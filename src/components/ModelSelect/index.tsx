@@ -1,5 +1,5 @@
 import { type ChatModelCard } from '@lobechat/types';
-import { type IconAvatarProps, LobeHub, ModelIcon, ProviderIcon } from '@lobehub/icons';
+import { type IconAvatarProps, ModelIcon } from '@lobehub/icons';
 import { Avatar, Flexbox, FlexboxProps, Icon, Tag, Text, Tooltip } from '@lobehub/ui';
 import { createStaticStyles, useResponsive } from 'antd-style';
 import {
@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 
 import { type AiProviderSourceType } from '@/types/aiProvider';
 import { formatTokenNumber } from '@/utils/format';
+import { getProviderLogoUrl } from '@/utils/providerLogo';
 
 import NewModelBadgeI18n, { NewModelBadge as NewModelBadgeCore } from './NewModelBadge';
 
@@ -328,8 +329,9 @@ interface ProviderItemRenderProps {
 }
 
 export const ProviderItemRender = memo<ProviderItemRenderProps>(
-  ({ provider, name, source, logo, type = 'mono', size = 16 }) => {
+  ({ provider, name, type = 'mono', size = 16 }) => {
     const isMono = type === 'mono';
+    const logoUrl = getProviderLogoUrl(provider, name);
     return (
       <Flexbox
         align={'center'}
@@ -340,19 +342,14 @@ export const ProviderItemRender = memo<ProviderItemRenderProps>(
         }}
         width={'100%'}
       >
-        {source === 'custom' && !!logo ? (
-          <Avatar
-            avatar={logo}
-            shape={'circle'}
-            size={size}
-            style={isMono ? { filter: 'grayscale(1)' } : {}}
-            title={name}
-          />
-        ) : provider === 'lobehub' ? (
-          <LobeHub.Morden size={size} />
-        ) : (
-          <ProviderIcon provider={provider} size={size} type={type} />
-        )}
+        <Avatar
+          avatar={logoUrl}
+          shape={'circle'}
+          size={size}
+          style={isMono ? { filter: 'grayscale(1)' } : {}}
+          title={name}
+        />
+
         <Text color={'inherit'} ellipsis>
           {name}
         </Text>

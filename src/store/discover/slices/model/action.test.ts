@@ -216,7 +216,7 @@ describe('ModelAction', () => {
       };
 
       vi.spyOn(discoverService, 'getModelList').mockResolvedValue(mockList as any);
-      vi.spyOn(globalHelpers, 'getCurrentLanguage').mockReturnValue('ja-JP');
+      vi.spyOn(globalHelpers, 'getCurrentLanguage').mockReturnValue('zh-TW');
 
       const { result } = renderHook(() => useStore.getState().useModelList());
 

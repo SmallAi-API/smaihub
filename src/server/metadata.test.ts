@@ -39,7 +39,7 @@ describe('Metadata', () => {
         url: 'https://example.com/custom',
         type: 'article',
         tags: ['tag1', 'tag2'],
-        locale: 'fr-FR',
+        locale: 'zh-TW',
         alternate: true,
       });
 
@@ -51,7 +51,7 @@ describe('Metadata', () => {
           description: 'Custom description',
           images: [{ url: 'https://custom-image.com', alt: `Custom Title · ${BRANDING_NAME}` }],
           type: 'article',
-          locale: 'fr-FR',
+          locale: 'zh-TW',
         }),
         twitter: expect.objectContaining({
           title: `Custom Title · ${BRANDING_NAME}`,
