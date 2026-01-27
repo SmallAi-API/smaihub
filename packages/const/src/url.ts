@@ -2,28 +2,28 @@ import urlJoin from 'url-join';
 
 const isDev = process.env.NODE_ENV === 'development';
 
-export const OFFICIAL_URL = 'https://app.lobehub.com';
-export const OFFICIAL_SITE = 'https://lobehub.com';
-export const OFFICIAL_DOMAIN = 'lobehub.com';
+export const OFFICIAL_URL = 'https://www.smallai.asia';
+export const OFFICIAL_SITE = 'https://www.smallai.asia';
+export const OFFICIAL_DOMAIN = 'https://www.smallai.asia';
 
 export const OG_URL = '/og/og.webp?v=1';
 
-export const GITHUB = 'https://github.com/lobehub/lobe-chat';
-export const GITHUB_ISSUES = urlJoin(GITHUB, 'issues/new/choose');
-export const CHANGELOG = 'https://lobehub.com/changelog';
+export const GITHUB = 'https://www.smallai.asia';
+export const GITHUB_ISSUES = 'https://www.smallai.asia';
+export const CHANGELOG = 'https://www.smallai.asia';
 
-export const DOCUMENTS = urlJoin(OFFICIAL_SITE, '/docs');
-export const USAGE_DOCUMENTS = urlJoin(DOCUMENTS, '/usage');
-export const SELF_HOSTING_DOCUMENTS = urlJoin(DOCUMENTS, '/self-hosting');
-export const DATABASE_SELF_HOSTING_URL = urlJoin(SELF_HOSTING_DOCUMENTS, '/server-database');
+export const DOCUMENTS = 'https://docs.smai.ai/zh/docs/apps/smallai';
+export const USAGE_DOCUMENTS = 'https://docs.smai.ai';
+export const SELF_HOSTING_DOCUMENTS = 'https://docs.smai.ai';
+export const DATABASE_SELF_HOSTING_URL = 'https://docs.smai.ai';
 
 // use this for the link
-export const DOCUMENTS_REFER_URL = `${DOCUMENTS}?utm_source=chat_preview`;
+export const DOCUMENTS_REFER_URL = 'https://docs.smai.ai';
 
-export const WIKI_PLUGIN_GUIDE = urlJoin(USAGE_DOCUMENTS, '/plugins/development');
-export const MANUAL_UPGRADE_URL = urlJoin(SELF_HOSTING_DOCUMENTS, '/advanced/upstream-sync');
+export const WIKI_PLUGIN_GUIDE = 'https://docs.smai.ai';
+export const MANUAL_UPGRADE_URL = 'https://docs.smai.ai';
 
-export const BLOG = urlJoin(OFFICIAL_SITE, 'blog');
+export const BLOG = 'https://docs.smai.ai';
 
 export const ABOUT = OFFICIAL_SITE;
 export const FEEDBACK = 'https://github.com/lobehub/lobe-chat/issues/new/choose';
