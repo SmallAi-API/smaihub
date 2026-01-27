@@ -1,0 +1,78 @@
+import { BRANDING_PROVIDER } from '@lobechat/business-const';
+import { Avatar, Flexbox, Skeleton, Text } from '@lobehub/ui';
+import { Divider } from 'antd';
+import { cx } from 'antd-style';
+import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { BrandingProviderCard } from '@/business/client/features/BrandingProviderCard';
+import { useIsDark } from '@/hooks/useIsDark';
+import { type AiProviderListItem } from '@/types/aiProvider';
+import { getProviderLogoUrl } from '@/utils/providerLogo';
+
+import EnableSwitch from './EnableSwitch';
+import { styles } from './style';
+
+interface ProviderCardProps extends AiProviderListItem {
+  loading?: boolean;
+  onProviderSelect: (provider: string) => void;
+}
+const ProviderCard = memo<ProviderCardProps>(
+  ({ id, description, name, enabled, source, loading, onProviderSelect }) => {
+    const { t } = useTranslation('providers');
+    const isDarkMode = useIsDark();
+
+    if (loading)
+      return (
+        <Flexbox
+          className={cx(isDarkMode ? styles.containerDark : styles.containerLight)}
+          gap={24}
+          padding={16}
+        >
+          <Skeleton active />
+        </Flexbox>
+      );
+
+    if (id === BRANDING_PROVIDER) {
+      return <BrandingProviderCard />;
+    }
+
+    return (
+      <Flexbox className={cx(isDarkMode ? styles.containerDark : styles.containerLight)} gap={24}>
+        <Flexbox gap={12} padding={16} width={'100%'}>
+          <div
+            onClick={() => {
+              onProviderSelect(id);
+            }}
+            style={{ cursor: 'pointer' }}
+          >
+            <Flexbox gap={12} width={'100%'}>
+              <Flexbox align={'center'} horizontal justify={'space-between'}>
+                <Flexbox align={'center'} gap={12} horizontal>
+                  <Avatar alt={name || id} avatar={getProviderLogoUrl(id, name)} size={28} />
+
+                  <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{name || id}</Text>
+                </Flexbox>
+              </Flexbox>
+              <Text
+                className={styles.desc}
+                ellipsis={{
+                  rows: 2,
+                }}
+              >
+                {source === 'custom' ? description : t(`${id}.description`)}
+              </Text>
+            </Flexbox>
+          </div>
+          <Divider style={{ margin: '4px 0' }} />
+          <Flexbox horizontal justify={'space-between'}>
+            <div />
+            <EnableSwitch enabled={enabled} id={id} />
+          </Flexbox>
+        </Flexbox>
+      </Flexbox>
+    );
+  },
+);
+
+export default ProviderCard;

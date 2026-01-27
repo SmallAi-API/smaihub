@@ -1,0 +1,5 @@
+{
+  "newapi.description": "SmallAi 全系列模型，支持 GPT、Claude、Gemini、DeepSeek 等主流大模型",
+  "openai.description": "仅支持部分 SmallAI GPT 全系列模型可用，例如 GPT4o mini / GPT 5.1 等",
+  "smai.description": "smai.ai 提供多种 AI 模型服务，支持 GPT、Claude、Gemini、DeepSeek 等主流大模型，新版本API，推荐使用。"
+}

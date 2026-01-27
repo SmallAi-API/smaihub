@@ -1,0 +1,51 @@
+description: Test supervisor prompt generation for group chat orchestration
+
+prompts:
+  - file://promptfoo/supervisor/productive/prompt.ts
+
+providers:
+  - id: smai:chat:gpt-5
+    config:
+      tools: file://./tools.json
+      tool_choice: required
+
+  - id: smai:chat:claude-sonnet-4-5-20250929
+    config:
+      tools: file://./tools.json
+      tool_choice:
+        type: any
+
+  - id: smai:chat:claude-haiku-4-5-20251001
+    config:
+      tools: file://./tools.json
+      tool_choice:
+        type: any
+
+  - id: smai:chat:gemini-2.5-pro
+    config:
+      tools: file://./tools.json
+      tool_choice: required
+
+  - id: smai:chat:deepseek-chat
+    config:
+      tools: file://./tools.json
+      tool_choice: required
+
+  - id: smai:chat:gpt-5-mini
+    config:
+      tools: file://./tools.json
+      tool_choice: required
+
+  - id: smai:chat:o3
+    config:
+      tools: file://./tools.json
+      tool_choice: required
+
+  - id: smai:chat:gpt-4.1-mini
+    config:
+      tools: file://./tools.json
+      tool_choice: required
+
+tests:
+  - file://./tests/basic-case.ts
+#  - file://./tests/role.ts

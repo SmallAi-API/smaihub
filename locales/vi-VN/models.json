@@ -1,0 +1,12 @@
+{
+  "chatgpt-4o-latest.description": "ChatGPT-4o là mô hình động được cập nhật theo thời gian thực, kết hợp khả năng hiểu và sinh văn bản mạnh mẽ cho các tình huống sử dụng quy mô lớn như hỗ trợ khách hàng, giáo dục và hỗ trợ kỹ thuật.",
+  "codex-mini-latest.description": "codex-mini-latest là một mô hình o4-mini được tinh chỉnh dành cho Codex CLI. Đối với việc sử dụng API trực tiếp, chúng tôi khuyến nghị bắt đầu với gpt-4.1.",
+  "computer-use-preview.description": "computer-use-preview là mô hình chuyên biệt cho công cụ \"sử dụng máy tính\", được huấn luyện để hiểu và thực hiện các tác vụ liên quan đến máy tính.",
+  "dall-e-2.description": "DALL·E thế hệ thứ hai với khả năng tạo hình ảnh thực tế, chính xác hơn và độ phân giải gấp 4 lần thế hệ đầu.",
+  "dall-e-3.description": "Mô hình DALL·E mới nhất, phát hành vào tháng 11 năm 2023, hỗ trợ tạo hình ảnh thực tế, chính xác hơn với chi tiết mạnh mẽ hơn.",
+  "o1-pro.description": "Dòng o1 được huấn luyện bằng học tăng cường để suy nghĩ trước khi trả lời và xử lý suy luận phức tạp. o1-pro sử dụng nhiều tài nguyên tính toán hơn để suy nghĩ sâu hơn và cung cấp câu trả lời chất lượng cao hơn một cách nhất quán.",
+  "o1.description": "o1 là mô hình suy luận mới của OpenAI với đầu vào văn bản + hình ảnh và đầu ra văn bản, phù hợp cho các tác vụ phức tạp đòi hỏi kiến thức rộng. Nó có cửa sổ ngữ cảnh 200K và mốc kiến thức đến tháng 10 năm 2023.",
+  "tts-1-hd.description": "Mô hình chuyển văn bản thành giọng nói mới nhất, được tối ưu hóa cho chất lượng cao.",
+  "tts-1.description": "Mô hình chuyển văn bản thành giọng nói mới nhất, được tối ưu hóa cho tốc độ thời gian thực.",
+  "whisper-1.description": "Mô hình nhận dạng giọng nói tổng quát hỗ trợ ASR đa ngôn ngữ, dịch giọng nói và nhận diện ngôn ngữ."
+}
