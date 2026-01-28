@@ -3,8 +3,8 @@
 
 # 方式1: GitHub Provider (默认)
 provider: github
-owner: lobehub
-repo: lobe-chat
+owner: SmallAi-API
+repo: smaihub
 updaterCacheDirName: electron-app-updater
 allowPrerelease: true
 channel: nightly

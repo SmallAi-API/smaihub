@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import urlJoin from 'url-join';
 
 import { OFFICIAL_SITE } from '@/const/url';
-import { isDesktop } from '@/const/version';
+import { isDesktop, isDesktopSelfHostEnabled } from '@/const/version';
 import UserInfo from '@/features/User/UserInfo';
 import { remoteServerService } from '@/services/electron/remoteServer';
 import { electronSystemService } from '@/services/electron/system';
@@ -111,8 +111,10 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
     };
   }, []);
 
+  const allowSelfHost = isDesktopSelfHostEnabled ?? true;
   const isCloudAuthed = !!dataSyncConfig?.active && dataSyncConfig.storageMode === 'cloud';
-  const isSelfHostAuthed = !!dataSyncConfig?.active && dataSyncConfig.storageMode === 'selfHost';
+  const isSelfHostAuthed =
+    allowSelfHost && !!dataSyncConfig?.active && dataSyncConfig.storageMode === 'selfHost';
   const isSelfHostEndpointVerified =
     isSelfHostAuthed &&
     !!endpoint.trim() &&
@@ -120,7 +122,11 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
 
   // 判断是否可以开始使用（任一方式成功即可）
   const canStart = () => {
-    return isCloudAuthed || cloudLoginStatus === 'success' || isSelfHostEndpointVerified;
+    return (
+      isCloudAuthed ||
+      cloudLoginStatus === 'success' ||
+      (allowSelfHost && isSelfHostEndpointVerified)
+    );
   };
 
   // 处理云端登录
@@ -143,6 +149,7 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
 
   // 处理自建服务器连接
   const handleSelfhostConnect = async () => {
+    if (!allowSelfHost) return;
     if (!isDesktop) {
       setRemoteError(t('screen5.errors.desktopOnlyOidc'));
       setSelfhostLoginStatus('error');
@@ -179,16 +186,18 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
 
   // Sync local UI status with real remote config
   useEffect(() => {
+    if (!allowSelfHost) return;
     if (isCloudAuthed) setCloudLoginStatus('success');
     if (isSelfHostEndpointVerified) setSelfhostLoginStatus('success');
-  }, [isCloudAuthed, isSelfHostEndpointVerified]);
+  }, [allowSelfHost, isCloudAuthed, isSelfHostEndpointVerified]);
 
   // If user changes self-host endpoint after success, require re-authorization.
   useEffect(() => {
+    if (!allowSelfHost) return;
     if (selfhostLoginStatus !== 'success') return;
     if (isSelfHostEndpointVerified) return;
     setSelfhostLoginStatus('idle');
-  }, [isSelfHostEndpointVerified, selfhostLoginStatus]);
+  }, [allowSelfHost, isSelfHostEndpointVerified, selfhostLoginStatus]);
 
   // Surface requestAuthorization errors reported via store
   useEffect(() => {
@@ -364,6 +373,7 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
 
   // 渲染 Self-host 登录内容
   const renderSelfhostContent = () => {
+    if (!allowSelfHost) return null;
     if (selfhostLoginStatus === 'success') {
       return (
         <Flexbox gap={16} style={{ width: '100%' }}>
@@ -515,30 +525,31 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
             </Button>
           )}
         </Flexbox>
-        {!showEndpoint ? (
-          <Center width={'100%'}>
-            <Button
-              onClick={() => setShowEndpoint(true)}
-              style={{
-                color: cssVar.colorTextSecondary,
-              }}
-              type={'text'}
-            >
-              {t(loginMethodMetas.selfhost.descriptionKey)}
-            </Button>
-          </Center>
-        ) : (
-          <>
-            <Divider>
-              <Text fontSize={12} type={'secondary'}>
-                OR
-              </Text>
-            </Divider>
+        {allowSelfHost &&
+          (!showEndpoint ? (
+            <Center width={'100%'}>
+              <Button
+                onClick={() => setShowEndpoint(true)}
+                style={{
+                  color: cssVar.colorTextSecondary,
+                }}
+                type={'text'}
+              >
+                {t(loginMethodMetas.selfhost.descriptionKey)}
+              </Button>
+            </Center>
+          ) : (
+            <>
+              <Divider>
+                <Text fontSize={12} type={'secondary'}>
+                  OR
+                </Text>
+              </Divider>
 
-            {/* Self-host 选项 */}
-            {renderSelfhostContent()}
-          </>
-        )}
+              {/* Self-host 选项 */}
+              {renderSelfhostContent()}
+            </>
+          ))}
       </Flexbox>
       {canStart() && (
         <Flexbox horizontal justify={'space-between'} style={{ marginTop: 32 }}>

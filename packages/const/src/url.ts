@@ -26,17 +26,15 @@ export const MANUAL_UPGRADE_URL = 'https://docs.smai.ai';
 export const BLOG = 'https://docs.smai.ai';
 
 export const ABOUT = OFFICIAL_SITE;
-export const FEEDBACK = 'https://github.com/lobehub/lobe-chat/issues/new/choose';
-export const PRIVACY_URL = urlJoin(OFFICIAL_SITE, '/privacy');
-export const TERMS_URL = urlJoin(OFFICIAL_SITE, '/terms');
+export const FEEDBACK = 'https://docs.smai.ai';
+export const PRIVACY_URL = 'https://lobehub.com/privacy';
+export const TERMS_URL = 'https://lobehub.com/terms';
 
 export const PLUGINS_INDEX_URL = 'https://chat-plugins.lobehub.com';
 
-export const MORE_MODEL_PROVIDER_REQUEST_URL =
-  'https://github.com/lobehub/lobe-chat/discussions/6157';
+export const MORE_MODEL_PROVIDER_REQUEST_URL = 'https://www.smallai.asia';
 
-export const MORE_FILE_PREVIEW_REQUEST_URL =
-  'https://github.com/lobehub/lobe-chat/discussions/3684';
+export const MORE_FILE_PREVIEW_REQUEST_URL = 'https://www.smallai.asia';
 
 export const AGENTS_INDEX_GITHUB = 'https://github.com/lobehub/lobe-chat-agents';
 export const AGENTS_INDEX_GITHUB_ISSUE = urlJoin(AGENTS_INDEX_GITHUB, 'issues/new');
@@ -60,12 +58,12 @@ export const RELEASES_URL = urlJoin(GITHUB, 'releases');
 export const mailTo = (email: string) => `mailto:${email}`;
 
 export const AES_GCM_URL = 'https://datatracker.ietf.org/doc/html/draft-ietf-avt-srtp-aes-gcm-01';
-export const BASE_PROVIDER_DOC_URL = 'https://lobehub.com/docs/usage/providers';
+export const BASE_PROVIDER_DOC_URL = 'https://api.smai.ai';
 export const SITEMAP_BASE_URL = isDev ? '/sitemap.xml/' : 'sitemap';
-export const CHANGELOG_URL = urlJoin(OFFICIAL_SITE, 'changelog/versions');
+export const CHANGELOG_URL = 'https://api.smai.ai';
 
 export const DOWNLOAD_URL = {
-  android: 'https://play.google.com/store/apps/details?id=com.lobehub.app',
-  default: urlJoin(OFFICIAL_SITE, '/download'),
-  ios: 'https://testflight.apple.com/join/2ZbjX4Qp',
+  android: 'https://app.smai.ai/',
+  default: 'https://app.smai.ai/',
+  ios: 'https://app.smai.ai/',
 } as const;

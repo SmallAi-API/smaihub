@@ -6,6 +6,7 @@ import { Server } from 'lucide-react';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { isDesktopSelfHostEnabled } from '@/const/version';
 import { useElectronStore } from '@/store/electron';
 import { electronSyncSelectors } from '@/store/electron/selectors';
 
@@ -84,8 +85,13 @@ const ConnectionMode = memo<ConnectionModeProps>(({ setWaiting }) => {
   const storageMode = useElectronStore(electronSyncSelectors.storageMode);
   const rawRemoteServerUrl = useElectronStore(electronSyncSelectors.rawRemoteServerUrl);
 
+  const allowSelfHost = isDesktopSelfHostEnabled ?? true;
   const [selectedOption, setSelectedOption] = useState<RemoteStorageMode>(
-    storageMode === StorageModeEnum.SelfHost ? StorageModeEnum.SelfHost : StorageModeEnum.Cloud,
+    !allowSelfHost
+      ? StorageModeEnum.Cloud
+      : storageMode === StorageModeEnum.SelfHost
+        ? StorageModeEnum.SelfHost
+        : StorageModeEnum.Cloud,
   );
   const [selfHostedUrl, setSelfHostedUrl] = useState(rawRemoteServerUrl);
 
@@ -105,6 +111,7 @@ const ConnectionMode = memo<ConnectionModeProps>(({ setWaiting }) => {
   }, []);
 
   const handleSelectOption = (option: RemoteStorageMode) => {
+    if (!allowSelfHost && option === StorageModeEnum.SelfHost) return;
     setSelectedOption(option);
     if (option !== StorageModeEnum.SelfHost) {
       setUrlError(undefined);
@@ -137,12 +144,14 @@ const ConnectionMode = memo<ConnectionModeProps>(({ setWaiting }) => {
         <Flexbox gap={16}>
           <Flexbox align="center" horizontal justify="space-between">
             <div className={styles.groupTitle}>{t('sync.mode.cloudSync')}</div>
-            <div
-              className={styles.selfHostedText}
-              onClick={() => handleSelectOption(StorageModeEnum.SelfHost)}
-            >
-              {t('sync.mode.useSelfHosted')}
-            </div>
+            {allowSelfHost && (
+              <div
+                className={styles.selfHostedText}
+                onClick={() => handleSelectOption(StorageModeEnum.SelfHost)}
+              >
+                {t('sync.mode.useSelfHosted')}
+              </div>
+            )}
           </Flexbox>
           <Option
             description={t('sync.lobehubCloud.description')}
@@ -152,7 +161,7 @@ const ConnectionMode = memo<ConnectionModeProps>(({ setWaiting }) => {
             onClick={handleSelectOption}
             value={StorageModeEnum.Cloud}
           />
-          {selectedOption === StorageModeEnum.SelfHost && (
+          {allowSelfHost && selectedOption === StorageModeEnum.SelfHost && (
             <Option
               description={t('sync.selfHosted.description')}
               icon={Server}
@@ -172,7 +181,7 @@ const ConnectionMode = memo<ConnectionModeProps>(({ setWaiting }) => {
                       setUrlError(validateUrl(newUrl));
                     }}
                     onClick={(e) => e.stopPropagation()}
-                    placeholder="https://your-lobechat.com"
+                    placeholder="https://your-url.com"
                     status={urlError ? 'error' : undefined}
                     value={selfHostedUrl}
                   />

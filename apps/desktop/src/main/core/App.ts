@@ -72,7 +72,7 @@ export class App {
     logger.info(`PATH: ${app.getAppPath()}`);
     logger.info(` lng: ${app.getLocale()}`);
     logger.info('----------------------------------------------');
-    logger.info('Starting LobeHub...');
+    logger.info('Starting smai.ai...');
 
     logger.debug('Initializing App');
     // Initialize store manager

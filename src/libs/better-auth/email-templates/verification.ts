@@ -12,18 +12,16 @@ export const getVerificationEmailTemplate = (params: {
   // Format expiration time in a human-readable way
   const expiresInHours = expiresInSeconds / 3600;
   const expirationText =
-    expiresInHours >= 1
-      ? `${expiresInHours} hour${expiresInHours > 1 ? 's' : ''}`
-      : `${expiresInSeconds / 60} minutes`;
+    expiresInHours >= 1 ? `${expiresInHours} 小时` : `${expiresInSeconds / 60} 分钟`;
 
   return {
     html: `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verify your email</title>
+  <title>验证您的邮箱</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5; color: #1a1a1a;">
   <!-- Container -->
@@ -32,8 +30,7 @@ export const getVerificationEmailTemplate = (params: {
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 32px;">
       <div style="display: inline-flex; align-items: center; justify-content: center; background-color: #ffffff; border-radius: 12px; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-        <span style="font-size: 24px; line-height: 1; margin-right: 10px;">🤯</span>
-        <span style="font-size: 18px; font-weight: 700; color: #000000; letter-spacing: -0.5px;">LobeHub</span>
+        <span style="font-size: 18px; font-weight: 700; color: #000000; letter-spacing: -0.5px;">smai.ai</span>
       </div>
     </div>
 
@@ -43,38 +40,38 @@ export const getVerificationEmailTemplate = (params: {
       <!-- Header -->
       <div style="text-align: center; margin-bottom: 32px;">
         <h1 style="color: #111827; font-size: 24px; font-weight: 700; margin: 0 0 12px 0; letter-spacing: -0.5px;">
-          Verify your email address
+          验证您的邮箱地址
         </h1>
         <p style="color: #6b7280; font-size: 16px; margin: 0;">
-          Let's get you signed in.
+          让我们帮您完成登录。
         </p>
       </div>
 
       <!-- Content -->
       <div style="color: #374151; font-size: 16px; line-height: 1.6;">
-        ${userName ? `<p style="margin: 0 0 16px 0;">Hi <strong>${userName}</strong>,</p>` : ''}
-        
+        ${userName ? `<p style="margin: 0 0 16px 0;">您好 <strong>${userName}</strong>，</p>` : ''}
+
         <p style="margin: 0 0 24px 0;">
-          Thanks for creating an account with LobeHub. To access your account, please verify your email address by clicking the button below.
+          感谢您在 smai.ai 创建账户。请点击下方按钮验证您的邮箱地址以访问您的账户。
         </p>
 
         <!-- Button -->
         <div style="text-align: center; margin: 36px 0;">
           <a href="${url}" target="_blank"
              style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 16px 36px; border-radius: 14px; font-weight: 600; font-size: 16px; transition: transform 0.1s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-            Verify Email Address
+            验证邮箱地址
           </a>
         </div>
 
         <!-- Expiration Note -->
         <div style="background-color: #f9fafb; border-radius: 12px; padding: 16px; margin-bottom: 24px; border: 1px solid #f3f4f6;">
           <p style="color: #6b7280; font-size: 14px; margin: 0; text-align: center;">
-            ⏰ This link will expire in <strong>${expirationText}</strong>.
+            ⏰ 此链接将在 <strong>${expirationText}</strong> 后失效。
           </p>
         </div>
-        
+
         <p style="color: #6b7280; font-size: 15px; margin: 0 0 8px 0;">
-          If you didn't create an account, you can safely ignore this email.
+          如果您没有创建账户，可以忽略此邮件。
         </p>
       </div>
 
@@ -84,7 +81,7 @@ export const getVerificationEmailTemplate = (params: {
       <!-- Fallback Link -->
       <div style="text-align: center;">
         <p style="color: #9ca3af; font-size: 13px; margin: 0 0 8px 0;">
-          Button not working? Copy and paste this link into your browser:
+          按钮无法点击？请复制以下链接到浏览器中打开：
         </p>
         <a href="${url}" style="color: #2563eb; font-size: 13px; text-decoration: none; word-break: break-all; display: block; line-height: 1.4;">
           ${url}
@@ -95,14 +92,14 @@ export const getVerificationEmailTemplate = (params: {
     <!-- Footer -->
     <div style="text-align: center; margin-top: 32px;">
       <p style="color: #a1a1aa; font-size: 13px; margin: 0;">
-        © 2025 LobeHub. All rights reserved.
+        © 2026 smai.ai 保留所有权利。
       </p>
     </div>
   </div>
 </body>
 </html>
     `,
-    subject: 'Verify Your Email - LobeHub',
-    text: `Please verify your email by clicking this link: ${url}\n\nThis link will expire in ${expirationText}.`,
+    subject: '验证您的邮箱 - smai.ai',
+    text: `请点击此链接验证您的邮箱：${url}\n\n此链接将在 ${expirationText} 后失效。`,
   };
 };

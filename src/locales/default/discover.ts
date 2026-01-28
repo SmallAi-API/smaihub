@@ -76,9 +76,8 @@ export default {
   'assistants.status.deprecated.subtitle': 'This Agent is currently unavailable. Possible reasons:',
   'assistants.status.deprecated.title': 'Agent unavailable',
   'assistants.status.support':
-    'For any questions, please copy the link and send it to <email>support@lobehub.com</email> for assistance.',
-  'assistants.status.unpublished.subtitle':
-    'This Agent is under review. To confirm its status, copy the link and email <email>support@lobehub.com</email>.',
+    'For any questions, please send it to WeChat:SmallAI2024 for assistance.',
+  'assistants.status.unpublished.subtitle': 'This Agent is under review.',
   'assistants.status.unpublished.title': 'Agent Under Review',
   'assistants.suggestions': 'Similar Agents',
   'assistants.systemRole': 'Agent Profile',
@@ -145,8 +144,8 @@ export default {
   'filterBy.timePeriod.week': 'Last 7 Days',
   'filterBy.timePeriod.year': 'Last Year',
   'footer.desc':
-    'Evolve with AI users worldwide. Become a creator to submit your agents and skills to the LobeHub Community.',
-  'footer.title': 'Share your creation on LobeHub Community today',
+    'Evolve with AI users worldwide. Become a creator to submit your agents and skills to the Lobe Hub Community.',
+  'footer.title': 'Share your creation on Lobe Hub Community today',
 
   'fork.alreadyForked': 'You have already forked this agent. Navigating to your fork...',
 

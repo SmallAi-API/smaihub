@@ -12,7 +12,6 @@ import {
   EthernetPort,
   Gift,
   Image as ImageIcon,
-  Info,
   KeyIcon,
   KeyboardIcon,
   Map,
@@ -215,11 +214,6 @@ export const useCategory = () => {
         icon: Database,
         key: SettingsTabs.Storage,
         label: t('tab.storage'),
-      },
-      !hideDocs && {
-        icon: Info,
-        key: SettingsTabs.About,
-        label: t('tab.about'),
       },
     ].filter(Boolean) as CategoryItem[];
 

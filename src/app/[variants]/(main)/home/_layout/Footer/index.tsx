@@ -1,19 +1,15 @@
 'use client';
 
-import { BRANDING_EMAIL, SOCIAL_URL } from '@lobechat/business-const';
 import { useAnalytics } from '@lobehub/analytics/react';
 import { ActionIcon, DropdownMenu, Icon, type MenuProps } from '@lobehub/ui';
 import { Flexbox } from '@lobehub/ui';
-import { DiscordIcon } from '@lobehub/ui/icons';
-import { Book, CircleHelp, Feather, FlaskConical, Mail, Rocket } from 'lucide-react';
+import { Book, CircleHelp, FlaskConical, KeyRound, Rocket, ShoppingBag } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import HighlightNotification from '@/components/HighlightNotification';
 import LabsModal from '@/components/LabsModal';
-import { DOCUMENTS_REFER_URL, mailTo } from '@/const/url';
 import ThemeButton from '@/features/User/UserPanel/ThemeButton';
-import { useFeedbackModal } from '@/hooks/useFeedbackModal';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors/systemStatus';
 
@@ -30,7 +26,6 @@ const Footer = memo(() => {
   const { analytics } = useAnalytics();
 
   const [isLabsModalOpen, setIsLabsModalOpen] = useState(false);
-
   const [isProductHuntCardOpen, setIsProductHuntCardOpen] = useState(false);
 
   const [isNotificationRead, updateSystemStatus] = useGlobalStore((s) => [
@@ -64,18 +59,12 @@ const Footer = memo(() => {
     }
   }, [isWithinTimeWindow, isNotificationRead, trackProductHuntEvent]);
 
-  const { open: openFeedbackModal } = useFeedbackModal();
-
   const handleOpenLabsModal = () => {
     setIsLabsModalOpen(true);
   };
 
   const handleCloseLabsModal = () => {
     setIsLabsModalOpen(false);
-  };
-
-  const handleOpenFeedbackModal = () => {
-    openFeedbackModal();
   };
 
   const handleOpenProductHuntCard = () => {
@@ -108,42 +97,36 @@ const Footer = memo(() => {
   const helpMenuItems: MenuProps['items'] = useMemo(
     () => [
       {
+        icon: <Icon icon={ShoppingBag} />,
+        key: 'shop',
+        label: (
+          <a href="https://shop.smallai.asia" rel="noopener noreferrer" target="_blank">
+            {t('tab.shop')}
+          </a>
+        ),
+      },
+      {
+        icon: <Icon icon={KeyRound} />,
+        key: 'apiKey',
+        label: (
+          <a href="https://api.smai.ai" rel="noopener noreferrer" target="_blank">
+            {t('tab.apiAccess')}
+          </a>
+        ),
+      },
+      {
         icon: <Icon icon={Book} />,
         key: 'docs',
         label: (
-          <a href={DOCUMENTS_REFER_URL} rel="noopener noreferrer" target="_blank">
-            {t('userPanel.docs')}
+          <a
+            href="https://docs.smai.ai/zh/docs/apps/smallai"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {t('tab.docs')}
           </a>
         ),
       },
-      {
-        icon: <Icon icon={Feather} />,
-        key: 'feedback',
-        label: t('userPanel.feedback'),
-        onClick: handleOpenFeedbackModal,
-      },
-      {
-        icon: <Icon icon={DiscordIcon} />,
-        key: 'discord',
-        label: (
-          <a href={SOCIAL_URL.discord} rel="noopener noreferrer" target="_blank">
-            {t('userPanel.discord')}
-          </a>
-        ),
-      },
-      {
-        icon: <Icon icon={Mail} />,
-        key: 'email',
-        label: (
-          <a href={mailTo(BRANDING_EMAIL.support)} rel="noopener noreferrer" target="_blank">
-            {t('userPanel.email')}
-          </a>
-        ),
-      },
-      {
-        type: 'divider',
-      },
-
       {
         icon: <Icon icon={FlaskConical} />,
         key: 'labs',
@@ -175,7 +158,6 @@ const Footer = memo(() => {
         <ThemeButton placement={'topCenter'} size={16} />
       </Flexbox>
       <LabsModal onClose={handleCloseLabsModal} open={isLabsModalOpen} />
-
       <HighlightNotification
         actionHref={PRODUCT_HUNT_NOTIFICATION.actionHref}
         actionLabel={t('productHunt.actionLabel')}

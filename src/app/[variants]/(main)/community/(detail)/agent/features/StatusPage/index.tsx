@@ -41,13 +41,7 @@ const StatusPage = memo<StatusPageProps>(({ status }) => {
           icon={<FluentEmoji emoji={'⌛'} size={96} type={'anim'} />}
           subTitle={
             <Text fontSize={16} type={'secondary'}>
-              <Trans
-                components={{
-                  email: <a href="mailto:support@lobehub.com">support@lobehub.com</a>,
-                }}
-                i18nKey="assistants.status.unpublished.subtitle"
-                ns="discover"
-              />
+              <Trans i18nKey="assistants.status.unpublished.subtitle" ns="discover" />
             </Text>
           }
           title={

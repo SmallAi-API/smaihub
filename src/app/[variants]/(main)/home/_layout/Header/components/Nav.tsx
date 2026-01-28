@@ -1,13 +1,16 @@
 'use client';
 
-import { Flexbox } from '@lobehub/ui';
-import { HomeIcon, SearchIcon } from 'lucide-react';
+import { Flexbox, Icon } from '@lobehub/ui';
+import { cssVar } from 'antd-style';
+import { HomeIcon, KeyRound, SearchIcon, ShoppingBag, SquareArrowOutUpRight } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { getRouteById } from '@/config/routes';
+import { isDesktop } from '@/const/version';
 import { useActiveTabKey } from '@/hooks/useActiveTabKey';
+import { electronSystemService } from '@/services/electron/system';
 import { useGlobalStore } from '@/store/global';
 import { SidebarTabKey } from '@/store/global/initialState';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
@@ -16,7 +19,22 @@ import NavItem, {
   type NavItemProps,
 } from '../../../../../../../features/NavPanel/components/NavItem';
 
+const handleExternalLink = (url: string) => {
+  if (isDesktop) {
+    void electronSystemService.openExternalLink(url);
+    return;
+  }
+
+  window.open(url, '_blank', 'noopener,noreferrer');
+};
+
+const externalIndicator = (
+  <Icon color={cssVar.colorTextQuaternary} icon={SquareArrowOutUpRight} size={14} />
+);
+
 interface Item {
+  external?: boolean;
+  extra?: NavItemProps['extra'];
   hidden?: boolean | undefined;
   icon: NavItemProps['icon'];
   key: string;
@@ -68,6 +86,22 @@ const Nav = memo(() => {
         title: t('tab.community'),
         url: '/community',
       },
+      {
+        external: true,
+        extra: externalIndicator,
+        icon: ShoppingBag,
+        key: 'shop',
+        title: t('tab.shop'),
+        url: 'https://shop.smallai.asia',
+      },
+      {
+        external: true,
+        extra: externalIndicator,
+        icon: KeyRound,
+        key: 'api',
+        title: t('tab.apiAccess'),
+        url: 'https://api.smai.ai',
+      },
     ],
     [t],
   );
@@ -75,17 +109,21 @@ const Nav = memo(() => {
   return (
     <Flexbox gap={1} paddingInline={4}>
       {items.map((item) => {
+        const isExternal = item.external === true || item.url?.startsWith('http') === true;
+        const externalUrl = isExternal ? item.url : undefined;
         const content = (
           <NavItem
             active={tab === item.key}
+            extra={item.extra}
             hidden={item.hidden}
+            href={externalUrl}
             icon={item.icon}
             key={item.key}
-            onClick={item.onClick}
+            onClick={externalUrl ? () => handleExternalLink(externalUrl) : item.onClick}
             title={item.title}
           />
         );
-        if (!item.url) return content;
+        if (!item.url || isExternal) return content;
 
         return (
           <Link

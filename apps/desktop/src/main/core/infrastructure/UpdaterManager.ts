@@ -394,9 +394,11 @@ export class UpdaterManager {
 
       if (this.isManualCheck) {
         this.mainWindow.broadcast('manualUpdateAvailable', info);
-      } else {
+      } else if (updaterConfig.app.autoDownloadUpdate) {
         logger.info('Auto check found update, starting download automatically...');
         this.downloadUpdate();
+      } else {
+        logger.info('Auto download disabled; update will wait for manual action.');
       }
     });
 

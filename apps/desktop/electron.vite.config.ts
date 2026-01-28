@@ -37,7 +37,11 @@ export default defineConfig({
       sourcemap: isDev ? 'inline' : false,
     },
     define: {
+      'process.env.AUTO_CHECK_UPDATE': JSON.stringify(process.env.AUTO_CHECK_UPDATE),
+      'process.env.AUTO_DOWNLOAD_UPDATE': JSON.stringify(process.env.AUTO_DOWNLOAD_UPDATE),
+      'process.env.ENABLE_APP_UPDATE': JSON.stringify(process.env.ENABLE_APP_UPDATE),
       'process.env.UPDATE_CHANNEL': JSON.stringify(process.env.UPDATE_CHANNEL),
+      'process.env.UPDATE_CHECK_INTERVAL_MS': JSON.stringify(process.env.UPDATE_CHECK_INTERVAL_MS),
       'process.env.UPDATE_SERVER_URL': JSON.stringify(process.env.UPDATE_SERVER_URL),
     },
     resolve: {

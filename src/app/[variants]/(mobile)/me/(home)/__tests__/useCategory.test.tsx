@@ -42,7 +42,7 @@ describe('useCategory', () => {
     });
 
     const mockOpenChangelogModal = vi.fn();
-    const { result } = renderHook(() => useCategory(mockOpenChangelogModal), { wrapper });
+    const { result } = renderHook(() => useCategory(), { wrapper });
 
     act(() => {
       const items = result.current;
@@ -60,7 +60,7 @@ describe('useCategory', () => {
     });
 
     const mockOpenChangelogModal = vi.fn();
-    const { result } = renderHook(() => useCategory(mockOpenChangelogModal), { wrapper });
+    const { result } = renderHook(() => useCategory(), { wrapper });
 
     act(() => {
       const items = result.current;

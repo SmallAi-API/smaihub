@@ -23,7 +23,7 @@ const ChatHeaderTitle = memo(() => {
   const isInbox = useSessionStore(sessionSelectors.isInboxSession);
   const title = useAgentStore(agentSelectors.currentAgentTitle);
 
-  const displayTitle = isInbox ? 'Lobe AI' : title;
+  const displayTitle = isInbox ? 'smai.ai' : title;
 
   return (
     <ChatHeader.Title

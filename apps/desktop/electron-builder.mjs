@@ -36,9 +36,9 @@ const isStable = !isNightly && !isBeta;
 // - Beta/Nightly: 仅使用 GitHub
 const getPublishConfig = () => {
   const githubProvider = {
-    owner: 'lobehub',
+    owner: 'SmallAi-API',
     provider: 'github',
-    repo: 'lobe-chat',
+    repo: 'smaihub',
   };
 
   // Stable channel: 使用自定义服务器 (generic provider)
@@ -70,10 +70,10 @@ if (!hasAppleCertificate) {
 
 // 根据版本类型确定协议 scheme
 const getProtocolScheme = () => {
-  if (isNightly) return 'lobehub-nightly';
-  if (isBeta) return 'lobehub-beta';
+  if (isNightly) return 'smai-nightly';
+  if (isBeta) return 'smai-beta';
 
-  return 'lobehub';
+  return 'smai.ai';
 };
 
 const protocolScheme = getProtocolScheme();
@@ -90,13 +90,6 @@ const getIconFileName = () => {
  * @see https://www.electron.build/configuration
  */
 const config = {
-  /**
-   * BeforePack hook to resolve pnpm symlinks for native modules.
-   * This ensures native modules are properly included in the asar archive.
-   */
-  beforePack: async () => {
-    await copyNativeModulesToSource();
-  },
   /**
    * AfterPack hook for post-processing:
    * 1. Copy native modules to asar.unpacked (resolving pnpm symlinks)
@@ -175,17 +168,27 @@ const config = {
       console.log(`⏭️  Skipping Assets.car (not found or copy failed)`);
     }
   },
+
   appId: isNightly
-    ? 'com.lobehub.lobehub-desktop-nightly'
+    ? 'com.lobehub.smai.ai-desktop-nightly'
     : isBeta
-      ? 'com.lobehub.lobehub-desktop-beta'
-      : 'com.lobehub.lobehub-desktop',
+      ? 'com.lobehub.smai.ai-desktop-beta'
+      : 'com.lobehub.smai.ai-desktop',
+
   appImage: {
     artifactName: '${productName}-${version}.${ext}',
   },
 
   // Native modules must be unpacked from asar to work correctly
   asarUnpack: getAsarUnpackPatterns(),
+
+  /**
+   * BeforePack hook to resolve pnpm symlinks for native modules.
+   * This ensures native modules are properly included in the asar archive.
+   */
+  beforePack: async () => {
+    await copyNativeModulesToSource();
+  },
 
   detectUpdateChannel: true,
 
@@ -230,7 +233,7 @@ const config = {
       CFBundleIconName: 'AppIcon',
       CFBundleURLTypes: [
         {
-          CFBundleURLName: 'LobeHub Protocol',
+          CFBundleURLName: 'smai.ai Protocol',
           CFBundleURLSchemes: [protocolScheme],
         },
       ],
@@ -273,7 +276,7 @@ const config = {
   },
   protocols: [
     {
-      name: 'LobeHub Protocol',
+      name: 'smai.ai Protocol',
       schemes: [protocolScheme],
     },
   ],
@@ -287,7 +290,7 @@ const config = {
   },
 
   win: {
-    executableName: 'LobeHub',
+    executableName: 'smai.ai',
   },
 };
 

@@ -17,8 +17,6 @@ import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfi
 import { useUserStore } from '@/store/user';
 import { authSelectors } from '@/store/user/selectors';
 
-import { useNewVersion } from './useNewVersion';
-
 const NewVersionBadge = memo(
   ({
     children,
@@ -44,7 +42,6 @@ const NewVersionBadge = memo(
 );
 
 export const useMenu = () => {
-  const hasNewVersion = useNewVersion();
   const { t } = useTranslation(['common', 'setting', 'auth']);
   const { showCloudPromotion, hideDocs } = useServerConfigStore(featureFlagsSelectors);
   const [isLogin, isLoginWithAuth] = useUserStore((s) => [
@@ -71,12 +68,13 @@ export const useMenu = () => {
       key: 'setting',
       label: (
         <Link to="/settings">
-          <NewVersionBadge showBadge={hasNewVersion}>{t('userPanel.setting')}</NewVersionBadge>
+          <NewVersionBadge>{t('userPanel.setting')}</NewVersionBadge>
         </Link>
       ),
     },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const downloadClient: MenuProps['items'] = [
     {
       icon: <Icon icon={Download} />,
@@ -128,7 +126,7 @@ export const useMenu = () => {
 
     ...(isLogin ? settings : []),
     ...businessMenuItems,
-    ...(!isDesktop ? downloadClient : []),
+    ...(!isDesktop ? [] : []),
     ...data,
     ...(!hideDocs ? helps : []),
   ].filter(Boolean) as MenuProps['items'];
