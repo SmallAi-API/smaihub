@@ -29,23 +29,8 @@ on:
         description: 'Version to build (e.g., 2.0.0)'
         required: true
         type: string
-      build_mac:
-        description: 'Build macOS (ARM64)'
-        required: false
-        type: boolean
-        default: true
-      build_mac_intel:
-        description: 'Build macOS (Intel x64)'
-        required: false
-        type: boolean
-        default: true
       build_windows:
         description: 'Build Windows'
-        required: false
-        type: boolean
-        default: true
-      build_linux:
-        description: 'Build Linux'
         required: false
         type: boolean
         default: true
@@ -131,31 +116,12 @@ jobs:
       - name: Generate Matrix
         id: set-matrix
         run: |
-          # 基础矩阵
+          # 基础矩阵（仅 Windows）
           static_matrix='[]'
 
           # Windows
           if [[ "${{ github.event_name }}" != "workflow_dispatch" ]] || [[ "${{ inputs.build_windows }}" == "true" ]]; then
-            static_matrix=$(echo "$static_matrix" | jq -c '. + [{"os": "windows-2025", "name": "windows-2025"}]')
-          fi
-
-          # Linux
-          if [[ "${{ github.event_name }}" != "workflow_dispatch" ]] || [[ "${{ inputs.build_linux }}" == "true" ]]; then
-            static_matrix=$(echo "$static_matrix" | jq -c '. + [{"os": "ubuntu-latest", "name": "ubuntu-latest"}]')
-          fi
-
-          # macOS (ARM64)
-          # 使用 GitHub Hosted Runner
-          if [[ "${{ github.event_name }}" != "workflow_dispatch" ]] || [[ "${{ inputs.build_mac }}" == "true" ]]; then
-            echo "Using GitHub-Hosted Runner for macOS ARM64"
-            arm_entry='{"os": "macos-14", "name": "macos-arm64"}'
-            static_matrix=$(echo "$static_matrix" | jq -c --argjson entry "$arm_entry" '. + [$entry]')
-          fi
-
-          if [[ "${{ github.event_name }}" != "workflow_dispatch" ]] || [[ "${{ inputs.build_mac_intel }}" == "true" ]]; then
-            echo "Using GitHub-Hosted Runner for macOS Intel x64"
-            intel_entry='{"os": "macos-15-intel", "name": "macos-intel"}'
-            static_matrix=$(echo "$static_matrix" | jq -c --argjson entry "$intel_entry" '. + [$entry]')
+            static_matrix=$(echo "$static_matrix" | jq -c '. + [{"os": "windows-latest", "name": "windows-latest"}]')
           fi
 
           # 输出
@@ -185,26 +151,6 @@ jobs:
       - name: Set package version
         run: npm run workflow:set-desktop-version ${{ needs.check-stable.outputs.version }} stable
 
-      # macOS 构建
-      - name: Build artifact on macOS
-        if: runner.os == 'macOS'
-        run: npm run desktop:build
-        env:
-          UPDATE_CHANNEL: stable
-          UPDATE_SERVER_URL: ${{ secrets.UPDATE_SERVER_URL }}
-          RELEASE_NOTES: ${{ needs.check-stable.outputs.release_notes }}
-          APP_URL: http://localhost:3015
-          DATABASE_URL: 'postgresql://postgres@localhost:5432/postgres'
-          KEY_VAULTS_SECRET: 'oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE='
-          CSC_LINK: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
-          CSC_KEY_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          CSC_FOR_PULL_REQUEST: true
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          NEXT_PUBLIC_DESKTOP_PROJECT_ID: ${{ secrets.UMAMI_STABLE_DESKTOP_PROJECT_ID }}
-          NEXT_PUBLIC_DESKTOP_UMAMI_BASE_URL: ${{ secrets.UMAMI_STABLE_DESKTOP_BASE_URL }}
-
       # Windows 构建
       - name: Build artifact on Windows
         if: runner.os == 'Windows'
@@ -221,84 +167,16 @@ jobs:
           TEMP: C:\temp
           TMP: C:\temp
 
-      # Linux 构建
-      - name: Build artifact on Linux
-        if: runner.os == 'Linux'
-        run: |
-          npm run desktop:build
-          tar -czf apps/desktop/release/lobehub-renderer.tar.gz -C out .
-        env:
-          UPDATE_CHANNEL: stable
-          UPDATE_SERVER_URL: ${{ secrets.UPDATE_SERVER_URL }}
-          RELEASE_NOTES: ${{ needs.check-stable.outputs.release_notes }}
-          APP_URL: http://localhost:3015
-          DATABASE_URL: 'postgresql://postgres@localhost:5432/postgres'
-          KEY_VAULTS_SECRET: 'oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE='
-          NEXT_PUBLIC_DESKTOP_PROJECT_ID: ${{ secrets.UMAMI_STABLE_DESKTOP_PROJECT_ID }}
-          NEXT_PUBLIC_DESKTOP_UMAMI_BASE_URL: ${{ secrets.UMAMI_STABLE_DESKTOP_BASE_URL }}
-
       - name: Upload artifacts
         uses: ./.github/actions/desktop-upload-artifacts
         with:
           artifact-name: release-${{ matrix.name }}
 
   # ============================================
-  # 合并 macOS 多架构文件
-  # ============================================
-  merge-mac-files:
-    needs: [build, check-stable]
-    name: Merge macOS Release Files
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          package-manager-cache: false
-
-      - name: Install bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v7
-        with:
-          path: release
-          pattern: release-*
-          merge-multiple: true
-
-      - name: List downloaded artifacts
-        run: ls -R release
-
-      - name: Install yaml only for merge step
-        run: |
-          cd scripts/electronWorkflow
-          if [ ! -f package.json ]; then
-            echo '{"name":"merge-mac-release","private":true}' > package.json
-          fi
-          bun add --no-save yaml@2.8.1
-
-      - name: Merge latest-mac.yml files
-        run: bun run scripts/electronWorkflow/mergeMacReleaseFiles.js
-
-      - name: Upload artifacts with merged macOS files
-        uses: actions/upload-artifact@v6
-        with:
-          name: merged-release
-          path: release/
-          retention-days: 1
-
-  # ============================================
   # 发布到 GitHub Releases
   # ============================================
   publish-github:
-    needs: [merge-mac-files, check-stable]
+    needs: [build, check-stable]
     name: Publish to GitHub Release
     runs-on: ubuntu-latest
     # 手动触发时可选择跳过
@@ -309,8 +187,9 @@ jobs:
       - name: Download merged artifacts
         uses: actions/download-artifact@v7
         with:
-          name: merged-release
           path: release
+          pattern: release-*
+          merge-multiple: true
 
       - name: List final artifacts
         run: ls -R release
@@ -350,7 +229,7 @@ jobs:
   #         *.dmg, *.zip, *.exe, ...
   # ============================================
   publish-s3:
-    needs: [merge-mac-files, check-stable]
+    needs: [build, check-stable]
     name: Publish to S3
     runs-on: ubuntu-latest
     # 手动触发时可选择跳过
@@ -359,8 +238,9 @@ jobs:
       - name: Download merged artifacts
         uses: actions/download-artifact@v7
         with:
-          name: merged-release
           path: release
+          pattern: release-*
+          merge-multiple: true
 
       - name: List artifacts to upload
         run: |
