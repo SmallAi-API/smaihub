@@ -2,7 +2,7 @@ export default {
   'changelog.description': 'Stay updated on the new features and improvements of {{appName}}',
   'changelog.title': 'Changelog',
   'chat.description':
-    '{{appName}} is a work-and-lifestyle space to find, build, and collaborate with agent teams that grow with you.',
+    'Supporting the world leading AI models—including GPT-5.2, Claude 4.5 Opus, NanoBanana, and Gemini 3 Pro—smai.ai features built-in Agents for seamless interaction. Easily build your own Agents and achieve true skill control. Using task-driven tools, you can create long-term Agent teammates that evolve alongside you. Join the world largest human-Agent symbiotic network.',
   'chat.title': '{{appName}} · Agent teams that grow with you',
   'discover.assistants.description':
     'Content, Q&A, images, video, voice, workflows—browse and add Agents from the Community.',

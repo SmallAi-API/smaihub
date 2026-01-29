@@ -209,24 +209,6 @@ export class MacOSMenu extends BaseMenuPlatform implements IMenuPlatform {
         label: t('help.title'),
         role: 'help',
         submenu: [
-          {
-            click: async () => {
-              await shell.openExternal('https://lobehub.com');
-            },
-            label: t('help.visitWebsite'),
-          },
-          {
-            click: async () => {
-              await shell.openExternal('https://github.com/lobehub/lobe-chat');
-            },
-            label: t('help.githubRepo'),
-          },
-          {
-            click: async () => {
-              await shell.openExternal('https://github.com/lobehub/lobe-chat/issues/new/choose');
-            },
-            label: t('help.reportIssue'),
-          },
           { type: 'separator' },
           {
             click: () => {

@@ -270,6 +270,8 @@ jobs:
             exit 0
           fi
 
+          aws configure set default.s3.addressing_style virtual
+
           # 构建端点参数
           ENDPOINT_ARG=""
           if [ -n "$S3_ENDPOINT" ]; then

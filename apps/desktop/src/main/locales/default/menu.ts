@@ -56,7 +56,7 @@ const menu = {
   'history.home': 'Home',
   'history.title': 'Go',
   'macOS.about': 'About {{appName}}',
-  'macOS.devTools': 'LobeHub Developer Tools',
+  'macOS.devTools': 'smai.ai Developer Tools',
   'macOS.hide': 'Hide {{appName}}',
   'macOS.hideOthers': 'Hide Others',
   'macOS.preferences': 'Preferences...',

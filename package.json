@@ -1,7 +1,7 @@
 {
-  "name": "@lobehub/lobehub",
-  "version": "2.0.0-next.389",
-  "description": "LobeHub - an open-source,comprehensive AI Agent framework that supports speech synthesis, multimodal, and extensible Function Call plugin system. Supports one-click free deployment of your private ChatGPT/LLM web application.",
+  "name": "@wasskayyy/smaihub",
+  "version": "v0.0.4",
+  "description": "smai.ai - 新一代智能体Agent对话平台,支持GPT5.2、Claude 4.5 Opus、NanoBanana、Gemini 3 Pro等全球主流Ai大模型服务,内置多个AI Agent完成AI对话,轻松构建 Agent，并实现真正的技能控制。以任务为驱动的工具，构建能随着您一起成长的长期 Agent 队友，加入全球最大的人与 Agent 共生网络。",
   "keywords": [
     "framework",
     "chatbot",
@@ -14,16 +14,16 @@
     "tts",
     "stt"
   ],
-  "homepage": "https://github.com/lobehub/lobe-chat",
+  "homepage": "https://www.smallai.asia",
   "bugs": {
-    "url": "https://github.com/lobehub/lobe-chat/issues/new/choose"
+    "url": "https://www.smallai.asia"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lobehub/lobe-chat.git"
+    "url": "https://www.smallai.asia"
   },
   "license": "MIT",
-  "author": "LobeHub <i@lobehub.com>",
+  "author": "smai.ai <wasskayyy@gmail.com>",
   "sideEffects": false,
   "workspaces": [
     "packages/*",

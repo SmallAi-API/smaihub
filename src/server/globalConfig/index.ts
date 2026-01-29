@@ -53,6 +53,9 @@ export const getServerGlobalConfig = async () => {
       lmstudio: {
         fetchOnClient: isDesktop ? false : undefined,
       },
+      newapi: {
+        enabledKey: 'ENABLED_NEWAPI',
+      },
       ollama: {
         enabled: isDesktop ? true : undefined,
         fetchOnClient: isDesktop ? false : !process.env.OLLAMA_PROXY_URL,
@@ -62,6 +65,9 @@ export const getServerGlobalConfig = async () => {
       },
       qwen: {
         withDeploymentName: true,
+      },
+      smaiai: {
+        enabledKey: 'ENABLED_SMAIAI',
       },
       tencentcloud: {
         enabledKey: 'ENABLED_TENCENT_CLOUD',

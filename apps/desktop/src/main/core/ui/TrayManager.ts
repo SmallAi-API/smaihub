@@ -58,8 +58,8 @@ export class TrayManager {
     return this.retrieveOrInitialize({
       iconPath: isMac
         ? nativeTheme.shouldUseDarkColorsForSystemIntegratedUI
-          ? 'tray-dark.png'
-          : 'tray-light.png'
+          ? 'tray.png'
+          : 'tray.png'
         : 'tray.png',
       identifier: 'main', // Use app icon, ensure this file exists in resources directory
       tooltip: name, // Can use app.getName() or localized string

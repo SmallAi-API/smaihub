@@ -18,18 +18,6 @@ export const AUTHOR_LIST = {
     name: 'Arvin Xu',
     url: 'https://github.com/arvinxx',
   },
-  canisminor: {
-    avatar: 'https://avatars.githubusercontent.com/u/17870709?v=4',
-    desc: 'Founder, Design Engineer',
-    name: 'CanisMinor',
-    url: 'https://github.com/canisminor1990',
-  },
-  lobehub: {
-    avatar: 'https://avatars.githubusercontent.com/u/131470832?v=4',
-    desc: 'Official Account',
-    name: 'LobeHub',
-    url: 'https://github.com/lobehub',
-  },
 };
 
 export class Ld {
