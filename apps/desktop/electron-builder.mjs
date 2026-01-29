@@ -170,10 +170,10 @@ const config = {
   },
 
   appId: isNightly
-    ? 'com.lobehub.smai.ai-desktop-nightly'
+    ? 'com.smallai.smaihub-desktop-nightly'
     : isBeta
-      ? 'com.lobehub.smai.ai-desktop-beta'
-      : 'com.lobehub.smai.ai-desktop',
+      ? 'com.smallai.smaihub-desktop-beta'
+      : 'com.smallai.smaihub-desktop',
 
   appImage: {
     artifactName: '${productName}-${version}.${ext}',
