@@ -272,6 +272,8 @@ jobs:
 
           aws configure set default.s3.addressing_style virtual
 
+          aws configure set default.s3.multipart_threshold 512MB
+
           # 构建端点参数
           ENDPOINT_ARG=""
           if [ -n "$S3_ENDPOINT" ]; then
