@@ -16,10 +16,11 @@ import { DocumentModel } from '@/database/models/document';
 import { EmbeddingModel } from '@/database/models/embedding';
 import { FileModel } from '@/database/models/file';
 import { MessageModel } from '@/database/models/message';
+import { AiInfraRepos } from '@/database/repositories/aiInfra';
 import { knowledgeBaseFiles } from '@/database/schemas';
 import { authedProcedure, router } from '@/libs/trpc/lambda';
 import { keyVaults, serverDatabase } from '@/libs/trpc/lambda/middleware';
-import { getServerDefaultFilesConfig } from '@/server/globalConfig';
+import { getServerDefaultFilesConfig, getServerGlobalConfig } from '@/server/globalConfig';
 import { initModelRuntimeFromDB } from '@/server/modules/ModelRuntime';
 import { ChunkService } from '@/server/services/chunk';
 import { DocumentService } from '@/server/services/document';
@@ -29,9 +30,21 @@ const chunkProcedure = authedProcedure
   .use(keyVaults)
   .use(async (opts) => {
     const { ctx } = opts;
+    const globalConfig = await getServerGlobalConfig();
+
+    // Convert ServerModelProviderConfig to ProviderConfig format
+    const providerConfigs: Record<string, { enabled: boolean }> = {};
+    if (globalConfig.aiProvider) {
+      for (const [key, value] of Object.entries(globalConfig.aiProvider)) {
+        if (value) {
+          providerConfigs[key] = { enabled: value.enabled ?? false };
+        }
+      }
+    }
 
     return opts.next({
       ctx: {
+        aiInfraRepos: new AiInfraRepos(ctx.serverDB, ctx.userId, providerConfigs),
         asyncTaskModel: new AsyncTaskModel(ctx.serverDB, ctx.userId),
         chunkModel: new ChunkModel(ctx.serverDB, ctx.userId),
         chunkService: new ChunkService(ctx.serverDB, ctx.userId),
@@ -224,8 +237,19 @@ export const chunkRouter = router({
     )
     .use(checkBudgetsUsage)
     .mutation(async ({ ctx, input }) => {
-      const { model, provider } =
+      const defaultConfig =
         getServerDefaultFilesConfig().embeddingModel || DEFAULT_FILE_EMBEDDING_MODEL_ITEM;
+      const { model } = defaultConfig;
+
+      // Get user's enabled embedding providers (sorted by user preference)
+      const enabledEmbeddingProviders = await ctx.aiInfraRepos.getEnabledEmbeddingProviders();
+
+      // Use the first enabled provider, fallback to default config if none enabled
+      const provider =
+        enabledEmbeddingProviders.length > 0
+          ? enabledEmbeddingProviders[0].id
+          : defaultConfig.provider;
+
       // Read user's provider config from database
       const agentRuntime = await initModelRuntimeFromDB(ctx.serverDB, ctx.userId, provider);
 
@@ -246,9 +270,19 @@ export const chunkRouter = router({
     .input(SemanticSearchSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const { model, provider } =
+        const defaultConfig =
           getServerDefaultFilesConfig().embeddingModel || DEFAULT_FILE_EMBEDDING_MODEL_ITEM;
+        const { model } = defaultConfig;
         let embedding: number[];
+
+        // Get user's enabled embedding providers (sorted by user preference)
+        const enabledEmbeddingProviders = await ctx.aiInfraRepos.getEnabledEmbeddingProviders();
+
+        // Use the first enabled provider, fallback to default config if none enabled
+        const provider =
+          enabledEmbeddingProviders.length > 0
+            ? enabledEmbeddingProviders[0].id
+            : defaultConfig.provider;
 
         // Read user's provider config from database
         const modelRuntime = await initModelRuntimeFromDB(ctx.serverDB, ctx.userId, provider);

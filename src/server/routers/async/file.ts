@@ -11,10 +11,11 @@ import { AsyncTaskModel } from '@/database/models/asyncTask';
 import { ChunkModel } from '@/database/models/chunk';
 import { EmbeddingModel } from '@/database/models/embedding';
 import { FileModel } from '@/database/models/file';
+import { AiInfraRepos } from '@/database/repositories/aiInfra';
 import { type NewChunkItem, type NewEmbeddingsItem } from '@/database/schemas';
 import { fileEnv } from '@/envs/file';
 import { asyncAuthedProcedure, asyncRouter as router } from '@/libs/trpc/async';
-import { getServerDefaultFilesConfig } from '@/server/globalConfig';
+import { getServerDefaultFilesConfig, getServerGlobalConfig } from '@/server/globalConfig';
 import { initModelRuntimeFromDB } from '@/server/modules/ModelRuntime';
 import { ChunkService } from '@/server/services/chunk';
 import { FileService } from '@/server/services/file';
@@ -29,9 +30,21 @@ import { sanitizeUTF8 } from '@/utils/sanitizeUTF8';
 
 const fileProcedure = asyncAuthedProcedure.use(async (opts) => {
   const { ctx } = opts;
+  const globalConfig = await getServerGlobalConfig();
+
+  // Convert ServerModelProviderConfig to ProviderConfig format
+  const providerConfigs: Record<string, { enabled: boolean }> = {};
+  if (globalConfig.aiProvider) {
+    for (const [key, value] of Object.entries(globalConfig.aiProvider)) {
+      if (value) {
+        providerConfigs[key] = { enabled: value.enabled ?? false };
+      }
+    }
+  }
 
   return opts.next({
     ctx: {
+      aiInfraRepos: new AiInfraRepos(ctx.serverDB, ctx.userId, providerConfigs),
       asyncTaskModel: new AsyncTaskModel(ctx.serverDB, ctx.userId),
       chunkModel: new ChunkModel(ctx.serverDB, ctx.userId),
       chunkService: new ChunkService(ctx.serverDB, ctx.userId),
@@ -61,8 +74,18 @@ export const fileRouter = router({
 
       const asyncTask = await ctx.asyncTaskModel.findById(input.taskId);
 
-      const { model, provider } =
+      const defaultConfig =
         getServerDefaultFilesConfig().embeddingModel || DEFAULT_FILE_EMBEDDING_MODEL_ITEM;
+      const { model } = defaultConfig;
+
+      // Get user's enabled embedding providers (sorted by user preference)
+      const enabledEmbeddingProviders = await ctx.aiInfraRepos.getEnabledEmbeddingProviders();
+
+      // Use the first enabled provider, fallback to default config if none enabled
+      const provider =
+        enabledEmbeddingProviders.length > 0
+          ? enabledEmbeddingProviders[0].id
+          : defaultConfig.provider;
 
       if (!asyncTask) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Async Task not found' });
 
