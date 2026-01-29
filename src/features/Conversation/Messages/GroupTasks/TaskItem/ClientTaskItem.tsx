@@ -3,13 +3,20 @@
 import { AccordionItem, Block, Text } from '@lobehub/ui';
 import { memo, useMemo, useState } from 'react';
 
+import { useAgentGroupStore } from '@/store/agentGroup';
+import { agentGroupSelectors } from '@/store/agentGroup/selectors';
 import { useChatStore } from '@/store/chat';
 import { displayMessageSelectors } from '@/store/chat/selectors';
 import { messageMapKey } from '@/store/chat/utils/messageMapKey';
 import { ThreadStatus } from '@/types/index';
 import type { UIChatMessage } from '@/types/index';
 
-import { ErrorState, InitializingState, TaskMessages, isProcessingStatus } from '../shared';
+import {
+  ErrorState,
+  InitializingState,
+  TaskMessages,
+  isProcessingStatus,
+} from '../../Tasks/shared';
 import TaskTitle, { type TaskMetrics } from './TaskTitle';
 
 interface ClientTaskItemProps {
@@ -42,6 +49,14 @@ const ClientTaskItem = memo<ClientTaskItemProps>(({ item }) => {
   // Use task message's agentId (skip 'supervisor' as it's not a valid agent ID for queries)
   // Fall back to activeAgentId if not available
   const agentId = itemAgentId && itemAgentId !== 'supervisor' ? itemAgentId : activeAgentId;
+
+  // Get agent info from store for displaying
+  const activeGroupId = useAgentGroupStore(agentGroupSelectors.activeGroupId);
+  const agent = useAgentGroupStore((s) =>
+    activeGroupId && itemAgentId
+      ? agentGroupSelectors.getAgentByIdFromGroup(activeGroupId, itemAgentId)(s)
+      : null,
+  );
 
   const threadContext = useMemo(
     () => ({
@@ -118,7 +133,18 @@ const ClientTaskItem = memo<ClientTaskItemProps>(({ item }) => {
       onExpandChange={setExpanded}
       paddingBlock={4}
       paddingInline={4}
-      title={<TaskTitle metrics={metrics} status={status} title={title} />}
+      title={
+        <TaskTitle
+          agent={
+            agent
+              ? { avatar: agent.avatar || undefined, backgroundColor: agent.backgroundColor }
+              : undefined
+          }
+          metrics={metrics}
+          status={status}
+          title={title}
+        />
+      }
     >
       <Block gap={16} padding={12} style={{ marginBlock: 8 }} variant={'outlined'}>
         {instruction && (

@@ -1,12 +1,15 @@
 'use client';
 
+import { ThreadStatus } from '@lobechat/types';
+import type { UIChatMessage } from '@lobechat/types';
 import { AccordionItem, Block } from '@lobehub/ui';
+import isEqual from 'fast-deep-equal';
 import { memo, useMemo, useState } from 'react';
 
-import { ThreadStatus } from '@/types/index';
-import type { UIChatMessage } from '@/types/index';
+import { useAgentGroupStore } from '@/store/agentGroup';
+import { agentGroupSelectors } from '@/store/agentGroup/selectors';
 
-import { TaskContent } from '../shared';
+import { TaskContent } from '../../Tasks/shared';
 import TaskTitle, { type TaskMetrics } from './TaskTitle';
 
 interface ServerTaskItemProps {
@@ -14,7 +17,7 @@ interface ServerTaskItemProps {
 }
 
 const ServerTaskItem = memo<ServerTaskItemProps>(({ item }) => {
-  const { id, metadata, taskDetail, tasks } = item;
+  const { id, agentId, metadata, taskDetail, tasks } = item;
   const [expanded, setExpanded] = useState(false);
 
   const title = taskDetail?.title || metadata?.taskTitle;
@@ -23,6 +26,14 @@ const ServerTaskItem = memo<ServerTaskItemProps>(({ item }) => {
 
   const isCompleted = status === ThreadStatus.Completed;
   const isError = status === ThreadStatus.Failed || status === ThreadStatus.Cancel;
+
+  // Get agent info from store
+  const activeGroupId = useAgentGroupStore(agentGroupSelectors.activeGroupId);
+  const agent = useAgentGroupStore((s) =>
+    activeGroupId && agentId
+      ? agentGroupSelectors.getAgentByIdFromGroup(activeGroupId, agentId)(s)
+      : null,
+  );
 
   // Build metrics for TaskTitle (only for completed/error states)
   const metrics: TaskMetrics | undefined = useMemo(() => {
@@ -49,7 +60,18 @@ const ServerTaskItem = memo<ServerTaskItemProps>(({ item }) => {
       onExpandChange={setExpanded}
       paddingBlock={4}
       paddingInline={4}
-      title={<TaskTitle metrics={metrics} status={status} title={title} />}
+      title={
+        <TaskTitle
+          agent={
+            agent
+              ? { avatar: agent.avatar || undefined, backgroundColor: agent.backgroundColor }
+              : undefined
+          }
+          metrics={metrics}
+          status={status}
+          title={title}
+        />
+      }
     >
       <Block gap={16} padding={12} style={{ marginBlock: 8 }} variant={'outlined'}>
         {expanded && (
@@ -65,7 +87,7 @@ const ServerTaskItem = memo<ServerTaskItemProps>(({ item }) => {
       </Block>
     </AccordionItem>
   );
-}, Object.is);
+}, isEqual);
 
 ServerTaskItem.displayName = 'ServerTaskItem';
 
