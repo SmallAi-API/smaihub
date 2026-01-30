@@ -83,7 +83,15 @@ const enabledSSOProviders = parseSSOProviders(authEnv.AUTH_SSO_PROVIDERS);
 
 const { socialProviders, genericOAuthProviders } = initBetterAuthSSOProviders();
 
+const BASIC_EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 async function customEmailValidator(email: string): Promise<boolean> {
+  const normalizedEmail = email.trim().toLowerCase();
+  if (!BASIC_EMAIL_REGEX.test(normalizedEmail)) return false;
+
+  const domain = normalizedEmail.split('@')[1];
+  if (domain === '189.cn') return true;
+
   return ENABLE_BUSINESS_FEATURES ? businessEmailValidator(email) : validateEmail(email);
 }
 
