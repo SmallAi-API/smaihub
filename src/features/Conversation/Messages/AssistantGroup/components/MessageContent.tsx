@@ -30,10 +30,13 @@ const MessageContent = memo<ContentBlockProps>(({ content, hasTools, id }) => {
   if (content === LOADING_FLAT) {
     return <ContentLoading id={id} />;
   }
-
+  const isSingleLine = (message || '').split('\n').length <= 2;
   return (
     content && (
-      <MarkdownMessage {...markdownProps} className={cx(hasTools && styles.pWithTool)}>
+      <MarkdownMessage
+        {...markdownProps}
+        className={cx(hasTools && isSingleLine && styles.pWithTool)}
+      >
         {message}
       </MarkdownMessage>
     )

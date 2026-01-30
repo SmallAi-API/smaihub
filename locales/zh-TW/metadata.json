@@ -1,7 +1,7 @@
 {
   "changelog.description": "持續追蹤 {{appName}} 的新功能和改進",
   "changelog.title": "更新日誌",
-  "chat.description": "{{appName}} 是一個結合工作與生活的空間，讓你能夠尋找、建立並與隨你一同成長的智能代理團隊合作。",
+  "chat.description": "支持全球領先的 AI 模型——包括 GPT-5.2、Claude 4.5 Opus、NanoBanana 和 Gemini 3 Pro——smai.ai 具備內建代理人，實現無縫互動。輕鬆建立您自己的代理人，實現真正的技能控制。使用以任務為驅動的工具，您可以創建與您共同成長的長期代理人隊友。加入全球最大的人工智慧與代理人共生網絡。",
   "chat.title": "{{appName}} · 與你一同成長的智能代理團隊",
   "discover.assistants.description": "內容創作、文案、問答、圖像生成、視頻生成、語音生成、智能代理、自動化工作流程，定制你專屬的 AI / GPTs / OLLaMA 智能助手",
   "discover.assistants.title": "智慧體社群",

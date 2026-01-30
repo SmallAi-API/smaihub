@@ -1,7 +1,7 @@
 {
   "changelog.description": "随时了解 {{appName}} 的新功能与改进",
   "changelog.title": "更新日志",
-  "chat.description": "{{appName}} 致力于构建下一代工作与生活空间，你可以找到、创建，或与 Agent 团队共事，无限进步！",
+  "chat.description": "支持全球领先的人工智能模型——包括 GPT-5.2、Claude 4.5 Opus、NanoBanana 和 Gemini 3 Pro——smai.ai 具有内置代理，便于无缝互动。轻松构建您自己的代理，实现真正的技能控制。通过任务驱动的工具，您可以创建与您共同发展的长期代理队友。加入全球最大的人工智能与人类共生网络。",
   "chat.title": "{{appName}} · 同 Agent 团队一起无限进步",
   "discover.assistants.description": "内容、问答、图像、视频、语音、工作流——从社区中浏览并添加智能体。",
   "discover.assistants.title": "智能体社区",
