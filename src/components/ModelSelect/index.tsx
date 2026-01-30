@@ -349,7 +349,6 @@ export const ProviderItemRender = memo<ProviderItemRenderProps>(
           style={isMono ? { filter: 'grayscale(1)' } : {}}
           title={name}
         />
-
         <Text color={'inherit'} ellipsis>
           {name}
         </Text>

@@ -38,6 +38,7 @@ const DefaultAgentForm = memo(() => {
               setLoading(false);
             }}
             showAbility={false}
+            virtual={false}
           />
         ),
         desc: t('defaultAgent.model.desc'),

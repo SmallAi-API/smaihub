@@ -48,6 +48,7 @@ const SystemAgentForm = memo(
                 setLoading(false);
               }}
               showAbility={false}
+              virtual={false}
               // value={value}
             />
           ),

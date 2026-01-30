@@ -27,7 +27,10 @@ interface ModelOption {
   value: string;
 }
 
-interface ModelSelectProps extends Pick<LobeSelectProps, 'loading' | 'size' | 'style' | 'variant'> {
+interface ModelSelectProps extends Omit<
+  LobeSelectProps,
+  'defaultValue' | 'onChange' | 'optionRender' | 'options' | 'value'
+> {
   defaultValue?: { model: string; provider?: string };
   initialWidth?: boolean;
   onChange?: (props: { model: string; provider: string }) => void;
@@ -38,103 +41,110 @@ interface ModelSelectProps extends Pick<LobeSelectProps, 'loading' | 'size' | 's
   value?: { model: string; provider?: string };
 }
 
-const ModelSelect = memo<ModelSelectProps>(
-  ({
+const ModelSelect = memo<ModelSelectProps>((props) => {
+  const {
     value,
+    defaultValue,
     onChange,
     initialWidth = false,
     showAbility = true,
     requiredAbilities,
-    loading,
     popupWidth,
-    size,
     style,
-    variant,
-  }) => {
-    const { styles } = useStyles({ popupWidth });
-    const enabledList = useEnabledChatModels();
+    virtual = true,
+    ...rest
+  } = props;
+  const { styles } = useStyles({ popupWidth });
+  const enabledList = useEnabledChatModels();
 
-    const options = useMemo<LobeSelectProps['options']>(() => {
-      const getChatModels = (provider: EnabledProviderWithModels) => {
-        const models =
-          requiredAbilities && requiredAbilities.length > 0
-            ? provider.children.filter((model) =>
-                requiredAbilities.every((ability) => Boolean(model.abilities?.[ability])),
-              )
-            : provider.children;
+  const options = useMemo<LobeSelectProps['options']>(() => {
+    const getChatModels = (provider: EnabledProviderWithModels) => {
+      const models =
+        requiredAbilities && requiredAbilities.length > 0
+          ? provider.children.filter((model) =>
+              requiredAbilities.every((ability) => Boolean(model.abilities?.[ability])),
+            )
+          : provider.children;
 
-        return models.map((model) => ({
-          ...model,
-          label: <ModelItemRender {...model} {...model.abilities} showInfoTag={false} />,
-          provider: provider.id,
-          value: `${provider.id}/${model.id}`,
-        }));
-      };
+      return models.map((model) => ({
+        ...model,
+        label: <ModelItemRender {...model} {...model.abilities} showInfoTag={false} />,
+        provider: provider.id,
+        value: `${provider.id}/${model.id}`,
+      }));
+    };
 
-      if (enabledList.length === 1) {
-        const provider = enabledList[0];
+    if (enabledList.length === 1) {
+      const provider = enabledList[0];
 
-        return getChatModels(provider);
-      }
+      return getChatModels(provider);
+    }
 
-      return enabledList
-        .map((provider) => {
-          const opts = getChatModels(provider);
-          if (opts.length === 0) return undefined;
+    return enabledList
+      .map((provider) => {
+        const opts = getChatModels(provider);
+        if (opts.length === 0) return undefined;
 
-          return {
-            label: (
-              <ProviderItemRender
-                logo={provider.logo}
-                name={provider.name}
-                provider={provider.id}
-                source={provider.source}
-              />
-            ),
-            options: opts,
-          };
-        })
-        .filter(Boolean) as LobeSelectProps['options'];
-    }, [enabledList, requiredAbilities, showAbility]);
+        return {
+          label: (
+            <ProviderItemRender
+              logo={provider.logo}
+              name={provider.name}
+              provider={provider.id}
+              source={provider.source}
+            />
+          ),
+          options: opts,
+        };
+      })
+      .filter(Boolean) as LobeSelectProps['options'];
+  }, [enabledList, requiredAbilities, showAbility]);
 
-    return (
-      <TooltipGroup>
-        <LobeSelect
-          defaultValue={`${value?.provider}/${value?.model}`}
-          loading={loading}
-          onChange={(value, option) => {
-            if (!value) return;
-            const model = (value as string).split('/').slice(1).join('/');
-            onChange?.({ model, provider: (option as unknown as ModelOption).provider });
-          }}
-          optionRender={(option) => {
-            const data = option as unknown as ModelOption;
-            return (
-              <ModelItemRender
-                displayName={data.displayName}
-                id={data.id}
-                showInfoTag={false}
-                {...data.abilities}
-              />
-            );
-          }}
-          options={options}
-          popupClassName={styles.popup}
-          popupMatchSelectWidth={false}
-          selectedIndicatorVariant="bold"
-          size={size}
-          style={{
-            minWidth: 200,
-            width: initialWidth ? 'initial' : undefined,
-            ...style,
-          }}
-          value={`${value?.provider}/${value?.model}`}
-          variant={variant}
-          virtual
-        />
-      </TooltipGroup>
-    );
-  },
-);
+  const selectedValue =
+    value?.provider && value?.model ? `${value.provider}/${value.model}` : undefined;
+  const selectedDefaultValue =
+    selectedValue === undefined && defaultValue?.provider && defaultValue?.model
+      ? `${defaultValue.provider}/${defaultValue.model}`
+      : undefined;
+  const popupClassName = rest.popupClassName
+    ? `${rest.popupClassName} ${styles.popup}`
+    : styles.popup;
+
+  return (
+    <TooltipGroup>
+      <LobeSelect
+        {...rest}
+        defaultValue={selectedDefaultValue}
+        onChange={(value, option) => {
+          if (!value) return;
+          const model = (value as string).split('/').slice(1).join('/');
+          onChange?.({ model, provider: (option as unknown as ModelOption).provider });
+        }}
+        optionRender={(option) => {
+          const data = option as unknown as ModelOption;
+          return (
+            <ModelItemRender
+              displayName={data.displayName}
+              id={data.id}
+              showInfoTag={false}
+              {...data.abilities}
+            />
+          );
+        }}
+        options={options}
+        popupClassName={popupClassName}
+        popupMatchSelectWidth={false}
+        selectedIndicatorVariant="bold"
+        style={{
+          minWidth: 200,
+          width: initialWidth ? 'initial' : undefined,
+          ...style,
+        }}
+        value={selectedValue}
+        virtual={virtual}
+      />
+    </TooltipGroup>
+  );
+});
 
 export default ModelSelect;
