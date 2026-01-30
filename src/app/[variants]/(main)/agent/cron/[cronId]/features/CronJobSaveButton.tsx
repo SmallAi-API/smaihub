@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, Flexbox } from '@lobehub/ui';
 import { Save } from 'lucide-react';
 import { memo } from 'react';
@@ -19,7 +21,7 @@ const CronJobSaveButton = memo<CronJobSaveButtonProps>(({ disabled, loading, onS
         icon={Save}
         loading={loading}
         onClick={onSave}
-        style={{ width: 200 }}
+        style={{ maxWidth: 200, width: '100%' }}
         type="primary"
       >
         {t('agentCronJobs.saveAsNew')}
