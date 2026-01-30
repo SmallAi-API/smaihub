@@ -12,11 +12,11 @@ export const defaultClients: ClientMetadata[] = [
   {
     application_type: 'web',
     client_id: 'lobehub-desktop',
-    client_name: 'LobeHub Desktop',
+    client_name: 'smai.ai Desktop',
     // 仅支持授权码流程
     grant_types: ['authorization_code', 'refresh_token'],
 
-    logo_uri: 'https://hub-apac-1.lobeobjects.space/lobehub-desktop-icon.png',
+    logo_uri: '/logo.png',
 
     post_logout_redirect_uris: [
       // 动态构建 Web 页面回调 URL
@@ -41,10 +41,10 @@ export const defaultClients: ClientMetadata[] = [
   {
     application_type: 'native', // 移动端使用 native 类型
     client_id: 'lobehub-mobile',
-    client_name: 'LobeHub Mobile',
+    client_name: 'smai.ai Mobile',
     // 支持授权码流程和刷新令牌
     grant_types: ['authorization_code', 'refresh_token'],
-    logo_uri: 'https://hub-apac-1.lobeobjects.space/docs/73f69adfa1b802a0e250f6ff9d62f70b.png',
+    logo_uri: '/logo.png',
     // 移动端不需要 post_logout_redirect_uris，因为注销通常在应用内处理
     post_logout_redirect_uris: [],
     // 移动端使用自定义 URL Scheme
