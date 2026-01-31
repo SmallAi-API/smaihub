@@ -122,6 +122,8 @@ const provider: GenericProviderDefinition<{
       responseMode: 'query',
 
       scopes: ['snsapi_login'],
+
+      tokenUrl: WECHAT_TOKEN_URL,
     };
   },
 
