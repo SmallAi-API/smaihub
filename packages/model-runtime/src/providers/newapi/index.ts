@@ -6,7 +6,7 @@ import { createRouterRuntime } from '../../core/RouterRuntime';
 import { CreateRouterRuntimeOptions } from '../../core/RouterRuntime/createRuntime';
 import { detectModelProvider, processMultiProviderModelList } from '../../utils/modelParse';
 
-const DEFAULT_BASE_URL = 'https://ai98.vip';
+const DEFAULT_BASE_URL = 'https://api.smallai.asia';
 
 export interface NewAPIModelCard {
   created: number;
