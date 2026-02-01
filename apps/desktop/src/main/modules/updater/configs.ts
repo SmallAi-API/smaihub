@@ -23,7 +23,7 @@ export const updaterConfig = {
   // Application update configuration
   app: {
     // Whether to auto-check for updates
-    autoCheckUpdate: env.AUTO_CHECK_UPDATE ?? false,
+    autoCheckUpdate: env.AUTO_CHECK_UPDATE ?? true,
     // Whether to auto-download updates
     autoDownloadUpdate: env.AUTO_DOWNLOAD_UPDATE ?? false,
     // Update check interval (milliseconds)

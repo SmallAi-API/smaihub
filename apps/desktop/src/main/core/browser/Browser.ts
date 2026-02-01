@@ -1,4 +1,4 @@
-import { APP_WINDOW_MIN_SIZE, TITLE_BAR_HEIGHT } from '@lobechat/desktop-bridge';
+import { APP_WINDOW_MIN_SIZE } from '@lobechat/desktop-bridge';
 import { MainBroadcastEventKey, MainBroadcastParams } from '@lobechat/electron-client-ipc';
 import {
   BrowserWindow,
@@ -119,8 +119,6 @@ export default class Browser {
     const resolvedState = this.stateManager.resolveState({ height, width });
     logger.info(`Creating new BrowserWindow instance: ${this.identifier}`);
     logger.debug(`[${this.identifier}] Resolved window state: ${JSON.stringify(resolvedState)}`);
-
-
 
     return new BrowserWindow({
       ...rest,
