@@ -1,9 +1,8 @@
 ---
 title: LobeHub Authentication Service Configuration
 description: >-
-  Learn how to configure external authentication services using Better Auth,
-  Clerk, or Next Auth for centralized user authorization management. Supported
-  authentication services include Auth0, Azure ID, etc.
+  Learn how to configure external authentication services using Better Auth, Clerk, or Next Auth for centralized user authorization management. Supported authentication services include Auth0, Azure ID, etc.
+
 tags:
   - Authentication Service
   - Better Auth
@@ -15,7 +14,8 @@ tags:
 LobeHub supports the configuration of external authentication services using Better Auth, Clerk, or Next Auth for internal use within enterprises/organizations to centrally manage user authorization.
 
 <Callout type={'info'}>
-  Looking for legacy authentication methods? See [Legacy Authentication](/docs/self-hosting/advanced/auth/legacy) for NextAuth and Clerk documentation.
+  Looking for legacy authentication methods? See [Legacy
+  Authentication](/docs/self-hosting/advanced/auth/legacy) for NextAuth and Clerk documentation.
 </Callout>
 
 Clerk is a comprehensive identity verification solution that has recently gained popularity. It provides a simple yet powerful API and services to handle user authentication and session management. Clerk's design philosophy is to offer a concise and modern authentication solution that enables developers to easily integrate and use it.
@@ -72,6 +72,8 @@ To enable Better Auth in LobeHub, set the following environment variables:
 Click on a provider below for detailed configuration guides:
 
 <Cards>
+  <Card href={'/docs/self-hosting/advanced/auth/providers/password'} title={'Email/Password'} />
+
   <Card href={'/docs/self-hosting/advanced/auth/providers/github'} title={'GitHub'} />
 
   <Card href={'/docs/self-hosting/advanced/auth/providers/google'} title={'Google'} />
@@ -133,7 +135,8 @@ Send emails via SMTP protocol, suitable for users with existing email services. 
 | `SMTP_FROM`              | Optional | Sender address (required for AWS SES), defaults to `SMTP_USER` | `noreply@example.com` |
 
 <Callout type={'warning'}>
-  When using Gmail, you must use an App Password instead of your account password. Generate one at [Google App Passwords](https://myaccount.google.com/apppasswords).
+  When using Gmail, you must use an App Password instead of your account password. Generate one at
+  [Google App Passwords](https://myaccount.google.com/apppasswords).
 </Callout>
 
 ### Option 2: Resend
@@ -147,7 +150,9 @@ Send emails via SMTP protocol, suitable for users with existing email services. 
 | `RESEND_FROM`            | Recommended | Sender address, must be a verified domain | `noreply@your-domain.com`   |
 
 <Callout type={'info'}>
-  Before using Resend, you need to [verify your sending domain](https://resend.com/docs/dashboard/domains/introduction), otherwise emails can only be sent to your own address.
+  Before using Resend, you need to [verify your sending
+  domain](https://resend.com/docs/dashboard/domains/introduction), otherwise emails can only be sent
+  to your own address.
 </Callout>
 
 ### Common Configuration
@@ -163,7 +168,8 @@ Enable email verification to ensure users own the email addresses they register 
 | `AUTH_EMAIL_VERIFICATION` | Optional | Set to `1` to require email verification after registration |
 
 <Callout type={'info'}>
-  Email verification requires a working email service (SMTP or Resend) configured above. When enabled, users must verify their email address before they can sign in.
+  Email verification requires a working email service (SMTP or Resend) configured above. When
+  enabled, users must verify their email address before they can sign in.
 </Callout>
 
 ## Magic Link (Passwordless) Login
@@ -175,7 +181,8 @@ Enable magic-link login (depends on a working email provider above, off by defau
 | `AUTH_ENABLE_MAGIC_LINK` | Optional | Set to `1` to enable passwordless magic-link login (off by default) |
 
 <Callout type={'tip'}>
-  Go to [Environment Variables](/docs/self-hosting/environment-variables/auth#better-auth) for detailed information on all Better Auth variables.
+  Go to [Environment Variables](/docs/self-hosting/environment-variables/auth#better-auth) for
+  detailed information on all Better Auth variables.
 </Callout>
 
 ## Session Storage Configuration (Optional)
@@ -188,7 +195,9 @@ By default, Better Auth uses the database to store session data. You can configu
 | `REDIS_PREFIX`       | Optional | Redis key prefix, defaults to `lobechat`                     |
 
 <Callout type={'info'}>
-  When Redis is configured, authentication session data will be stored in Redis, enabling session sharing across multiple service instances and faster session validation. See [Redis Cache Service](/docs/self-hosting/advanced/redis) for detailed configuration.
+  When Redis is configured, authentication session data will be stored in Redis, enabling session
+  sharing across multiple service instances and faster session validation. See [Redis Cache
+  Service](/docs/self-hosting/advanced/redis) for detailed configuration.
 </Callout>
 
 ## FAQ
@@ -216,6 +225,16 @@ The current authentication system requires email. Please configure a valid email
 
 This applies to all authentication methods, including SSO providers like Casdoor. Always ensure users have valid email addresses configured.
 
+### How do I enable SSO-only mode (disable email/password login)?
+
+Set `AUTH_DISABLE_EMAIL_PASSWORD=1` to disable email/password authentication. When enabled:
+
+- The email input will be hidden on the login page, only SSO buttons are displayed
+- The signup page will redirect to the login page
+- Users can only log in via configured SSO providers
+
+Make sure you have at least one SSO provider configured via `AUTH_SSO_PROVIDERS` before enabling this option.
+
 ### How do I restrict registration to specific emails or domains?
 
 Set the `AUTH_ALLOWED_EMAILS` environment variable with a comma-separated list of allowed emails or domains. For example:
@@ -224,7 +243,10 @@ Set the `AUTH_ALLOWED_EMAILS` environment variable with a comma-separated list o
 - Allow multiple domains and specific emails: `AUTH_ALLOWED_EMAILS=example.com,company.org,admin@other.com`
 
 <Callout type={'info'}>
-  Note: `AUTH_ALLOWED_EMAILS` only restricts which email addresses can register, but does not verify email ownership. If you need to ensure users actually own the email address they register with, set `AUTH_EMAIL_VERIFICATION=1` to require email verification. This requires configuring an email service (SMTP).
+  Note: `AUTH_ALLOWED_EMAILS` only restricts which email addresses can register, but does not verify
+  email ownership. If you need to ensure users actually own the email address they register with,
+  set `AUTH_EMAIL_VERIFICATION=1` to require email verification. This requires configuring an email
+  service (SMTP).
 </Callout>
 
 ## Additional Features
