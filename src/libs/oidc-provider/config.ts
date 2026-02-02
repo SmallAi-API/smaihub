@@ -16,7 +16,7 @@ export const defaultClients: ClientMetadata[] = [
     // 仅支持授权码流程
     grant_types: ['authorization_code', 'refresh_token'],
 
-    logo_uri: '/logo.png',
+    logo_uri: 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com/logo/smai.ai.png',
 
     post_logout_redirect_uris: [
       // 动态构建 Web 页面回调 URL
