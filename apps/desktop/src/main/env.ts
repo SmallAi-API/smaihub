@@ -39,34 +39,6 @@ const envBoolean = (defaultValue: boolean) =>
     }, z.boolean().optional())
     .default(defaultValue);
 
-const envBooleanOptional = () =>
-  z.preprocess((input) => {
-    const str = normalizeEnvString(input);
-    if (!str) return undefined;
-
-    switch (str.toLowerCase()) {
-      case '1':
-      case 'true':
-      case 'yes':
-      case 'y':
-      case 'on': {
-        return true;
-      }
-
-      case '0':
-      case 'false':
-      case 'no':
-      case 'n':
-      case 'off': {
-        return false;
-      }
-
-      default: {
-        return undefined;
-      }
-    }
-  }, z.boolean().optional());
-
 const envNumber = (defaultValue: number) =>
   z
     .preprocess((input) => {
@@ -77,15 +49,6 @@ const envNumber = (defaultValue: number) =>
       return num;
     }, z.number().optional())
     .default(defaultValue);
-
-const envNumberOptional = () =>
-  z.preprocess((input) => {
-    const str = normalizeEnvString(input);
-    if (!str) return undefined;
-    const num = Number(str);
-    if (!Number.isFinite(num)) return undefined;
-    return num;
-  }, z.number().optional());
 
 /**
  * Desktop (Electron main process) runtime env access.
@@ -102,17 +65,10 @@ export const getDesktopEnv = memoize(() =>
     isServer: true,
     runtimeEnv: process.env,
     server: {
-      AUTO_CHECK_UPDATE: envBooleanOptional(),
-
-      AUTO_DOWNLOAD_UPDATE: envBooleanOptional(),
-
       DEBUG_VERBOSE: envBoolean(false),
 
       // escape hatch: allow testing static renderer in dev via env
       DESKTOP_RENDERER_STATIC: envBoolean(false),
-
-      // updater behavior overrides (optional)
-      ENABLE_APP_UPDATE: envBooleanOptional(),
 
       // Force use dev-app-update.yml even in packaged app (for testing updates)
       FORCE_DEV_UPDATE_CONFIG: envBoolean(false),
@@ -130,8 +86,6 @@ export const getDesktopEnv = memoize(() =>
       // updater
       // process.env.xxx will replace in build stage
       UPDATE_CHANNEL: z.string().optional().default(process.env.UPDATE_CHANNEL),
-
-      UPDATE_CHECK_INTERVAL_MS: envNumberOptional(),
 
       // Custom update server URL (for stable channel)
       // e.g., https://releases.lobehub.com/stable or https://your-bucket.s3.amazonaws.com/releases
