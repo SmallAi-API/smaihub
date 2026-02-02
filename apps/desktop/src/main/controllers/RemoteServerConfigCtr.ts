@@ -265,9 +265,40 @@ export default class RemoteServerConfigCtr extends ControllerModule {
 
   /**
    * Clear tokens
+   * Also revokes the refresh token on the server to clean up OIDC grants
    */
   async clearTokens() {
     logger.info('Clearing access and refresh tokens');
+
+    // 1. First, revoke the refresh token on the server (if available)
+    // This ensures server-side OIDC grants are cleaned up to prevent "accountId mismatch" errors
+    const refreshToken = await this.getRefreshToken();
+    if (refreshToken) {
+      try {
+        const config = await this.getRemoteServerConfig();
+        const remoteUrl = await this.getRemoteServerUrl(config);
+        if (remoteUrl && config.active) {
+          const revokeUrl = new URL('/oidc/token/revocation', remoteUrl);
+          logger.debug(`Revoking refresh token on server: ${revokeUrl.toString()}`);
+          await fetch(revokeUrl.toString(), {
+            body: querystring.stringify({
+              client_id: 'lobehub-desktop',
+              token: refreshToken,
+              token_type_hint: 'refresh_token',
+            }),
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            method: 'POST',
+          });
+          logger.info('Successfully revoked refresh token on server');
+        }
+      } catch (error) {
+        // Log warning but continue with local cleanup
+        // Server revocation failure should not block local token clearing
+        logger.warn('Failed to revoke token on server:', error);
+      }
+    }
+
+    // 2. Clear local tokens
     this.encryptedAccessToken = undefined;
     this.encryptedRefreshToken = undefined;
     this.tokenExpiresAt = undefined;
