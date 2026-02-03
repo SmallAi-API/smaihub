@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 
 const UPDATE_SERVER_URL = 'https://smaihub-1301925107.cos.accelerate.myqcloud.com/stable';
 
+export const revalidate = 3600; // Revalidate every hour
+export const dynamic = 'force-static';
+
 /**
  * Parse electron-builder's YAML manifest to extract version info
  */
@@ -22,7 +25,7 @@ function parseYaml(yamlText: string): Record<string, string> {
 export async function GET() {
   try {
     const response = await fetch(`${UPDATE_SERVER_URL}/stable.yml`, {
-      cache: 'no-store',
+      cache: 'force-cache',
     });
 
     if (!response.ok) {
