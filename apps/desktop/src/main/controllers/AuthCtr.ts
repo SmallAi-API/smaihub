@@ -61,6 +61,35 @@ export default class AuthCtr extends ControllerModule {
   }
 
   /**
+   * Clean up server-side OIDC data before new authorization
+   * This ensures no stale sessions/grants cause account mismatch errors
+   * when the user has switched accounts on the web
+   * @param remoteUrl Remote server URL
+   */
+  private async cleanupServerOIDCData(remoteUrl: string): Promise<void> {
+    try {
+      const cleanupUrl = new URL('/oidc/cleanup', remoteUrl);
+      logger.info(`Cleaning up server OIDC data: ${cleanupUrl.toString()}`);
+
+      const response = await fetch(cleanupUrl.toString(), {
+        body: JSON.stringify({ clientId: 'lobehub-desktop' }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        logger.info('OIDC cleanup successful:', result);
+      } else {
+        logger.warn('OIDC cleanup failed (non-critical):', response.status);
+      }
+    } catch (error) {
+      // Cleanup failure should not block authorization flow
+      logger.warn('Failed to cleanup server OIDC data (non-critical):', error);
+    }
+  }
+
+  /**
    * Request OAuth authorization
    */
   @IpcMethod()
@@ -77,6 +106,10 @@ export default class AuthCtr extends ControllerModule {
       `Requesting OAuth authorization, storageMode:${config.storageMode} server URL: ${remoteUrl}`,
     );
     try {
+      // Clean up server-side OIDC data before starting new authorization
+      // This prevents account mismatch errors when switching accounts
+      await this.cleanupServerOIDCData(remoteUrl);
+
       // Generate PKCE parameters
       logger.debug('Generating PKCE parameters');
       const codeVerifier = this.generateCodeVerifier();
@@ -98,7 +131,7 @@ export default class AuthCtr extends ControllerModule {
         client_id: 'lobehub-desktop',
         code_challenge: codeChallenge,
         code_challenge_method: 'S256',
-        prompt: 'consent',
+        prompt: 'login',
         redirect_uri: redirectUri,
         // https://github.com/lobehub/lobe-chat/pull/8450
         resource: 'urn:lobehub:chat',
