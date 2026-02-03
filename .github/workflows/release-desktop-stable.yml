@@ -303,9 +303,10 @@ jobs:
           for yml in release/latest*.yml; do
             if [ -f "$yml" ]; then
               stable_name=$(basename "$yml" | sed 's/latest/stable/')
-              # 复制并修改 URL: 给所有 url 字段加上版本目录前缀
+              # 复制并修改 URL 和 path: 给所有 url 和 path 字段加上版本目录前缀
               # url: xxx.dmg -> url: {VERSION}/xxx.dmg
-              sed "s|url: |url: $VERSION/|g" "$yml" > "release/$stable_name"
+              # path: xxx.dmg -> path: {VERSION}/xxx.dmg
+              sed -e "s|url: |url: $VERSION/|g" -e "s|^path: |path: $VERSION/|g" "$yml" > "release/$stable_name"
               echo "   📄 Created $stable_name from $(basename $yml) with URL prefix: $VERSION/"
             fi
           done

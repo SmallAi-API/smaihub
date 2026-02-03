@@ -1,6 +1,5 @@
 'use client';
 
-import { HeartFilled } from '@ant-design/icons';
 import { ActionIcon, Button, Flexbox } from '@lobehub/ui';
 import { createStaticStyles, cssVar } from 'antd-style';
 import { X } from 'lucide-react';
@@ -82,7 +81,7 @@ const HighlightNotification = memo<HighlightNotificationProps>(
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <Button block icon={HeartFilled} size="small" type="primary">
+                <Button block size="small" type="primary">
                   {actionLabel}
                 </Button>
               </Link>

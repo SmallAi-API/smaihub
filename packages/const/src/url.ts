@@ -21,7 +21,7 @@ export const DATABASE_SELF_HOSTING_URL = 'https://docs.smai.ai';
 export const DOCUMENTS_REFER_URL = 'https://docs.smai.ai';
 
 export const WIKI_PLUGIN_GUIDE = 'https://docs.smai.ai';
-export const MANUAL_UPGRADE_URL = 'https://docs.smai.ai';
+export const MANUAL_UPGRADE_URL = 'https://www.smallai.asia/download';
 
 export const BLOG = 'https://docs.smai.ai';
 

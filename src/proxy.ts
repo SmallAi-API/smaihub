@@ -30,7 +30,7 @@ export const config = {
     '/desktop-onboarding',
     '/desktop-onboarding(.*)',
     '/onboarding',
-
+    '/download(.*)',
     '/signup(.*)',
     '/signin(.*)',
     '/verify-email(.*)',

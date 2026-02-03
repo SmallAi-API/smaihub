@@ -14,11 +14,11 @@ import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors/systemStatus';
 
 const PRODUCT_HUNT_NOTIFICATION = {
-  actionHref: 'https://www.producthunt.com/products/lobehub?launch=lobehub',
-  endTime: new Date('2027-02-01T00:00:00Z'),
-  image: 'https://hub-apac-1.lobeobjects.space/og/lobehub-ph.png',
-  slug: 'product-hunt-2026',
-  startTime: new Date('2027-01-27T08:00:00Z'),
+  actionHref: '/download',
+  endTime: new Date('2026-02-1T00:00:00Z'),
+  image: 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com/logo/windows.png',
+  slug: 'smai.ai-desktop',
+  startTime: new Date('2026-02-01T08:00:00Z'),
 };
 
 const Footer = memo(() => {

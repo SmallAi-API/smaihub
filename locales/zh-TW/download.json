@@ -1,0 +1,19 @@
+{
+  "description": "下載桌面客戶端以獲得更好的體驗，提升性能和原生功能。",
+  "downloadButton": "下載 Windows 版",
+  "downloading": "下載中...",
+  "features.native.desc": "與系統整合的原生桌面體驗",
+  "features.native.title": "原生體驗",
+  "features.offline.desc": "離線工作並使用本地數據存儲",
+  "features.offline.title": "離線支持",
+  "features.performance.desc": "經過優化的性能，支持硬體加速",
+  "features.performance.title": "更好的性能",
+  "latestVersion": "最新版本",
+  "releaseDate": "發佈日期",
+  "requirements.os": "Windows 10 或更高版本（64 位）",
+  "requirements.title": "系統要求",
+  "subtitle": "獲取桌面應用以獲得最佳體驗",
+  "title": "下載桌面客戶端",
+  "version": "版本 {{version}}",
+  "versionLoading": "獲取最新版本中..."
+}

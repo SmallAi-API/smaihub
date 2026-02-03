@@ -17,7 +17,7 @@ import { type FieldType } from './type';
 
 const Preview = memo<FieldType & { title?: string }>(
   ({ title, withSystemRole, withBackground, withFooter, widthMode }) => {
-    const [model, plugins, systemRole, isInbox, avatar, backgroundColor] = useAgentStore((s) => [
+    const [model, plugins, systemRole, isInbox] = useAgentStore((s) => [
       agentSelectors.currentAgentModel(s),
       agentSelectors.displayableAgentPlugins(s),
       agentSelectors.currentAgentSystemRole(s),
@@ -27,8 +27,8 @@ const Preview = memo<FieldType & { title?: string }>(
       agentSelectors.currentAgentBackgroundColor(s),
     ]);
 
-    const displayTitle = isInbox ? 'Lobe AI' : title;
-
+    const displayTitle = isInbox ? 'smai.ai' : title;
+    const logoUrl = '/logo.png';
     return (
       <div
         className={cx(
@@ -45,13 +45,7 @@ const Preview = memo<FieldType & { title?: string }>(
           >
             <div className={styles.header}>
               <Flexbox align={'center'} gap={12} horizontal>
-                <Avatar
-                  avatar={avatar}
-                  background={backgroundColor}
-                  shape={'square'}
-                  size={28}
-                  title={title}
-                />
+                <Avatar avatar={logoUrl} shape={'square'} size={28} title={title} />
                 <Text fontSize={16} strong>
                   {displayTitle}
                 </Text>

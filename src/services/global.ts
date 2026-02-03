@@ -9,8 +9,8 @@ import { electronSyncSelectors } from '@/store/electron/selectors';
 import { type LobeAgentConfig } from '@/types/agent';
 import { type GlobalRuntimeConfig } from '@/types/serverConfig';
 
-const VERSION_URL = 'https://registry.npmmirror.com/@lobehub/chat/latest';
-const SERVER_VERSION_URL = '/api/version';
+const VERSION_URL = 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com';
+const SERVER_VERSION_URL = '/stable';
 
 class GlobalService extends BusinessGlobalService {
   /**

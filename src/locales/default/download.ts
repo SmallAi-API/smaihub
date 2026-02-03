@@ -1,0 +1,20 @@
+export default {
+  'description':
+    'Download the desktop client for a better experience with enhanced performance and native features.',
+  'downloadButton': 'Download for Windows',
+  'downloading': 'Downloading...',
+  'features.native.desc': 'Native desktop experience with system integration',
+  'features.native.title': 'Native Experience',
+  'features.offline.desc': 'Work offline with local data storage',
+  'features.offline.title': 'Offline Support',
+  'features.performance.desc': 'Optimized performance with hardware acceleration',
+  'features.performance.title': 'Better Performance',
+  'latestVersion': 'Latest Version',
+  'releaseDate': 'Release Date',
+  'requirements.os': 'Windows 10 or later (64-bit)',
+  'requirements.title': 'System Requirements',
+  'subtitle': 'Get the desktop app for the best experience',
+  'title': 'Download Desktop Client',
+  'version': 'Version {{version}}',
+  'versionLoading': 'Fetching latest version...',
+};
