@@ -15,7 +15,7 @@ import { systemStatusSelectors } from '@/store/global/selectors/systemStatus';
 
 const PRODUCT_HUNT_NOTIFICATION = {
   actionHref: '/download',
-  endTime: new Date('2026-02-1T00:00:00Z'),
+  endTime: new Date('2026-02-15T00:00:00Z'),
   image: 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com/logo/windows.png',
   slug: 'smai.ai-desktop',
   startTime: new Date('2026-02-01T08:00:00Z'),

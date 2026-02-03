@@ -2,7 +2,7 @@ import { LOBE_CHAT_CLOUD, UTM_SOURCE } from '@lobechat/business-const';
 import { isDesktop } from '@lobechat/const';
 import { Flexbox, Hotkey, Icon, Tag } from '@lobehub/ui';
 import { type ItemType } from 'antd/es/menu/interface';
-import { Cloudy, HardDriveDownload, LogOut, Settings2 } from 'lucide-react';
+import { Cloudy, Download, HardDriveDownload, LogOut, Settings2 } from 'lucide-react';
 import { type PropsWithChildren, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -66,21 +66,20 @@ export const useMenu = () => {
     },
   ];
 
-  // TODO: 暂时隐藏下载客户端入口
-  // const downloadClient: MenuProps['items'] = [
-  //   {
-  //     icon: <Icon icon={Download} />,
-  //     key: 'download-client',
-  //     label: (
-  //       <a href={'/download'} rel="noopener noreferrer" target="_blank">
-  //         {t('downloadClient')}
-  //       </a>
-  //     ),
-  //   },
-  //   {
-  //     type: 'divider',
-  //   },
-  // ];
+  const downloadClient: MenuProps['items'] = [
+    {
+      icon: <Icon icon={Download} />,
+      key: 'download-client',
+      label: (
+        <a href={'/download'} rel="noopener noreferrer" target="_blank">
+          {t('downloadClient')}
+        </a>
+      ),
+    },
+    {
+      type: 'divider',
+    },
+  ];
 
   const data = !isLogin
     ? []
@@ -118,8 +117,7 @@ export const useMenu = () => {
 
     ...(isLogin ? settings : []),
     ...businessMenuItems,
-    // TODO: 暂时隐藏下载客户端入口
-    // ...(!isDesktop ? downloadClient : []),
+    ...(!isDesktop ? downloadClient : []),
     ...data,
     ...(!hideDocs ? helps : []),
   ].filter(Boolean) as MenuProps['items'];
