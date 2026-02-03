@@ -56,15 +56,16 @@ const Version = memo<{ mobile?: boolean }>(({ mobile }) => {
         <Flexbox align={'flex-start'} gap={6}>
           <div style={{ fontSize: 18, fontWeight: 'bolder' }}>{BRANDING_NAME}</div>
           <Flexbox gap={6} horizontal={!mobile}>
-            <Tag>{CURRENT_VERSION}</Tag>
-            {showServerVersion && (
-              <Tag>{t('upgradeVersion.serverVersion', { version: `v${serverVersion}` })}</Tag>
-            )}
-            {hasNewVersion && (
-              <Tag color={'info'}>
-                {t('upgradeVersion.newVersion', { version: `v${latestVersion}` })}
-              </Tag>
-            )}
+            <>
+              {showServerVersion && (
+                <Tag>{t('upgradeVersion.serverVersion', { version: `v${serverVersion}` })}</Tag>
+              )}
+              {hasNewVersion && (
+                <Tag color={'info'}>
+                  {t('upgradeVersion.newVersion', { version: `v${latestVersion}` })}
+                </Tag>
+              )}
+            </>
           </Flexbox>
         </Flexbox>
       </Flexbox>
