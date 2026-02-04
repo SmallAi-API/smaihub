@@ -1,6 +1,6 @@
 {
   "name": "@wasskayyy/smaihub",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "smai.ai - 新一代智能体Agent对话平台,支持GPT5.2、Claude 4.5 Opus、NanoBanana、Gemini 3 Pro等全球主流Ai大模型服务,内置多个AI Agent完成AI对话,轻松构建 Agent，并实现真正的技能控制。以任务为驱动的工具，构建能随着您一起成长的长期 Agent 队友，加入全球最大的人与 Agent 共生网络。",
   "keywords": [
     "framework",
