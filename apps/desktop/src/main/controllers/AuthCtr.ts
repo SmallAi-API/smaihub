@@ -132,7 +132,7 @@ export default class AuthCtr extends ControllerModule {
         client_id: 'lobehub-desktop',
         code_challenge: codeChallenge,
         code_challenge_method: 'S256',
-        prompt: 'login',
+        prompt: 'consent',
         redirect_uri: redirectUri,
         // https://github.com/lobehub/lobe-chat/pull/8450
         resource: 'urn:lobehub:chat',
