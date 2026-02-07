@@ -43,6 +43,7 @@ export const responsesAPIModels = new Set([
   'gpt-5.2',
   'gpt-5.2-pro-2025-12-11',
   'gpt-5.2-pro',
+  'gpt-5.3-codex',
 ]);
 
 /**
