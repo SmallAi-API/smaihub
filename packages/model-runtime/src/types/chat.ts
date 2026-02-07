@@ -61,6 +61,7 @@ export interface OpenAIChatMessage {
  */
 export interface ChatStreamPayload {
   apiMode?: 'chatCompletion' | 'responses';
+  effort?: 'low' | 'medium' | 'high' | 'max';
   /**
    * Enable context caching
    */
@@ -143,7 +144,7 @@ export interface ChatStreamPayload {
    */
   thinking?: {
     budget_tokens: number;
-    type: 'enabled' | 'disabled';
+    type: 'enabled' | 'disabled' | 'adaptive';
   };
   thinkingBudget?: number;
   /**

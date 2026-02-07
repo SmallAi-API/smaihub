@@ -119,6 +119,7 @@ export const buildDefaultAnthropicPayload = async (
     top_p,
     tools,
     thinking,
+    effort,
     enabledContextCaching = true,
     enabledSearch,
   } = payload;
@@ -147,6 +148,11 @@ export const buildDefaultAnthropicPayload = async (
 
   const postMessages = await buildAnthropicMessages(userMessages, { enabledContextCaching });
 
+  // Claude Opus 4.6 does not support assistant turn prefill
+  if (model.includes('opus-4-6') && postMessages.at(-1)?.role === 'assistant') {
+    postMessages.pop();
+  }
+
   let postTools = buildAnthropicTools(tools, { enabledContextCaching }) as
     | AnthropicTools[]
     | undefined;
@@ -156,20 +162,24 @@ export const buildDefaultAnthropicPayload = async (
     postTools = postTools?.length ? [...postTools, webSearchTool] : [webSearchTool];
   }
 
-  if (!!thinking && thinking.type === 'enabled') {
+  if (!!thinking && (thinking.type === 'enabled' || thinking.type === 'adaptive')) {
+    const resolvedThinking: Anthropic.MessageCreateParams['thinking'] =
+      thinking.type === 'enabled'
+        ? {
+            budget_tokens: Math.min(thinking?.budget_tokens || 1024, resolvedMaxTokens - 1),
+            type: 'enabled',
+          }
+        : { type: 'adaptive' };
+
     return {
       max_tokens: resolvedMaxTokens,
       messages: postMessages,
       model,
       system: systemPrompts,
-      thinking: {
-        ...thinking,
-        budget_tokens: thinking?.budget_tokens
-          ? Math.min(thinking.budget_tokens, resolvedMaxTokens - 1)
-          : 1024,
-      },
+      ...(thinking.type === 'adaptive' && effort ? { output_config: { effort } } : {}),
+      thinking: resolvedThinking,
       tools: postTools as Anthropic.MessageCreateParams['tools'],
-    } satisfies Anthropic.MessageCreateParams;
+    } as Anthropic.MessageCreateParams;
   }
 
   const hasConflict = hasTemperatureTopPConflict(model);
@@ -366,17 +376,30 @@ export const createAnthropicCompatibleRuntime = <T extends Record<string, any> =
     protected _options: ConstructorOptions<T>;
 
     constructor(options: ClientOptions & Record<string, any> = {}) {
+      const apiKey = typeof options.apiKey === 'string' ? options.apiKey.trim() : options.apiKey;
+      const baseURL =
+        typeof options.baseURL === 'string' ? options.baseURL.trim() : options.baseURL;
+
       const resolvedOptions = {
         ...options,
-        apiKey: options.apiKey?.trim() || DEFAULT_API_KEY,
-        baseURL: options.baseURL?.trim() || DEFAULT_BASE_URL,
+        apiKey: apiKey || DEFAULT_API_KEY,
+        baseURL: baseURL || DEFAULT_BASE_URL,
       };
-      const { apiKey, baseURL = DEFAULT_BASE_URL, ...rest } = resolvedOptions;
+      const {
+        apiKey: finalApiKey,
+        baseURL: finalBaseURL = DEFAULT_BASE_URL,
+        ...rest
+      } = resolvedOptions;
       this._options = resolvedOptions as ConstructorOptions<T>;
 
-      if (!apiKey) throw AgentRuntimeError.createError(ErrorType.invalidAPIKey);
+      if (!finalApiKey) throw AgentRuntimeError.createError(ErrorType.invalidAPIKey);
 
-      const initOptions = { apiKey, baseURL, ...constructorOptions, ...rest };
+      const initOptions = {
+        apiKey: finalApiKey,
+        baseURL: finalBaseURL,
+        ...constructorOptions,
+        ...rest,
+      };
 
       if (customClient?.createClient) {
         this.client = customClient.createClient(initOptions as ConstructorOptions<T>);
@@ -561,7 +584,7 @@ export const createAnthropicCompatibleRuntime = <T extends Record<string, any> =
     async models() {
       if (!models) return [];
       return models({
-        apiKey: this._options.apiKey ?? undefined,
+        apiKey: (this._options.apiKey as string) ?? undefined,
         baseURL: this.baseURL,
         client: this.client,
       });

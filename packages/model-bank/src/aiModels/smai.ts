@@ -663,9 +663,30 @@ const smaiChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 200_000,
     description:
+      'Claude Opus 4.6 is Anthropic’s most intelligent model for building agents and coding.',
+    displayName: 'Claude Opus 4.6',
+    enabled: true,
+    id: 'claude-opus-4-6',
+    maxOutput: 128_000,
+    releasedAt: '2026-02-05',
+    settings: {
+      extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'effort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 200_000,
+    description:
       'Claude Opus 4.5 是 Anthropic 的旗舰模型，结合了卓越的智能与可扩展性能，适合需要最高质量回应和推理能力的复杂任务。',
     displayName: 'Claude Opus 4.5',
-    enabled: true,
     id: 'claude-opus-4-5-20251101',
     maxOutput: 64_000,
     releasedAt: '2025-11-24',
