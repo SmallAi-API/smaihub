@@ -9,6 +9,8 @@ import { ModelProvider } from 'model-bank';
 
 import { hasTemperatureTopPConflict } from '../../const/models';
 import { LobeRuntimeAI } from '../../core/BaseAI';
+import { resolveCacheTTL } from '../../core/anthropicCompatibleFactory/resolveCacheTTL';
+import { resolveMaxTokens } from '../../core/anthropicCompatibleFactory/resolveMaxTokens';
 import { buildAnthropicMessages, buildAnthropicTools } from '../../core/contextBuilders/anthropic';
 import { resolveParameters } from '../../core/parameterResolver';
 import {
@@ -28,8 +30,6 @@ import { AgentRuntimeError } from '../../utils/createError';
 import { debugStream } from '../../utils/debugStream';
 import { getModelPricing } from '../../utils/getModelPricing';
 import { StreamingResponse } from '../../utils/response';
-import { resolveCacheTTL } from '../anthropic/resolveCacheTTL';
-import { resolveMaxTokens } from '../anthropic/resolveMaxTokens';
 
 /**
  * A prompt constructor for HuggingFace LLama 2 chat models.

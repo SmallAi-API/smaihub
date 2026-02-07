@@ -1,8 +1,8 @@
 import type Anthropic from '@anthropic-ai/sdk';
 import debug from 'debug';
 
-import { buildAnthropicMessages, buildAnthropicTools } from '../../core/contextBuilders/anthropic';
 import { GenerateObjectOptions, GenerateObjectPayload } from '../../types';
+import { buildAnthropicMessages, buildAnthropicTools } from '../contextBuilders/anthropic';
 
 const log = debug('lobe-model-runtime:anthropic:generate-object');
 
