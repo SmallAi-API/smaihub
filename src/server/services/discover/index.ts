@@ -740,6 +740,7 @@ export class DiscoverService {
           title: item.name || item.identifier,
           tokenUsage: item.tokenUsage || 0,
           type: item.type,
+          updatedAt: item.updatedAt,
           userName: normalizedAuthor.userName,
         };
       });
