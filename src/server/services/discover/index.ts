@@ -573,9 +573,9 @@ export class DiscoverService {
 
         examples: Array.isArray((data as any).examples)
           ? (data as any).examples.map((example: any) => ({
-            content: typeof example === 'string' ? example : example.content || '',
-            role: example.role || 'user',
-          }))
+              content: typeof example === 'string' ? example : example.content || '',
+              role: example.role || 'user',
+            }))
           : [],
         forkCount: (data as any).forkCount,
         forkedFromAgentId: (data as any).forkedFromAgentId,
@@ -676,8 +676,7 @@ export class DiscoverService {
     try {
       const normalizedLocale = normalizeLocale(locale);
 
-      let apiSort: 'createdAt' | 'updatedAt' | 'name' | 'mostUsage' | 'recommended' =
-        'recommended';
+      let apiSort: 'createdAt' | 'updatedAt' | 'name' | 'mostUsage' | 'recommended' = 'recommended';
       let haveSkills: boolean | undefined = rest.haveSkills;
 
       switch (sort) {
@@ -1706,6 +1705,8 @@ export class DiscoverService {
         locale,
       })) as UserInfoResponse & {
         agentGroups?: any[];
+        favoriteAgentGroups?: any[];
+        favoriteAgents?: any[];
         forkedAgentGroups?: any[];
         forkedAgents?: any[];
       };
@@ -1715,7 +1716,15 @@ export class DiscoverService {
         return undefined;
       }
 
-      const { user, agents, agentGroups, forkedAgents, forkedAgentGroups } = response;
+      const {
+        user,
+        agents,
+        agentGroups,
+        forkedAgents,
+        forkedAgentGroups,
+        favoriteAgents,
+        favoriteAgentGroups,
+      } = response;
 
       // Transform agents to DiscoverAssistantItem format
       const transformedAgents: DiscoverAssistantItem[] = (agents || []).map((agent: any) => ({
@@ -1745,6 +1754,54 @@ export class DiscoverService {
         category: group.category as any,
         createdAt: group.createdAt,
         description: group.description || '',
+        homepage: `https://lobehub.com/discover/group_agent/${group.identifier}`,
+        identifier: group.identifier,
+        installCount: group.installCount || 0,
+        isFeatured: group.isFeatured || false,
+        isOfficial: group.isOfficial || false,
+        isValidated: group.isValidated,
+        memberCount: 0, // Will be populated from memberAgents in detail view
+        schemaVersion: 1,
+        status: group.status,
+        tags: group.tags || [],
+        title: group.name || group.identifier,
+        updatedAt: group.updatedAt,
+      }));
+
+      // Transform favoriteAgents to DiscoverAssistantItem format
+      const transformedFavoriteAgents: DiscoverAssistantItem[] = (favoriteAgents || []).map(
+        (agent: any) => ({
+          author: agent.author || '',
+          avatar: agent.avatar || '',
+          category: agent.category as any,
+          config: {} as any,
+          createdAt: agent.createdAt,
+          description: agent.description || '',
+          forkCount: agent.forkCount || 0,
+          forkedFromAgentId: agent.forkedFromAgentId || null,
+          homepage: `https://lobehub.com/discover/assistant/${agent.identifier}`,
+          identifier: agent.identifier,
+          installCount: agent.installCount,
+          isValidated: agent.isValidated,
+          knowledgeCount: agent.knowledgeCount || 0,
+          pluginCount: agent.pluginCount || 0,
+          schemaVersion: 1,
+          status: agent.status,
+          tags: agent.tags || [],
+          title: agent.name || agent.identifier,
+          tokenUsage: agent.tokenUsage || 0,
+        }),
+      );
+
+      // Transform favoriteAgentGroups to DiscoverGroupAgentItem format
+      const transformedFavoriteAgentGroups = (favoriteAgentGroups || []).map((group: any) => ({
+        author: group.author || '',
+        avatar: group.avatar || '👥',
+        category: group.category as any,
+        createdAt: group.createdAt,
+        description: group.description || '',
+        forkCount: group.forkCount || 0,
+        forkedFromGroupId: group.forkedFromGroupId || null,
         homepage: `https://lobehub.com/discover/group_agent/${group.identifier}`,
         identifier: group.identifier,
         installCount: group.installCount || 0,
@@ -1810,6 +1867,8 @@ export class DiscoverService {
       const result: DiscoverUserProfile = {
         agentGroups: transformedAgentGroups,
         agents: transformedAgents,
+        favoriteAgentGroups: transformedFavoriteAgentGroups,
+        favoriteAgents: transformedFavoriteAgents,
         forkedAgentGroups: transformedForkedAgentGroups,
         forkedAgents: transformedForkedAgents,
         user: {
@@ -1829,11 +1888,13 @@ export class DiscoverService {
       };
 
       log(
-        'getUserInfo: returning user profile with %d agents, %d groups, %d forked agents, %d forked groups',
+        'getUserInfo: returning user profile with %d agents, %d groups, %d forked agents, %d forked groups, %d favorite agents, %d favorite groups',
         result.agents.length,
         result.agentGroups?.length || 0,
         result.forkedAgents?.length || 0,
         result.forkedAgentGroups?.length || 0,
+        result.favoriteAgents?.length || 0,
+        result.favoriteAgentGroups?.length || 0,
       );
       return result;
     } catch (error) {

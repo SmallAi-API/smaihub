@@ -67,6 +67,28 @@ const smaiChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 400_000,
     description:
+      'GPT-5.3 Codex — 专为更深入的工作而打造，帮助用户以更高的完成度处理复杂任务，擅长编码、长文档总结、回答上传文件相关问题、逐步推导数学与逻辑问题，以及通过更清晰的结构和更有用的细节支持规划与决策。',
+    displayName: 'GPT-5.3 Codex',
+    enabled: true,
+    id: 'gpt-5.3-codex',
+    maxOutput: 128_000,
+    releasedAt: '2026-02-06',
+    settings: {
+      extendParams: ['gpt5_2ReasoningEffort', 'textVerbosity'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 400_000,
+    description:
       'GPT-5.2 — 专为更深入的工作而打造，帮助用户以更高的完成度处理复杂任务，擅长编码、长文档总结、回答上传文件相关问题、逐步推导数学与逻辑问题，以及通过更清晰的结构和更有用的细节支持规划与决策。',
     displayName: 'GPT-5.2',
     enabled: true,
