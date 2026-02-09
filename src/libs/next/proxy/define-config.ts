@@ -165,6 +165,9 @@ export function defineConfig() {
     '/api/dev(.*)',
     '/webapi(.*)',
     '/trpc(.*)',
+    // version
+    '/api/version',
+    '/api/desktop/(.*)',
     // better auth
     '/signin',
     '/signup',
