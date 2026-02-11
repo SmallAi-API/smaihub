@@ -105,8 +105,8 @@ const Nav = memo(() => {
             active={tab === item.key}
             icon={item.icon}
             key={item.key}
-            onClick={item.onClick}
             title={item.title}
+            onClick={item.onClick}
           />
         );
         if (!item.url) return content;
@@ -114,6 +114,7 @@ const Nav = memo(() => {
         return (
           <Link
             key={item.key}
+            to={item.url}
             onClick={(e) => {
               e.preventDefault();
               item?.onClick?.();
@@ -121,7 +122,6 @@ const Nav = memo(() => {
                 navigate(item.url);
               }
             }}
-            to={item.url}
           >
             <NavItem active={tab === item.key} icon={item.icon} title={item.title} />
           </Link>

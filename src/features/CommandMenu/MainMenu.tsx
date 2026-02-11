@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { getNavigableRoutes, getRouteById } from '@/config/routes';
 
 import { useCommandMenuContext } from './CommandMenuContext';
-import ContextCommands from './ContextCommands';
 import { CommandItem } from './components';
+import ContextCommands from './ContextCommands';
 import { useCommandMenu } from './useCommandMenu';
 
 const MainMenu = memo(() => {
@@ -31,18 +31,18 @@ const MainMenu = memo(() => {
       <Command.Group>
         <CommandItem
           icon={<Bot />}
-          onSelect={handleCreateSession}
           unpinned={menuContext === 'agent' || menuContext === 'page'}
           value="create new agent assistant"
+          onSelect={handleCreateSession}
         >
           {t('cmdk.newAgent')}
         </CommandItem>
 
         <CommandItem
           icon={<Bot />}
-          onSelect={handleCreateAgentTeam}
           unpinned={menuContext === 'agent' || menuContext === 'page'}
           value="create new agent team"
+          onSelect={handleCreateAgentTeam}
         >
           {t('cmdk.newAgentTeam')}
         </CommandItem>
@@ -50,23 +50,23 @@ const MainMenu = memo(() => {
         {menuContext === 'agent' && (
           <CommandItem
             icon={<MessageSquarePlusIcon />}
-            onSelect={handleCreateTopic}
             unpinned={menuContext !== 'agent'}
             value="create new topic"
+            onSelect={handleCreateTopic}
           >
             {t('cmdk.newTopic')}
           </CommandItem>
         )}
 
-        <CommandItem icon={<FilePen />} onSelect={handleCreatePage} value="create new page">
+        <CommandItem icon={<FilePen />} value="create new page" onSelect={handleCreatePage}>
           {t('cmdk.newPage')}
         </CommandItem>
 
         <CommandItem
           icon={<LibraryBig />}
-          onSelect={handleCreateLibrary}
           unpinned={menuContext !== 'resource'}
           value="create new library"
+          onSelect={handleCreateLibrary}
         >
           {t('cmdk.newLibrary')}
         </CommandItem>
@@ -82,8 +82,8 @@ const MainMenu = memo(() => {
               <CommandItem
                 icon={SettingsIcon && <SettingsIcon />}
                 keywords={keywords}
-                onSelect={() => handleNavigate(settingsRoute?.path || '/settings')}
                 value="settings"
+                onSelect={() => handleNavigate(settingsRoute?.path || '/settings')}
               >
                 {t('cmdk.settings')}
               </CommandItem>
@@ -92,8 +92,8 @@ const MainMenu = memo(() => {
 
         <CommandItem
           icon={<Monitor />}
-          onSelect={() => setPages([...pages, 'theme'])}
           value="theme"
+          onSelect={() => setPages([...pages, 'theme'])}
         >
           {t('cmdk.theme')}
         </CommandItem>
@@ -111,8 +111,8 @@ const MainMenu = memo(() => {
                 icon={<RouteIcon />}
                 key={route.id}
                 keywords={keywords}
-                onSelect={() => handleNavigate(route.path)}
                 value={route.id}
+                onSelect={() => handleNavigate(route.path)}
               >
                 {t(route.cmdkKey as any)}
               </CommandItem>

@@ -17,11 +17,10 @@ const Header = memo(() => {
       right={
         <ActionIcon
           icon={MessageSquarePlus}
-          onClick={() => createSession()}
           size={MOBILE_HEADER_ICON_SIZE}
+          onClick={() => createSession()}
         />
       }
-      style={mobileHeaderSticky}
     />
   );
 });

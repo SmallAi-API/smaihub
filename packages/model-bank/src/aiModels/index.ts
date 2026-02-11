@@ -49,6 +49,7 @@ export { default as fal, fluxSchnellParamsSchema } from './fal';
 export { default as fireworksai } from './fireworksai';
 export { default as giteeai } from './giteeai';
 export { default as github } from './github';
+export { default as githubcopilot } from './githubCopilot';
 export { default as google } from './google';
 export { default as groq } from './groq';
 export { default as higress } from './higress';

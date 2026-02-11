@@ -15,9 +15,8 @@ import { useGlobalStore } from '@/store/global';
 import { SidebarTabKey } from '@/store/global/initialState';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 
-import NavItem, {
-  type NavItemProps,
-} from '../../../../../../../features/NavPanel/components/NavItem';
+import { type NavItemProps } from '../../../../../../../features/NavPanel/components/NavItem';
+import NavItem from '../../../../../../../features/NavPanel/components/NavItem';
 
 const handleExternalLink = (url: string) => {
   if (isDesktop) {
@@ -121,6 +120,7 @@ const Nav = memo(() => {
             key={item.key}
             onClick={externalUrl ? () => handleExternalLink(externalUrl) : item.onClick}
             title={item.title}
+            onClick={item.onClick}
           />
         );
         if (!item.url || isExternal) return content;
@@ -128,6 +128,7 @@ const Nav = memo(() => {
         return (
           <Link
             key={item.key}
+            to={item.url}
             onClick={(e) => {
               e.preventDefault();
               item?.onClick?.();
@@ -135,7 +136,6 @@ const Nav = memo(() => {
                 navigate(item.url);
               }
             }}
-            to={item.url}
           >
             <NavItem
               active={tab === item.key}

@@ -1,5 +1,43 @@
+import { ENABLE_BUSINESS_FEATURES } from '@lobechat/business-const';
+
 import { type ChatModelCard, type ModelProviderCard } from '@/types/llm';
 
+import Ai21Provider from './ai21';
+import Ai302Provider from './ai302';
+import Ai360Provider from './ai360';
+import AiHubMixProvider from './aihubmix';
+import AkashChatProvider from './akashchat';
+import AnthropicProvider from './anthropic';
+import AzureProvider from './azure';
+import AzureAIProvider from './azureai';
+import BaichuanProvider from './baichuan';
+import BedrockProvider from './bedrock';
+import BflProvider from './bfl';
+import CerebrasProvider from './cerebras';
+import CloudflareProvider from './cloudflare';
+import CohereProvider from './cohere';
+import CometAPIProvider from './cometapi';
+import ComfyUIProvider from './comfyui';
+import DeepSeekProvider from './deepseek';
+import FalProvider from './fal';
+import FireworksAIProvider from './fireworksai';
+import GiteeAIProvider from './giteeai';
+import GithubProvider from './github';
+import GoogleProvider from './google';
+import GroqProvider from './groq';
+import HigressProvider from './higress';
+import HuggingFaceProvider from './huggingface';
+import HunyuanProvider from './hunyuan';
+import InfiniAIProvider from './infiniai';
+import InternLMProvider from './internlm';
+import JinaProvider from './jina';
+import LMStudioProvider from './lmstudio';
+import LobeHubProvider from './lobehub';
+import MinimaxProvider from './minimax';
+import MistralProvider from './mistral';
+import ModelScopeProvider from './modelscope';
+import MoonshotProvider from './moonshot';
+import NebiusProvider from './nebius';
 import NewAPIProvider from './newapi';
 import OpenAIProvider from './openai';
 import SMAIProvider from './smai';
@@ -13,7 +51,78 @@ export const LOBE_DEFAULT_MODEL_LIST: ChatModelCard[] = [
   OpenAIProvider.chatModels,
 ].flat();
 
-export const DEFAULT_MODEL_PROVIDER_LIST = [SMAIProvider, NewAPIProvider, OpenAIProvider];
+export const DEFAULT_MODEL_PROVIDER_LIST = [
+  ...(ENABLE_BUSINESS_FEATURES ? [LobeHubProvider] : []),
+  AnthropicProvider,
+  GoogleProvider,
+  OpenAIProvider,
+  DeepSeekProvider,
+  XinferenceProvider,
+  MoonshotProvider,
+  BedrockProvider,
+  VertexAIProvider,
+  { ...AzureProvider, chatModels: [] },
+  AzureAIProvider,
+  AiHubMixProvider,
+  OpenRouterProvider,
+  FalProvider,
+  OllamaProvider,
+  OllamaCloudProvider,
+  VLLMProvider,
+  ComfyUIProvider,
+  HuggingFaceProvider,
+  CloudflareProvider,
+  GithubProvider,
+  NewAPIProvider,
+  BflProvider,
+  NovitaProvider,
+  PPIOProvider,
+  Ai302Provider,
+  NvidiaProvider,
+  TogetherAIProvider,
+  FireworksAIProvider,
+  GroqProvider,
+  PerplexityProvider,
+  MistralProvider,
+  ModelScopeProvider,
+  Ai21Provider,
+  UpstageProvider,
+  XAIProvider,
+  JinaProvider,
+  SambaNovaProvider,
+  CohereProvider,
+  V0Provider,
+  QwenProvider,
+  WenxinProvider,
+  TencentcloudProvider,
+  HunyuanProvider,
+  ZhiPuProvider,
+  SiliconCloudProvider,
+  ZeroOneProvider,
+  SparkProvider,
+  SenseNovaProvider,
+  StepfunProvider,
+  BaichuanProvider,
+  VolcengineProvider,
+  MinimaxProvider,
+  LMStudioProvider,
+  InternLMProvider,
+  HigressProvider,
+  GiteeAIProvider,
+  TaichuProvider,
+  Ai360Provider,
+  Search1APIProvider,
+  InfiniAIProvider,
+  AkashChatProvider,
+  QiniuProvider,
+  ReplicateProvider,
+  NebiusProvider,
+  CometAPIProvider,
+  VercelAIGatewayProvider,
+  CerebrasProvider,
+  ZenMuxProvider,
+  XiaomiMiMoProvider,
+];
 
 export const filterEnabledModels = (provider: ModelProviderCard) => {
   return provider.chatModels.filter((v) => v.enabled).map((m) => m.id);
@@ -45,6 +154,7 @@ export { default as FalProviderCard } from './fal';
 export { default as FireworksAIProviderCard } from './fireworksai';
 export { default as GiteeAIProviderCard } from './giteeai';
 export { default as GithubProviderCard } from './github';
+export { default as GithubCopilotProviderCard } from './githubCopilot';
 export { default as GoogleProviderCard } from './google';
 export { default as GroqProviderCard } from './groq';
 export { default as HigressProviderCard } from './higress';

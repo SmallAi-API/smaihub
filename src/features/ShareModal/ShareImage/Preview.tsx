@@ -12,8 +12,8 @@ import pkg from '../../../../package.json';
 import { containerStyles } from '../style';
 import ChatList from './ChatList';
 import { styles } from './style';
-import { WidthMode } from './type';
 import { type FieldType } from './type';
+import { WidthMode } from './type';
 
 const Preview = memo<FieldType & { title?: string }>(
   ({ title, withSystemRole, withBackground, withFooter, widthMode }) => {
@@ -49,7 +49,7 @@ const Preview = memo<FieldType & { title?: string }>(
                 <Text fontSize={16} strong>
                   {displayTitle}
                 </Text>
-                <Flexbox gap={4} horizontal>
+                <Flexbox horizontal gap={4}>
                   <ModelTag model={model} />
                   {plugins?.length > 0 && <PluginTag plugins={plugins} />}
                 </Flexbox>

@@ -149,8 +149,8 @@ const Footer = memo(() => {
 
   return (
     <>
-      <Flexbox align={'center'} gap={2} horizontal justify={'space-between'} padding={8}>
-        <Flexbox align={'center'} flex={1} gap={2} horizontal>
+      <Flexbox horizontal align={'center'} gap={2} justify={'space-between'} padding={8}>
+        <Flexbox horizontal align={'center'} flex={1} gap={2}>
           <DropdownMenu items={helpMenuItems} placement="topLeft">
             <ActionIcon aria-label={t('userPanel.help')} icon={CircleHelp} size={16} />
           </DropdownMenu>
@@ -163,10 +163,10 @@ const Footer = memo(() => {
         actionLabel={t('productHunt.actionLabel')}
         description={t('productHunt.description')}
         image={PRODUCT_HUNT_NOTIFICATION.image}
-        onActionClick={handleProductHuntActionClick}
-        onClose={handleCloseProductHuntCard}
         open={isProductHuntCardOpen}
         title={t('productHunt.title')}
+        onActionClick={handleProductHuntActionClick}
+        onClose={handleCloseProductHuntCard}
       />
     </>
   );

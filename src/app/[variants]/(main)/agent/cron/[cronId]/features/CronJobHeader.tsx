@@ -29,15 +29,14 @@ const CronJobHeader = memo<CronJobHeaderProps>(
 
     return (
       <Flexbox
+        horizontal
         align="center"
         gap={16}
-        horizontal
         justify="space-between"
         style={{ marginBottom: 8 }}
       >
         <Input
           className={styles.titleInput}
-          onChange={(e) => onNameChange(e.target.value)}
           placeholder={t('agentCronJobs.form.name.placeholder')}
           style={{
             fontSize: 28,
@@ -46,6 +45,7 @@ const CronJobHeader = memo<CronJobHeaderProps>(
           }}
           value={name}
           variant="borderless"
+          onChange={(e) => onNameChange(e.target.value)}
         />
 
         {!isNewJob && (

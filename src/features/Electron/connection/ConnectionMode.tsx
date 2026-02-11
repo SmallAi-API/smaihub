@@ -1,5 +1,6 @@
-import { type StorageMode, StorageModeEnum } from '@lobechat/electron-client-ipc';
-import { Button, Center, Flexbox, Input } from '@lobehub/ui';
+import { type StorageMode } from '@lobechat/electron-client-ipc';
+import { StorageModeEnum } from '@lobechat/electron-client-ipc';
+import { Button, Center, Flexbox, Input, stopPropagation } from '@lobehub/ui';
 import { LobeHub } from '@lobehub/ui/brand';
 import { createStaticStyles } from 'antd-style';
 import { Server } from 'lucide-react';
@@ -142,7 +143,7 @@ const ConnectionMode = memo<ConnectionModeProps>(({ setWaiting }) => {
 
       <Flexbox className={styles.cardGroup} gap={24}>
         <Flexbox gap={16}>
-          <Flexbox align="center" horizontal justify="space-between">
+          <Flexbox horizontal align="center" justify="space-between">
             <div className={styles.groupTitle}>{t('sync.mode.cloudSync')}</div>
             {allowSelfHost && (
               <div
@@ -158,8 +159,8 @@ const ConnectionMode = memo<ConnectionModeProps>(({ setWaiting }) => {
             icon={LobeHub}
             isSelected={selectedOption === StorageModeEnum.Cloud}
             label={t('sync.lobehubCloud.title')}
-            onClick={handleSelectOption}
             value={StorageModeEnum.Cloud}
+            onClick={handleSelectOption}
           />
           {allowSelfHost && selectedOption === StorageModeEnum.SelfHost && (
             <Option
@@ -167,23 +168,23 @@ const ConnectionMode = memo<ConnectionModeProps>(({ setWaiting }) => {
               icon={Server}
               isSelected={selectedOption === StorageModeEnum.SelfHost}
               label={t('sync.selfHosted.title')}
-              onClick={handleSelectOption}
               value={StorageModeEnum.SelfHost}
+              onClick={handleSelectOption}
             >
               {selectedOption === StorageModeEnum.SelfHost && (
                 <>
                   <Input
                     autoFocus
                     className={styles.selfHostedInput}
+                    placeholder="https://your-lobechat.com"
+                    status={urlError ? 'error' : undefined}
+                    value={selfHostedUrl}
+                    onClick={stopPropagation}
                     onChange={(e) => {
                       const newUrl = e.target.value;
                       setSelfHostedUrl(newUrl);
                       setUrlError(validateUrl(newUrl));
                     }}
-                    onClick={(e) => e.stopPropagation()}
-                    placeholder="https://your-url.com"
-                    status={urlError ? 'error' : undefined}
-                    value={selfHostedUrl}
                   />
                   {urlError && <div className={styles.inputError}>{urlError}</div>}
                 </>
@@ -195,14 +196,14 @@ const ConnectionMode = memo<ConnectionModeProps>(({ setWaiting }) => {
 
       <Button
         className={styles.continueButton}
+        size="large"
+        style={{ maxWidth: 400 }}
+        type="primary"
         disabled={
           !selectedOption ||
           (selectedOption === StorageModeEnum.SelfHost && (!!urlError || !selfHostedUrl))
         }
         onClick={handleContinue}
-        size="large"
-        style={{ maxWidth: 400 }}
-        type="primary"
       >
         {t('sync.continue')}
       </Button>

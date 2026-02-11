@@ -3,7 +3,7 @@
 import { Center, Flexbox } from '@lobehub/ui';
 import { Divider } from 'antd';
 import { cx } from 'antd-style';
-import type { FC, PropsWithChildren } from 'react';
+import { type FC, type PropsWithChildren } from 'react';
 
 import LangButton from '@/features/User/UserPanel/LangButton';
 import ThemeButton from '@/features/User/UserPanel/ThemeButton';
@@ -21,15 +21,15 @@ const OnBoardingContainer: FC<PropsWithChildren> = ({ children }) => {
         width={'100%'}
       >
         <Flexbox
+          horizontal
           align={'center'}
           gap={8}
-          horizontal
           justify={'space-between'}
           padding={16}
           width={'100%'}
         >
           <div />
-          <Flexbox align={'center'} horizontal>
+          <Flexbox horizontal align={'center'}>
             <LangButton placement={'bottomRight'} size={18} />
             <Divider className={styles.divider} orientation={'vertical'} />
             <ThemeButton placement={'bottomRight'} size={18} />

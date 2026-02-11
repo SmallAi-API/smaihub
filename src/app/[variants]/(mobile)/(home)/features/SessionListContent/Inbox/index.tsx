@@ -25,12 +25,12 @@ const Inbox = memo(() => {
         e.preventDefault();
         navigateToAgent(inboxAgentId);
       }}
-      to={SESSION_CHAT_URL(inboxAgentId, mobile)}
     >
       <ListItem
         active={isInboxActive}
         avatar={DEFAULT_INBOX_AVATAR}
         key={'inbox'}
+        title={'Lobe AI'}
         styles={{
           container: {
             gap: 12,

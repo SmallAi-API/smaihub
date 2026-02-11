@@ -1,6 +1,6 @@
 import { authEnv } from '@/envs/auth';
 
-import type { GenericProviderDefinition } from '../types';
+import { type GenericProviderDefinition } from '../types';
 
 const WECHAT_AUTHORIZATION_URL = 'https://open.weixin.qq.com/connect/qrconnect';
 const WECHAT_TOKEN_URL = 'https://api.weixin.qq.com/sns/oauth2/access_token';

@@ -5,7 +5,7 @@ import { type ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
-import type { MenuProps } from '@/components/Menu';
+import { type MenuProps } from '@/components/Menu';
 import { DiscoverTab } from '@/types/discover';
 
 const ICON_SIZE = 16;

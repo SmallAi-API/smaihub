@@ -1,6 +1,7 @@
 'use client';
 
-import { Form, type FormGroupItemType, Icon, Skeleton } from '@lobehub/ui';
+import { type FormGroupItemType } from '@lobehub/ui';
+import { Form, Icon, Skeleton } from '@lobehub/ui';
 import { Form as AntForm } from 'antd';
 import { Loader2Icon } from 'lucide-react';
 import { memo, useState } from 'react';
@@ -32,6 +33,7 @@ const DefaultAgentForm = memo(() => {
       {
         children: (
           <ModelSelect
+            showAbility={false}
             onChange={async ({ model, provider }) => {
               setLoading(true);
               await updateDefaultAgent({ config: { model, provider } });
@@ -46,7 +48,7 @@ const DefaultAgentForm = memo(() => {
         name: 'defaultAgentConfig',
       },
     ],
-    extra: loading && <Icon icon={Loader2Icon} size={16} spin style={{ opacity: 0.5 }} />,
+    extra: loading && <Icon spin icon={Loader2Icon} size={16} style={{ opacity: 0.5 }} />,
     title: t('defaultAgent.title'),
   };
 

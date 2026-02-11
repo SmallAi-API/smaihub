@@ -3,17 +3,14 @@ import {
   DEFAULT_DISCOVER_ASSISTANT_ITEM,
   DEFAULT_DISCOVER_PLUGIN_ITEM,
   DEFAULT_DISCOVER_PROVIDER_ITEM,
-  KLAVIS_SERVER_TYPES,
   isDesktop,
+  KLAVIS_SERVER_TYPES,
 } from '@lobechat/const';
 import {
   type AgentStatus,
   type AssistantListResponse,
   type AssistantMarketSource,
   type AssistantQueryParams,
-  AssistantSorts,
-  CacheRevalidate,
-  CacheTag,
   type DiscoverAssistantDetail,
   type DiscoverAssistantItem,
   type DiscoverMcpDetail,
@@ -25,18 +22,24 @@ import {
   type DiscoverProviderItem,
   type DiscoverUserProfile,
   type IdentifiersResponse,
-  McpCategory,
   type McpListResponse,
   type McpQueryParams,
-  McpSorts,
   type ModelListResponse,
   type ModelQueryParams,
-  ModelSorts,
   type PluginListResponse,
   type PluginQueryParams,
-  PluginSorts,
   type ProviderListResponse,
   type ProviderQueryParams,
+} from '@lobechat/types';
+import {
+  AssistantCategory,
+  AssistantSorts,
+  CacheRevalidate,
+  CacheTag,
+  McpCategory,
+  McpSorts,
+  ModelSorts,
+  PluginSorts,
   ProviderSorts,
 } from '@lobechat/types';
 import {
@@ -47,11 +50,11 @@ import {
 import {
   type CategoryItem,
   type CategoryListQuery,
-  MarketSDK,
+  type MarketSDK,
   type UserInfoResponse,
 } from '@lobehub/market-sdk';
 import {
-  AgentEventRequest,
+  type AgentEventRequest,
   type CallReportRequest,
   type InstallReportRequest,
   type PluginEventRequest,
@@ -366,7 +369,7 @@ export class DiscoverService {
     log('legacyGetAssistantDetail: params=%O', params);
     const { locale, identifier } = params;
     const normalizedLocale = normalizeLocale(locale);
-    let data = await this.assistantStore.getAgent(identifier, normalizedLocale);
+    const data = await this.assistantStore.getAgent(identifier, normalizedLocale);
     if (!data) {
       log('legacyGetAssistantDetail: assistant not found for identifier=%s', identifier);
       return;
@@ -809,12 +812,15 @@ export class DiscoverService {
         },
       },
     );
+
+    // Fetch related MCPs
     const list = await this.getMcpList({
       category: mcp.category,
       locale,
       page: 1,
       pageSize: 7,
     });
+
     const result = {
       ...mcp,
       related: list.items.filter((item) => item.identifier !== mcp.identifier).slice(0, 6),
@@ -827,7 +833,9 @@ export class DiscoverService {
     log('getMcpList: params=%O', params);
     const { category, locale, sort } = params;
     const normalizedLocale = normalizeLocale(locale);
-    const isDiscoverCategory = category === McpCategory.Discover;
+    const shouldOmitCategory = [McpCategory.All, McpCategory.Discover].includes(
+      category as McpCategory,
+    );
 
     const result = await this.market.plugins.getPluginList(
       {
@@ -904,6 +912,78 @@ export class DiscoverService {
    */
   increaseAgentInstallCount = async (identifier: string) => {
     await this.market.agents.increaseInstallCount(identifier);
+  };
+
+  /**
+   * Get agents that use a specific plugin
+   */
+  getAgentsByPlugin = async (params: {
+    locale?: string;
+    page?: number;
+    pageSize?: number;
+    pluginId: string;
+  }): Promise<AssistantListResponse> => {
+    log('getAgentsByPlugin: params=%O', params);
+    const { locale, pluginId, page = 1, pageSize = 20 } = params;
+    const normalizedLocale = normalizeLocale(locale);
+
+    try {
+      const data = await this.market.agents.getAgentsByPlugin({
+        locale: normalizedLocale,
+        page,
+        pageSize,
+        pluginId,
+      });
+
+      // Transform to DiscoverAssistantItem format
+      const items: DiscoverAssistantItem[] = (data.items || []).map((item: any) => {
+        const normalizedAuthor = this.normalizeAuthorField(item.author);
+        return {
+          author:
+            normalizedAuthor.name || (item.ownerId !== null ? `User${item.ownerId}` : 'Unknown'),
+          avatar: item.avatar || '',
+          category: item.category,
+          config: {} as any,
+          createdAt: item.createdAt || item.updatedAt || new Date().toISOString(),
+          description: item.description || '',
+          homepage: `https://lobehub.com/discover/assistant/${item.identifier}`,
+          identifier: item.identifier,
+          installCount: item.installCount,
+          knowledgeCount: item.knowledgeCount || 0,
+          pluginCount: item.pluginCount || 0,
+          schemaVersion: 1,
+          tags: item.tags || [],
+          title: item.name || item.identifier,
+          tokenUsage: item.tokenUsage || 0,
+          userName: normalizedAuthor.userName,
+        };
+      });
+
+      const result: AssistantListResponse = {
+        currentPage: data.currentPage || page,
+        items,
+        pageSize: data.pageSize || pageSize,
+        totalCount: data.totalCount || 0,
+        totalPages: data.totalPages || 0,
+      };
+
+      log(
+        'getAgentsByPlugin: returning page %d/%d with %d items',
+        result.currentPage,
+        result.totalPages,
+        result.items.length,
+      );
+      return result;
+    } catch (error) {
+      log('getAgentsByPlugin: error fetching from market SDK: %O', error);
+      return {
+        currentPage: page,
+        items: [],
+        pageSize,
+        totalCount: 0,
+        totalPages: 0,
+      };
+    }
   };
 
   // ============================== Plugin Market ==============================
@@ -1236,7 +1316,7 @@ export class DiscoverService {
     const { identifier, locale, withReadme } = params;
     const { LOBE_DEFAULT_MODEL_LIST } = await import('model-bank');
     const all = await this._getProviderList();
-    let provider = all.find((item) => item.identifier === identifier);
+    const provider = all.find((item) => item.identifier === identifier);
     if (!provider) {
       log('getProviderDetail: provider not found for identifier=%s', identifier);
       return;
@@ -1430,8 +1510,8 @@ export class DiscoverService {
       identifierGroups.size,
     );
 
-    // 2. 从每个 identifier 组中选择 abilities 最全的
-    let deduplicatedByIdentifier = Array.from(identifierGroups.values()).map((models) =>
+    // 2. Select the model with most complete abilities from each identifier group
+    const deduplicatedByIdentifier = Array.from(identifierGroups.values()).map((models) =>
       this.selectModelWithBestAbilities(models),
     );
 

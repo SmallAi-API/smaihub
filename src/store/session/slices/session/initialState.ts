@@ -26,16 +26,16 @@ export interface SessionState {
    * @description 用于控制会话重命名弹窗的显示状态
    */
   sessionRenamingId: string | null;
+  /**
+   * it means defaultSessions
+   */
+  sessions: LobeSessions;
   sessionSearchKeywords?: string;
   /**
    * @title 正在更新的会话 ID
    * @description 用于显示会话更新时的加载状态
    */
   sessionUpdatingId: string | null;
-  /**
-   * it means defaultSessions
-   */
-  sessions: LobeSessions;
 }
 
 export const initialSessionState: SessionState = {

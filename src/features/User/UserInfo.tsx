@@ -1,13 +1,15 @@
 'use client';
 
-import { Flexbox, type FlexboxProps, Text } from '@lobehub/ui';
+import { type FlexboxProps } from '@lobehub/ui';
+import { Flexbox, Text } from '@lobehub/ui';
 import { cssVar } from 'antd-style';
 import { memo } from 'react';
 
 import { useUserStore } from '@/store/user';
 import { userProfileSelectors } from '@/store/user/selectors';
 
-import UserAvatar, { type UserAvatarProps } from './UserAvatar';
+import { type UserAvatarProps } from './UserAvatar';
+import UserAvatar from './UserAvatar';
 
 export interface UserInfoProps extends FlexboxProps {
   avatarProps?: Partial<UserAvatarProps>;
@@ -23,16 +25,16 @@ const UserInfo = memo<UserInfoProps>(({ avatarProps, onClick, ...rest }) => {
 
   return (
     <Flexbox
+      horizontal
       align={'center'}
       gap={12}
-      horizontal
       justify={'space-between'}
       paddingBlock={12}
       paddingInline={12}
       {...rest}
     >
-      <Flexbox align={'center'} gap={10} horizontal onClick={onClick}>
-        <UserAvatar background={cssVar.colorFill} size={36} {...avatarProps} />
+      <Flexbox horizontal align={'center'} gap={10} onClick={onClick}>
+        <UserAvatar background={cssVar.colorFill} size={36} {...(avatarProps as any)} />
         <Flexbox flex={1}>
           <Text style={{ lineHeight: 1.4 }} weight={'bold'}>
             {nickname}

@@ -40,12 +40,12 @@ const Version = memo<{ mobile?: boolean }>(({ mobile }) => {
       justify={'space-between'}
       width={'100%'}
     >
-      <Flexbox align={'center'} flex={'none'} gap={16} horizontal>
+      <Flexbox horizontal align={'center'} flex={'none'} gap={16}>
         <a href={OFFICIAL_SITE} rel="noreferrer" target="_blank">
           <Block
+            clickable
             align={'center'}
             className={styles.logo}
-            clickable
             height={64}
             justify={'center'}
             width={64}

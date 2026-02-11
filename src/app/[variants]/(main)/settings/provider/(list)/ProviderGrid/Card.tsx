@@ -41,10 +41,10 @@ const ProviderCard = memo<ProviderCardProps>(
       <Flexbox className={cx(isDarkMode ? styles.containerDark : styles.containerLight)} gap={24}>
         <Flexbox gap={12} padding={16} width={'100%'}>
           <div
+            style={{ cursor: 'pointer' }}
             onClick={() => {
               onProviderSelect(id);
             }}
-            style={{ cursor: 'pointer' }}
           >
             <Flexbox gap={12} width={'100%'}>
               <Flexbox align={'center'} horizontal justify={'space-between'}>
