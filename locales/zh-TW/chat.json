@@ -165,6 +165,7 @@
   "messageAction.delAndRegenerate": "刪除並重新生成",
   "messageAction.deleteDisabledByThreads": "存在子話題，無法刪除",
   "messageAction.expand": "展開訊息",
+  "messageAction.reaction": "添加反應",
   "messageAction.regenerate": "重新生成",
   "messages.dm.sentTo": "僅對{{name}}可見",
   "messages.dm.title": "私訊",

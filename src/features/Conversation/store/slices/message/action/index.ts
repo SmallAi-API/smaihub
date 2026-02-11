@@ -2,6 +2,7 @@ import type { StateCreator } from 'zustand';
 
 import type { Store as ConversationStore } from '../../../action';
 import { type MessageCRUDAction, messageCRUDSlice } from './crud';
+import { type MessageReactionAction, messageReactionSlice } from './reaction';
 import { sendMessage } from './sendMessage';
 import { type MessageStateAction, messageStateSlice } from './state';
 
@@ -13,7 +14,7 @@ import { type MessageStateAction, messageStateSlice } from './state';
  * - State management (loading, collapsed, editing)
  * - Sending messages
  */
-export interface MessageAction extends MessageCRUDAction, MessageStateAction {
+export interface MessageAction extends MessageCRUDAction, MessageStateAction, MessageReactionAction {
   /**
    * Add an AI message (convenience method)
    */
@@ -41,6 +42,9 @@ export const messageSlice: StateCreator<
 
   // Spread state actions
   ...messageStateSlice(set, get, ...rest),
+
+  // Spread reaction actions
+  ...messageReactionSlice(set, get, ...rest),
 
   // Convenience methods
   addAIMessage: async (content: string) => {

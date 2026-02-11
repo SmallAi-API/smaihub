@@ -1,5 +1,6 @@
 'use client';
 
+import { type EmojiReaction } from '@lobechat/types';
 import { Tag } from '@lobehub/ui';
 import isEqual from 'fast-deep-equal';
 import { type MouseEventHandler, memo, useCallback } from 'react';
@@ -11,7 +12,10 @@ import { ChatItem } from '@/features/Conversation/ChatItem';
 import { useNewScreen } from '@/features/Conversation/Messages/components/useNewScreen';
 import { useAgentGroupStore } from '@/store/agentGroup';
 import { agentGroupSelectors } from '@/store/agentGroup/selectors';
+import { useUserStore } from '@/store/user';
+import { userProfileSelectors } from '@/store/user/selectors';
 
+import { ReactionDisplay } from '../../components/Reaction';
 import { useAgentMeta } from '../../hooks';
 import { dataSelectors, messageStateSelectors, useConversationStore } from '../../store';
 import {
@@ -64,6 +68,31 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
 
   const setMessageItemActionElementPortialContext = useSetMessageItemActionElementPortialContext();
   const setMessageItemActionTypeContext = useSetMessageItemActionTypeContext();
+
+  const reactions = (item.metadata?.reactions || []) as EmojiReaction[];
+  const addReaction = useConversationStore((s) => s.addReaction);
+  const removeReaction = useConversationStore((s) => s.removeReaction);
+  const userId = useUserStore(userProfileSelectors.userId)!;
+
+  const handleReactionClick = useCallback(
+    (emoji: string) => {
+      const existing = reactions.find((r) => r.emoji === emoji);
+      if (existing && existing.users.includes(userId)) {
+        removeReaction(id, emoji);
+      } else {
+        addReaction(id, emoji);
+      }
+    },
+    [id, reactions, addReaction, removeReaction],
+  );
+
+  const isActive = useCallback(
+    (emoji: string) => {
+      const reaction = reactions.find((r) => r.emoji === emoji);
+      return !!reaction && reaction.users.includes(userId);
+    },
+    [reactions],
+  );
 
   const onMouseEnter: MouseEventHandler<HTMLDivElement> = useCallback(
     (e) => {
@@ -120,6 +149,14 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
       )}
       {model && (
         <Usage model={model} performance={performance} provider={provider!} usage={usage} />
+      )}
+      {reactions.length > 0 && (
+        <ReactionDisplay
+          isActive={isActive}
+          messageId={id}
+          onReactionClick={handleReactionClick}
+          reactions={reactions}
+        />
       )}
     </ChatItem>
   );
