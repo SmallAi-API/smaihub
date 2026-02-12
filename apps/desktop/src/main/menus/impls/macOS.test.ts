@@ -1,7 +1,7 @@
-import { Menu, app, shell } from 'electron';
+import { app, Menu, shell } from 'electron';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { App } from '@/core/App';
+import { type App } from '@/core/App';
 import menuTranslations from '@/locales/default/menu';
 
 import { MacOSMenu } from './macOS';
@@ -39,7 +39,7 @@ const createMockApp = () => {
     let translation = menuTranslations[key as keyof typeof menuTranslations] || key;
     if (params && typeof translation === 'string') {
       Object.keys(params).forEach((paramKey) => {
-        translation = translation.replace(
+        translation = translation.replaceAll(
           new RegExp(`{{${paramKey}}}`, 'g'),
           params[paramKey] as string,
         );

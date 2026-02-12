@@ -1,4 +1,4 @@
-import type { UpdateInfo } from '@lobechat/electron-client-ipc';
+import { type UpdateInfo } from '@lobechat/electron-client-ipc';
 import { app as electronApp } from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
@@ -6,15 +6,15 @@ import { autoUpdater } from 'electron-updater';
 import { isDev, isWindows } from '@/const/env';
 import { getDesktopEnv } from '@/env';
 import {
-  UPDATE_SERVER_URL,
-  UPDATE_CHANNEL as channel,
   githubConfig,
   isStableChannel,
+  UPDATE_CHANNEL as channel,
+  UPDATE_SERVER_URL,
   updaterConfig,
 } from '@/modules/updater/configs';
 import { createLogger } from '@/utils/logger';
 
-import type { App as AppCore } from '../App';
+import { type App as AppCore } from '../App';
 
 const FORCE_DEV_UPDATE_CONFIG = getDesktopEnv().FORCE_DEV_UPDATE_CONFIG;
 

@@ -1,9 +1,12 @@
 import console from 'node:console';
-import { join } from 'node:path';
+import path from 'node:path';
 
 import { APP_WINDOW_MIN_SIZE } from '@lobechat/desktop-bridge';
-import type { MainBroadcastEventKey, MainBroadcastParams } from '@lobechat/electron-client-ipc';
-import type { BrowserWindowConstructorOptions } from 'electron';
+import {
+  type MainBroadcastEventKey,
+  type MainBroadcastParams,
+} from '@lobechat/electron-client-ipc';
+import { type BrowserWindowConstructorOptions } from 'electron';
 import { BrowserWindow, ipcMain, screen, session as electronSession, shell } from 'electron';
 
 import { preloadDir, resourcesDir } from '@/const/dir';
@@ -14,7 +17,7 @@ import { backendProxyProtocolManager } from '@/core/infrastructure/BackendProxyP
 import { appendVercelCookie, setResponseHeader } from '@/utils/http-headers';
 import { createLogger } from '@/utils/logger';
 
-import type { App } from '../App';
+import { type App } from '../App';
 import { WindowStateManager } from './WindowStateManager';
 import { WindowThemeManager } from './WindowThemeManager';
 
@@ -131,7 +134,7 @@ export default class Browser {
       webPreferences: {
         backgroundThrottling: false,
         contextIsolation: true,
-        preload: join(preloadDir, 'index.js'),
+        preload: path.join(preloadDir, 'index.js'),
         sandbox: false,
         webviewTag: true,
       },
@@ -375,7 +378,7 @@ export default class Browser {
 
   loadPlaceholder = async (): Promise<void> => {
     logger.debug(`[${this.identifier}] Loading splash screen placeholder`);
-    await this._browserWindow!.loadFile(join(resourcesDir, 'splash.html'));
+    await this._browserWindow!.loadFile(path.join(resourcesDir, 'splash.html'));
     logger.debug(`[${this.identifier}] Splash screen placeholder loaded.`);
   };
 
@@ -406,7 +409,7 @@ export default class Browser {
   private async handleLoadError(urlWithLocale: string): Promise<void> {
     try {
       logger.info(`[${this.identifier}] Attempting to load error page...`);
-      await this._browserWindow!.loadFile(join(resourcesDir, 'error.html'));
+      await this._browserWindow!.loadFile(path.join(resourcesDir, 'error.html'));
       logger.info(`[${this.identifier}] Error page loaded successfully.`);
 
       this.setupRetryHandler(urlWithLocale);
@@ -429,7 +432,7 @@ export default class Browser {
       } catch (err: any) {
         logger.error(`[${this.identifier}] Retry connection failed:`, err);
         try {
-          await this._browserWindow?.loadFile(join(resourcesDir, 'error.html'));
+          await this._browserWindow?.loadFile(path.join(resourcesDir, 'error.html'));
         } catch (loadErr) {
           logger.error(`[${this.identifier}] Failed to reload error page:`, loadErr);
         }

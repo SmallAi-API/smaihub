@@ -1,6 +1,6 @@
 import { APP_WINDOW_MIN_SIZE } from '@lobechat/desktop-bridge';
 
-import type { BrowserWindowOpts } from './core/browser/Browser';
+import { type BrowserWindowOpts } from './core/browser/Browser';
 
 export const BrowsersIdentifiers = {
   app: 'app',

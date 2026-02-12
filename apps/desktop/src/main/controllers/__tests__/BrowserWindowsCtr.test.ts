@@ -1,9 +1,9 @@
-import { InterceptRouteParams } from '@lobechat/electron-client-ipc';
-import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
+import { type InterceptRouteParams } from '@lobechat/electron-client-ipc';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
-import { AppBrowsersIdentifiers, BrowsersIdentifiers } from '@/appBrowsers';
-import type { App } from '@/core/App';
-import type { IpcContext } from '@/utils/ipc';
+import { type AppBrowsersIdentifiers } from '@/appBrowsers';
+import { type App } from '@/core/App';
+import { type IpcContext } from '@/utils/ipc';
 import { runWithIpcContext } from '@/utils/ipc';
 
 import BrowserWindowsCtr from '../BrowserWindowsCtr';

@@ -69,7 +69,7 @@ const Version = memo<{ mobile?: boolean }>(({ mobile }) => {
           </Flexbox>
         </Flexbox>
       </Flexbox>
-      <Flexbox flex={mobile ? 1 : undefined} gap={8} horizontal>
+      <Flexbox horizontal flex={mobile ? 1 : undefined} gap={8}>
         {isDesktop && !hasNewVersion && (
           <Button block={mobile} onClick={() => void autoUpdateService.checkUpdate()}>
             {t('checkForUpdates')}

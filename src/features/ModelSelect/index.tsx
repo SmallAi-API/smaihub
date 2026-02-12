@@ -117,11 +117,12 @@ const ModelSelect = memo<ModelSelectProps>((props) => {
       <LobeSelect
         {...rest}
         defaultValue={selectedDefaultValue}
-        onChange={(value, option) => {
-          if (!value) return;
-          const model = (value as string).split('/').slice(1).join('/');
-          onChange?.({ model, provider: (option as unknown as ModelOption).provider });
-        }}
+        options={options}
+        popupClassName={popupClassName}
+        popupMatchSelectWidth={false}
+        selectedIndicatorVariant="bold"
+        value={selectedValue}
+        virtual={virtual}
         optionRender={(option) => {
           const data = option as unknown as ModelOption;
           return (
@@ -133,17 +134,16 @@ const ModelSelect = memo<ModelSelectProps>((props) => {
             />
           );
         }}
-        options={options}
-        popupClassName={popupClassName}
-        popupMatchSelectWidth={false}
-        selectedIndicatorVariant="bold"
         style={{
           minWidth: 200,
           width: initialWidth ? 'initial' : undefined,
           ...style,
         }}
-        value={selectedValue}
-        virtual={virtual}
+        onChange={(value, option) => {
+          if (!value) return;
+          const model = (value as string).split('/').slice(1).join('/');
+          onChange?.({ model, provider: (option as unknown as ModelOption).provider });
+        }}
       />
     </TooltipGroup>
   );

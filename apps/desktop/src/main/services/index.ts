@@ -1,4 +1,4 @@
-import type { App } from '../core/App';
+import { type App } from '../core/App';
 
 export class ServiceModule {
   constructor(public app: App) {

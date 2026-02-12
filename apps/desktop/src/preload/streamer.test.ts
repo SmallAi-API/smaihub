@@ -1,4 +1,4 @@
-import type { StreamInvokeRequestParams } from '@lobechat/electron-client-ipc';
+import { type StreamInvokeRequestParams } from '@lobechat/electron-client-ipc';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock electron module
@@ -328,7 +328,7 @@ describe('onStreamInvoke', () => {
     cleanup();
 
     // Try to trigger callbacks after cleanup (this simulates late events)
-    const dataListener = mockIpcRendererOn.mock.calls.find((call) =>
+    const _dataListener = mockIpcRendererOn.mock.calls.find((call) =>
       call[0].includes('stream:data'),
     )?.[1];
 

@@ -1,16 +1,23 @@
+import { type Readable } from 'node:stream';
+
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import {
-  StdioClientTransport,
   getDefaultEnvironment,
+  StdioClientTransport,
 } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
-import type { Progress } from '@modelcontextprotocol/sdk/types.js';
-import type { Readable } from 'node:stream';
+import { type Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
+import { type Progress } from '@modelcontextprotocol/sdk/types.js';
 
 import { getDesktopEnv } from '@/env';
 
-import type { MCPClientParams, McpPrompt, McpResource, McpTool, ToolCallResult } from './types';
+import {
+  type MCPClientParams,
+  type McpPrompt,
+  type McpResource,
+  type McpTool,
+  type ToolCallResult,
+} from './types';
 
 /**
  * Custom error class for MCP connection errors that includes STDIO logs
@@ -76,7 +83,7 @@ export class MCPClient {
 
       default: {
         // Exhaustive check
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
         const _never: never = params;
         throw new Error(`Unsupported MCP connection type: ${(params as any).type}`);
       }
@@ -105,7 +112,7 @@ export class MCPClient {
   private isMethodNotFoundError(error: unknown) {
     const err = error as any;
     if (!err) return false;
-    // eslint-disable-next-line unicorn/numeric-separators-style
+
     if (err.code === -32601) return true;
     if (typeof err.message === 'string' && err.message.includes('Method not found')) return true;
     return false;

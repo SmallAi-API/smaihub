@@ -1,9 +1,8 @@
-/* eslint-disable unicorn/no-array-push-push */
-import { Menu, MenuItemConstructorOptions, app, clipboard, dialog, shell } from 'electron';
+import { app, clipboard, dialog, Menu, type MenuItemConstructorOptions, shell } from 'electron';
 
 import { isDev } from '@/const/env';
 
-import type { ContextMenuData, IMenuPlatform, MenuOptions } from '../types';
+import { type ContextMenuData, type IMenuPlatform, type MenuOptions } from '../types';
 import { BaseMenuPlatform } from './BaseMenuPlatform';
 
 export class LinuxMenu extends BaseMenuPlatform implements IMenuPlatform {

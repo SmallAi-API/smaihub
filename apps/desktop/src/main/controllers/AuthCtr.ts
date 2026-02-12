@@ -1,24 +1,24 @@
-import {
-  AuthorizationProgress,
-  DataSyncConfig,
-  MarketAuthorizationParams,
-} from '@lobechat/electron-client-ipc';
-import { BrowserWindow, shell } from 'electron';
 import crypto from 'node:crypto';
 import querystring from 'node:querystring';
 import { URL } from 'node:url';
 
+import {
+  type AuthorizationProgress,
+  type DataSyncConfig,
+  type MarketAuthorizationParams,
+} from '@lobechat/electron-client-ipc';
+import { BrowserWindow, shell } from 'electron';
+
 import { appendVercelCookie } from '@/utils/http-headers';
 import { createLogger } from '@/utils/logger';
 
-import RemoteServerConfigCtr from './RemoteServerConfigCtr';
 import { ControllerModule, IpcMethod } from './index';
+import RemoteServerConfigCtr from './RemoteServerConfigCtr';
 
 const logger = createLogger('controllers:AuthCtr');
 
 const MAX_POLL_TIME = 2 * 60 * 1000; // 2 minutes (reduced from 5 minutes for better UX)
 const POLL_INTERVAL = 3000; // 3 seconds
-const TOKEN_REFRESH_DEBOUNCE = 5 * 60 * 1000; // 5 minutes - debounce interval to prevent excessive refreshes on rapid app restarts
 const TOKEN_REFRESH_DEBOUNCE = 5 * 60 * 1000; // 5 minutes - debounce interval to prevent excessive refreshes on rapid app restarts
 
 /**
@@ -43,14 +43,14 @@ export default class AuthCtr extends ControllerModule {
   /**
    * Polling related parameters
    */
-  // eslint-disable-next-line no-undef
+
   private pollingInterval: NodeJS.Timeout | null = null;
   private cachedRemoteUrl: string | null = null;
 
   /**
    * Auto-refresh timer
    */
-  // eslint-disable-next-line no-undef
+
   private autoRefreshTimer: NodeJS.Timeout | null = null;
 
   /**
@@ -324,13 +324,6 @@ export default class AuthCtr extends ControllerModule {
     this.autoRefreshTimer = setInterval(async () => {
       try {
         // Check if token is expiring soon (refresh 5 minutes in advance)
-        if (!this.remoteServerConfigCtr.isTokenExpiringSoon()) {
-          return;
-        }
-        const expiresAt = this.remoteServerConfigCtr.getTokenExpiresAt();
-        logger.info(
-          `Token is expiring soon, triggering auto-refresh. Expires at: ${expiresAt ? new Date(expiresAt).toISOString() : 'unknown'}`,
-        );
         if (!this.remoteServerConfigCtr.isTokenExpiringSoon()) {
           return;
         }
@@ -735,8 +728,6 @@ export default class AuthCtr extends ControllerModule {
 
       const currentTime = Date.now();
 
-      const currentTime = Date.now();
-
       // Check if token has already expired
       if (currentTime >= expiresAt) {
         logger.info('Token has expired, attempting to refresh it');
@@ -760,97 +751,6 @@ export default class AuthCtr extends ControllerModule {
       logger.error('Error during auto-refresh initialization:', error);
     }
   }
-  /**
-   * Check if token should be proactively refreshed
-   * Returns true if the token hasn't been refreshed recently (within debounce interval)
-   * This ensures we refresh on every app launch while preventing excessive refreshes on rapid restarts
-   */
-  private shouldProactivelyRefresh(): boolean {
-    const lastRefreshAt = this.remoteServerConfigCtr.getLastTokenRefreshAt();
-
-    // If never refreshed, should refresh
-    if (!lastRefreshAt) {
-      logger.debug('No last refresh time found, should proactively refresh');
-      return true;
-    }
-
-    const timeSinceLastRefresh = Date.now() - lastRefreshAt;
-    const shouldRefresh = timeSinceLastRefresh >= TOKEN_REFRESH_DEBOUNCE;
-
-    if (shouldRefresh) {
-      logger.debug(
-        `Time since last refresh: ${Math.round(timeSinceLastRefresh / 1000 / 60)} minutes, exceeds ${TOKEN_REFRESH_DEBOUNCE / 1000 / 60} minutes debounce threshold`,
-      );
-    } else {
-      logger.debug(
-        `Time since last refresh: ${Math.round(timeSinceLastRefresh / 1000 / 60)} minutes, within ${TOKEN_REFRESH_DEBOUNCE / 1000 / 60} minutes debounce threshold, skipping refresh`,
-      );
-    }
-
-    return shouldRefresh;
-  }
-
-  /**
-   * Perform proactive token refresh (used on startup and app activation)
-   */
-  private async performProactiveRefresh(): Promise<void> {
-    const refreshResult = await this.remoteServerConfigCtr.refreshAccessToken();
-    if (refreshResult.success) {
-      logger.info('Proactive token refresh successful');
-      this.broadcastTokenRefreshed();
-      this.startAutoRefresh();
-    } else {
-      logger.error(`Proactive token refresh failed: ${refreshResult.error}`);
-
-      // Only clear token for non-retryable errors
-      if (this.remoteServerConfigCtr.isNonRetryableError(refreshResult.error)) {
-        logger.warn('Non-retryable error during proactive refresh, clearing tokens');
-        await this.remoteServerConfigCtr.clearTokens();
-        await this.remoteServerConfigCtr.setRemoteServerConfig({ active: false });
-        this.broadcastAuthorizationRequired();
-      } else {
-        // For transient errors, still start auto-refresh timer to retry later
-        logger.warn('Transient error during proactive refresh, will retry via auto-refresh');
-        this.startAutoRefresh();
-      }
-    }
-  }
-
-  /**
-   * Handle app activation event (e.g., Mac dock click, window focus)
-   * Proactively refresh token if needed (respects 6-hour interval)
-   */
-  async onAppActivate(): Promise<void> {
-    logger.debug('App activated, checking if token refresh is needed');
-
-    try {
-      const config = await this.remoteServerConfigCtr.getRemoteServerConfig();
-
-      // Check if remote server is configured and active
-      if (!(await this.remoteServerConfigCtr.isRemoteServerConfigured(config))) {
-        logger.debug('Remote server not active, skipping activation refresh');
-        return;
-      }
-
-      // Check if valid access token exists
-      const accessToken = await this.remoteServerConfigCtr.getAccessToken();
-      if (!accessToken) {
-        logger.debug('No access token found, skipping activation refresh');
-        return;
-      }
-
-      // Only refresh if interval has passed
-      if (this.shouldProactivelyRefresh()) {
-        logger.info('Token refresh interval exceeded on app activation, refreshing token');
-        await this.performProactiveRefresh();
-      } else {
-        logger.debug('Token was recently refreshed, skipping activation refresh');
-      }
-    } catch (error) {
-      logger.error('Error during app activation refresh check:', error);
-    }
-  }
-
   /**
    * Check if token should be proactively refreshed
    * Returns true if the token hasn't been refreshed recently (within debounce interval)

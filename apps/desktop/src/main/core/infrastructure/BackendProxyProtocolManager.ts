@@ -37,7 +37,7 @@ export class BackendProxyProtocolManager {
    * Debounce timer for authorization required notifications.
    * Prevents multiple rapid 401 responses from triggering duplicate notifications.
    */
-  // eslint-disable-next-line no-undef
+
   private authRequiredDebounceTimer: NodeJS.Timeout | null = null;
   private static readonly AUTH_REQUIRED_DEBOUNCE_MS = 1000;
 
@@ -119,7 +119,6 @@ export class BackendProxyProtocolManager {
         }
         appendVercelCookie(headers);
 
-        // eslint-disable-next-line no-undef
         const requestInit: RequestInit & { duplex?: 'half' } = {
           headers,
           method: request.method,

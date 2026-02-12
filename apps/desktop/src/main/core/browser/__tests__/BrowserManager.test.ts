@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { App as AppCore } from '../../App';
+import { type App as AppCore } from '../../App';
 import { BrowserManager } from '../BrowserManager';
 
 // Use vi.hoisted to define mocks before hoisting

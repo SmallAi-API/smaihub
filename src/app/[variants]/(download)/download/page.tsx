@@ -11,7 +11,7 @@ import PageTitle from '@/components/PageTitle';
 import { useIsDark } from '@/hooks/useIsDark';
 
 import { styles } from './_layout/style';
-import { type VersionInfo, getLatestVersion } from './_lib/version';
+import { getLatestVersion, type VersionInfo } from './_lib/version';
 
 const DownloadPage = memo(() => {
   const { t } = useTranslation('download');
@@ -49,16 +49,16 @@ const DownloadPage = memo(() => {
           <Flexbox align={'center'} gap={16}>
             <div style={{ fontSize: 32, fontWeight: 'bold', lineHeight: 1.4, minHeight: 48 }}>
               <TypewriterEffect
+                showCursor
                 cursorStyle="dot"
                 loop={false}
+                typingSpeed={150}
                 sentences={[
                   t('title'),
                   '最佳的桌面端体验',
                   '支持云同步，无缝连接你的聊天记录',
                   '立刻下载桌面端',
                 ]}
-                showCursor
-                typingSpeed={150}
               />
             </div>
             <Text fontSize={18} style={{ lineHeight: 1.4 }} type={'secondary'}>
@@ -77,9 +77,9 @@ const DownloadPage = memo(() => {
               disabled={loading || !versionInfo}
               icon={<Icon icon={Download} />}
               loading={loading}
-              onClick={handleDownload}
               size={'large'}
               type={'primary'}
+              onClick={handleDownload}
             >
               {t('downloadButton')}
             </Button>
@@ -96,12 +96,12 @@ const DownloadPage = memo(() => {
               autoPlay
               loop
               muted
+              style={{ borderRadius: 6 }}
               src={
                 isDarkMode
                   ? 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com/logo/agent-builder-dark.webm'
                   : 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com/logo/agent-builder-light.webm'
               }
-              style={{ borderRadius: 6 }}
             />
           </motion.div>
 

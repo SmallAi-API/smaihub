@@ -1,8 +1,8 @@
-import { ThemeMode } from '@lobechat/electron-client-ipc';
+import { type ThemeMode } from '@lobechat/electron-client-ipc';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { App } from '@/core/App';
-import type { IpcContext } from '@/utils/ipc';
+import { type App } from '@/core/App';
+import { type IpcContext } from '@/utils/ipc';
 import { IpcHandler } from '@/utils/ipc/base';
 import { __resetMacPermissionsModuleCache, __setMacPermissionsModule } from '@/utils/permissions';
 

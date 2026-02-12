@@ -102,7 +102,7 @@ const StoreInitialization = memo(() => {
     const handleMessage = (event: MessageEvent<{ sourceId?: string; type?: string }>) => {
       if (event.data?.type !== 'refresh-ai-provider-runtime') return;
       if (event.data.sourceId === sourceId) return;
-      void refreshAiProviderRuntimeState({ broadcast: false });
+      void refreshAiProviderRuntimeState();
     };
 
     channel.addEventListener('message', handleMessage);

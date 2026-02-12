@@ -1,9 +1,12 @@
+import path from 'node:path';
+
 import { TITLE_BAR_HEIGHT } from '@lobechat/desktop-bridge';
-import { BrowserWindow, BrowserWindowConstructorOptions, nativeTheme } from 'electron';
-import { join } from 'node:path';
+import { type BrowserWindow, type BrowserWindowConstructorOptions, nativeTheme } from 'electron';
 
 import { buildDir } from '@/const/dir';
 import { isDev, isMac, isWindows } from '@/const/env';
+import { createLogger } from '@/utils/logger';
+
 import {
   BACKGROUND_DARK,
   BACKGROUND_LIGHT,
@@ -11,7 +14,6 @@ import {
   SYMBOL_COLOR_LIGHT,
   THEME_CHANGE_DELAY,
 } from '../../const/theme';
-import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('core:WindowThemeManager');
 
@@ -105,7 +107,7 @@ export class WindowThemeManager {
   private getWindowsConfig(isDarkMode: boolean): WindowsThemeConfig {
     return {
       backgroundColor: isDarkMode ? BACKGROUND_DARK : BACKGROUND_LIGHT,
-      icon: isDev ? join(buildDir, 'icon-dev.ico') : undefined,
+      icon: isDev ? path.join(buildDir, 'icon-dev.ico') : undefined,
       titleBarOverlay: this.getWindowsTitleBarOverlay(isDarkMode),
       titleBarStyle: 'hidden',
     };

@@ -1,7 +1,7 @@
 import { nativeTheme } from 'electron';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { App } from '../../App';
+import { type App } from '../../App';
 import { Tray } from '../Tray';
 import { TrayManager } from '../TrayManager';
 

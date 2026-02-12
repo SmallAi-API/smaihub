@@ -1,7 +1,7 @@
 import { Flexbox, Icon, Popover } from '@lobehub/ui';
 import { cssVar } from 'antd-style';
 import { BookOpenIcon, MessageCircle, SquareArrowOutUpRight } from 'lucide-react';
-import { type ReactNode, memo, useMemo } from 'react';
+import { memo, type ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -105,8 +105,8 @@ const BottomMenu = memo(() => {
             href={externalUrl}
             icon={item.icon}
             key={item.key}
-            onClick={externalUrl ? () => handleExternalLink(externalUrl) : item.onClick}
             title={item.title}
+            onClick={externalUrl ? () => handleExternalLink(externalUrl) : item.onClick}
           />
         );
         const content = item.popoverContent ? (
@@ -128,11 +128,11 @@ const BottomMenu = memo(() => {
         return (
           <Link
             key={item.key}
+            to={internalUrl}
             onClick={(e) => {
               e.preventDefault();
               navigate(internalUrl);
             }}
-            to={internalUrl}
           >
             <NavItem
               active={tab === item.key}

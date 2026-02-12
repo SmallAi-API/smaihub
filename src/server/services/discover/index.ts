@@ -32,7 +32,6 @@ import {
   type ProviderQueryParams,
 } from '@lobechat/types';
 import {
-  AssistantCategory,
   AssistantSorts,
   CacheRevalidate,
   CacheTag,
@@ -840,9 +839,9 @@ export class DiscoverService {
     const result = await this.market.plugins.getPluginList(
       {
         ...params,
-        category: isDiscoverCategory ? undefined : category,
+        category: shouldOmitCategory ? undefined : category,
         locale: normalizedLocale,
-        sort: isDiscoverCategory ? McpSorts.Recommended : sort,
+        sort: shouldOmitCategory ? McpSorts.Recommended : sort,
       },
       {
         next: {

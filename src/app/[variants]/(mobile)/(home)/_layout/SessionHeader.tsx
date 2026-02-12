@@ -7,7 +7,6 @@ import { memo } from 'react';
 
 import { MOBILE_HEADER_ICON_SIZE } from '@/const/layoutTokens';
 import { useSessionStore } from '@/store/session';
-import { mobileHeaderSticky } from '@/styles/mobileHeader';
 
 const Header = memo(() => {
   const [createSession] = useSessionStore((s) => [s.createSession]);

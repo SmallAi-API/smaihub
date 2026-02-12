@@ -1,4 +1,8 @@
-import type { CreateServicesResult, IpcServiceConstructor, MergeIpcService } from '@/utils/ipc';
+import {
+  type CreateServicesResult,
+  type IpcServiceConstructor,
+  type MergeIpcService,
+} from '@/utils/ipc';
 
 import AuthCtr from './AuthCtr';
 import BrowserWindowsCtr from './BrowserWindowsCtr';

@@ -1,11 +1,11 @@
 import { stat } from 'node:fs/promises';
-import * as path from 'node:path';
+import path from 'node:path';
 
-import type { GlobFilesParams, GlobFilesResult } from '@lobechat/electron-client-ipc';
+import { type GlobFilesParams, type GlobFilesResult } from '@lobechat/electron-client-ipc';
 
-import type { ToolDetectorManager } from '@/core/infrastructure/ToolDetectorManager';
+import { type ToolDetectorManager } from '@/core/infrastructure/ToolDetectorManager';
 
-import type { FileResult, SearchOptions } from './types';
+import { type FileResult, type SearchOptions } from './types';
 
 /**
  * Content type mapping for common file extensions

@@ -28,7 +28,7 @@ export const parseBrowserLanguage = (headers: Headers, defaultLang: string = DEF
    * 2) The available locales (they must contain the default locale).
    * 3) The default locale.
    */
-  let browserLang: string = resolveAcceptLanguage(
+  const browserLang: string = resolveAcceptLanguage(
     headers.get('accept-language') || '',
     [...locales],
     defaultLang,

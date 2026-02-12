@@ -7,7 +7,7 @@ import { getProviderLogoUrl } from '@/utils/providerLogo';
 const GroupItem = memo<AiProviderListItem>(({ id, name }) => {
   return (
     <>
-      <Flexbox gap={8} horizontal>
+      <Flexbox horizontal gap={8}>
         <Avatar
           alt={name || id}
           avatar={getProviderLogoUrl(id, name)}

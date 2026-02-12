@@ -1,7 +1,6 @@
-import { Menu } from 'electron';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { App } from '../../App';
+import { type App } from '../../App';
 import { MenuManager } from '../MenuManager';
 
 // Mock electron modules

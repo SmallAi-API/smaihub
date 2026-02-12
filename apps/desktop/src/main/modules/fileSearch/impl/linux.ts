@@ -1,8 +1,8 @@
-import { ToolDetectorManager } from '@/core/infrastructure/ToolDetectorManager';
+import { type ToolDetectorManager } from '@/core/infrastructure/ToolDetectorManager';
 import { createLogger } from '@/utils/logger';
 
-import { FileResult, SearchOptions } from '../types';
-import { UnixFileSearch, UnixSearchTool } from './unix';
+import { type FileResult, type SearchOptions } from '../types';
+import { UnixFileSearch, type UnixSearchTool } from './unix';
 
 const logger = createLogger('module:FileSearch:linux');
 

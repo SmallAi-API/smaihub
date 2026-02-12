@@ -1,8 +1,8 @@
 import {
-  DesktopNotificationResult,
-  ShowDesktopNotificationParams,
+  type DesktopNotificationResult,
+  type ShowDesktopNotificationParams,
 } from '@lobechat/electron-client-ipc';
-import { Notification, app, systemPreferences } from 'electron';
+import { app, Notification } from 'electron';
 import { macOS, windows } from 'electron-is';
 
 import { getIpcContext } from '@/utils/ipc';

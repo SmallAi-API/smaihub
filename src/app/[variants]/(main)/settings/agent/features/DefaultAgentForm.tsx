@@ -34,13 +34,12 @@ const DefaultAgentForm = memo(() => {
         children: (
           <ModelSelect
             showAbility={false}
+            virtual={false}
             onChange={async ({ model, provider }) => {
               setLoading(true);
               await updateDefaultAgent({ config: { model, provider } });
               setLoading(false);
             }}
-            showAbility={false}
-            virtual={false}
           />
         ),
         desc: t('defaultAgent.model.desc'),

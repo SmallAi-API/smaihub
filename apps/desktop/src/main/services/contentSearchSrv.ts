@@ -1,6 +1,6 @@
-import { GrepContentParams, GrepContentResult } from '@lobechat/electron-client-ipc';
+import { type GrepContentParams, type GrepContentResult } from '@lobechat/electron-client-ipc';
 
-import { BaseContentSearch, createContentSearchImpl } from '@/modules/contentSearch';
+import { type BaseContentSearch, createContentSearchImpl } from '@/modules/contentSearch';
 
 import { ServiceModule } from './index';
 

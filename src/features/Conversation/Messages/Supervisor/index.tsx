@@ -155,8 +155,8 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
         <ReactionDisplay
           isActive={isActive}
           messageId={id}
-          onReactionClick={handleReactionClick}
           reactions={reactions}
+          onReactionClick={handleReactionClick}
         />
       )}
     </ChatItem>

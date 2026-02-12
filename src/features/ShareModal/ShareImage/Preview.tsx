@@ -44,9 +44,9 @@ const Preview = memo<FieldType & { title?: string }>(
             gap={16}
           >
             <div className={styles.header}>
-              <Flexbox align={'center'} gap={12} horizontal>
+              <Flexbox horizontal align={'center'} gap={12}>
                 <Avatar avatar={logoUrl} shape={'square'} size={28} title={title} />
-                <Text fontSize={16} strong>
+                <Text strong fontSize={16}>
                   {displayTitle}
                 </Text>
                 <Flexbox horizontal gap={4}>

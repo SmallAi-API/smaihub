@@ -8,7 +8,9 @@ import { cloudModelIdMapping } from '@lobechat/business-const';
 import { ModelProvider } from 'model-bank';
 
 import { hasTemperatureTopPConflict } from '../../const/models';
-import type { LobeRuntimeAI } from '../../core/BaseAI';
+import { resolveCacheTTL } from '../../core/anthropicCompatibleFactory/resolveCacheTTL';
+import { resolveMaxTokens } from '../../core/anthropicCompatibleFactory/resolveMaxTokens';
+import { type LobeRuntimeAI } from '../../core/BaseAI';
 import { buildAnthropicMessages, buildAnthropicTools } from '../../core/contextBuilders/anthropic';
 import { resolveParameters } from '../../core/parameterResolver';
 import {
@@ -16,12 +18,12 @@ import {
   AWSBedrockLlamaStream,
   createBedrockStream,
 } from '../../core/streams';
-import type {
-  ChatMethodOptions,
-  ChatStreamPayload,
-  Embeddings,
-  EmbeddingsOptions,
-  EmbeddingsPayload,
+import {
+  type ChatMethodOptions,
+  type ChatStreamPayload,
+  type Embeddings,
+  type EmbeddingsOptions,
+  type EmbeddingsPayload,
 } from '../../types';
 import { AgentRuntimeErrorType } from '../../types/error';
 import { AgentRuntimeError } from '../../utils/createError';

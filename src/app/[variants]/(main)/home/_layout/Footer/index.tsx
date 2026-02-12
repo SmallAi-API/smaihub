@@ -3,7 +3,7 @@
 import { useAnalytics } from '@lobehub/analytics/react';
 import { ActionIcon, DropdownMenu, Icon, type MenuProps } from '@lobehub/ui';
 import { Flexbox } from '@lobehub/ui';
-import { Book, CircleHelp, FlaskConical, KeyRound, Rocket, ShoppingBag } from 'lucide-react';
+import { AppWindow, Book, CircleHelp, FlaskConical, KeyRound, ShoppingBag } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -136,9 +136,9 @@ const Footer = memo(() => {
       ...(isWithinTimeWindow
         ? [
             {
-              icon: <Icon icon={Rocket} />,
+              icon: <Icon icon={AppWindow} />,
               key: 'productHunt',
-              label: 'Product Hunt',
+              label: 'Windows 客户端',
               onClick: handleOpenProductHuntCard,
             },
           ]
@@ -157,7 +157,7 @@ const Footer = memo(() => {
         </Flexbox>
         <ThemeButton placement={'topCenter'} size={16} />
       </Flexbox>
-      <LabsModal onClose={handleCloseLabsModal} open={isLabsModalOpen} />
+      <LabsModal open={isLabsModalOpen} onClose={handleCloseLabsModal} />
       <HighlightNotification
         actionHref={PRODUCT_HUNT_NOTIFICATION.actionHref}
         actionLabel={t('productHunt.actionLabel')}

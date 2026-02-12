@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getProtocolScheme, parseProtocolUrl } from '@/utils/protocol';
 
-import type { App as AppCore } from '../../App';
+import { type App as AppCore } from '../../App';
 import { ProtocolManager } from '../ProtocolManager';
 
 // Use vi.hoisted to define mocks before hoisting

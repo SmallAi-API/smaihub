@@ -97,6 +97,8 @@ export interface ProviderConfigProps extends Omit<AiProviderDetailItem, 'enabled
   className?: string;
   enabled?: boolean;
   extra?: ReactNode;
+  headerExtra?: ReactNode;
+  headerTitle?: ReactNode;
   hideSwitch?: boolean;
   modelList?: {
     azureDeployName?: boolean;
@@ -119,6 +121,8 @@ const ProviderConfig = memo<ProviderConfigProps>(
     className,
     checkErrorRender,
     canDeactivate = true,
+    headerExtra,
+    headerTitle,
     name,
     showAceGcm = true,
     extra,
@@ -418,7 +422,7 @@ const ProviderConfig = memo<ProviderConfigProps>(
       defaultActive: true,
 
       extra: (
-        <Flexbox align={'center'} gap={8} horizontal>
+        <Flexbox horizontal align={'center'} gap={8}>
           {extra}
 
           {isCustom && <UpdateProviderInfo />}
@@ -429,16 +433,16 @@ const ProviderConfig = memo<ProviderConfigProps>(
       ),
       title: (
         <Flexbox
+          horizontal
           align={'center'}
           gap={4}
-          horizontal
           style={{
             height: 24,
             maxHeight: 24,
             ...(enabled ? {} : { filter: 'grayscale(100%)', maxHeight: 24, opacity: 0.66 }),
           }}
         >
-          <Flexbox align={'center'} gap={8} horizontal>
+          <Flexbox horizontal align={'center'} gap={8}>
             <Avatar alt={name || id} avatar={getProviderLogoUrl(id, name)} size={28} />
 
             {name}

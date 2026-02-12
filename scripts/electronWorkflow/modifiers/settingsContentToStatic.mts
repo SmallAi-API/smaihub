@@ -1,6 +1,6 @@
-/* eslint-disable no-undef */
-import { Lang, parse } from '@ast-grep/napi';
 import path from 'node:path';
+
+import { Lang, parse } from '@ast-grep/napi';
 
 import { invariant, isDirectRun, runStandalone, updateFile } from './utils.mjs';
 
@@ -12,18 +12,11 @@ interface DynamicImportInfo {
   start: number;
 }
 
-const isBusinessFeaturesEnabled = () => {
-  const raw = process.env.ENABLE_BUSINESS_FEATURES;
-  if (!raw) return false;
-  const normalized = raw.trim().toLowerCase();
-  return normalized === 'true' || normalized === '1';
-};
-
 const extractDynamicImportsFromMap = (code: string): DynamicImportInfo[] => {
   const results: DynamicImportInfo[] = [];
 
   const regex =
-    /\[SettingsTabs\.(\w+)]:\s*dynamic\(\s*\(\)\s*=>\s*import\(\s*["']([^"']+)["']\s*\)/g;
+    /\[SettingsTabs\.(\w+)\]:\s*dynamic\(\s*\(\)\s*=>\s*import\(\s*["']([^"']+)["']\s*\)/g;
 
   let match;
   while ((match = regex.exec(code)) !== null) {
@@ -44,20 +37,12 @@ const extractDynamicImportsFromMap = (code: string): DynamicImportInfo[] => {
   return results;
 };
 
-const generateStaticImports = (imports: DynamicImportInfo[], keepBusinessTabs: boolean): string => {
-  return imports
-    .filter((imp) => keepBusinessTabs || !imp.importPath.includes('@/business/'))
-    .map((imp) => `import ${imp.componentName} from '${imp.importPath}';`)
-    .join('\n');
+const generateStaticImports = (imports: DynamicImportInfo[]): string => {
+  return imports.map((imp) => `import ${imp.componentName} from '${imp.importPath}';`).join('\n');
 };
 
-const generateStaticComponentMap = (
-  imports: DynamicImportInfo[],
-  keepBusinessTabs: boolean,
-): string => {
-  const entries = imports
-    .filter((imp) => keepBusinessTabs || !imp.importPath.includes('@/business/'))
-    .map((imp) => `  [SettingsTabs.${imp.key}]: ${imp.componentName},`);
+const generateStaticComponentMap = (imports: DynamicImportInfo[]): string => {
+  const entries = imports.map((imp) => `  [SettingsTabs.${imp.key}]: ${imp.componentName},`);
 
   return `const componentMap: Record<string, React.ComponentType<{ mobile?: boolean }>> = {\n${entries.join('\n')}\n}`;
 };
@@ -79,13 +64,6 @@ export const convertSettingsContentToStatic = async (TEMP_DIR: string) => {
     filePath,
     name: 'convertSettingsContentToStatic',
     transformer: (code) => {
-      const keepBusinessTabs = isBusinessFeaturesEnabled();
-      if (keepBusinessTabs) {
-        console.log(
-          '    ENABLE_BUSINESS_FEATURES is enabled, preserving business Settings tabs in componentMap',
-        );
-      }
-
       const imports = extractDynamicImportsFromMap(code);
 
       invariant(
@@ -95,8 +73,8 @@ export const convertSettingsContentToStatic = async (TEMP_DIR: string) => {
 
       console.log(`    Found ${imports.length} dynamic imports in componentMap`);
 
-      const staticImports = generateStaticImports(imports, keepBusinessTabs);
-      const staticComponentMap = generateStaticComponentMap(imports, keepBusinessTabs);
+      const staticImports = generateStaticImports(imports);
+      const staticComponentMap = generateStaticComponentMap(imports);
 
       let result = code;
 
@@ -130,7 +108,7 @@ export const convertSettingsContentToStatic = async (TEMP_DIR: string) => {
         staticImports +
         result.slice(insertPos);
 
-      const componentMapRegex = /const componentMap = {[\S\s]*?\n};/;
+      const componentMapRegex = /const componentMap = \{[\S\s]*?\n\};/;
       invariant(
         componentMapRegex.test(result),
         '[convertSettingsContentToStatic] componentMap declaration not found in SettingsContent.tsx',

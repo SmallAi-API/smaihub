@@ -1,18 +1,19 @@
-import { ProxyTRPCStreamRequestParams } from '@lobechat/electron-client-ipc';
-import { IpcMainEvent, WebContents, ipcMain } from 'electron';
-import { HttpProxyAgent } from 'http-proxy-agent';
-import { HttpsProxyAgent } from 'https-proxy-agent';
 import { Buffer } from 'node:buffer';
-import http, { IncomingMessage, OutgoingHttpHeaders } from 'node:http';
+import http, { type IncomingMessage, type OutgoingHttpHeaders } from 'node:http';
 import https from 'node:https';
 import { URL } from 'node:url';
+
+import { type ProxyTRPCStreamRequestParams } from '@lobechat/electron-client-ipc';
+import { ipcMain, type IpcMainEvent, type WebContents } from 'electron';
+import { HttpProxyAgent } from 'http-proxy-agent';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 
 import { defaultProxySettings } from '@/const/store';
 import { appendVercelCookie } from '@/utils/http-headers';
 import { createLogger } from '@/utils/logger';
 
-import RemoteServerConfigCtr from './RemoteServerConfigCtr';
 import { ControllerModule } from './index';
+import RemoteServerConfigCtr from './RemoteServerConfigCtr';
 
 // Create logger
 const logger = createLogger('controllers:RemoteServerSyncCtr');
@@ -188,8 +189,7 @@ export default class RemoteServerSyncCtr extends ControllerModule {
     url: URL;
   }) {
     // Prepare headers, cloning and adding Oidc-Auth
-    const requestHeaders: OutgoingHttpHeaders = { ...headers }; // Use OutgoingHttpHeaders
-    requestHeaders['Oidc-Auth'] = accessToken;
+    const requestHeaders: OutgoingHttpHeaders = { ...headers, ['Oidc-Auth']: accessToken }; // Use OutgoingHttpHeaders
     appendVercelCookie(requestHeaders);
 
     // Let node handle Host, Content-Length etc. Remove potentially problematic headers

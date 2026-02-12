@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DEFAULT_SHORTCUTS_CONFIG } from '@/shortcuts';
 
-import type { App } from '../../App';
+import { type App } from '../../App';
 import { ShortcutManager } from '../ShortcutManager';
 
 // Mock electron

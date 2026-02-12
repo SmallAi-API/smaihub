@@ -1,6 +1,6 @@
-import { NetworkProxySettings } from '@lobechat/electron-client-ipc';
-import { SocksProxies, socksDispatcher } from 'fetch-socks';
-import { Agent, ProxyAgent, getGlobalDispatcher, setGlobalDispatcher } from 'undici';
+import { type NetworkProxySettings } from '@lobechat/electron-client-ipc';
+import { socksDispatcher, type SocksProxies } from 'fetch-socks';
+import { Agent, getGlobalDispatcher, ProxyAgent, setGlobalDispatcher } from 'undici';
 
 import { createLogger } from '@/utils/logger';
 

@@ -1,7 +1,7 @@
-import { Menu, app, shell } from 'electron';
+import { app, Menu, shell } from 'electron';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { App } from '@/core/App';
+import { type App } from '@/core/App';
 
 import { WindowsMenu } from './windows';
 

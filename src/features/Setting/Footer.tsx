@@ -3,7 +3,7 @@
 import { Center, Flexbox, Icon } from '@lobehub/ui';
 import { createStaticStyles } from 'antd-style';
 import { MessageSquareHeart } from 'lucide-react';
-import { type PropsWithChildren, memo } from 'react';
+import { memo, type PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
@@ -24,7 +24,7 @@ const Footer = memo<PropsWithChildren>(() => {
 
   return hideGitHub ? null : (
     <Flexbox flex={1} justify={'flex-end'}>
-      <Center as={'footer'} className={styles} flex={'none'} horizontal padding={16} width={'100%'}>
+      <Center horizontal as={'footer'} className={styles} flex={'none'} padding={16} width={'100%'}>
         <div style={{ textAlign: 'center' }}>
           <Icon icon={MessageSquareHeart} /> {`${t('footer.title')} `}
         </div>

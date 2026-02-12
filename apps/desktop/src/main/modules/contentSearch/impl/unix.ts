@@ -1,8 +1,7 @@
-/* eslint-disable unicorn/no-array-push-push */
-import { GrepContentParams, GrepContentResult } from '@lobechat/electron-client-ipc';
+import { type GrepContentParams, type GrepContentResult } from '@lobechat/electron-client-ipc';
 import { execa } from 'execa';
 
-import { ToolDetectorManager } from '@/core/infrastructure/ToolDetectorManager';
+import { type ToolDetectorManager } from '@/core/infrastructure/ToolDetectorManager';
 import { createLogger } from '@/utils/logger';
 
 import { BaseContentSearch } from '../base';

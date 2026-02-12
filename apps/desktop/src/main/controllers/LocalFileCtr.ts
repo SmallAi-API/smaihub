@@ -1,33 +1,33 @@
-/* eslint-disable unicorn/no-array-push-push */
+import { constants } from 'node:fs';
+import { access, mkdir, readdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+
 import {
-  EditLocalFileParams,
-  EditLocalFileResult,
-  GlobFilesParams,
-  GlobFilesResult,
-  GrepContentParams,
-  GrepContentResult,
-  ListLocalFileParams,
-  LocalMoveFilesResultItem,
-  LocalReadFileParams,
-  LocalReadFileResult,
-  LocalReadFilesParams,
-  LocalSearchFilesParams,
-  MoveLocalFilesParams,
-  OpenLocalFileParams,
-  OpenLocalFolderParams,
-  RenameLocalFileResult,
-  ShowSaveDialogParams,
-  ShowSaveDialogResult,
-  WriteLocalFileParams,
+  type EditLocalFileParams,
+  type EditLocalFileResult,
+  type GlobFilesParams,
+  type GlobFilesResult,
+  type GrepContentParams,
+  type GrepContentResult,
+  type ListLocalFileParams,
+  type LocalMoveFilesResultItem,
+  type LocalReadFileParams,
+  type LocalReadFileResult,
+  type LocalReadFilesParams,
+  type LocalSearchFilesParams,
+  type MoveLocalFilesParams,
+  type OpenLocalFileParams,
+  type OpenLocalFolderParams,
+  type RenameLocalFileResult,
+  type ShowSaveDialogParams,
+  type ShowSaveDialogResult,
+  type WriteLocalFileParams,
 } from '@lobechat/electron-client-ipc';
-import { SYSTEM_FILES_TO_IGNORE, loadFile } from '@lobechat/file-loaders';
+import { loadFile, SYSTEM_FILES_TO_IGNORE } from '@lobechat/file-loaders';
 import { createPatch } from 'diff';
 import { dialog, shell } from 'electron';
-import { constants } from 'node:fs';
-import { access, mkdir, readFile, readdir, rename, stat, writeFile } from 'node:fs/promises';
-import * as path from 'node:path';
 
-import { FileResult, SearchOptions } from '@/modules/fileSearch';
+import { type FileResult, type SearchOptions } from '@/modules/fileSearch';
 import ContentSearchService from '@/services/contentSearchSrv';
 import FileSearchService from '@/services/fileSearchSrv';
 import { makeSureDirExist } from '@/utils/file-system';

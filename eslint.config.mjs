@@ -50,6 +50,8 @@ export default eslint(
       'react/no-unknown-property': 0,
       'regexp/match-any': 0,
       'unicorn/better-regex': 0,
+      'unicorn/error-message': 0,
+      'unicorn/text-encoding-identifier-case': 0,
     },
   },
   // MDX files

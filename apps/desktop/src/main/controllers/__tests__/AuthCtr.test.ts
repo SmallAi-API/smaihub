@@ -1,9 +1,8 @@
-import { DataSyncConfig } from '@lobechat/electron-client-ipc';
+import { type DataSyncConfig } from '@lobechat/electron-client-ipc';
 import { BrowserWindow, shell } from 'electron';
-import crypto from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { App } from '@/core/App';
+import { type App } from '@/core/App';
 
 import AuthCtr from '../AuthCtr';
 import RemoteServerConfigCtr from '../RemoteServerConfigCtr';
@@ -60,7 +59,7 @@ vi.mock('@/const/env', () => ({
 let randomBytesCounter = 0;
 vi.mock('node:crypto', () => ({
   default: {
-    randomBytes: vi.fn((size: number) => {
+    randomBytes: vi.fn((_size: number) => {
       randomBytesCounter++;
       return {
         toString: vi.fn(() => `mock-random-${randomBytesCounter}`),

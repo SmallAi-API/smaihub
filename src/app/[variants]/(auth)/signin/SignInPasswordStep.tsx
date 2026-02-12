@@ -35,7 +35,7 @@ export const SignInPasswordStep = ({
   return (
     <AuthCard
       subtitle={t('betterAuth.signin.passwordStep.subtitle')}
-      title={'Agent teammates that grow with you'}
+      title={'伴您共同成长的 Agent 团队'}
       footer={
         <>
           <Text fontSize={13} type={'secondary'}>
@@ -56,8 +56,6 @@ export const SignInPasswordStep = ({
           </Button>
         </>
       }
-      subtitle={t('betterAuth.signin.passwordStep.subtitle')}
-      title={'伴您共同成长的 Agent 团队'}
     >
       <Text fontSize={20}>{email}</Text>
       <Form

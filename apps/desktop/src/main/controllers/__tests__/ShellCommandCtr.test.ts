@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { App } from '@/core/App';
+import { type App } from '@/core/App';
 
 import ShellCommandCtr from '../ShellCommandCtr';
 
@@ -214,7 +214,7 @@ describe('ShellCommandCtr', () => {
               () =>
                 stdoutCallback(
                   Buffer.from(
-                    '\x1b[38;5;250m███████╗\x1b[0m\n\x1b[1;32mSuccess\x1b[0m\n\x1b[31mError\x1b[0m',
+                    '\x1B[38;5;250m███████╗\x1B[0m\n\x1B[1;32mSuccess\x1B[0m\n\x1B[31mError\x1B[0m',
                   ),
                 ),
               5,
@@ -227,7 +227,7 @@ describe('ShellCommandCtr', () => {
           if (event === 'data') {
             stderrCallback = callback;
             setTimeout(
-              () => stderrCallback(Buffer.from('\x1b[33mwarning:\x1b[0m something happened')),
+              () => stderrCallback(Buffer.from('\x1B[33mwarning:\x1B[0m something happened')),
               5,
             );
           }
@@ -241,11 +241,11 @@ describe('ShellCommandCtr', () => {
 
         expect(result.success).toBe(true);
         // ANSI codes should be stripped
-        expect(result.stdout).not.toContain('\x1b[');
+        expect(result.stdout).not.toContain('\x1B[');
         expect(result.stdout).toContain('███████╗');
         expect(result.stdout).toContain('Success');
         expect(result.stdout).toContain('Error');
-        expect(result.stderr).not.toContain('\x1b[');
+        expect(result.stderr).not.toContain('\x1B[');
         expect(result.stderr).toContain('warning: something happened');
       });
 

@@ -2,9 +2,9 @@ import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 
 import {
-  IToolDetector,
-  ToolStatus,
   createCommandDetector,
+  type IToolDetector,
+  type ToolStatus,
 } from '@/core/infrastructure/ToolDetectorManager';
 
 const execPromise = promisify(exec);

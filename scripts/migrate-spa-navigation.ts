@@ -10,6 +10,7 @@
  *
  * @see RFC 147
  */
+import console from 'node:console';
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -87,7 +88,6 @@ async function migrateFile(relativePath: string): Promise<MigrationResult | null
         // Keep other imports (like notFound, redirect) from next/navigation
         console.log(`   ⚠️  Unknown hook "${hook}" - keeping original import`);
       }
-    }
     }
   }
 

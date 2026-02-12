@@ -47,8 +47,8 @@ const ProviderCard = memo<ProviderCardProps>(
             }}
           >
             <Flexbox gap={12} width={'100%'}>
-              <Flexbox align={'center'} horizontal justify={'space-between'}>
-                <Flexbox align={'center'} gap={12} horizontal>
+              <Flexbox horizontal align={'center'} justify={'space-between'}>
+                <Flexbox horizontal align={'center'} gap={12}>
                   <Avatar alt={name || id} avatar={getProviderLogoUrl(id, name)} size={28} />
 
                   <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{name || id}</Text>

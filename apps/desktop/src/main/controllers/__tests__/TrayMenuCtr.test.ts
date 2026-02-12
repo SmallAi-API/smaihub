@@ -1,11 +1,11 @@
 import {
-  ShowTrayNotificationParams,
-  UpdateTrayIconParams,
-  UpdateTrayTooltipParams,
+  type ShowTrayNotificationParams,
+  type UpdateTrayIconParams,
+  type UpdateTrayTooltipParams,
 } from '@lobechat/electron-client-ipc';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { App } from '@/core/App';
+import { type App } from '@/core/App';
 
 import TrayMenuCtr from '../TrayMenuCtr';
 

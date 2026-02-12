@@ -1,6 +1,6 @@
 import process from 'node:process';
 
-import type { ElectronAppState, ThemeMode } from '@lobechat/electron-client-ipc';
+import { type ElectronAppState, type ThemeMode } from '@lobechat/electron-client-ipc';
 import { app, dialog, nativeTheme, shell } from 'electron';
 import { macOS } from 'electron-is';
 import { pathExists, readdir } from 'fs-extra';

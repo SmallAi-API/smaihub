@@ -1,12 +1,12 @@
-/* eslint-disable unicorn/no-array-push-push */
-import { Menu, MenuItemConstructorOptions, app, clipboard, shell } from 'electron';
-import * as path from 'node:path';
+import path from 'node:path';
+
+import { app, clipboard, Menu, type MenuItemConstructorOptions, shell } from 'electron';
 
 import { isDev } from '@/const/env';
 import NotificationCtr from '@/controllers/NotificationCtr';
 import SystemController from '@/controllers/SystemCtr';
 
-import type { ContextMenuData, IMenuPlatform, MenuOptions } from '../types';
+import { type ContextMenuData, type IMenuPlatform, type MenuOptions } from '../types';
 import { BaseMenuPlatform } from './BaseMenuPlatform';
 
 export class MacOSMenu extends BaseMenuPlatform implements IMenuPlatform {

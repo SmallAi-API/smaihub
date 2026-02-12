@@ -1,11 +1,12 @@
-import { getPort } from 'get-port-please';
 import { createServer } from 'node:http';
+
+import { getPort } from 'get-port-please';
 
 import { LOCAL_STORAGE_URL_PREFIX } from '@/const/dir';
 import FileService from '@/services/fileSrv';
 import { createLogger } from '@/utils/logger';
 
-import type { App } from '../App';
+import { type App } from '../App';
 
 const logger = createLogger('core:StaticFileServerManager');
 

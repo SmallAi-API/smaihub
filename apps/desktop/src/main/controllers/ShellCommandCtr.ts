@@ -1,13 +1,14 @@
-import {
-  GetCommandOutputParams,
-  GetCommandOutputResult,
-  KillCommandParams,
-  KillCommandResult,
-  RunCommandParams,
-  RunCommandResult,
-} from '@lobechat/electron-client-ipc';
-import { ChildProcess, spawn } from 'node:child_process';
+import { type ChildProcess, spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
+
+import {
+  type GetCommandOutputParams,
+  type GetCommandOutputResult,
+  type KillCommandParams,
+  type KillCommandResult,
+  type RunCommandParams,
+  type RunCommandResult,
+} from '@lobechat/electron-client-ipc';
 
 import { createLogger } from '@/utils/logger';
 
@@ -21,7 +22,7 @@ const MAX_OUTPUT_LENGTH = 80_000;
 /**
  * Strip ANSI escape codes from terminal output
  */
-// eslint-disable-next-line no-control-regex
+// eslint-disable-next-line no-control-regex, regexp/no-obscure-range
 const ANSI_REGEX = /\u001B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g;
 const stripAnsi = (str: string): string => str.replaceAll(ANSI_REGEX, '');
 

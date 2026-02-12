@@ -21,6 +21,7 @@ const Inbox = memo(() => {
   return (
     <Link
       aria-label={'smai.ai'}
+      to={SESSION_CHAT_URL(inboxAgentId, mobile)}
       onClick={(e) => {
         e.preventDefault();
         navigateToAgent(inboxAgentId);
@@ -30,7 +31,7 @@ const Inbox = memo(() => {
         active={isInboxActive}
         avatar={DEFAULT_INBOX_AVATAR}
         key={'inbox'}
-        title={'Lobe AI'}
+        title={'smai.ai'}
         styles={{
           container: {
             gap: 12,
@@ -40,7 +41,6 @@ const Inbox = memo(() => {
             maskImage: `linear-gradient(90deg, #000 90%, transparent)`,
           },
         }}
-        title={'smai.ai'}
       />
     </Link>
   );

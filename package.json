@@ -1,6 +1,6 @@
 {
   "name": "@wasskayyy/smaihub",
-  "version": "0.2.1",
+  "version": "0.2.4",
   "description": "smai.ai - 新一代智能体Agent对话平台,支持GPT5.2、Claude 4.5 Opus、NanoBanana、Gemini 3 Pro等全球主流Ai大模型服务,内置多个AI Agent完成AI对话,轻松构建 Agent，并实现真正的技能控制。以任务为驱动的工具，构建能随着您一起成长的长期 Agent 队友，加入全球最大的人与 Agent 共生网络。",
   "keywords": [
     "framework",
@@ -70,6 +70,7 @@
     "e2e": "cd e2e && npm run test",
     "e2e:install": "playwright install",
     "e2e:ui": "playwright test --ui",
+    "hotfix:branch": "tsx ./scripts/hotfixWorkflow/index.ts",
     "i18n": "npm run workflow:i18n && lobe-i18n && prettier -c --write \"locales/**\"",
     "i18n:unused": "tsx ./scripts/i18nWorkflow/analyzeUnusedKeys.ts",
     "i18n:unused-clean": "tsx ./scripts/i18nWorkflow/cleanUnusedKeys.ts",
@@ -130,18 +131,18 @@
       "prettier --write --no-error-on-unmatched-pattern"
     ],
     "*.{mjs,cjs}": [
-      "prettier --write",
-      "eslint --fix"
+      "eslint --fix",
+      "prettier --write"
     ],
     "*.{js,jsx}": [
-      "prettier --write",
+      "eslint --fix",
       "stylelint --fix",
-      "eslint --fix"
+      "prettier --write"
     ],
     "*.{ts,tsx}": [
-      "prettier --parser=typescript --write",
       "stylelint --fix",
-      "eslint --fix"
+      "eslint --fix",
+      "prettier --parser=typescript --write"
     ]
   },
   "overrides": {
@@ -219,7 +220,7 @@
     "@lobehub/icons": "^4.1.0",
     "@lobehub/market-sdk": "0.29.2",
     "@lobehub/tts": "^4.0.2",
-    "@lobehub/ui": "^4.35.0",
+    "@lobehub/ui": "^4.36.2",
     "@modelcontextprotocol/sdk": "^1.25.3",
     "@napi-rs/canvas": "^0.1.88",
     "@neondatabase/serverless": "^1.0.2",
@@ -402,7 +403,7 @@
     "@types/oidc-provider": "^9.5.0",
     "@types/pdfkit": "^0.17.4",
     "@types/pg": "^8.16.0",
-    "@types/react": "^19.2.9",
+    "@types/react": "19.2.13",
     "@types/react-dom": "^19.2.3",
     "@types/rtl-detect": "^1.0.3",
     "@types/semver": "^7.7.1",
@@ -468,6 +469,7 @@
   },
   "pnpm": {
     "overrides": {
+      "@types/react": "19.2.13",
       "better-auth": "1.4.6",
       "better-call": "1.1.8",
       "drizzle-orm": "0.44.7"

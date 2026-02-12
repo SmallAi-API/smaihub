@@ -1,23 +1,23 @@
-import { ElectronIPCEventHandler, ElectronIPCServer } from '@lobechat/electron-server-ipc';
+import os from 'node:os';
+import path from 'node:path';
+
+import { type ElectronIPCEventHandler, ElectronIPCServer } from '@lobechat/electron-server-ipc';
 import { app, nativeTheme, protocol } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { macOS, windows } from 'electron-is';
-import os from 'node:os';
-import { join } from 'node:path';
 
 import { name } from '@/../../package.json';
 import { buildDir } from '@/const/dir';
 import { isDev } from '@/const/env';
 import { ELECTRON_BE_PROTOCOL_SCHEME } from '@/const/protocol';
-import { IControlModule } from '@/controllers';
+import { type IControlModule } from '@/controllers';
 import AuthCtr from '@/controllers/AuthCtr';
 import {
   astSearchDetectors,
   contentSearchDetectors,
   fileSearchDetectors,
 } from '@/modules/toolDetectors';
-import AuthCtr from '@/controllers/AuthCtr';
-import { IServiceModule } from '@/services';
+import { type IServiceModule } from '@/services';
 import { createLogger } from '@/utils/logger';
 
 import { BrowserManager } from './browser/BrowserManager';
@@ -298,14 +298,6 @@ export class App {
         logger.error('Error during app activation token refresh:', error);
       });
     }
-
-    // Trigger proactive token refresh on app activation (respects 6-hour interval)
-    const authCtr = this.getController(AuthCtr);
-    if (authCtr) {
-      authCtr.onAppActivate().catch((error) => {
-        logger.error('Error during app activation token refresh:', error);
-      });
-    }
   };
 
   /**
@@ -410,7 +402,7 @@ export class App {
     logger.debug('Setting up dev branding');
     app.setName('lobehub-desktop-dev');
     if (macOS()) {
-      app.dock!.setIcon(join(buildDir, 'icon-dev.png'));
+      app.dock!.setIcon(path.join(buildDir, 'icon-dev.png'));
     }
   };
 

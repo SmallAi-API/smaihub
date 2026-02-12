@@ -526,11 +526,11 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
           (!showEndpoint ? (
             <Center width={'100%'}>
               <Button
-                onClick={() => setShowEndpoint(true)}
+                type={'text'}
                 style={{
                   color: cssVar.colorTextSecondary,
                 }}
-                type={'text'}
+                onClick={() => setShowEndpoint(true)}
               >
                 {t(loginMethodMetas.selfhost.descriptionKey)}
               </Button>

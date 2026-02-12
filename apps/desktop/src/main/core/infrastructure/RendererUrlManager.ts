@@ -1,5 +1,6 @@
+import path from 'node:path';
+
 import { pathExistsSync } from 'fs-extra';
-import { extname, join } from 'node:path';
 
 import { nextExportDir } from '@/const/dir';
 import { isDev } from '@/const/env';
@@ -74,7 +75,7 @@ export class RendererUrlManager {
 
     // If the incoming path already contains an extension (like .html or .ico),
     // treat it as a direct asset lookup.
-    const extension = extname(normalizedPathname);
+    const extension = path.extname(normalizedPathname);
     if (extension) {
       return this.resolveExportFilePath(pathname);
     }
@@ -86,10 +87,10 @@ export class RendererUrlManager {
     // Normalize by removing leading/trailing slashes so extname works as expected
     const normalizedPath = decodeURIComponent(pathname).replace(/^\/+/, '').replace(/\/$/, '');
 
-    if (!normalizedPath) return join(nextExportDir, 'index.html');
+    if (!normalizedPath) return path.join(nextExportDir, 'index.html');
 
-    const basePath = join(nextExportDir, normalizedPath);
-    const ext = extname(normalizedPath);
+    const basePath = path.join(nextExportDir, normalizedPath);
+    const ext = path.extname(normalizedPath);
 
     // If the request explicitly includes an extension (e.g. html, ico, txt),
     // treat it as a direct asset.
@@ -97,13 +98,13 @@ export class RendererUrlManager {
       return pathExistsSync(basePath) ? basePath : null;
     }
 
-    const candidates = [`${basePath}.html`, join(basePath, 'index.html'), basePath];
+    const candidates = [`${basePath}.html`, path.join(basePath, 'index.html'), basePath];
 
     for (const candidate of candidates) {
       if (pathExistsSync(candidate)) return candidate;
     }
 
-    const fallback404 = join(nextExportDir, '404.html');
+    const fallback404 = path.join(nextExportDir, '404.html');
     if (pathExistsSync(fallback404)) return fallback404;
 
     return null;

@@ -38,13 +38,13 @@ const CronJobHeader = memo<CronJobHeaderProps>(
         <Input
           className={styles.titleInput}
           placeholder={t('agentCronJobs.form.name.placeholder')}
+          value={name}
+          variant="borderless"
           style={{
             fontSize: 28,
             fontWeight: 600,
             padding: 0,
           }}
-          value={name}
-          variant="borderless"
           onChange={(e) => onNameChange(e.target.value)}
         />
 

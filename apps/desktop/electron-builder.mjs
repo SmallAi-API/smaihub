@@ -1,8 +1,9 @@
-import dotenv from 'dotenv';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import dotenv from 'dotenv';
 
 import {
   copyNativeModules,
@@ -36,9 +37,9 @@ const isStable = !isNightly && !isBeta;
 // - Beta/Nightly: 仅使用 GitHub
 const getPublishConfig = () => {
   const githubProvider = {
-    owner: 'SmallAi-API',
+    owner: 'lobehub',
     provider: 'github',
-    repo: 'smaihub',
+    repo: 'lobe-chat',
   };
 
   // Stable channel: 使用自定义服务器 (generic provider)
@@ -70,10 +71,10 @@ if (!hasAppleCertificate) {
 
 // 根据版本类型确定协议 scheme
 const getProtocolScheme = () => {
-  if (isNightly) return 'smai-nightly';
-  if (isBeta) return 'smai-beta';
+  if (isNightly) return 'lobehub-nightly';
+  if (isBeta) return 'lobehub-beta';
 
-  return 'smai.ai';
+  return 'lobehub';
 };
 
 const protocolScheme = getProtocolScheme();
@@ -90,6 +91,13 @@ const getIconFileName = () => {
  * @see https://www.electron.build/configuration
  */
 const config = {
+  /**
+   * BeforePack hook to resolve pnpm symlinks for native modules.
+   * This ensures native modules are properly included in the asar archive.
+   */
+  beforePack: async () => {
+    await copyNativeModulesToSource();
+  },
   /**
    * AfterPack hook for post-processing:
    * 1. Copy native modules to asar.unpacked (resolving pnpm symlinks)
@@ -168,27 +176,17 @@ const config = {
       console.log(`⏭️  Skipping Assets.car (not found or copy failed)`);
     }
   },
-
   appId: isNightly
-    ? 'com.smallai.smaihub-desktop-nightly'
+    ? 'com.lobehub.lobehub-desktop-nightly'
     : isBeta
-      ? 'com.smallai.smaihub-desktop-beta'
-      : 'com.smallai.smaihub-desktop',
-
+      ? 'com.lobehub.lobehub-desktop-beta'
+      : 'com.lobehub.lobehub-desktop',
   appImage: {
     artifactName: '${productName}-${version}.${ext}',
   },
 
   // Native modules must be unpacked from asar to work correctly
   asarUnpack: getAsarUnpackPatterns(),
-
-  /**
-   * BeforePack hook to resolve pnpm symlinks for native modules.
-   * This ensures native modules are properly included in the asar archive.
-   */
-  beforePack: async () => {
-    await copyNativeModulesToSource();
-  },
 
   detectUpdateChannel: true,
 
@@ -233,7 +231,7 @@ const config = {
       CFBundleIconName: 'AppIcon',
       CFBundleURLTypes: [
         {
-          CFBundleURLName: 'smai.ai Protocol',
+          CFBundleURLName: 'LobeHub Protocol',
           CFBundleURLSchemes: [protocolScheme],
         },
       ],
@@ -276,7 +274,7 @@ const config = {
   },
   protocols: [
     {
-      name: 'smai.ai Protocol',
+      name: 'LobeHub Protocol',
       schemes: [protocolScheme],
     },
   ],
@@ -290,7 +288,7 @@ const config = {
   },
 
   win: {
-    executableName: 'smai.ai',
+    executableName: 'LobeHub',
   },
 };
 

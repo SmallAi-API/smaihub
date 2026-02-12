@@ -29,7 +29,7 @@ const StatusFilter = memo<StatusFilterProps>(({ value, onChange }) => {
     { label: t('user.statusFilter.favorite'), value: 'favorite' as const },
   ];
 
-  return <Select onChange={onChange} options={options} style={{ minWidth: 120 }} value={value} />;
+  return <Select options={options} style={{ minWidth: 120 }} value={value} onChange={onChange} />;
 });
 
 export default StatusFilter;

@@ -18,14 +18,14 @@ const { findMatchingRoute } = await import('~common/routes');
 const { setupRouteInterceptors } = await import('./routeInterceptor');
 
 describe('setupRouteInterceptors', () => {
-  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
+  let _consoleLogSpy: ReturnType<typeof vi.spyOn>;
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     // Mock console methods
-    consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    _consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     // Setup happy-dom window and document

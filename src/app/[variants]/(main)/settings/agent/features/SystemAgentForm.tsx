@@ -42,12 +42,12 @@ const SystemAgentForm = memo(
         {
           children: (
             <ModelSelect
+              showAbility={false}
               onChange={async (props) => {
                 setLoading(true);
                 await updateSystemAgent(systemAgentKey, props);
                 setLoading(false);
               }}
-              showAbility={false}
               virtual={false}
               // value={value}
             />

@@ -1,4 +1,4 @@
-import { DataSyncConfig, NetworkProxySettings } from '@lobechat/electron-client-ipc';
+import { type DataSyncConfig, type NetworkProxySettings } from '@lobechat/electron-client-ipc';
 
 export interface ElectronMainStore {
   dataSyncConfig: DataSyncConfig;

@@ -1,17 +1,20 @@
-import { MainBroadcastEventKey, MainBroadcastParams } from '@lobechat/electron-client-ipc';
-import { WebContents } from 'electron';
+import {
+  type MainBroadcastEventKey,
+  type MainBroadcastParams,
+} from '@lobechat/electron-client-ipc';
+import { type WebContents } from 'electron';
 
 import { createLogger } from '@/utils/logger';
 
 import {
-  AppBrowsersIdentifiers,
-  BrowsersIdentifiers,
-  WindowTemplateIdentifiers,
   appBrowsers,
+  type AppBrowsersIdentifiers,
+  BrowsersIdentifiers,
+  type WindowTemplateIdentifiers,
   windowTemplates,
 } from '../../appBrowsers';
-import type { App } from '../App';
-import type { BrowserWindowOpts } from './Browser';
+import { type App } from '../App';
+import { type BrowserWindowOpts } from './Browser';
 import Browser from './Browser';
 
 // Create logger

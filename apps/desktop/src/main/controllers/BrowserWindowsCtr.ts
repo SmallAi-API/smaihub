@@ -1,13 +1,13 @@
-import type {
-  InterceptRouteParams,
-  OpenSettingsWindowOptions,
-  WindowMinimumSizeParams,
-  WindowSizeParams,
+import {
+  type InterceptRouteParams,
+  type OpenSettingsWindowOptions,
+  type WindowMinimumSizeParams,
+  type WindowSizeParams,
 } from '@lobechat/electron-client-ipc';
-import { findMatchingRoute } from '~common/routes';
 
-import { AppBrowsersIdentifiers, WindowTemplateIdentifiers } from '@/appBrowsers';
+import { type AppBrowsersIdentifiers, type WindowTemplateIdentifiers } from '@/appBrowsers';
 import { getIpcContext } from '@/utils/ipc';
+import { findMatchingRoute } from '~common/routes';
 
 import { ControllerModule, IpcMethod, shortcut } from './index';
 

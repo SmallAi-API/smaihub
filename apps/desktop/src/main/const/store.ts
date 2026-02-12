@@ -1,11 +1,11 @@
 /**
  * Application settings storage related constants
  */
-import { NetworkProxySettings } from '@lobechat/electron-client-ipc';
+import { type NetworkProxySettings } from '@lobechat/electron-client-ipc';
 
 import { appStorageDir } from '@/const/dir';
 import { DEFAULT_SHORTCUTS_CONFIG } from '@/shortcuts';
-import { ElectronMainStore } from '@/types/store';
+import { type ElectronMainStore } from '@/types/store';
 
 /**
  * Storage name

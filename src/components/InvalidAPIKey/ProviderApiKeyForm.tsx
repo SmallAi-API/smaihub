@@ -30,7 +30,7 @@ const ProviderApiKeyForm = memo<ProviderApiKeyFormProps>(
     const { apiKey, baseURL, setConfig } = useApiKey(provider);
     const { showOpenAIProxyUrl } = useServerConfigStore(featureFlagsSelectors);
     const providerName = useProviderName(provider);
-    const { loading } = useContext(LoadingContext);
+    const { loading } = use(LoadingContext);
     const logoUrl = '/logo.png';
 
     return (

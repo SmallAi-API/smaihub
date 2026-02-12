@@ -23,7 +23,7 @@ const ChatInvalidAPIKey = memo<ChatInvalidAPIKeyProps>(({ id, provider }) => {
 
   return (
     <BaseErrorForm
-      avatar={<ProviderIcon provider={provider} shape={'square'} size={40} />}
+      avatar={<Avatar avatar={'/logo.png'} shape={'square'} size={40} />}
       title={t(`unlock.apiKey.title`, { name: providerName, ns: 'error' })}
       action={
         <Button
@@ -36,7 +36,6 @@ const ChatInvalidAPIKey = memo<ChatInvalidAPIKeyProps>(({ id, provider }) => {
           {t('unlock.goToSettings', { ns: 'error' })}
         </Button>
       }
-      avatar={<Avatar avatar={'/logo.png'} shape={'square'} size={40} />}
       desc={
         provider === ModelProvider.Bedrock
           ? t('bedrock.unlock.description')

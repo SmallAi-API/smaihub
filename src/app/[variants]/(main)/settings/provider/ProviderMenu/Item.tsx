@@ -37,6 +37,8 @@ const ProviderItem = memo<ProviderItemProps>(({ id, name, enabled, onClick = () 
   return (
     <NavItem
       active={activeKey === id}
+      icon={() => providerIcon}
+      title={name}
       extra={
         enabled ? (
           <Center width={24}>
@@ -44,11 +46,9 @@ const ProviderItem = memo<ProviderItemProps>(({ id, name, enabled, onClick = () 
           </Center>
         ) : undefined
       }
-      icon={() => providerIcon}
       onClick={() => {
         onClick(id);
       }}
-      title={name}
     />
   );
 });

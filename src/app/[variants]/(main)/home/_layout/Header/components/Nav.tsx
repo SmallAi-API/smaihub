@@ -118,9 +118,8 @@ const Nav = memo(() => {
             href={externalUrl}
             icon={item.icon}
             key={item.key}
-            onClick={externalUrl ? () => handleExternalLink(externalUrl) : item.onClick}
             title={item.title}
-            onClick={item.onClick}
+            onClick={externalUrl ? () => handleExternalLink(externalUrl) : item.onClick}
           />
         );
         if (!item.url || isExternal) return content;

@@ -1,6 +1,6 @@
 import { type ChatModelCard } from '@lobechat/types';
 import { type IconAvatarProps, ModelIcon } from '@lobehub/icons';
-import { Avatar, Flexbox, FlexboxProps, Icon, Tag, Text, Tooltip } from '@lobehub/ui';
+import { Avatar, Flexbox, type FlexboxProps, Icon, Tag, Text, Tooltip } from '@lobehub/ui';
 import { createStaticStyles, useResponsive } from 'antd-style';
 import {
   AtomIcon,
@@ -350,7 +350,7 @@ export const ProviderItemRender = memo<ProviderItemRenderProps>(
           style={isMono ? { filter: 'grayscale(1)' } : {}}
           title={name}
         />
-        <Text color={'inherit'} ellipsis>
+        <Text ellipsis color={'inherit'}>
           {name}
         </Text>
       </Flexbox>
