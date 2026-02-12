@@ -37,9 +37,9 @@ const isStable = !isNightly && !isBeta;
 // - Beta/Nightly: 仅使用 GitHub
 const getPublishConfig = () => {
   const githubProvider = {
-    owner: 'lobehub',
+    owner: 'SmallAi-API',
     provider: 'github',
-    repo: 'lobe-chat',
+    repo: 'smaihub',
   };
 
   // Stable channel: 使用自定义服务器 (generic provider)
@@ -71,10 +71,10 @@ if (!hasAppleCertificate) {
 
 // 根据版本类型确定协议 scheme
 const getProtocolScheme = () => {
-  if (isNightly) return 'lobehub-nightly';
-  if (isBeta) return 'lobehub-beta';
+  if (isNightly) return 'smai-nightly';
+  if (isBeta) return 'smai-beta';
 
-  return 'lobehub';
+  return 'smai';
 };
 
 const protocolScheme = getProtocolScheme();
@@ -177,10 +177,10 @@ const config = {
     }
   },
   appId: isNightly
-    ? 'com.lobehub.lobehub-desktop-nightly'
+    ? 'com.smallai.smaihub-desktop-nightly'
     : isBeta
-      ? 'com.lobehub.lobehub-desktop-beta'
-      : 'com.lobehub.lobehub-desktop',
+      ? 'com.smallai.smaihub-desktop-beta'
+      : 'com.smallai.smaihub-desktop',
   appImage: {
     artifactName: '${productName}-${version}.${ext}',
   },
@@ -231,7 +231,7 @@ const config = {
       CFBundleIconName: 'AppIcon',
       CFBundleURLTypes: [
         {
-          CFBundleURLName: 'LobeHub Protocol',
+          CFBundleURLName: 'smai.ai Protocol',
           CFBundleURLSchemes: [protocolScheme],
         },
       ],
@@ -274,7 +274,7 @@ const config = {
   },
   protocols: [
     {
-      name: 'LobeHub Protocol',
+      name: 'smai.ai Protocol',
       schemes: [protocolScheme],
     },
   ],
@@ -288,7 +288,7 @@ const config = {
   },
 
   win: {
-    executableName: 'LobeHub',
+    executableName: 'smai.ai',
   },
 };
 
