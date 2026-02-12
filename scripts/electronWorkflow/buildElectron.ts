@@ -16,17 +16,17 @@ const buildElectron = () => {
     // Determine build command based on platform
     switch (platform) {
       case 'darwin': {
-        buildCommand = 'npm run package:mac --prefix=./apps/desktop';
+        buildCommand = 'npm run build:mac --prefix=./apps/desktop';
         console.log('📦 Building macOS desktop application...');
         break;
       }
       case 'win32': {
-        buildCommand = 'npm run package:win --prefix=./apps/desktop';
+        buildCommand = 'npm run build:win --prefix=./apps/desktop';
         console.log('📦 Building Windows desktop application...');
         break;
       }
       case 'linux': {
-        buildCommand = 'npm run package:linux --prefix=./apps/desktop';
+        buildCommand = 'npm run build:linux --prefix=./apps/desktop';
         console.log('📦 Building Linux desktop application...');
         break;
       }

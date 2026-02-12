@@ -154,7 +154,7 @@ jobs:
       # Windows 构建
       - name: Build artifact on Windows
         if: runner.os == 'Windows'
-        run: npm run desktop:build:all
+        run: npm run desktop:package:app
         env:
           UPDATE_CHANNEL: stable
           UPDATE_SERVER_URL: ${{ secrets.UPDATE_SERVER_URL }}
