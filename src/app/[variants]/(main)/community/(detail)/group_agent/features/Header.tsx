@@ -177,11 +177,7 @@ const Header = memo<{ mobile?: boolean }>(({ mobile: isMobile }) => {
               );
             })()}
             <Icon icon={DotIcon} />
-            <PublishedTime
-              className={styles.time}
-              date={createdAt as string}
-              template={'MMM DD, YYYY'}
-            />
+            <PublishedTime className={styles.time} date={createdAt as string} />
             <GroupAgentForkTag />
             {!!forkCount && forkCount > 0 && (
               <Tag bordered={false} color="default" icon={<Icon icon={GitBranchIcon} />}>

@@ -190,11 +190,7 @@ const FavoritePluginCard = memo<FavoritePluginCardProps>(
           >
             <Flexbox horizontal align={'center'} gap={4}>
               <Icon icon={ClockIcon} size={14} />
-              <PublishedTime
-                className={styles.secondaryDesc}
-                date={createdAt}
-                template={'MMM DD, YYYY'}
-              />
+              <PublishedTime className={styles.secondaryDesc} date={createdAt} />
             </Flexbox>
             {category && t(`category.plugin.${category}` as any)}
           </Flexbox>

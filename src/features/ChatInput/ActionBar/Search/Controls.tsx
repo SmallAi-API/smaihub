@@ -118,7 +118,7 @@ const Controls = memo(() => {
   );
 
   useEffect(() => {
-    if (isModelBuiltinSearchInternal && (searchMode ?? 'off') === 'off') {
+    if (isModelBuiltinSearchInternal && (searchMode ?? 'auto') === 'off') {
       updateAgentChatConfig({ searchMode: 'auto' });
     }
   }, [isModelBuiltinSearchInternal, searchMode, updateAgentChatConfig]);
@@ -161,7 +161,7 @@ const Controls = memo(() => {
   return (
     <Flexbox gap={4}>
       {options.map((option) => (
-        <Item {...option} key={option.value} />
+        <Item key={option.value} {...option} />
       ))}
       {showDivider && <Divider style={{ margin: 0 }} />}
       {showModelBuiltinSearch && <ModelBuiltinSearch />}

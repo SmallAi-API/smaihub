@@ -17,12 +17,13 @@ import { useDropdownMenu } from './useDropdownMenu';
 interface KnowledgeBaseItemProps {
   active?: boolean;
   className?: string;
+   description?: string | null;
   id: string;
   name: string;
   style?: CSSProperties;
 }
 
-const KnowledgeBaseItem = memo<KnowledgeBaseItemProps>(({ id, name, active, style, className }) => {
+const KnowledgeBaseItem = memo<KnowledgeBaseItemProps>(({ id, name, description, active, style, className }) => {
   const setLibraryId = useResourceManagerStore((s) => s.setLibraryId);
   const navigate = useNavigate();
 
@@ -47,7 +48,7 @@ const KnowledgeBaseItem = memo<KnowledgeBaseItemProps>(({ id, name, active, styl
       navigate(`/resource/library/${id}`);
       setLibraryId(id);
     }
-  }, [editing, navigate, id]);
+  }, [editing, navigate, id, setLibraryId]);
 
   const handleDoubleClick = useCallback(
     (e: React.MouseEvent) => {
@@ -67,7 +68,9 @@ const KnowledgeBaseItem = memo<KnowledgeBaseItemProps>(({ id, name, active, styl
   }, [isLoading]);
 
   const dropdownMenu = useDropdownMenu({
+      description,
     id,
+      name,
     toggleEditing,
   });
 

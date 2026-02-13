@@ -150,7 +150,6 @@ const ModelItem = memo<DiscoverModelItem>(
               <PublishedTime
                 className={styles.secondaryDesc}
                 date={releasedAt || dayjs().toISOString()}
-                template={'MMM DD, YYYY'}
               />
             </Flexbox>
             <Popover

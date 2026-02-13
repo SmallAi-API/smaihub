@@ -22,7 +22,7 @@ const MasonryView = memo(function MasonryView() {
   const [
     libraryId,
     category,
-    searchQuery,
+
     selectedFileIds,
     setSelectedFileIds,
     storeIsMasonryReady,
@@ -32,7 +32,7 @@ const MasonryView = memo(function MasonryView() {
   ] = useResourceManagerStore((s) => [
     s.libraryId,
     s.category,
-    s.searchQuery,
+
     s.selectedFileIds,
     s.setSelectedFileIds,
     s.isMasonryReady,
@@ -53,12 +53,12 @@ const MasonryView = memo(function MasonryView() {
       category: libraryId ? undefined : category,
       libraryId,
       parentId: null,
-      q: searchQuery ?? undefined,
+
       showFilesInKnowledgeBase: false,
       sortType,
       sorter,
     }),
-    [category, libraryId, searchQuery, sorter, sortType],
+    [category, libraryId, sorter, sortType],
   );
 
   const { isLoading, isValidating } = useFetchResources(queryParams);
@@ -70,8 +70,7 @@ const MasonryView = memo(function MasonryView() {
     return (
       currentQueryParams.libraryId !== queryParams.libraryId ||
       currentQueryParams.parentId !== queryParams.parentId ||
-      currentQueryParams.category !== queryParams.category ||
-      currentQueryParams.q !== queryParams.q
+      currentQueryParams.category !== queryParams.category
     );
   }, [currentQueryParams, queryParams]);
 

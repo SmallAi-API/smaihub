@@ -3,7 +3,7 @@ import { access, mkdir, readdir, readFile, rename, stat, writeFile } from 'node:
 import path from 'node:path';
 
 import {
-  type EditLocalFileParams,
+ type EditLocalFileParams,
   type EditLocalFileResult,
   type GlobFilesParams,
   type GlobFilesResult,
@@ -18,7 +18,11 @@ import {
   type MoveLocalFilesParams,
   type OpenLocalFileParams,
   type OpenLocalFolderParams,
+  type PickFileParams,
+  type PickFileResult,
   type RenameLocalFileResult,
+  type ShowOpenDialogParams,
+  type ShowOpenDialogResult,
   type ShowSaveDialogParams,
   type ShowSaveDialogResult,
   type WriteLocalFileParams,
@@ -50,6 +54,67 @@ export default class LocalFileCtr extends ControllerModule {
 
   // ==================== File Operation ====================
 
+   @IpcMethod()
+  async handleShowOpenDialog({
+    filters,
+    multiple,
+    title,
+  }: ShowOpenDialogParams): Promise<ShowOpenDialogResult> {
+    logger.debug('Showing open dialog:', { filters, multiple, title });
+
+    const result = await dialog.showOpenDialog({
+      filters,
+      properties: multiple ? ['openFile', 'multiSelections'] : ['openFile'],
+      title,
+    });
+
+    logger.debug('Open dialog result:', { canceled: result.canceled, filePaths: result.filePaths });
+
+    return {
+      canceled: result.canceled,
+      filePaths: result.filePaths,
+    };
+  }
+
+  @IpcMethod()
+  async handlePickFile({ filters, title }: PickFileParams): Promise<PickFileResult> {
+    logger.debug('Picking file:', { filters, title });
+
+    const result = await dialog.showOpenDialog({
+      filters,
+      properties: ['openFile'],
+      title,
+    });
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return { canceled: true };
+    }
+
+    const filePath = result.filePaths[0];
+    const data = await readFile(filePath);
+    const name = path.basename(filePath);
+    const ext = path.extname(filePath).toLowerCase().slice(1);
+
+    const MIME_MAP: Record<string, string> = {
+      avif: 'image/avif',
+      gif: 'image/gif',
+      jpeg: 'image/jpeg',
+      jpg: 'image/jpeg',
+      png: 'image/png',
+      svg: 'image/svg+xml',
+      webp: 'image/webp',
+    };
+
+    return {
+      canceled: false,
+      file: {
+        data: new Uint8Array(data),
+        mimeType: MIME_MAP[ext] || 'application/octet-stream',
+        name,
+      },
+    };
+  }
+  
   @IpcMethod()
   async handleOpenLocalFile({ path: filePath }: OpenLocalFileParams): Promise<{
     error?: string;

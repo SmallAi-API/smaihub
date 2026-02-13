@@ -88,11 +88,7 @@ const Header = memo<{ mobile?: boolean }>(({ mobile: isMobile }) => {
               {...abilities}
             />
             <Icon icon={DotIcon} />
-            <PublishedTime
-              className={styles.time}
-              date={releasedAt as string}
-              template={'MMM DD, YYYY'}
-            />
+            <PublishedTime className={styles.time} date={releasedAt as string} />
           </Flexbox>
         </Flexbox>
       </Flexbox>

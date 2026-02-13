@@ -399,6 +399,7 @@ const FileListItem = memo<FileListItemProps>(
             borderBlockEnd: `1px solid ${cssVar.colorBorderSecondary}`,
             userSelect: 'none',
           }}
+          onClick={handleItemClick}
           onDragEnd={handleDragEnd}
           onDragLeave={handleDragLeave}
           onDragOver={handleDragOver}
@@ -437,7 +438,6 @@ const FileListItem = memo<FileListItemProps>(
               paddingInline: 8,
               width: columnWidths.name,
             }}
-            onClick={handleItemClick}
           >
             <Flexbox horizontal align={'center'} className={styles.nameContainer}>
               <Flexbox

@@ -24,6 +24,7 @@
     // support mdx
     "mdx"
   ],
+  "git.allowNoVerifyCommit": true,
   "npm.packageManager": "pnpm",
   "search.exclude": {
     "**/node_modules": true,

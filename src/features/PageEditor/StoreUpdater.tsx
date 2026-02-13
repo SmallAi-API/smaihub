@@ -57,7 +57,8 @@ const StoreUpdater = memo<StoreUpdaterProps>(
     // Connect editor to page agent runtime
     useEffect(() => {
       if (editor) {
-        pageAgentRuntime.setEditor(editor);
+        // Cast needed: pnpm resolves duplicate @lobehub/editor versions (3.16.1 vs 3.15.0)
+        pageAgentRuntime.setEditor(editor as any);
       }
       return () => {
         pageAgentRuntime.setEditor(null);

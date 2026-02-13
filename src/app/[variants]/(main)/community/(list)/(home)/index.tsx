@@ -8,6 +8,7 @@ import { AssistantSorts, McpSorts } from '@/types/discover';
 
 import Title from '../../components/Title';
 import AssistantList from '../agent/features/List';
+import CreatorRewardBanner from '../features/CreatorRewardBanner';
 import McpList from '../mcp/features/List';
 import Loading from './loading';
 
@@ -32,6 +33,7 @@ const HomePage = memo(() => {
 
   return (
     <>
+      <CreatorRewardBanner />
       <Title more={t('home.more')} moreLink={'/community/agent'}>
         {t('home.featuredAssistants')}
       </Title>
