@@ -13,7 +13,7 @@ function parseYaml(yamlText: string): Record<string, string> {
   const lines = yamlText.split('\n');
 
   for (const line of lines) {
-    const match = line.match(/^(\w+):\s*(.+)$/);
+    const match = line.match(/^(\w+):\s*(\S.*)$/);
     if (match) {
       result[match[1]] = match[2].trim();
     }
