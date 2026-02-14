@@ -33,7 +33,7 @@ const isDarwin = getTargetPlatform() === 'darwin';
  */
 export const nativeModules = [
   // macOS-only native modules
-  ...(isDarwin ? ['node-mac-permissions'] : []),
+  ...(isDarwin ? ['node-mac-permissions', 'electron-liquid-glass'] : []),
   '@napi-rs/canvas',
   // Add more native modules here as needed
 ];
@@ -151,7 +151,7 @@ export async function copyNativeModulesToSource() {
   const deps = getAllDependencies();
   const sourceNodeModules = path.join(__dirname, 'node_modules');
 
-  console.log(`📦 Resolving ${deps.length} native module symlinks for packaging...`);
+  console.info(`📦 Resolving ${deps.length} native module symlinks for packaging...`);
 
   for (const dep of deps) {
     const modulePath = path.join(sourceNodeModules, dep);
@@ -162,7 +162,7 @@ export async function copyNativeModulesToSource() {
       if (stat.isSymbolicLink()) {
         // Resolve the symlink to get the real path
         const realPath = await fsPromises.realpath(modulePath);
-        console.log(`  📎 ${dep} (resolving symlink)`);
+        console.info(`  📎 ${dep} (resolving symlink)`);
 
         // Remove the symlink
         await fsPromises.rm(modulePath, { force: true, recursive: true });
@@ -175,11 +175,11 @@ export async function copyNativeModulesToSource() {
       }
     } catch (err) {
       // Module might not exist (optional dependency for different platform)
-      console.log(`  ⏭️  ${dep} (skipped: ${err.code || err.message})`);
+      console.info(`  ⏭️  ${dep} (skipped: ${err.code || err.message})`);
     }
   }
 
-  console.log(`✅ Native module symlinks resolved`);
+  console.info(`✅ Native module symlinks resolved`);
 }
 
 /**
@@ -192,7 +192,7 @@ export async function copyNativeModules(destNodeModules) {
   const deps = getAllDependencies();
   const sourceNodeModules = path.join(__dirname, 'node_modules');
 
-  console.log(`📦 Copying ${deps.length} native modules to unpacked directory...`);
+  console.info(`📦 Copying ${deps.length} native modules to unpacked directory...`);
 
   for (const dep of deps) {
     const sourcePath = path.join(sourceNodeModules, dep);
@@ -205,7 +205,7 @@ export async function copyNativeModules(destNodeModules) {
       if (stat.isSymbolicLink()) {
         // Resolve the symlink to get the real path
         const realPath = await fsPromises.realpath(sourcePath);
-        console.log(`  📎 ${dep} (symlink -> ${path.relative(sourceNodeModules, realPath)})`);
+        console.info(`  📎 ${dep} (symlink -> ${path.relative(sourceNodeModules, realPath)})`);
 
         // Create destination directory
         await fsPromises.mkdir(path.dirname(destPath), { recursive: true });
@@ -213,17 +213,17 @@ export async function copyNativeModules(destNodeModules) {
         // Copy the actual directory content (not the symlink)
         await copyDir(realPath, destPath);
       } else if (stat.isDirectory()) {
-        console.log(`  📁 ${dep}`);
+        console.info(`  📁 ${dep}`);
         await fsPromises.mkdir(path.dirname(destPath), { recursive: true });
         await copyDir(sourcePath, destPath);
       }
     } catch (err) {
       // Module might not exist (optional dependency for different platform)
-      console.log(`  ⏭️  ${dep} (skipped: ${err.code || err.message})`);
+      console.info(`  ⏭️  ${dep} (skipped: ${err.code || err.message})`);
     }
   }
 
-  console.log(`✅ Native modules copied successfully`);
+  console.info(`✅ Native modules copied successfully`);
 }
 
 /**

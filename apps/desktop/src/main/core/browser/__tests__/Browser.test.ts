@@ -100,6 +100,7 @@ vi.mock('@/const/dir', () => ({
 vi.mock('@/const/env', () => ({
   isDev: false,
   isMac: false,
+  isMacTahoe: false,
   isWindows: true,
 }));
 
