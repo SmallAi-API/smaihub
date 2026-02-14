@@ -61,6 +61,18 @@ const userMemoryExtractionTaskInputSchema = z
   })
   .optional();
 
+// NOTICE(@nekomeowww): Memory extraction time scales with topic count. We estimate
+// an average of ~5 minutes per topic to derive a dynamic timeout budget.
+const USER_MEMORY_EXTRACTION_TIMEOUT_PER_TOPIC_MS = 5 * 60 * 1000;
+
+const getUserMemoryExtractionTimeoutMs = (metadata: UserMemoryExtractionMetadata) => {
+  const totalTopics = metadata.progress.totalTopics;
+
+  if (!Number.isFinite(totalTopics) || !totalTopics || totalTopics <= 0) return null;
+
+  return totalTopics * USER_MEMORY_EXTRACTION_TIMEOUT_PER_TOPIC_MS;
+};
+
 export const userMemoryRouter = router({
   // ============ Identity CRUD ============
   createIdentity: userMemoryProcedure
@@ -140,12 +152,44 @@ export const userMemoryRouter = router({
 
       if (!task || task.userId !== ctx.userId) return null;
 
+      const metadata = initUserMemoryExtractionMetadata(
+        task.metadata as UserMemoryExtractionMetadata | undefined,
+      );
+
+      const timeoutMs = getUserMemoryExtractionTimeoutMs(metadata);
+      const taskCreatedAt = task.createdAt ? new Date(task.createdAt).getTime() : Number.NaN;
+      const isActiveTask =
+        task.status === AsyncTaskStatus.Pending || task.status === AsyncTaskStatus.Processing;
+
+      if (
+        isActiveTask &&
+        timeoutMs !== null &&
+        Number.isFinite(taskCreatedAt) &&
+        Date.now() - taskCreatedAt > timeoutMs
+      ) {
+        const timeoutMinutes = Math.ceil(timeoutMs / (60 * 1000));
+        const timeoutError = new AsyncTaskError(
+          AsyncTaskErrorType.Timeout,
+          `User memory extraction timed out after ${timeoutMinutes} minutes for ${metadata.progress.totalTopics} topics (estimated at 5 minutes per topic). Please retry.`,
+        );
+
+        await ctx.asyncTaskModel.update(task.id, {
+          error: timeoutError,
+          status: AsyncTaskStatus.Error,
+        });
+
+        return {
+          error: timeoutError,
+          id: task.id,
+          metadata,
+          status: AsyncTaskStatus.Error,
+        };
+      }
+
       return {
         error: task.error,
         id: task.id,
-        metadata: initUserMemoryExtractionMetadata(
-          task.metadata as UserMemoryExtractionMetadata | undefined,
-        ),
+        metadata,
         status: task.status as AsyncTaskStatus,
       };
     }),
