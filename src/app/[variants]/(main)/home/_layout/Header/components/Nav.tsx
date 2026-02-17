@@ -1,6 +1,6 @@
 'use client';
 
-import { Flexbox, Icon } from '@lobehub/ui';
+import { Flexbox, Icon, Tag } from '@lobehub/ui';
 import { cssVar } from 'antd-style';
 import { HomeIcon, KeyRound, SearchIcon, ShoppingBag, SquareArrowOutUpRight } from 'lucide-react';
 import { memo, useMemo } from 'react';
@@ -36,6 +36,7 @@ interface Item {
   extra?: NavItemProps['extra'];
   hidden?: boolean | undefined;
   icon: NavItemProps['icon'];
+  isNew?: boolean;
   key: string;
   onClick?: () => void;
   title: NavItemProps['title'];
@@ -72,6 +73,13 @@ const Nav = memo(() => {
         url: '/page',
       },
       {
+        icon: getRouteById('video')!.icon,
+        isNew: true,
+        key: SidebarTabKey.Video,
+        title: t('tab.video'),
+        url: '/video',
+      },
+      {
         hidden: !showAiImage,
         icon: getRouteById('image')!.icon,
         key: SidebarTabKey.Image,
@@ -105,15 +113,22 @@ const Nav = memo(() => {
     [t],
   );
 
+  const newBadge = (
+    <Tag color="blue" size="small">
+      {t('new')}
+    </Tag>
+  );
+
   return (
     <Flexbox gap={1} paddingInline={4}>
       {items.map((item) => {
+        const extra = item.isNew ? newBadge : undefined;
         const isExternal = item.external === true || item.url?.startsWith('http') === true;
         const externalUrl = isExternal ? item.url : undefined;
         const content = (
           <NavItem
             active={tab === item.key}
-            extra={item.extra}
+            extra={extra}
             hidden={item.hidden}
             href={externalUrl}
             icon={item.icon}
@@ -138,6 +153,7 @@ const Nav = memo(() => {
           >
             <NavItem
               active={tab === item.key}
+              extra={extra}
               hidden={item.hidden}
               icon={item.icon}
               title={item.title}

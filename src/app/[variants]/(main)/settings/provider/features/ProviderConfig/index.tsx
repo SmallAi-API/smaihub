@@ -1,7 +1,7 @@
 'use client';
 
 import { ENABLE_BUSINESS_FEATURES } from '@lobechat/business-const';
-import { AES_GCM_URL, FORM_STYLE, isDesktop } from '@lobechat/const';
+import { AES_GCM_URL, FORM_STYLE } from '@lobechat/const';
 import { Avatar, Form, type FormGroupItemType, type FormItemProps, Icon } from '@lobehub/ui';
 import { Flexbox, Skeleton } from '@lobehub/ui';
 import { useDebounceFn } from 'ahooks';
@@ -353,14 +353,12 @@ const ProviderConfig = memo<ProviderConfigProps>(
 
     /*
      * Conditions to show Client Fetch Switch
-     * 0. is not desktop app
      * 1. provider is not disabled browser request
      * 2. provider show browser request by default
      * 3. Provider allow to edit endpoint and the value of endpoint is not empty
      * 4. There is an apikey provided by user
      */
     const showClientFetch =
-      !isDesktop &&
       !disableBrowserRequest &&
       (defaultShowBrowserRequest ||
         (showEndpoint && isProviderEndpointNotEmpty) ||

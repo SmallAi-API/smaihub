@@ -17,6 +17,7 @@ import type {
 } from '../types';
 import { AgentRuntimeErrorType } from '../types/error';
 import type { AuthenticatedImageRuntime, CreateImagePayload } from '../types/image';
+import type { CreateVideoPayload, HandleCreateVideoWebhookPayload } from '../types/video';
 import { AgentRuntimeError } from '../utils/createError';
 import type { LobeRuntimeAI } from './BaseAI';
 
@@ -82,6 +83,14 @@ export class ModelRuntime {
     return this._runtime.createImage?.(payload);
   }
 
+  async createVideo(payload: CreateVideoPayload) {
+    return this._runtime.createVideo?.(payload);
+  }
+
+  async handleCreateVideoWebhook(payload: HandleCreateVideoWebhookPayload) {
+    return this._runtime.handleCreateVideoWebhook?.(payload);
+  }
+  
   async models() {
     return this._runtime.models?.();
   }

@@ -1,4 +1,5 @@
 import { dirname, join, resolve } from 'node:path';
+
 import { coverageConfigDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -51,13 +52,13 @@ export default defineConfig({
       '@/utils/identifier': resolve(__dirname, './src/utils/identifier'),
       '@/utils/electron': resolve(__dirname, './src/utils/electron'),
       '@/utils/markdownToTxt': resolve(__dirname, './src/utils/markdownToTxt'),
+      '@/utils/sanitizeFileName': resolve(__dirname, './src/utils/sanitizeFileName'),
       '@/utils': resolve(__dirname, './packages/utils/src'),
       '@/types': resolve(__dirname, './packages/types/src'),
       '@/const': resolve(__dirname, './packages/const/src'),
       '@': resolve(__dirname, './src'),
       '~test-utils': resolve(__dirname, './tests/utils.tsx'),
       'lru_map': resolve(__dirname, './tests/mocks/lru_map'),
-      /* eslint-enable */
     },
     coverage: {
       all: false,

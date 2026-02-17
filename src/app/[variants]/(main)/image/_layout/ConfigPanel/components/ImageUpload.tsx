@@ -26,6 +26,8 @@ export interface ImageUploadProps {
       | string // Old API: just URL
       | { dimensions?: { height: number; width: number }; url: string }, // New API: URL with dimensions
   ) => void;
+  /** Height of the empty placeholder area. Defaults to 160. */
+  placeholderHeight?: number;
   style?: React.CSSProperties;
   value?: string | null;
 }
@@ -301,11 +303,12 @@ CircularProgress.displayName = 'CircularProgress';
  * 占位视图组件
  */
 interface PlaceholderProps {
+  height?: number;
   isDragOver?: boolean;
   onClick?: () => void;
 }
 
-const Placeholder: FC<PlaceholderProps> = memo(({ isDragOver, onClick }) => {
+const Placeholder: FC<PlaceholderProps> = memo(({ isDragOver, onClick, height }) => {
   const configStyles = configPanelStyles;
   const { t } = useTranslation('components');
 
@@ -313,6 +316,7 @@ const Placeholder: FC<PlaceholderProps> = memo(({ isDragOver, onClick }) => {
     <Center
       gap={16}
       horizontal={false}
+      style={height ? { height } : undefined}
       className={cx(
         styles.placeholder,
         configStyles.dragTransition,
@@ -422,7 +426,7 @@ SuccessDisplay.displayName = 'SuccessDisplay';
 // ======== Main Component ======== //
 
 const ImageUpload: FC<ImageUploadProps> = memo(
-  ({ value, onChange, style, className, maxFileSize }) => {
+  ({ value, onChange, style, className, maxFileSize, placeholderHeight }) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const uploadWithProgress = useFileStore((s) => s.uploadWithProgress);
     const [uploadState, setUploadState] = useState<UploadState | null>(null);
@@ -636,7 +640,11 @@ const ImageUpload: FC<ImageUploadProps> = memo(
             onDelete={handleDelete}
           />
         ) : (
-          <Placeholder isDragOver={isDragOver} onClick={handleFileSelect} />
+          <Placeholder
+            height={placeholderHeight}
+            isDragOver={isDragOver}
+            onClick={handleFileSelect}
+          />
         )}
       </div>
     );

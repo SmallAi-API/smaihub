@@ -438,11 +438,6 @@
       "count": 1
     }
   },
-  "src/features/NavPanel/SideBarHeaderLayout.tsx": {
-    "@eslint-react/dom/no-flush-sync": {
-      "count": 1
-    }
-  },
   "src/features/PluginDevModal/MCPManifestForm/QuickImportSection.tsx": {
     "object-shorthand": {
       "count": 2
@@ -640,11 +635,6 @@
   "src/server/modules/S3/index.ts": {
     "object-shorthand": {
       "count": 3
-    }
-  },
-  "src/server/routers/async/image.ts": {
-    "object-shorthand": {
-      "count": 1
     }
   },
   "src/server/routers/lambda/__tests__/integration/aiAgent.createClientGroupAgentTaskThread.integration.test.ts": {

@@ -74,7 +74,7 @@ describe('generationBatchRouter', () => {
 
     const mockDelete = vi.fn().mockResolvedValue({
       deletedBatch: mockDeletedBatch,
-      thumbnailUrls: [], // 没有缩略图
+      filesToDelete: [], // 没有缩略图
     });
     const mockDeleteFiles = vi.fn();
 
@@ -121,7 +121,7 @@ describe('generationBatchRouter', () => {
 
     const mockDelete = vi.fn().mockResolvedValue({
       deletedBatch: mockDeletedBatch,
-      thumbnailUrls: mockThumbnailUrls,
+      filesToDelete: mockThumbnailUrls,
     });
     const mockDeleteFiles = vi.fn().mockResolvedValue(true);
 
@@ -168,7 +168,7 @@ describe('generationBatchRouter', () => {
 
     const mockDelete = vi.fn().mockResolvedValue({
       deletedBatch: mockDeletedBatch,
-      thumbnailUrls: mockThumbnailUrls,
+      filesToDelete: mockThumbnailUrls,
     });
 
     // Mock thumbnail deletion to fail
@@ -196,10 +196,7 @@ describe('generationBatchRouter', () => {
     expect(result).toEqual(mockDeletedBatch);
     expect(mockDelete).toHaveBeenCalledWith(mockBatchId);
     expect(mockDeleteFiles).toHaveBeenCalledWith(mockThumbnailUrls);
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Failed to delete thumbnail files from S3:',
-      expect.any(Error),
-    );
+    expect(consoleSpy).toHaveBeenCalledWith('Failed to delete files from S3:', expect.any(Error));
 
     consoleSpy.mockRestore();
   });
@@ -254,7 +251,7 @@ describe('generationBatchRouter', () => {
 
     const mockDelete = vi.fn().mockResolvedValue({
       deletedBatch: mockDeletedBatch,
-      thumbnailUrls: mockThumbnailUrls,
+      filesToDelete: mockThumbnailUrls,
     });
     const mockDeleteFiles = vi.fn().mockResolvedValue(true);
 
@@ -336,7 +333,7 @@ describe('generationBatchRouter', () => {
 
     const mockDelete = vi.fn().mockResolvedValue({
       deletedBatch: mockDeletedBatch,
-      thumbnailUrls: mockThumbnailUrls,
+      filesToDelete: mockThumbnailUrls,
     });
 
     // Mock partial failure - some thumbnails could not be deleted
@@ -366,10 +363,7 @@ describe('generationBatchRouter', () => {
     expect(result).toEqual(mockDeletedBatch);
     expect(mockDelete).toHaveBeenCalledWith(mockBatchId);
     expect(mockDeleteFiles).toHaveBeenCalledWith(mockThumbnailUrls);
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Failed to delete thumbnail files from S3:',
-      expect.any(Error),
-    );
+    expect(consoleSpy).toHaveBeenCalledWith('Failed to delete files from S3:', expect.any(Error));
 
     consoleSpy.mockRestore();
   });

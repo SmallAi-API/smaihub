@@ -31,12 +31,10 @@ describe('OllamaStream', () => {
 
         const protocolStream = OllamaStream(mockOllamaStream);
 
-        const decoder = new TextDecoder();
-        const chunks = [];
+        const chunks: string[] = [];
 
-        // @ts-ignore
         for await (const chunk of protocolStream) {
-          chunks.push(decoder.decode(chunk, { stream: true }));
+          chunks.push(chunk as string);
         }
 
         expect(chunks).toEqual(
@@ -89,12 +87,10 @@ describe('OllamaStream', () => {
           onCompletion: onCompletionMock,
         });
 
-        const decoder = new TextDecoder();
-        const chunks = [];
+        const chunks: string[] = [];
 
-        // @ts-ignore
         for await (const chunk of protocolStream) {
-          chunks.push(decoder.decode(chunk, { stream: true }));
+          chunks.push(chunk as string);
         }
 
         expect(chunks).toEqual([
@@ -134,12 +130,10 @@ describe('OllamaStream', () => {
         onCompletion: onCompletionMock,
       });
 
-      const decoder = new TextDecoder();
-      const chunks = [];
+      const chunks: string[] = [];
 
-      // @ts-ignore
       for await (const chunk of protocolStream) {
-        chunks.push(decoder.decode(chunk, { stream: true }));
+        chunks.push(chunk as string);
       }
 
       expect(chunks).toEqual([
@@ -211,12 +205,10 @@ describe('OllamaStream', () => {
         onToolsCalling: onToolCall,
       });
 
-      const decoder = new TextDecoder();
-      const chunks = [];
+      const chunks: string[] = [];
 
-      // @ts-ignore
       for await (const chunk of protocolStream) {
-        chunks.push(decoder.decode(chunk, { stream: true }));
+        chunks.push(chunk as string);
       }
 
       expect(chunks).toEqual(
@@ -281,12 +273,10 @@ describe('OllamaStream', () => {
         onToolsCalling: onToolCall,
       });
 
-      const decoder = new TextDecoder();
-      const chunks = [];
+      const chunks: string[] = [];
 
-      // @ts-ignore
       for await (const chunk of protocolStream) {
-        chunks.push(decoder.decode(chunk, { stream: true }));
+        chunks.push(chunk as string);
       }
 
       expect(chunks).toEqual(
@@ -313,12 +303,10 @@ describe('OllamaStream', () => {
 
     const protocolStream = OllamaStream(mockOllamaStream);
 
-    const decoder = new TextDecoder();
-    const chunks = [];
+    const chunks: string[] = [];
 
-    // @ts-ignore
     for await (const chunk of protocolStream) {
-      chunks.push(decoder.decode(chunk, { stream: true }));
+      chunks.push(chunk as string);
     }
 
     expect(chunks).toEqual([]);
