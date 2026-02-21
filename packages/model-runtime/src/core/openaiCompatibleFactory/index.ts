@@ -1,36 +1,36 @@
-import type { ChatModelCard } from '@lobechat/types';
+import { type ChatModelCard } from '@lobechat/types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import debug from 'debug';
-import type { AiModelType } from 'model-bank';
+import { type AiModelType } from 'model-bank';
 import { LOBE_DEFAULT_MODEL_LIST } from 'model-bank';
-import type { ClientOptions } from 'openai';
+import { type ClientOptions } from 'openai';
 import OpenAI from 'openai';
-import type { Stream } from 'openai/streaming';
+import { type Stream } from 'openai/streaming';
 
 import { responsesAPIModels } from '../../const/models';
-import type {
-  ChatCompletionErrorPayload,
-  ChatCompletionTool,
-  ChatMethodOptions,
-  ChatStreamCallbacks,
-  ChatStreamPayload,
-  Embeddings,
-  EmbeddingsOptions,
-  EmbeddingsPayload,
-  GenerateObjectOptions,
-  GenerateObjectPayload,
-  TextToSpeechOptions,
-  TextToSpeechPayload,
+import {
+  type ChatCompletionErrorPayload,
+  type ChatCompletionTool,
+  type ChatMethodOptions,
+  type ChatStreamCallbacks,
+  type ChatStreamPayload,
+  type Embeddings,
+  type EmbeddingsOptions,
+  type EmbeddingsPayload,
+  type GenerateObjectOptions,
+  type GenerateObjectPayload,
+  type TextToSpeechOptions,
+  type TextToSpeechPayload,
 } from '../../types';
-import type { ILobeAgentRuntimeErrorType } from '../../types/error';
+import { type ILobeAgentRuntimeErrorType } from '../../types/error';
 import { AgentRuntimeErrorType } from '../../types/error';
-import type { CreateImagePayload, CreateImageResponse } from '../../types/image';
-import type {
-  CreateVideoPayload,
-  CreateVideoResponse,
-  HandleCreateVideoWebhookPayload,
-  HandleCreateVideoWebhookResult,
+import { type CreateImagePayload, type CreateImageResponse } from '../../types/image';
+import {
+  type CreateVideoPayload,
+  type CreateVideoResponse,
+  type HandleCreateVideoWebhookPayload,
+  type HandleCreateVideoWebhookResult,
 } from '../../types/video';
 import { AgentRuntimeError } from '../../utils/createError';
 import { debugResponse, debugStream } from '../../utils/debugStream';
@@ -40,9 +40,9 @@ import { getModelPricing } from '../../utils/getModelPricing';
 import { handleOpenAIError } from '../../utils/handleOpenAIError';
 import { postProcessModelList } from '../../utils/postProcessModelList';
 import { StreamingResponse } from '../../utils/response';
-import type { LobeRuntimeAI } from '../BaseAI';
+import { type LobeRuntimeAI } from '../BaseAI';
 import { convertOpenAIMessages, convertOpenAIResponseInputs } from '../contextBuilders/openai';
-import type { OpenAIStreamOptions } from '../streams';
+import { type OpenAIStreamOptions } from '../streams';
 import { OpenAIResponsesStream, OpenAIStream } from '../streams';
 import { createOpenAICompatibleImage } from './createImage';
 import { transformResponseAPIToStream, transformResponseToStream } from './nonStreamToStream';

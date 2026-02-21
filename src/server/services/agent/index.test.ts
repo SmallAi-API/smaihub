@@ -5,7 +5,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AgentModel } from '@/database/models/agent';
 import { SessionModel } from '@/database/models/session';
 import { UserModel } from '@/database/models/user';
-import { initializeRedisWithPrefix, isRedisEnabled,RedisKeys } from '@/libs/redis';
+import type * as RedisModule from '@/libs/redis';
+import { initializeRedisWithPrefix, isRedisEnabled, RedisKeys } from '@/libs/redis';
 import { parseAgentConfig } from '@/server/globalConfig/parseDefaultAgent';
 
 import { AgentService } from './index';
@@ -40,7 +41,7 @@ vi.mock('@/envs/redis', () => ({
 }));
 
 vi.mock('@/libs/redis', async (importOriginal) => {
-  const original = await importOriginal<typeof import('@/libs/redis')>();
+  const original = await importOriginal<typeof RedisModule>();
   return {
     ...original,
     initializeRedisWithPrefix: vi.fn(),

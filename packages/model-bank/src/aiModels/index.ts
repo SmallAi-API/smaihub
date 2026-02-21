@@ -1,4 +1,4 @@
-import { AiFullModelCard, LobeDefaultAiModelListItem } from '../types/aiModel';
+import { type AiFullModelCard, type LobeDefaultAiModelListItem } from '../types/aiModel';
 import { default as newapi } from './newapi';
 import { default as openai } from './openai';
 import { default as smai } from './smai';
@@ -84,6 +84,7 @@ export { default as siliconcloud } from './siliconcloud';
 export { default as smai } from './smai';
 export { default as spark } from './spark';
 export { default as stepfun } from './stepfun';
+export { default as straico } from './straico';
 export { default as taichu } from './taichu';
 export { default as tencentcloud } from './tencentcloud';
 export { default as togetherai } from './togetherai';

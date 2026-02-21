@@ -54,6 +54,7 @@ import { LobeSiliconCloudAI } from './providers/siliconcloud';
 import { LobeSMAIAI } from './providers/smai';
 import { LobeSparkAI } from './providers/spark';
 import { LobeStepfunAI } from './providers/stepfun';
+import { LobeStraicoAI } from './providers/straico';
 import { LobeTaichuAI } from './providers/taichu';
 import { LobeTencentCloudAI } from './providers/tencentcloud';
 import { LobeTogetherAI } from './providers/togetherai';
@@ -128,6 +129,7 @@ export const providerRuntimeMap = {
   smai: LobeSMAIAI,
   spark: LobeSparkAI,
   stepfun: LobeStepfunAI,
+  straico: LobeStraicoAI,
   taichu: LobeTaichuAI,
   tencentcloud: LobeTencentCloudAI,
   togetherai: LobeTogetherAI,

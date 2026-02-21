@@ -3,6 +3,7 @@ import { LayersEnum, TypesEnum } from '@lobechat/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getServerDB } from '@/database/core/db-adaptor';
+import type * as UserMemoryModule from '@/database/models/userMemory';
 import { UserMemoryModel } from '@/database/models/userMemory';
 import { initModelRuntimeFromDB } from '@/server/modules/ModelRuntime';
 
@@ -23,7 +24,7 @@ vi.mock('@/server/modules/ModelRuntime', () => ({
 }));
 
 vi.mock('@/database/models/userMemory', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/database/models/userMemory')>();
+  const actual = await importOriginal<typeof UserMemoryModule>();
   const mockUserMemoryModel: any = vi.fn();
   mockUserMemoryModel.parseDateFromString = actual.UserMemoryModel.parseDateFromString;
   mockUserMemoryModel.parseAssociatedLocations = actual.UserMemoryModel.parseAssociatedLocations;
@@ -32,7 +33,7 @@ vi.mock('@/database/models/userMemory', async (importOriginal) => {
   return {
     ...actual,
     UserMemoryModel: mockUserMemoryModel,
-  } satisfies typeof import('@/database/models/userMemory');
+  } satisfies typeof UserMemoryModule;
 });
 
 const embeddingsMock = vi.fn();
@@ -96,7 +97,7 @@ describe('memoryRouter.reEmbedMemories', () => {
       { feedback: 'feedback text', id: 'activity-1', narrative: 'narrative text' },
     ];
 
-   const dbStub = makeServerDBMock({
+    const dbStub = makeServerDBMock({
       userMemories: {
         findMany: vi.fn().mockResolvedValue(userMemoriesRows),
       },
@@ -109,7 +110,7 @@ describe('memoryRouter.reEmbedMemories', () => {
       userMemoriesIdentities: {
         findMany: vi.fn().mockResolvedValue(identitiesRows),
       },
-     userMemoriesPreferences: {
+      userMemoriesPreferences: {
         findMany: vi.fn().mockResolvedValue(preferencesRows),
       },
       userMemoriesActivities: {
@@ -220,7 +221,7 @@ describe('userMemories.queryMemories', () => {
           queryMemories,
         }) as any,
     );
- vi.mocked(getServerDB).mockResolvedValue(makeServerDBMock() as any);
+    vi.mocked(getServerDB).mockResolvedValue(makeServerDBMock() as any);
 
     const caller = userMemoriesRouter.createCaller(mockCtx as any);
 
@@ -243,7 +244,7 @@ describe('userMemories.getMemoryDetail', () => {
         }) as any,
     );
 
- vi.mocked(getServerDB).mockResolvedValue(makeServerDBMock() as any);
+    vi.mocked(getServerDB).mockResolvedValue(makeServerDBMock() as any);
 
     const caller = userMemoriesRouter.createCaller(mockCtx as any);
 
@@ -268,7 +269,7 @@ describe('userMemories.getMemoryDetail', () => {
           getMemoryDetail,
         }) as any,
     );
-  vi.mocked(getServerDB).mockResolvedValue(makeServerDBMock() as any);
+    vi.mocked(getServerDB).mockResolvedValue(makeServerDBMock() as any);
 
     const caller = userMemoriesRouter.createCaller(mockCtx as any);
 
@@ -346,7 +347,7 @@ describe('userMemories.retrieveMemory', () => {
         }) as any,
     );
 
-  vi.mocked(getServerDB).mockResolvedValue(makeServerDBMock() as any);
+    vi.mocked(getServerDB).mockResolvedValue(makeServerDBMock() as any);
 
     const caller = userMemoriesRouter.createCaller(mockCtx as any);
 

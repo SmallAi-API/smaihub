@@ -80,6 +80,7 @@ export { default as SiliconCloudProviderCard } from './siliconcloud';
 export { default as SMAIProviderCard } from './smai';
 export { default as SparkProviderCard } from './spark';
 export { default as StepfunProviderCard } from './stepfun';
+export { default as StraicoProviderCard } from './straico';
 export { default as TaichuProviderCard } from './taichu';
 export { default as TencentCloudProviderCard } from './tencentcloud';
 export { default as TogetherAIProviderCard } from './togetherai';

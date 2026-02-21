@@ -86,9 +86,9 @@ export class LobeBedrockAI implements LobeRuntimeAI {
     this.id = id ?? ModelProvider.Bedrock;
     this.client = new BedrockRuntimeClient({
       credentials: {
-        accessKeyId: accessKeyId,
+        accessKeyId,
         secretAccessKey: accessKeySecret,
-        sessionToken: sessionToken,
+        sessionToken,
       },
       region: this.region,
     });
@@ -199,8 +199,8 @@ export class LobeBedrockAI implements LobeRuntimeAI {
 
     const postMessages = await buildAnthropicMessages(user_messages, { enabledContextCaching });
 
-    // Claude Opus 4.6 does not support assistant turn prefill
-    if (model.includes('opus-4-6') && postMessages.at(-1)?.role === 'assistant') {
+    // Claude 4.6 models do not support assistant turn prefill
+    if (model.includes('-4-6') && postMessages.at(-1)?.role === 'assistant') {
       postMessages.pop();
     }
 

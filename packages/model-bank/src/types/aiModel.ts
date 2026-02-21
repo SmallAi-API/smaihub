@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { ModelParamsSchema, VideoModelParamsSchema } from '../standard-parameters';
+import { type ModelParamsSchema, type VideoModelParamsSchema } from '../standard-parameters';
 
 export type ModelPriceCurrency = 'CNY' | 'USD';
 
@@ -144,7 +144,7 @@ export type PricingUnitName =
   | 'imageGeneration' // for image generation models
   | 'imageInput'
   | 'imageInput_cacheRead'
-| 'imageOutput'
+  | 'imageOutput'
 
   // Video-based pricing units
   | 'videoGeneration';
@@ -192,7 +192,7 @@ export interface Pricing {
    * Fallback approximate per-image price (USD) when detailed pricing table is unavailable
    */
   approximatePricePerImage?: number;
-   /**
+  /**
    * Fallback approximate per-video price (USD) when detailed pricing table is unavailable
    */
   approximatePricePerVideo?: number;
@@ -255,6 +255,7 @@ export type ExtendParamsType =
   | 'thinkingBudget'
   | 'thinkingLevel'
   | 'thinkingLevel2'
+  | 'thinkingLevel3'
   | 'imageAspectRatio'
   | 'imageResolution'
   | 'urlContext';
@@ -284,6 +285,7 @@ export const ExtendParamsTypeSchema = z.enum([
   'thinkingBudget',
   'thinkingLevel',
   'thinkingLevel2',
+  'thinkingLevel3',
   'imageAspectRatio',
   'imageResolution',
   'urlContext',
