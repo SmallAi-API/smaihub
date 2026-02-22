@@ -1,6 +1,6 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix  */
 import { isNotNull } from 'drizzle-orm';
-import type { AnyPgColumn } from 'drizzle-orm/pg-core';
+import { type AnyPgColumn } from 'drizzle-orm/pg-core';
 import {
   boolean,
   index,
@@ -15,8 +15,8 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 
-import type { LobeDocumentPage } from '@/types/document';
-import type { FileSource } from '@/types/files';
+import { type LobeDocumentPage } from '@/types/document';
+import { type FileSource } from '@/types/files';
 
 import { idGenerator, randomSlug } from '../utils/idGenerator';
 import { accessedAt, createdAt, timestamps } from './_helpers';

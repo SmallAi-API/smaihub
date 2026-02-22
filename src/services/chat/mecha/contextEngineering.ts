@@ -9,7 +9,7 @@ import {
   type GroupOfficialToolItem,
   type GTDConfig,
   type LobeToolManifest,
-   type MemoryContext,
+  type MemoryContext,
   type UserMemoryData,
 } from '@lobechat/context-engine';
 import { MessagesEngine } from '@lobechat/context-engine';
@@ -43,6 +43,7 @@ import {
   resolveGlobalIdentities,
   resolveTopicMemories,
 } from './memoryManager';
+import { createSkillEngine } from './skillEngineering';
 
 const log = debug('context-engine:contextEngineering');
 
@@ -65,10 +66,12 @@ interface ContextEngineeringContext {
   inputTemplate?: string;
   /** Tool manifests with systemRole and API definitions */
   manifests?: LobeToolManifest[];
-   /** Memory-related context for prompt/runtime behavior */
+  /** Memory-related context for prompt/runtime behavior */
   memoryContext?: MemoryContext;
   messages: UIChatMessage[];
   model: string;
+  /** Agent's enabled plugin/tool/skill identifiers (from agentConfig.plugins) */
+  plugins?: string[];
   provider: string;
   sessionId?: string;
   /**
@@ -99,9 +102,10 @@ export const contextEngineering = async ({
   agentId,
   groupId,
   initialContext,
+  plugins,
   stepContext,
   topicId,
-   memoryContext,
+  memoryContext,
 }: ContextEngineeringContext): Promise<OpenAIChatMessage[]> => {
   log('tools: %o', tools);
 
@@ -285,7 +289,7 @@ export const contextEngineering = async ({
 
   // Resolve user memories: topic memories and global identities are independent layers
   // Both functions now read from cache only (no network requests) to avoid blocking sendMessage
- let userMemoryData: UserMemoryData | undefined;
+  let userMemoryData: UserMemoryData | undefined;
   if (enableUserMemories) {
     const topicMemories = resolveTopicMemories();
     const globalIdentities = resolveGlobalIdentities();
@@ -336,7 +340,7 @@ export const contextEngineering = async ({
     }
   }
 
-   const userMemoryConfig =
+  const userMemoryConfig =
     enableUserMemories && userMemoryData
       ? {
           enabled: enableUserMemories,
@@ -345,7 +349,7 @@ export const contextEngineering = async ({
       : undefined;
 
   // Create MessagesEngine with injected dependencies
-  
+
   const engine = new MessagesEngine({
     // Agent configuration
     enableHistoryCount,
@@ -382,6 +386,11 @@ export const contextEngineering = async ({
     initialContext,
     stepContext,
 
+    // Skills configuration
+    skillsConfig: {
+      enabledSkills: plugins ? createSkillEngine().getEnabledSkills(plugins) : undefined,
+    },
+
     // Tools configuration
     toolsConfig: {
       manifests,
@@ -389,7 +398,7 @@ export const contextEngineering = async ({
     },
 
     // User memory configuration
-   userMemory: userMemoryConfig,
+    userMemory: userMemoryConfig,
 
     // Variable generators
     variableGenerators: {

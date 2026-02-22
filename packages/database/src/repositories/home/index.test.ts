@@ -158,6 +158,7 @@ describe('HomeRepository', () => {
         type: 'group',
       });
     });
+
     it('should return custom avatar when chat group has one set', async () => {
       const [group] = await serverDB
         .insert(chatGroups)
@@ -1002,6 +1003,7 @@ describe('HomeRepository', () => {
       expect(result[0].title).toBe('New Search Agent');
       expect(result[1].title).toBe('Old Search Agent');
     });
+
     it('should return custom avatar for chat groups with custom avatar in search', async () => {
       await serverDB.insert(chatGroups).values({
         avatar: '🎨',

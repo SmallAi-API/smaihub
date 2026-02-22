@@ -12,6 +12,7 @@ import download from './download';
 import editor from './editor';
 import electron from './electron';
 import error from './error';
+import eval_ from './eval';
 import file from './file';
 import home from './home';
 import hotkey from './hotkey';
@@ -54,6 +55,7 @@ const resources = {
   discover,
   download,
   editor,
+  eval: eval_,
   electron,
   error,
   file,

@@ -271,7 +271,9 @@ export class AiInfraRepos {
       return allModels.some((model) => model.providerId === provider.id && model.type === 'image');
     });
     const enabledVideoAiProviders = enabledAiProviders.filter((provider) => {
-      return allModels.some((model) => model.providerId === provider.id && model.type === 'video');
+      return allModels.some(
+        (model) => model.providerId === provider.id && model.type === 'video',
+      );
     });
 
     return {
@@ -451,14 +453,5 @@ export class AiInfraRepos {
       console.error(error);
       // maybe provider id not exist
     }
-  };
-
-  /**
-   * Get enabled providers sorted by user preference
-   * Used for dynamic embedding provider selection
-   * Returns all enabled providers regardless of whether they have embedding models configured
-   */
-  getEnabledEmbeddingProviders = async (): Promise<EnabledProvider[]> => {
-    return this.getUserEnabledProviderList();
   };
 }

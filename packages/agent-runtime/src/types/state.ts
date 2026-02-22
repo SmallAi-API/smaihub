@@ -1,11 +1,10 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix, typescript-sort-keys/interface */
-import type {
-  ChatToolPayload,
-  SecurityBlacklistConfig,
-  UserInterventionConfig,
+import {
+  type ChatToolPayload,
+  type SecurityBlacklistConfig,
+  type UserInterventionConfig,
 } from '@lobechat/types';
 
-import type { Cost, CostLimit, Usage } from './usage';
+import { type Cost, type CostLimit, type Usage } from './usage';
 
 /**
  * Agent's serializable state.
@@ -26,6 +25,12 @@ export interface AgentState {
   // --- Metadata ---
   createdAt: string;
   error?: any;
+  /**
+   * When true, the agent is in force-finish mode (maxSteps exceeded).
+   * Tools are allowed to complete, but the next LLM call will have tools stripped
+   * and a summary prompt injected to produce a final text response.
+   */
+  forceFinish?: boolean;
   // --- Interruption Handling ---
   /**
    * When status is 'interrupted', this stores the interruption context

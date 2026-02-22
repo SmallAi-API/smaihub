@@ -1,5 +1,5 @@
-import type { ChatTopicMetadata, DBMessageItem, TopicRankItem } from '@lobechat/types';
-import type { SQL } from 'drizzle-orm';
+import { type ChatTopicMetadata, type DBMessageItem, type TopicRankItem } from '@lobechat/types';
+import { type SQL } from 'drizzle-orm';
 import {
   and,
   count,
@@ -17,9 +17,9 @@ import {
   sql,
 } from 'drizzle-orm';
 
-import type { TopicItem } from '../schemas';
+import { type TopicItem } from '../schemas';
 import { agents, agentsToSessions, messagePlugins, messages, topics } from '../schemas';
-import type { LobeChatDatabase } from '../type';
+import { type LobeChatDatabase } from '../type';
 import { genEndDateWhere, genRangeWhere, genStartDateWhere, genWhere } from '../utils/genWhere';
 import { idGenerator } from '../utils/idGenerator';
 
@@ -455,6 +455,7 @@ export class TopicModel {
             id: params.id || this.genId(),
             sessionId: params.groupId ? null : params.sessionId,
             title: params.title,
+            trigger: params.trigger,
             userId: this.userId,
           })),
         )

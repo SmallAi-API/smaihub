@@ -1777,6 +1777,7 @@ describe('AiInfraRepos', () => {
       });
     });
   });
+
   describe('AiInfraRepos.tryMatchingProviderFrom', () => {
     const createRuntimeState = (models: EnabledAiModel[]): AiProviderRuntimeState => ({
       enabledAiModels: models,

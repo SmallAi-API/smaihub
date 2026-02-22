@@ -1,7 +1,6 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix, typescript-sort-keys/interface */
-import type { ChatToolPayload } from '@lobechat/types';
+import { type ChatToolPayload } from '@lobechat/types';
 
-import type { AgentState, ToolsCalling } from './state';
+import { type AgentState, type ToolsCalling } from './state';
 
 export interface AgentEventInit {
   type: 'init';
@@ -63,6 +62,7 @@ export type FinishReason =
   | 'user_requested' // User requested to end
   | 'user_aborted' // User abort
   | 'max_steps_exceeded' // Reached maximum steps limit
+  | 'max_steps_completed' // Completed after reaching max steps (forceFinish)
   | 'cost_limit_exceeded' // Reached cost limit
   | 'timeout' // Execution timeout
   | 'agent_decision' // Agent decided to finish

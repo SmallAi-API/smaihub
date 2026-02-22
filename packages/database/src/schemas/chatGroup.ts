@@ -10,7 +10,7 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
-import type { ChatGroupConfig } from '../types/chatGroup';
+import { type ChatGroupConfig } from '../types/chatGroup';
 import { idGenerator } from '../utils/idGenerator';
 import { timestamps } from './_helpers';
 import { agents } from './agent';

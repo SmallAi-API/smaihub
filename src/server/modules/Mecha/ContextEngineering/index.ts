@@ -12,7 +12,7 @@ const createServerVariableGenerators = (model?: string, provider?: string) => ({
   date: () => new Date().toLocaleDateString('en-US', { dateStyle: 'full' }),
   datetime: () => new Date().toISOString(),
   time: () => new Date().toLocaleTimeString('en-US', { timeStyle: 'medium' }),
-  /* eslint-disable sort-keys-fix/sort-keys-fix */
+
   // Model-related variables
   model: () => model ?? '',
   provider: () => provider ?? '',
@@ -46,6 +46,7 @@ export const serverMessagesEngine = async ({
   systemRole,
   inputTemplate,
   enableHistoryCount,
+  forceFinish,
   historyCount,
   historySummary,
   formatHistorySummary,
@@ -54,6 +55,7 @@ export const serverMessagesEngine = async ({
   capabilities,
   userMemory,
   agentBuilderContext,
+  evalContext,
   pageContentContext,
 }: ServerMessagesEngineParams): Promise<OpenAIChatMessage[]> => {
   const engine = new MessagesEngine({
@@ -69,6 +71,9 @@ export const serverMessagesEngine = async ({
 
     // File context configuration (server always includes file URLs)
     fileContext: { enabled: true, includeFileUrl: true },
+
+    // Force finish mode (inject summary prompt when maxSteps exceeded)
+    forceFinish,
 
     formatHistorySummary,
 
@@ -113,6 +118,7 @@ export const serverMessagesEngine = async ({
 
     // Extended contexts
     ...(agentBuilderContext && { agentBuilderContext }),
+    ...(evalContext && { evalContext }),
     ...(pageContentContext && { pageContentContext }),
   });
 
@@ -122,6 +128,7 @@ export const serverMessagesEngine = async ({
 
 // Re-export types
 export type {
+  EvalContext,
   ServerKnowledgeConfig,
   ServerMessagesEngineParams,
   ServerModelCapabilities,

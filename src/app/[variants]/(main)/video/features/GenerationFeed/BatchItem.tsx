@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import useRenderBusinessVideoBatchItem from '@/business/client/hooks/useRenderBusinessVideoBatchItem';
 import { useVideoStore } from '@/store/video';
 import { AsyncTaskStatus } from '@/types/asyncTask';
-import type { GenerationBatch } from '@/types/generation';
+import { type GenerationBatch } from '@/types/generation';
 import { downloadFile } from '@/utils/client/downloadFile';
 
 import VideoErrorItem from './VideoErrorItem';
@@ -134,7 +134,13 @@ export const VideoGenerationBatchItem = memo<VideoGenerationBatchItemProps>(({ b
       );
     }
 
-    return <VideoLoadingItem aspectRatio={batch.config?.aspectRatio} generation={generation} />;
+    return (
+      <VideoLoadingItem
+        aspectRatio={batch.config?.aspectRatio}
+        avgLatencyMs={batch.avgLatencyMs}
+        generation={generation}
+      />
+    );
   };
 
   const hasReferenceFrames = batch.config?.imageUrl || batch.config?.endImageUrl;

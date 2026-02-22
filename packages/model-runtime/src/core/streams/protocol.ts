@@ -1,12 +1,12 @@
-import type { ChatCitationItem, ModelPerformance, ModelUsage } from '@lobechat/types';
-import type { Pricing } from 'model-bank';
+import { type ChatCitationItem, type ModelPerformance, type ModelUsage } from '@lobechat/types';
+import { type Pricing } from 'model-bank';
 
 import { parseToolCalls } from '../../helpers';
-import type { ChatStreamCallbacks } from '../../types';
+import { type ChatStreamCallbacks } from '../../types';
 import { AgentRuntimeErrorType } from '../../types/error';
 import { safeParseJSON } from '../../utils/safeParseJSON';
 import { nanoid } from '../../utils/uuid';
-import type { ComputeChatCostOptions } from '../usageConverters/utils/computeChatCost';
+import { type ComputeChatCostOptions } from '../usageConverters/utils/computeChatCost';
 
 export type ChatPayloadForTransformStream = {
   model?: string;
@@ -266,6 +266,7 @@ export function createCallbacksTransformer(cb: ChatStreamCallbacks | undefined) 
   let speed: ModelPerformance | undefined;
   let grounding: any;
   let toolsCalling: any;
+  let streamError: any;
   // Track base64 images for accumulation
   const base64Images: Array<{ data: string; id: string }> = [];
 
@@ -275,6 +276,7 @@ export function createCallbacksTransformer(cb: ChatStreamCallbacks | undefined) 
   return new TransformStream({
     async flush(): Promise<void> {
       const data = {
+        error: streamError,
         grounding,
         speed,
         text: aggregatedText,
@@ -385,6 +387,13 @@ export function createCallbacksTransformer(cb: ChatStreamCallbacks | undefined) 
             toolsCalling = parseToolCalls(toolsCalling, data);
 
             await callbacks.onToolsCalling?.({ chunk: data, toolsCalling });
+            break;
+          }
+
+          case 'error': {
+            streamError = data;
+            await callbacks.onError?.(data);
+            break;
           }
         }
       }

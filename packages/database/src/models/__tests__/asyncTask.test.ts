@@ -5,10 +5,10 @@ import { AsyncTaskStatus, AsyncTaskType } from '@lobechat/types';
 import { eq } from 'drizzle-orm';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
+import { getTestDB } from '../../core/getTestDB';
 import { asyncTasks, users } from '../../schemas';
 import type { LobeChatDatabase } from '../../type';
 import { AsyncTaskModel } from '../asyncTask';
-import { getTestDB } from '../../core/getTestDB';
 
 const serverDB: LobeChatDatabase = await getTestDB();
 

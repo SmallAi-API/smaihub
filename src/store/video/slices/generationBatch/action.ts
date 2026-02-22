@@ -1,6 +1,6 @@
 import { isEqual } from 'es-toolkit/compat';
 import { useRef } from 'react';
-import type { SWRResponse } from 'swr';
+import { type SWRResponse } from 'swr';
 import { type StateCreator } from 'zustand';
 
 import { mutate, useClientDataSWR } from '@/libs/swr';
@@ -250,7 +250,7 @@ export const createGenerationBatchSlice: StateCreator<
     useClientDataSWR<GenerationBatch[]>(
       topicId ? [SWR_USE_FETCH_GENERATION_BATCHES, topicId] : null,
       async ([, topicId]: [string, string]) => {
-        return generationBatchService.getGenerationBatches(topicId);
+        return generationBatchService.getGenerationBatches(topicId, 'video');
       },
       {
         onSuccess: (data) => {

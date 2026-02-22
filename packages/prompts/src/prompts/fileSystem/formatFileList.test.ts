@@ -209,6 +209,7 @@ describe('formatFileList', () => {
         [F] index.ts"
     `);
   });
+
   describe('extended info', () => {
     it('should format files with size and modified time', () => {
       const files = [

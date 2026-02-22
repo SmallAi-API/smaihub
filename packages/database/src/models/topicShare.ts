@@ -106,7 +106,7 @@ export class TopicShareModel {
         agentTitle: agents.title,
         groupAvatar: chatGroups.avatar,
         groupBackgroundColor: chatGroups.backgroundColor,
-         groupCreatedAt: chatGroups.createdAt,
+        groupCreatedAt: chatGroups.createdAt,
         groupId: topics.groupId,
         groupTitle: chatGroups.title,
         groupUpdatedAt: chatGroups.updatedAt,
@@ -142,7 +142,7 @@ export class TopicShareModel {
         .select({
           avatar: agents.avatar,
           backgroundColor: agents.backgroundColor,
-           id: agents.id,
+          id: agents.id,
           title: agents.title,
         })
         .from(chatGroupsAgents)

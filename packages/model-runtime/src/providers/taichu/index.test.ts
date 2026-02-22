@@ -3,12 +3,12 @@ import { ModelProvider } from 'model-bank';
 import OpenAI from 'openai';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { LobeOpenAICompatibleRuntime } from '../../core/BaseAI';
+import { type LobeOpenAICompatibleRuntime } from '../../core/BaseAI';
 import { testProvider } from '../../providerTestUtils';
 import { LobeTaichuAI } from './index';
 
 const provider = ModelProvider.Taichu;
-const defaultBaseURL = 'https://ai-maas.wair.ac.cn/maas/v1';
+const defaultBaseURL = 'https://cloud.zidongtaichu.com/maas/v1';
 
 testProvider({
   Runtime: LobeTaichuAI,

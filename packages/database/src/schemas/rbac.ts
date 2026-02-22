@@ -11,6 +11,7 @@ export const roles = pgTable('rbac_roles', {
     .$defaultFn(() => createNanoId(16)())
     .notNull()
     .primaryKey(),
+
   name: text('name').notNull().unique(), // Role name, e.g.: admin, user, guest
   displayName: text('display_name').notNull(), // Display name
   description: text('description'), // Role description

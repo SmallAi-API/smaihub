@@ -1,4 +1,4 @@
-import type { AsyncTaskError, AsyncTaskStatus } from '../asyncTask';
+import { type AsyncTaskError, type AsyncTaskStatus } from '../asyncTask';
 
 export interface ImageGenerationTopic {
   coverUrl?: string | null;
@@ -81,6 +81,7 @@ export interface Generation {
 }
 
 export interface GenerationBatch {
+  avgLatencyMs?: number | null;
   config?: GenerationConfig;
   createdAt: Date;
   generations: Generation[];

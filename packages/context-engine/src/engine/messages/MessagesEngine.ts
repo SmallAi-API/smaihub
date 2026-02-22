@@ -1,4 +1,3 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix */
 import debug from 'debug';
 
 import type { OpenAIChatMessage } from '@/types/index';
@@ -23,6 +22,8 @@ import {
 } from '../../processors';
 import {
   AgentBuilderContextInjector,
+  EvalContextSystemInjector,
+  ForceFinishSummaryInjector,
   GroupAgentBuilderContextInjector,
   GroupContextInjector,
   GTDPlanInjector,
@@ -31,6 +32,7 @@ import {
   KnowledgeInjector,
   PageEditorContextInjector,
   PageSelectionsInjector,
+  SkillContextProvider,
   SystemRoleInjector,
   ToolSystemRoleProvider,
   UserMemoryInjector,
@@ -115,14 +117,17 @@ export class MessagesEngine {
       provider,
       systemRole,
       inputTemplate,
+      forceFinish,
       historySummary,
       formatHistorySummary,
       knowledge,
+      skillsConfig,
       toolsConfig,
       capabilities,
       variableGenerators,
       fileContext,
       agentBuilderContext,
+      evalContext,
       groupAgentBuilderContext,
       agentGroup,
       gtd,
@@ -151,6 +156,9 @@ export class MessagesEngine {
 
       // 1. System role injection (agent's system role)
       new SystemRoleInjector({ systemRole }),
+
+      // 1b. Eval context injection (appends envPrompt to system message)
+      new EvalContextSystemInjector({ enabled: !!evalContext?.envPrompt, evalContext }),
 
       // =============================================
       // Phase 2: First User Message Context Injection
@@ -196,6 +204,15 @@ export class MessagesEngine {
         enabled: isGroupAgentBuilderEnabled,
         groupContext: groupAgentBuilderContext,
       }),
+
+      // 7.5. Skill context injection (conditionally added)
+      ...(skillsConfig?.enabledSkills && skillsConfig.enabledSkills.length > 0
+        ? [
+            new SkillContextProvider({
+              enabledSkills: skillsConfig.enabledSkills,
+            }),
+          ]
+        : []),
 
       // 8. Tool system role injection (conditionally added)
       ...(toolsConfig?.manifests && toolsConfig.manifests.length > 0
@@ -323,7 +340,10 @@ export class MessagesEngine {
       // 24. Tool message reordering
       new ToolMessageReorder(),
 
-      // 25. Message cleanup (final step, keep only necessary fields)
+      // 25. Force finish summary injection (when maxSteps exceeded, inject summary prompt)
+      new ForceFinishSummaryInjector({ enabled: !!forceFinish }),
+
+      // 26. Message cleanup (final step, keep only necessary fields)
       new MessageCleanupProcessor(),
     ];
   }

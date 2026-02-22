@@ -4,44 +4,44 @@ prompts:
   - file://promptfoo/supervisor/productive/prompt.ts
 
 providers:
-  - id: smai:chat:gpt-5
+  - id: openai:chat:gpt-5
     config:
       tools: file://./tools.json
       tool_choice: required
 
-  - id: smai:chat:claude-sonnet-4-5-20250929
+  - id: openai:chat:claude-sonnet-4-5-20250929
     config:
       tools: file://./tools.json
       tool_choice:
         type: any
 
-  - id: smai:chat:claude-haiku-4-5-20251001
+  - id: openai:chat:claude-haiku-4-5-20251001
     config:
       tools: file://./tools.json
       tool_choice:
         type: any
 
-  - id: smai:chat:gemini-2.5-pro
+  - id: openai:chat:gemini-2.5-pro
     config:
       tools: file://./tools.json
       tool_choice: required
 
-  - id: smai:chat:deepseek-chat
+  - id: openai:chat:deepseek-chat
     config:
       tools: file://./tools.json
       tool_choice: required
 
-  - id: smai:chat:gpt-5-mini
+  - id: openai:chat:gpt-5-mini
     config:
       tools: file://./tools.json
       tool_choice: required
 
-  - id: smai:chat:o3
+  - id: openai:chat:o3
     config:
       tools: file://./tools.json
       tool_choice: required
 
-  - id: smai:chat:gpt-4.1-mini
+  - id: openai:chat:gpt-4.1-mini
     config:
       tools: file://./tools.json
       tool_choice: required

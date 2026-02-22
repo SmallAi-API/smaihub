@@ -1,9 +1,9 @@
 import createDebug from 'debug';
-import type { RuntimeImageGenParamsValue } from 'model-bank';
+import { type RuntimeImageGenParamsValue } from 'model-bank';
 import OpenAI from 'openai';
 
-import type { CreateImageOptions } from '../../core/openaiCompatibleFactory';
-import type { CreateImagePayload, CreateImageResponse } from '../../types/image';
+import { type CreateImageOptions } from '../../core/openaiCompatibleFactory';
+import { type CreateImagePayload, type CreateImageResponse } from '../../types/image';
 
 const log = createDebug('lobe-image:volcengine');
 
@@ -38,6 +38,16 @@ export async function createVolcengineImage(
       value,
     ]),
   );
+
+  // Convert height and weight/width to size parameter
+  const imgHeight = userInput.height;
+  const imgWidth = userInput.width;
+
+  if (imgHeight !== undefined && imgWidth !== undefined) {
+    userInput.size = `${imgWidth}x${imgHeight}`;
+    delete userInput.height;
+    delete userInput.width;
+  }
 
   // Volcengine supports direct URL or base64, no need to convert to File objects
   // Check if there is image input

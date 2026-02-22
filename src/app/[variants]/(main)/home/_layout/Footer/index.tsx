@@ -6,12 +6,15 @@ import { Flexbox } from '@lobehub/ui';
 import { AppWindow, Book, CircleHelp, FlaskConical, KeyRound, ShoppingBag } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 import HighlightNotification from '@/components/HighlightNotification';
 import LabsModal from '@/components/LabsModal';
 import ThemeButton from '@/features/User/UserPanel/ThemeButton';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors/systemStatus';
+import { useUserStore } from '@/store/user';
+import { userGeneralSettingsSelectors } from '@/store/user/slices/settings/selectors';
 
 const PRODUCT_HUNT_NOTIFICATION = {
   actionHref: '/download',
@@ -27,7 +30,7 @@ const Footer = memo(() => {
 
   const [isLabsModalOpen, setIsLabsModalOpen] = useState(false);
   const [isProductHuntCardOpen, setIsProductHuntCardOpen] = useState(false);
-
+  const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
   const [isNotificationRead, updateSystemStatus] = useGlobalStore((s) => [
     systemStatusSelectors.isNotificationRead(PRODUCT_HUNT_NOTIFICATION.slug)(s),
     s.updateSystemStatus,
@@ -155,6 +158,11 @@ const Footer = memo(() => {
             <ActionIcon aria-label={t('userPanel.help')} icon={CircleHelp} size={16} />
           </DropdownMenu>
         </Flexbox>
+        {isDevMode && (
+          <Link to="/eval">
+            <ActionIcon icon={FlaskConical} size={16} title="Evaluation Lab" />
+          </Link>
+        )}
         <ThemeButton placement={'topCenter'} size={16} />
       </Flexbox>
       <LabsModal open={isLabsModalOpen} onClose={handleCloseLabsModal} />

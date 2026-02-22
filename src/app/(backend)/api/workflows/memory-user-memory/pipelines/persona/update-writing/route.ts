@@ -18,7 +18,6 @@ export const { POST } = serve(async (context) => {
   const db = await getServerDB();
 
   const userIds = Array.from(new Set(payload.userIds || [])).filter(Boolean);
-
   if (userIds.length === 0) {
     throw new Error('No user IDs provided for persona update.');
   }
