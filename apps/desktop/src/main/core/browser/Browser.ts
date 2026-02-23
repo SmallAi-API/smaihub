@@ -150,7 +150,7 @@ export default class Browser {
       width: resolvedState.width,
       x: resolvedState.x,
       y: resolvedState.y,
-       // Platform visual config is the SOLE source of vibrancy / transparency / titleBarOverlay.
+      // Platform visual config is the SOLE source of vibrancy / transparency / titleBarOverlay.
       ...this.themeManager.getPlatformConfig(),
     });
   }
@@ -158,7 +158,7 @@ export default class Browser {
   private setupWindow(browserWindow: BrowserWindow): void {
     logger.debug(`[${this.identifier}] BrowserWindow instance created.`);
 
-    // Setup theme management (includes liquid glass lifecycle on macOS Tahoe)
+    // Setup theme management
     this.themeManager.attach(browserWindow);
 
     // Setup network interceptors
