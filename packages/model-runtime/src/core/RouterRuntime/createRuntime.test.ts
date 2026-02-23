@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { LobeRuntimeAI } from '../BaseAI';
+import { type LobeRuntimeAI } from '../BaseAI';
 import { createRouterRuntime } from './createRuntime';
 
 describe('createRouterRuntime', () => {
@@ -654,6 +654,111 @@ describe('createRouterRuntime', () => {
       const result = await runtime.createImage(payload);
       expect(result).toEqual({ imageUrl: 'https://example.com/image.png' });
       expect(mockCreateImage).toHaveBeenCalledWith(payload);
+    });
+  });
+
+  describe('handleCreateVideoWebhook method', () => {
+    it('should route webhook to matched runtime by model', async () => {
+      const mockHandleAnthropicWebhook = vi.fn().mockResolvedValue({ status: 'pending' });
+      const mockHandleVolcengineWebhook = vi.fn().mockResolvedValue({
+        inferenceId: 'task-123',
+        status: 'success',
+        videoUrl: 'https://example.com/video.mp4',
+      });
+
+      class AnthropicRuntime implements LobeRuntimeAI {
+        handleCreateVideoWebhook = mockHandleAnthropicWebhook;
+      }
+
+      class VolcengineRuntime implements LobeRuntimeAI {
+        handleCreateVideoWebhook = mockHandleVolcengineWebhook;
+      }
+
+      const Runtime = createRouterRuntime({
+        id: 'test-runtime',
+        routers: [
+          {
+            apiType: 'anthropic',
+            options: {},
+            runtime: AnthropicRuntime as any,
+            models: ['claude-3'],
+          },
+          {
+            apiType: 'volcengine',
+            options: {},
+            runtime: VolcengineRuntime as any,
+            models: ['doubao-seedance-1-5-pro-251215'],
+          },
+        ],
+      });
+
+      const runtime = new Runtime();
+      const payload = {
+        body: {
+          id: 'task-123',
+          model: 'doubao-seedance-1-5-pro-251215',
+          status: 'running',
+        },
+      };
+
+      const result = await runtime.handleCreateVideoWebhook(payload);
+
+      expect(result).toEqual({
+        inferenceId: 'task-123',
+        status: 'success',
+        videoUrl: 'https://example.com/video.mp4',
+      });
+      expect(mockHandleVolcengineWebhook).toHaveBeenCalledWith(payload);
+      expect(mockHandleAnthropicWebhook).not.toHaveBeenCalled();
+    });
+
+    it('should fallback to first runtime when webhook model is missing', async () => {
+      const mockHandleFirstWebhook = vi.fn().mockResolvedValue({ status: 'pending' });
+      const mockHandleSecondWebhook = vi.fn().mockResolvedValue({
+        inferenceId: 'task-123',
+        status: 'success',
+        videoUrl: 'https://example.com/video.mp4',
+      });
+
+      class FirstRuntime implements LobeRuntimeAI {
+        handleCreateVideoWebhook = mockHandleFirstWebhook;
+      }
+
+      class SecondRuntime implements LobeRuntimeAI {
+        handleCreateVideoWebhook = mockHandleSecondWebhook;
+      }
+
+      const Runtime = createRouterRuntime({
+        id: 'test-runtime',
+        routers: [
+          {
+            apiType: 'anthropic',
+            options: {},
+            runtime: FirstRuntime as any,
+            models: ['claude-3'],
+          },
+          {
+            apiType: 'volcengine',
+            options: {},
+            runtime: SecondRuntime as any,
+            models: ['doubao-seedance-1-5-pro-251215'],
+          },
+        ],
+      });
+
+      const runtime = new Runtime();
+      const payload = {
+        body: {
+          id: 'task-123',
+          status: 'running',
+        },
+      };
+
+      const result = await runtime.handleCreateVideoWebhook(payload);
+
+      expect(result).toEqual({ status: 'pending' });
+      expect(mockHandleFirstWebhook).toHaveBeenCalledWith(payload);
+      expect(mockHandleSecondWebhook).not.toHaveBeenCalled();
     });
   });
 

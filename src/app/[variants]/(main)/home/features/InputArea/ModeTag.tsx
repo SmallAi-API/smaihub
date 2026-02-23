@@ -24,7 +24,7 @@ const modeConfig = {
   group: { icon: GroupBotSquareIcon, titleKey: 'starter.createGroup' },
   image: { icon: ImageIcon, titleKey: 'starter.image' },
   research: { icon: FilePenIcon, titleKey: 'starter.deepResearch' },
-    video: { icon: VideoIcon, titleKey: 'starter.seedance' },
+  video: { icon: VideoIcon, titleKey: 'starter.text2video' },
   write: { icon: PenLineIcon, titleKey: 'starter.write' },
 } as const;
 

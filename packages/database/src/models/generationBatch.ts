@@ -1,22 +1,22 @@
-import type {
-  Generation,
-  GenerationBatch,
-  GenerationConfig,
-  ImageGenerationAsset,
-  VideoGenerationAsset,
+import {
+  type Generation,
+  type GenerationBatch,
+  type GenerationConfig,
+  type ImageGenerationAsset,
+  type VideoGenerationAsset,
 } from '@lobechat/types';
 import debug from 'debug';
 import { and, eq } from 'drizzle-orm';
 
 import { FileService } from '@/server/services/file';
 
-import type {
-  GenerationBatchItem,
-  GenerationBatchWithGenerations,
-  NewGenerationBatch,
+import {
+  type GenerationBatchItem,
+  type GenerationBatchWithGenerations,
+  type NewGenerationBatch,
 } from '../schemas/generation';
 import { generationBatches } from '../schemas/generation';
-import type { LobeChatDatabase } from '../type';
+import { type LobeChatDatabase } from '../type';
 import { GenerationModel } from './generation';
 
 const log = debug('lobe-image:generation-batch-model');

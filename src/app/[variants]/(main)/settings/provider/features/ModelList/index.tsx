@@ -10,6 +10,7 @@ import {
   ImageIcon,
   MessageSquareTextIcon,
   MicIcon,
+  VideoIcon,
 } from 'lucide-react';
 import { memo, Suspense, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -54,6 +55,7 @@ const Content = memo<ContentProps>(({ id }) => {
       image: 0,
       stt: 0,
       tts: 0,
+      video: 0,
     };
 
     allModels.forEach((model) => {
@@ -91,6 +93,12 @@ const Content = memo<ContentProps>(({ id }) => {
         label: formatTabLabel(t('providerModels.tabs.image'), modelCounts.image),
       },
       {
+        count: modelCounts.video,
+        icon: <Icon icon={VideoIcon} size={16} />,
+        key: 'video',
+        label: formatTabLabel(t('providerModels.tabs.video'), modelCounts.video),
+      },
+      {
         count: modelCounts.embedding,
         icon: <Icon icon={BoltIcon} size={16} />,
         key: 'embedding',
@@ -112,7 +120,16 @@ const Content = memo<ContentProps>(({ id }) => {
 
     // Only show tabs that have models (count > 0), but always show 'all' tab
     return allTabs.filter((tab) => tab.key === 'all' || tab.count > 0);
-  }, [modelCounts]);
+  }, [
+    modelCounts.all,
+    modelCounts.chat,
+    modelCounts.embedding,
+    modelCounts.image,
+    modelCounts.stt,
+    modelCounts.tts,
+    modelCounts.video,
+    t,
+  ]);
 
   // Ensure active tab is available, fallback to 'all' if current tab is hidden
   const availableTabKeys = tabs.map((tab) => tab.key);

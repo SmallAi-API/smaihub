@@ -375,6 +375,7 @@ export default {
   'providerModels.tabs.image': 'Image',
   'providerModels.tabs.stt': 'ASR',
   'providerModels.tabs.tts': 'TTS',
+  'providerModels.tabs.video': 'Video',
   'smai.apiKey.desc': 'API key provided by the SMAI platform',
   'smai.apiKey.placeholder': 'SMAI API Key',
   'smai.apiKey.title': 'API Key',

@@ -1,12 +1,16 @@
-import type {
-  AiProviderDetailItem,
-  AiProviderListItem,
-  AiProviderRuntimeState,
-  EnabledProvider,
-  ProviderConfig,
+import {
+  type AiProviderDetailItem,
+  type AiProviderListItem,
+  type AiProviderRuntimeState,
+  type EnabledProvider,
+  type ProviderConfig,
 } from '@lobechat/types';
 import { isEmpty } from 'es-toolkit/compat';
-import type { AIChatModelCard, AiProviderModelListItem, EnabledAiModel } from 'model-bank';
+import {
+  type AIChatModelCard,
+  type AiProviderModelListItem,
+  type EnabledAiModel,
+} from 'model-bank';
 import { AiModelSourceEnum } from 'model-bank';
 import * as modelBank from 'model-bank';
 import { DEFAULT_MODEL_PROVIDER_LIST } from 'model-bank/modelProviders';
@@ -16,7 +20,7 @@ import { merge, mergeArrayById } from '@/utils/merge';
 
 import { AiModelModel } from '../../models/aiModel';
 import { AiProviderModel } from '../../models/aiProvider';
-import type { LobeChatDatabase } from '../../type';
+import { type LobeChatDatabase } from '../../type';
 
 type DecryptUserKeyVaults = (encryptKeyVaultsStr: string | null) => Promise<any>;
 
@@ -271,9 +275,7 @@ export class AiInfraRepos {
       return allModels.some((model) => model.providerId === provider.id && model.type === 'image');
     });
     const enabledVideoAiProviders = enabledAiProviders.filter((provider) => {
-      return allModels.some(
-        (model) => model.providerId === provider.id && model.type === 'video',
-      );
+      return allModels.some((model) => model.providerId === provider.id && model.type === 'video');
     });
 
     return {
@@ -453,5 +455,13 @@ export class AiInfraRepos {
       console.error(error);
       // maybe provider id not exist
     }
+  };
+
+  /**
+   * Get enabled providers sorted by user preference.
+   * Used for dynamic embedding provider selection.
+   */
+  getEnabledEmbeddingProviders = async (): Promise<EnabledProvider[]> => {
+    return this.getUserEnabledProviderList();
   };
 }

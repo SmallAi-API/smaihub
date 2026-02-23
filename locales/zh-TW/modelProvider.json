@@ -311,6 +311,7 @@
   "providerModels.tabs.image": "圖片",
   "providerModels.tabs.stt": "ASR",
   "providerModels.tabs.tts": "TTS",
+  "providerModels.tabs.video": "影片",
   "smai.apiKey.desc": "由SMAI平台提供的API金鑰",
   "smai.apiKey.placeholder": "SMAI API金鑰",
   "smai.apiKey.title": "API金鑰",

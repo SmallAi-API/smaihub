@@ -7,13 +7,12 @@ import {
 } from 'model-bank';
 import { seedance15ProParams } from 'model-bank/lobehub';
 
-export const DEFAULT_AI_VIDEO_PROVIDER = ModelProvider.LobeHub;
+export const DEFAULT_AI_VIDEO_PROVIDER = ModelProvider.SMAI;
 export const DEFAULT_AI_VIDEO_MODEL = 'seedance-1-5-pro-251215';
 
 export interface VideoGenerationConfigState {
   parameters: RuntimeVideoGenParams;
   parametersSchema: VideoModelParamsSchema;
-
   provider: string;
   model: string;
 

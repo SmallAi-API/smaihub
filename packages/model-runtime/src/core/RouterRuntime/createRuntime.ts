@@ -1,43 +1,42 @@
 /**
  * @see https://github.com/lobehub/lobe-chat/discussions/6563
  */
-import type { GoogleGenAIOptions } from '@google/genai';
-import type { ChatModelCard } from '@lobechat/types';
+import { type GoogleGenAIOptions } from '@google/genai';
+import { type ChatModelCard } from '@lobechat/types';
 import debug from 'debug';
-import OpenAI, { ClientOptions } from 'openai';
-import { Stream } from 'openai/streaming';
+import type OpenAI from 'openai';
+import { type ClientOptions } from 'openai';
+import { type Stream } from 'openai/streaming';
 
 import { LobeOpenAI } from '../../providers/openai';
 import { LobeVertexAI } from '../../providers/vertexai';
 import {
-  CreateImagePayload,
-  CreateImageResponse,
-  CreateVideoPayload,
-  CreateVideoResponse,
-  GenerateObjectOptions,
-  GenerateObjectPayload,
-  HandleCreateVideoWebhookPayload,
-  HandleCreateVideoWebhookResult,
-  ILobeAgentRuntimeErrorType,
-} from '../../types';
-import {
   type ChatCompletionErrorPayload,
-  ChatMethodOptions,
-  ChatStreamCallbacks,
-  ChatStreamPayload,
-  EmbeddingsOptions,
-  EmbeddingsPayload,
-  TextToSpeechPayload,
+  type ChatMethodOptions,
+  type ChatStreamCallbacks,
+  type ChatStreamPayload,
+  type CreateImagePayload,
+  type CreateImageResponse,
+  type CreateVideoPayload,
+  type CreateVideoResponse,
+  type EmbeddingsOptions,
+  type EmbeddingsPayload,
+  type GenerateObjectOptions,
+  type GenerateObjectPayload,
+  type HandleCreateVideoWebhookPayload,
+  type HandleCreateVideoWebhookResult,
+  type ILobeAgentRuntimeErrorType,
+  type TextToSpeechPayload,
 } from '../../types';
 import { postProcessModelList } from '../../utils/postProcessModelList';
 import { safeParseJSON } from '../../utils/safeParseJSON';
-import { LobeRuntimeAI } from '../BaseAI';
+import { type LobeRuntimeAI } from '../BaseAI';
 import {
-  CreateImageOptions,
-  CreateVideoOptions,
-  CustomClientOptions,
+  type CreateImageOptions,
+  type CreateVideoOptions,
+  type CustomClientOptions,
 } from '../openaiCompatibleFactory';
-import type { ApiType, RuntimeClass } from './apiTypes';
+import { type ApiType, type RuntimeClass } from './apiTypes';
 
 const log = debug('lobe-model-runtime:router-runtime');
 
@@ -465,9 +464,12 @@ export const createRouterRuntime = ({
 
     async handleCreateVideoWebhook(payload: HandleCreateVideoWebhookPayload) {
       const model = (payload.body as any)?.model;
-      const resolvedRouters = await this.resolveRouters(model);
-      const routerOptions = this.normalizeRouterOptions(resolvedRouters[0]);
-      const { runtime } = await this.createRuntimeFromOption(resolvedRouters[0], routerOptions[0]);
+      const matchedRouter =
+        typeof model === 'string'
+          ? await this.resolveMatchedRouter(model)
+          : (await this.resolveRouters())[0];
+      const routerOptions = this.normalizeRouterOptions(matchedRouter);
+      const { runtime } = await this.createRuntimeFromOption(matchedRouter, routerOptions[0]);
       return runtime.handleCreateVideoWebhook!(payload);
     }
 

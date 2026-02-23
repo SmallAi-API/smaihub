@@ -1,4 +1,4 @@
-import type { ModelParamsSchema } from 'model-bank';
+import { type ModelParamsSchema } from 'model-bank';
 
 // Common parameters for Imagen models
 export const imagenBaseParameters: ModelParamsSchema = {

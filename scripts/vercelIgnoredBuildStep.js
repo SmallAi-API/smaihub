@@ -1,11 +1,16 @@
-const { execSync } = require('node:child_process');
+import { execSync } from 'node:child_process';
 
 // 获取当前分支名
 const branchName = process.env.VERCEL_GIT_COMMIT_REF || '';
 
 function shouldProceedBuild() {
   // 如果是 lighthouse 分支或以 testgru 开头的分支，取消构建
-  if (branchName === 'lighthouse' || branchName.startsWith('gru/')) {
+  if (
+    branchName === 'lighthouse' ||
+    ['gru', 'automatic', 'reproduction'].some((item) =>
+      branchName.startsWith(`${item.toLowerCase()}/`),
+    )
+  ) {
     return false;
   }
 

@@ -12,7 +12,7 @@ import {
 import { Switch } from 'antd';
 import { Dices } from 'lucide-react';
 import { MAX_VIDEO_SEED } from 'model-bank';
-import type { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 

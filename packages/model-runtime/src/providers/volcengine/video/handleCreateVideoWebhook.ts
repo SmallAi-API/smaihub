@@ -1,8 +1,8 @@
 import createDebug from 'debug';
 
 import {
-  HandleCreateVideoWebhookPayload,
-  HandleCreateVideoWebhookResult,
+  type HandleCreateVideoWebhookPayload,
+  type HandleCreateVideoWebhookResult,
 } from '../../../types/video';
 
 const log = createDebug('lobe-video:volcengine:webhook');

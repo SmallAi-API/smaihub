@@ -2,13 +2,15 @@ import { type ChatModelCard } from '@lobechat/types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import debug from 'debug';
-import { type AiModelType } from 'model-bank';
+import { type AiModelType, ModelProvider } from 'model-bank';
 import { LOBE_DEFAULT_MODEL_LIST } from 'model-bank';
 import { type ClientOptions } from 'openai';
 import OpenAI from 'openai';
 import { type Stream } from 'openai/streaming';
 
 import { responsesAPIModels } from '../../const/models';
+import { createVolcengineVideo } from '../../providers/volcengine/video/createVideo';
+import { handleVolcengineVideoWebhook } from '../../providers/volcengine/video/handleCreateVideoWebhook';
 import {
   type ChatCompletionErrorPayload,
   type ChatCompletionTool,
@@ -38,6 +40,7 @@ import { desensitizeUrl } from '../../utils/desensitizeUrl';
 import { getModelPropertyWithFallback } from '../../utils/getFallbackModelProperty';
 import { getModelPricing } from '../../utils/getModelPricing';
 import { handleOpenAIError } from '../../utils/handleOpenAIError';
+import { detectModelProvider } from '../../utils/modelParse';
 import { postProcessModelList } from '../../utils/postProcessModelList';
 import { StreamingResponse } from '../../utils/response';
 import { type LobeRuntimeAI } from '../BaseAI';
@@ -61,6 +64,152 @@ export const CHAT_MODELS_BLOCK_LIST = [
   'whisper',
   'dall-e',
 ];
+
+interface SmaiVideoWebhookBody {
+  content?: {
+    video_url?: string;
+  };
+  data?: {
+    message?: string;
+    result_url?: string;
+    status?: string;
+    task_id?: string;
+  };
+  error?: {
+    message?: string;
+  };
+  generate_audio?: boolean;
+  id?: string;
+  metadata?: {
+    url?: string;
+  };
+  model?: string;
+  status?: string;
+  task_id?: string;
+  usage?: {
+    completion_tokens?: number;
+    total_tokens?: number;
+  };
+}
+
+const PENDING_VIDEO_STATUSES = ['in_progress', 'pending', 'processing', 'queued', 'running'];
+const SUCCESS_VIDEO_STATUSES = ['completed', 'succeeded', 'success'];
+
+const resolveSmaiVideoBaseURL = (baseURL: string) => {
+  const normalizedBaseURL = baseURL.replace(/\/$/, '');
+  return /\/v1$/.test(normalizedBaseURL) ? normalizedBaseURL : `${normalizedBaseURL}/v1`;
+};
+
+const createSmaiVideoViaRelay = async (
+  payload: CreateVideoPayload,
+  options: CreateVideoOptions,
+): Promise<CreateVideoResponse> => {
+  const {
+    prompt,
+    imageUrl,
+    endImageUrl,
+    aspectRatio,
+    duration,
+    generateAudio,
+    seed,
+    resolution,
+    cameraFixed,
+  } = payload.params;
+
+  const images = [imageUrl, endImageUrl].filter((url): url is string => Boolean(url));
+  const metadata: Record<string, unknown> = { watermark: false };
+
+  if (aspectRatio !== undefined) metadata.ratio = aspectRatio;
+  if (duration !== undefined) metadata.duration = duration;
+  if (generateAudio !== undefined) metadata.generate_audio = generateAudio;
+  if (seed !== undefined && seed !== null) metadata.seed = seed;
+  if (resolution !== undefined) metadata.resolution = resolution;
+  if (cameraFixed !== undefined) metadata.camera_fixed = cameraFixed;
+  if (payload.callbackUrl) metadata.callback_url = payload.callbackUrl;
+
+  const body: Record<string, unknown> = {
+    metadata,
+    model: payload.model,
+    prompt,
+  };
+
+  if (images.length > 0) {
+    body.images = images;
+  }
+
+  const response = await fetch(
+    `${resolveSmaiVideoBaseURL(options.baseURL || '')}/video/generations`,
+    {
+      body: JSON.stringify(body),
+      headers: {
+        'Authorization': `Bearer ${options.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+    },
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`SMAI video API error: ${response.status} ${errorText}`);
+  }
+
+  const data = await response.json();
+  const taskId = data?.task_id || data?.id || data?.data?.task_id || data?.data?.id;
+
+  if (!taskId) {
+    throw new Error('Invalid response: missing task id');
+  }
+
+  return { inferenceId: taskId };
+};
+
+const handleSmaiVideoWebhook = async (
+  payload: HandleCreateVideoWebhookPayload,
+): Promise<HandleCreateVideoWebhookResult> => {
+  const body = payload.body as SmaiVideoWebhookBody;
+
+  const status = (body.status || body.data?.status || '').toLowerCase();
+  if (PENDING_VIDEO_STATUSES.includes(status)) {
+    return { status: 'pending' };
+  }
+
+  const inferenceId = body.task_id || body.id || body.data?.task_id;
+  if (!inferenceId) {
+    throw new Error('Missing task id in webhook body');
+  }
+
+  if (SUCCESS_VIDEO_STATUSES.includes(status)) {
+    const videoUrl = body.content?.video_url || body.metadata?.url || body.data?.result_url;
+    if (!videoUrl) {
+      throw new Error('Missing video_url in succeeded webhook body');
+    }
+
+    return {
+      generateAudio: body.generate_audio,
+      inferenceId,
+      model: body.model,
+      status: 'success',
+      usage:
+        typeof body.usage?.completion_tokens === 'number'
+          ? {
+              completionTokens: body.usage.completion_tokens,
+              totalTokens: body.usage.total_tokens ?? body.usage.completion_tokens,
+            }
+          : undefined,
+      videoUrl,
+    };
+  }
+
+  return {
+    error:
+      body.error?.message ||
+      body.data?.message ||
+      (status === 'expired' ? 'Video generation task expired' : 'Unknown error'),
+    inferenceId,
+    status: 'error',
+  };
+};
 
 type ConstructorOptions<T extends Record<string, any> = any> = ClientOptions & T;
 export type CreateImageOptions = Omit<ClientOptions, 'apiKey'> & {
@@ -539,25 +688,48 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
     }
 
     async createVideo(payload: CreateVideoPayload) {
-      if (!customCreateVideo) {
-        throw new Error('createVideo is not supported by this provider');
-      }
-      return customCreateVideo(payload, {
+      const videoOptions = {
         ...this._options,
         apiKey: this._options.apiKey!,
         provider,
-      });
+      };
+
+      if (customCreateVideo) {
+        return customCreateVideo(payload, videoOptions);
+      }
+
+      if (this.id === ModelProvider.SMAI) {
+        return createSmaiVideoViaRelay(payload, videoOptions);
+      }
+
+      if (detectModelProvider(payload.model) === 'volcengine') {
+        return createVolcengineVideo(payload, videoOptions);
+      }
+
+      throw new Error('createVideo is not supported by this provider');
     }
 
     async handleCreateVideoWebhook(payload: HandleCreateVideoWebhookPayload) {
-      if (!customHandleCreateVideoWebhook) {
-        throw new Error('handleCreateVideoWebhook is not supported by this provider');
-      }
-      return customHandleCreateVideoWebhook(payload, {
+      const videoOptions = {
         ...this._options,
         apiKey: this._options.apiKey!,
         provider,
-      });
+      };
+
+      if (customHandleCreateVideoWebhook) {
+        return customHandleCreateVideoWebhook(payload, videoOptions);
+      }
+
+      if (this.id === ModelProvider.SMAI) {
+        return handleSmaiVideoWebhook(payload);
+      }
+
+      const model = (payload.body as { model?: unknown })?.model;
+      if (typeof model === 'string' && detectModelProvider(model) === 'volcengine') {
+        return handleVolcengineVideoWebhook(payload);
+      }
+
+      throw new Error('handleCreateVideoWebhook is not supported by this provider');
     }
 
     async models() {

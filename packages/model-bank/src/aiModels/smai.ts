@@ -1,11 +1,17 @@
-import { ModelParamsSchema } from '../standard-parameters';
+import { type ModelParamsSchema } from '../standard-parameters';
 import {
-  AIChatModelCard,
-  AIEmbeddingModelCard,
-  AIImageModelCard,
-  AIRealtimeModelCard,
-  AISTTModelCard,
-  AITTSModelCard,
+  PRESET_VIDEO_ASPECT_RATIOS,
+  PRESET_VIDEO_RESOLUTIONS,
+  type VideoModelParamsSchema,
+} from '../standard-parameters/video';
+import {
+  type AIChatModelCard,
+  type AIEmbeddingModelCard,
+  type AIImageModelCard,
+  type AIRealtimeModelCard,
+  type AISTTModelCard,
+  type AITTSModelCard,
+  type AIVideoModelCard,
 } from '../types/aiModel';
 
 // smai Router Provider - 聚合多个 AI 服务
@@ -18,6 +24,25 @@ export const gptImage1ParamsSchema: ModelParamsSchema = {
     enum: ['auto', '1024x1024', '1536x1024', '1024x1536'],
   },
 };
+
+export const seedance15ProParams: VideoModelParamsSchema = {
+  aspectRatio: {
+    default: 'adaptive',
+    enum: ['adaptive', ...PRESET_VIDEO_ASPECT_RATIOS],
+  },
+  cameraFixed: { default: false },
+  duration: { default: 5, max: 12, min: 4 },
+  endImageUrl: { default: null, maxFileSize: 30 * 1024 * 1024, requiresImageUrl: true },
+  generateAudio: { default: true },
+  imageUrl: { default: null, maxFileSize: 30 * 1024 * 1024 },
+  prompt: { default: '' },
+  resolution: {
+    default: '720p',
+    enum: PRESET_VIDEO_RESOLUTIONS,
+  },
+  seed: { default: null },
+};
+
 const NANO_BANANA_ASPECT_RATIOS = [
   '1:1', // 1024x1024 / 2048x2048 / 4096x4096
   '2:3', // 848x1264 / 1696x2528 / 3392x5056
@@ -55,6 +80,34 @@ export const qwenImageParamsSchema: ModelParamsSchema = {
   steps: { default: 30, max: 50, min: 2, step: 1 },
   width: { default: 1328, max: 1536, min: 512, step: 1 },
 };
+
+export const smaiVideoModels: AIVideoModelCard[] = [
+  {
+    description:
+      'Seedance 1.5 pro 是豆包大模型团队推出的新一代专业级音画同生视频模型。它在继承前代多镜头叙事与高清生成能力的基础上，原生支持音视频一体输出，致力于提供画面、人声、音乐、音效的全链路同步创作体验。同时，模型内置首尾帧功能，创作者只需设定视频的起始与结束画面，即可精准锁定视频的风格、构图与角色，并由此驱动模型生成帧间流畅自然的动态影像。音画同生，结合首尾帧控制，Seedance 1.5 pro显著提升了专业视频创作的效率、可控性与艺术表现力',
+    displayName: 'Seedance 1.5 Pro',
+    enabled: true,
+    id: 'doubao-seedance-1-5-pro-251215',
+    organization: 'ByteDance',
+    parameters: seedance15ProParams,
+    pricing: {
+      approximatePricePerVideo: 0.25,
+      units: [
+        {
+          lookup: {
+            pricingParams: ['generateAudio'],
+            prices: { false: 1.2, true: 2.4 },
+          },
+          name: 'videoGeneration',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    releasedAt: '2026-2-23',
+    type: 'video',
+  },
+];
 
 const smaiChatModels: AIChatModelCard[] = [
   {
@@ -684,6 +737,33 @@ const smaiChatModels: AIChatModelCard[] = [
       vision: true,
     },
     contextWindowTokens: 200_000,
+    description: 'Claude Sonnet 4.6 is Anthropic’s best combination of speed and intelligence.',
+    displayName: 'Claude Sonnet 4.6',
+    enabled: true,
+    id: 'claude-sonnet-4-6',
+    maxOutput: 64_000,
+    releasedAt: '2026-02-23',
+    settings: {
+      extendParams: [
+        'disableContextCaching',
+        'enableAdaptiveThinking',
+        'enableReasoning',
+        'reasoningBudgetToken',
+        'effort',
+      ],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 200_000,
     description:
       'Claude Opus 4.5 是 Anthropic 的旗舰模型，结合了卓越的智能与可扩展性能，适合需要最高质量回应和推理能力的复杂任务。',
     displayName: 'Claude Opus 4.5',
@@ -787,13 +867,36 @@ const smaiChatModels: AIChatModelCard[] = [
       reasoning: true,
       search: true,
       structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_048_576 + 65_536,
+    description:
+      'Gemini 3.1 Pro Preview provides better thinking, improved token efficiency, and a reliable experience optimized for software engineering behavior.',
+    displayName: 'Gemini 3.1 Pro Preview',
+    enabled: true,
+    id: 'gemini-3.1-pro-preview',
+    maxOutput: 65_536,
+    releasedAt: '2026-02-23',
+    settings: {
+      extendParams: ['thinkingLevel3', 'urlContext'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
       vision: true,
     },
     contextWindowTokens: 1_048_576 + 65_536,
     description:
       'Gemini 3 Pro 是 全球最佳的多模态理解模型，也是 Google 迄今为止最强大的智能体和氛围编程模型，提供更丰富的视觉效果和更深层次的交互性，所有这些都建立在最先进的推理能力基础之上。',
     displayName: 'Gemini 3.0 Pro Preview',
-    enabled: true,
     id: 'gemini-3-pro-preview',
     maxOutput: 65_536,
     releasedAt: '2025-11-19',
@@ -1247,6 +1350,28 @@ const smaiChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 262_144,
+    description:
+      'Kimi K2.5 is Kimi\'s most versatile model to date, featuring a native multimodal architecture that supports both vision and text inputs, "thinking" and "non-thinking" modes, and both conversational and agent tasks.',
+    displayName: 'Kimi K2.5',
+    enabled: true,
+    id: 'kimi-k2.5',
+    maxOutput: 32_768,
+    releasedAt: '2026-02-23',
+    settings: {
+      extendParams: ['enableReasoning'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
     },
     contextWindowTokens: 131_072,
     description:
@@ -1475,6 +1600,7 @@ export const allModels = [
   ...smaiSTTModels,
   ...smaiImageModels,
   ...smaiRealtimeModels,
+  ...smaiVideoModels,
 ];
 
 export default allModels;

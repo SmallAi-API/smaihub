@@ -3,7 +3,7 @@ import { type ButtonProps } from '@lobehub/ui';
 import { Button, Center, Tooltip } from '@lobehub/ui';
 import { GroupBotSquareIcon } from '@lobehub/ui/icons';
 import { createStaticStyles, cssVar, cx } from 'antd-style';
-import { BotIcon, PenLineIcon } from 'lucide-react';
+import { BotIcon, MicroscopeIcon, PenLineIcon, VideoIcon } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -33,7 +33,7 @@ type StarterTitleKey =
   | 'starter.createAgent'
   | 'starter.createGroup'
   | 'starter.write'
-  | 'starter.seedance'
+  | 'starter.text2video'
   | 'starter.deepResearch';
 
 interface StarterItem {
@@ -74,18 +74,18 @@ const StarterList = memo(() => {
         key: 'write',
         titleKey: 'starter.write',
       },
-      // {
-      //   hot: true,
-      //   icon: VideoIcon,
-      //   key: 'video',
-      //   titleKey: 'starter.seedance',
-      // },
-      // {
-      //   disabled: true,
-      //   icon: MicroscopeIcon,
-      //   key: 'research',
-      //   titleKey: 'starter.deepResearch',
-      // },
+      {
+        hot: true,
+        icon: VideoIcon,
+        key: 'video',
+        titleKey: 'starter.text2video',
+      },
+      {
+        disabled: true,
+        icon: MicroscopeIcon,
+        key: 'research',
+        titleKey: 'starter.deepResearch',
+      },
     ],
     [],
   );
@@ -104,7 +104,7 @@ const StarterList = memo(() => {
         setInputActiveMode(key);
       }
     },
-    [inputActiveMode, setInputActiveMode],
+    [inputActiveMode, navigate, setInputActiveMode],
   );
 
   return (
@@ -125,7 +125,6 @@ const StarterList = memo(() => {
             onClick={() => handleClick(item.key)}
           >
             {t(item.titleKey)}
-            {item.hot && ' 🔥'}
           </Button>
         );
 

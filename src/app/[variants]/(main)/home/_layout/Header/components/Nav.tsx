@@ -2,7 +2,7 @@
 
 import { Flexbox, Icon, Tag } from '@lobehub/ui';
 import { cssVar } from 'antd-style';
-import { HomeIcon, KeyRound, SearchIcon, ShoppingBag, SquareArrowOutUpRight } from 'lucide-react';
+import { HomeIcon, KeyRound, SearchIcon, SquareArrowOutUpRight } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
@@ -92,14 +92,6 @@ const Nav = memo(() => {
         key: SidebarTabKey.Community,
         title: t('tab.community'),
         url: '/community',
-      },
-      {
-        external: true,
-        extra: externalIndicator,
-        icon: ShoppingBag,
-        key: 'shop',
-        title: t('tab.shop'),
-        url: 'https://shop.smallai.asia',
       },
       {
         external: true,

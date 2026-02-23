@@ -1,12 +1,12 @@
 // @vitest-environment node
 import { ModelProvider } from 'model-bank';
 import OpenAI from 'openai';
-import type { Stream } from 'openai/streaming';
-import type { Mock } from 'vitest';
+import { type Stream } from 'openai/streaming';
+import { type Mock } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { LobeOpenAICompatibleRuntime } from '../../core/BaseAI';
-import type { ChatStreamCallbacks, ChatStreamPayload } from '../../types/chat';
+import { type LobeOpenAICompatibleRuntime } from '../../core/BaseAI';
+import { type ChatStreamCallbacks, type ChatStreamPayload } from '../../types/chat';
 import { AgentRuntimeErrorType } from '../../types/error';
 import * as debugStreamModule from '../../utils/debugStream';
 import * as openaiHelpers from '../contextBuilders/openai';
@@ -351,7 +351,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           'data: {"inputTextTokens":5,"outputTextTokens":5,"totalInputTokens":5,"totalOutputTokens":5,"totalTokens":10}\n\n',
           'id: output_speed\n',
           'event: speed\n',
-          expect.stringMatching(/^data: {.*"tps":.*,"ttft":.*}\n\n$/), // tps ttft should be calculated with elapsed time
+          expect.stringMatching(/^data: \{.*"tps":.*,"ttft":.*\}\n\n$/), // tps ttft should be calculated with elapsed time
           'id: a\n',
           'event: stop\n',
           'data: "stop"\n\n',
@@ -427,7 +427,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           'data: {"inputTextTokens":5,"outputTextTokens":5,"totalInputTokens":5,"totalOutputTokens":5,"totalTokens":10,"cost":0.000005}\n\n',
           'id: output_speed\n',
           'event: speed\n',
-          expect.stringMatching(/^data: {.*"tps":.*,"ttft":.*}\n\n$/), // tps ttft should be calculated with elapsed time
+          expect.stringMatching(/^data: \{.*"tps":.*,"ttft":.*\}\n\n$/), // tps ttft should be calculated with elapsed time
           'id: a\n',
           'event: stop\n',
           'data: "stop"\n\n',
@@ -2665,6 +2665,167 @@ describe('LobeOpenAICompatibleFactory', () => {
 
         expect(result).toEqual([{ arguments: { data: 'test' }, name: 'data_extractor' }]);
       });
+    });
+  });
+
+  describe('video fallback', () => {
+    it('should fallback to Volcengine video implementation for doubao models', async () => {
+      const RuntimeClass = createOpenAICompatibleRuntime({
+        baseURL: 'https://api.smai.ai/api/v3',
+        provider: 'test-provider',
+      });
+      const runtime = new RuntimeClass({ apiKey: 'test-key' });
+
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        json: async () => ({ id: 'task-abc-123' }),
+        ok: true,
+      } as Response);
+
+      const result = await runtime.createVideo({
+        model: 'doubao-seedance-1-5-pro-251215',
+        params: { prompt: 'A cat is running on the beach' },
+      });
+
+      expect(result).toEqual({ inferenceId: 'task-abc-123' });
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      expect(fetchSpy).toHaveBeenCalledWith(
+        'https://api.smai.ai/api/v3/contents/generations/tasks',
+        expect.any(Object),
+      );
+
+      const [, requestInit] = fetchSpy.mock.calls[0] as [string, RequestInit];
+      const requestBody = JSON.parse(requestInit.body as string);
+      expect(requestBody.model).toBe('doubao-seedance-1-5-pro-251215');
+      expect(requestBody.content).toEqual([
+        { text: 'A cat is running on the beach', type: 'text' },
+      ]);
+
+      fetchSpy.mockRestore();
+    });
+
+    it('should fallback to Volcengine webhook parser for doubao models', async () => {
+      const RuntimeClass = createOpenAICompatibleRuntime({
+        baseURL: 'https://api.smai.ai/api/v3',
+        provider: 'test-provider',
+      });
+      const runtime = new RuntimeClass({ apiKey: 'test-key' });
+
+      const result = await runtime.handleCreateVideoWebhook({
+        body: {
+          content: { video_url: 'https://example.com/video.mp4' },
+          id: 'task-123',
+          model: 'doubao-seedance-1-5-pro-251215',
+          status: 'succeeded',
+        },
+      });
+
+      expect(result).toEqual({
+        generateAudio: undefined,
+        inferenceId: 'task-123',
+        model: 'doubao-seedance-1-5-pro-251215',
+        status: 'success',
+        usage: undefined,
+        videoUrl: 'https://example.com/video.mp4',
+      });
+    });
+
+    it('should route smai video models to /v1/video/generations', async () => {
+      const RuntimeClass = createOpenAICompatibleRuntime({
+        baseURL: 'https://api.smai.ai/v1',
+        provider: 'test-provider',
+      });
+      const runtime = new RuntimeClass({ apiKey: 'test-key', id: ModelProvider.SMAI });
+
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        json: async () => ({ task_id: 'task-smai-1' }),
+        ok: true,
+      } as Response);
+
+      const result = await runtime.createVideo({
+        model: 'my-custom-video-model',
+        params: {
+          aspectRatio: '16:9',
+          duration: 5,
+          imageUrl: 'https://example.com/first.png',
+          prompt: 'A fox runs across a snowy field',
+          seed: 123,
+        },
+      });
+
+      expect(result).toEqual({ inferenceId: 'task-smai-1' });
+      expect(fetchSpy).toHaveBeenCalledWith(
+        'https://api.smai.ai/v1/video/generations',
+        expect.any(Object),
+      );
+
+      const [, requestInit] = fetchSpy.mock.calls[0] as [string, RequestInit];
+      const requestBody = JSON.parse(requestInit.body as string);
+
+      expect(requestBody).toMatchObject({
+        images: ['https://example.com/first.png'],
+        metadata: {
+          duration: 5,
+          ratio: '16:9',
+          seed: 123,
+          watermark: false,
+        },
+        model: 'my-custom-video-model',
+        prompt: 'A fox runs across a snowy field',
+      });
+
+      fetchSpy.mockRestore();
+    });
+
+    it('should parse smai webhook payload for custom video models', async () => {
+      const RuntimeClass = createOpenAICompatibleRuntime({
+        baseURL: 'https://api.smai.ai/v1',
+        provider: 'test-provider',
+      });
+      const runtime = new RuntimeClass({ apiKey: 'test-key', id: ModelProvider.SMAI });
+
+      const result = await runtime.handleCreateVideoWebhook({
+        body: {
+          metadata: { url: 'https://example.com/video-smai.mp4' },
+          model: 'my-custom-video-model',
+          status: 'completed',
+          task_id: 'task-smai-2',
+        },
+      });
+
+      expect(result).toEqual({
+        generateAudio: undefined,
+        inferenceId: 'task-smai-2',
+        model: 'my-custom-video-model',
+        status: 'success',
+        usage: undefined,
+        videoUrl: 'https://example.com/video-smai.mp4',
+      });
+    });
+
+    it('should keep unsupported error for non-volcengine models', async () => {
+      const RuntimeClass = createOpenAICompatibleRuntime({
+        baseURL: 'https://api.smai.ai/api/v3',
+        provider: 'test-provider',
+      });
+      const runtime = new RuntimeClass({ apiKey: 'test-key' });
+
+      await expect(
+        runtime.createVideo({
+          model: 'gpt-4o',
+          params: { prompt: 'A cat is running on the beach' },
+        }),
+      ).rejects.toThrow('createVideo is not supported by this provider');
+
+      await expect(
+        runtime.handleCreateVideoWebhook({
+          body: {
+            content: { video_url: 'https://example.com/video.mp4' },
+            id: 'task-123',
+            model: 'gpt-4o',
+            status: 'succeeded',
+          },
+        }),
+      ).rejects.toThrow('handleCreateVideoWebhook is not supported by this provider');
     });
   });
 

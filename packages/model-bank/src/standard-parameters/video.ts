@@ -1,4 +1,4 @@
-import type { Simplify } from 'type-fest';
+import { type Simplify } from 'type-fest';
 import { z } from 'zod';
 
 export const MAX_VIDEO_SEED = 2 ** 32 - 1;

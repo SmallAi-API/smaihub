@@ -3,7 +3,7 @@
 import { useAnalytics } from '@lobehub/analytics/react';
 import { ActionIcon, DropdownMenu, Icon, type MenuProps } from '@lobehub/ui';
 import { Flexbox } from '@lobehub/ui';
-import { AppWindow, Book, CircleHelp, FlaskConical, KeyRound, ShoppingBag } from 'lucide-react';
+import { AppWindow, Book, CircleHelp, FlaskConical, KeyRound } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -99,15 +99,6 @@ const Footer = memo(() => {
 
   const helpMenuItems: MenuProps['items'] = useMemo(
     () => [
-      {
-        icon: <Icon icon={ShoppingBag} />,
-        key: 'shop',
-        label: (
-          <a href="https://shop.smallai.asia" rel="noopener noreferrer" target="_blank">
-            {t('tab.shop')}
-          </a>
-        ),
-      },
       {
         icon: <Icon icon={KeyRound} />,
         key: 'apiKey',

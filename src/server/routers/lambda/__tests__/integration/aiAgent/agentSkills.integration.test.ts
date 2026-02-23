@@ -4,8 +4,8 @@ import { agentSkills } from '@lobechat/database/schemas';
 import { getTestDB } from '@lobechat/database/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { agentSkillsRouter } from '../../agentSkills';
-import { cleanupTestUser, createTestContext, createTestUser } from './setup';
+import { agentSkillsRouter } from '../../../agentSkills';
+import { cleanupTestUser, createTestContext, createTestUser } from '../setup';
 
 // Mock getServerDB to return our test database instance
 let testDB: LobeChatDatabase;
