@@ -167,6 +167,64 @@ jobs:
           TEMP: C:\temp
           TMP: C:\temp
 
+      - name: Verify package integrity (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          function Assert-File([string]$path) {
+            if (-not (Test-Path -Path $path -PathType Leaf)) {
+              throw "Missing required file: $path"
+            }
+          }
+
+          function Assert-Dir([string]$path) {
+            if (-not (Test-Path -Path $path -PathType Container)) {
+              throw "Missing required directory: $path"
+            }
+          }
+
+          function Assert-MinSize([string]$path, [Int64]$minBytes) {
+            $size = (Get-Item -LiteralPath $path).Length
+            if ($size -lt $minBytes) {
+              throw "File too small: $path (actual=$size, required>=$minBytes)"
+            }
+          }
+
+          # 1) Validate renderer export output exists
+          $rendererRoot = 'apps/desktop/dist/next'
+          Assert-Dir $rendererRoot
+          Assert-File "$rendererRoot/index.html"
+          Assert-Dir "$rendererRoot/_next/static"
+
+          $rendererFileCount = (Get-ChildItem -Path $rendererRoot -Recurse -File | Measure-Object).Count
+          if ($rendererFileCount -lt 20) {
+            throw "Renderer export looks incomplete: file count=$rendererFileCount"
+          }
+
+          # 2) Validate packaged app output exists
+          $releaseRoot = 'apps/desktop/release'
+          $asarPath = "$releaseRoot/win-unpacked/resources/app.asar"
+          Assert-File $asarPath
+          Assert-MinSize $asarPath 1048576
+
+          # 3) Validate update manifest and installer output
+          Assert-File "$releaseRoot/latest.yml"
+          $installer = Get-ChildItem -Path $releaseRoot -File -Filter '*.exe' | Sort-Object Length -Descending | Select-Object -First 1
+          if (-not $installer) {
+            throw "Missing Windows installer (*.exe) in $releaseRoot"
+          }
+
+          if ($installer.Length -lt 10485760) {
+            throw "Installer looks too small: $($installer.FullName) (size=$($installer.Length))"
+          }
+
+          Write-Host "Renderer files: $rendererFileCount"
+          Write-Host "app.asar size: $((Get-Item -LiteralPath $asarPath).Length)"
+          Write-Host "Installer: $($installer.Name) ($($installer.Length) bytes)"
+          Write-Host 'Package integrity verification passed.'
+
       - name: Upload artifacts
         uses: ./.github/actions/desktop-upload-artifacts
         with:
