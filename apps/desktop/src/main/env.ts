@@ -85,11 +85,11 @@ export const getDesktopEnv = memoize(() =>
 
       // updater
       // process.env.xxx will replace in build stage
-      UPDATE_CHANNEL: z.string().optional().default(process.env.UPDATE_CHANNEL),
+      UPDATE_CHANNEL: z.string().optional(),
 
       // Custom update server URL (for stable channel)
       // e.g., https://releases.lobehub.com/stable or https://your-bucket.s3.amazonaws.com/releases
-      UPDATE_SERVER_URL: z.string().optional().default(process.env.UPDATE_SERVER_URL),
+      UPDATE_SERVER_URL: z.string().optional(),
 
       // Vercel JWT for bypassing deployment protection (dev only)
       VERCEL_JWT: z.string().optional(),

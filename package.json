@@ -54,7 +54,7 @@
     "desktop:main:build": "npm run build --prefix=./apps/desktop",
     "desktop:package:app": "npm run desktop:build:renderer:all && npm run desktop:package:app:platform",
     "desktop:package:app:platform": "tsx scripts/electronWorkflow/buildElectron.ts",
-    "desktop:package:local": "npm run desktop:build:renderer:all && npm run package:local --prefix=./apps/desktop",
+    "desktop:package:local": "npm run desktop:build:renderer:all && npm run build-local --prefix=./apps/desktop",
     "desktop:package:local:reuse": "npm run package:local:reuse --prefix=./apps/desktop",
     "dev": "next dev -p 3010",
     "dev:bun": "bun --bun next dev -p 3010",

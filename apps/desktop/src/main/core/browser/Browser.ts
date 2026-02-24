@@ -201,6 +201,7 @@ export default class Browser {
     this.setupFocusListener(browserWindow);
     this.setupWillPreventUnloadListener(browserWindow);
     this.setupContextMenu(browserWindow);
+    this.setupRendererDiagnostics(browserWindow);
   }
 
   /**
@@ -286,6 +287,48 @@ export default class Browser {
         x,
         y,
       });
+    });
+  }
+
+  /**
+   * Capture renderer diagnostics in main-process logs so production crashes can be diagnosed
+   * from %APPDATA%/smai.ai/logs/main.log without requiring DevTools.
+   */
+  private setupRendererDiagnostics(browserWindow: BrowserWindow): void {
+    logger.debug(`[${this.identifier}] Setting up renderer diagnostics listeners.`);
+
+    browserWindow.webContents.on(
+      'did-fail-load',
+      (_event, errorCode, errorDescription, validatedURL, isMainFrame) => {
+        if (!isMainFrame) return;
+
+        logger.error(
+          `[${this.identifier}] did-fail-load: code=${errorCode}, reason="${errorDescription}", url=${validatedURL}`,
+        );
+      },
+    );
+
+    browserWindow.webContents.on('render-process-gone', (_event, details) => {
+      logger.error(
+        `[${this.identifier}] render-process-gone: reason=${details.reason}, exitCode=${details.exitCode}`,
+      );
+    });
+
+    browserWindow.webContents.on('console-message', (_event, level, message, line, sourceId) => {
+      if (level < 2) return;
+
+      const severity = level >= 3 ? 'error' : 'warn';
+      logger.warn(
+        `[${this.identifier}] renderer console ${severity}: ${message} (${sourceId}:${line})`,
+      );
+    });
+
+    browserWindow.on('unresponsive', () => {
+      logger.warn(`[${this.identifier}] renderer became unresponsive.`);
+    });
+
+    browserWindow.on('responsive', () => {
+      logger.info(`[${this.identifier}] renderer recovered responsiveness.`);
     });
   }
 

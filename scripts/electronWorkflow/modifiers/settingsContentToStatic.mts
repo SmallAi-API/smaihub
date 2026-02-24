@@ -47,6 +47,10 @@ const generateStaticComponentMap = (imports: DynamicImportInfo[]): string => {
   return `const componentMap: Record<string, React.ComponentType<{ mobile?: boolean }>> = {\n${entries.join('\n')}\n}`;
 };
 
+// Business tabs that should be excluded from the desktop static build
+// when ENABLE_BUSINESS_FEATURES is not active in this fork.
+const BUSINESS_TABS = new Set(['Plans', 'Funds', 'Usage', 'Billing', 'Referral']);
+
 export const convertSettingsContentToStatic = async (TEMP_DIR: string) => {
   const filePath = path.join(
     TEMP_DIR,
@@ -64,14 +68,20 @@ export const convertSettingsContentToStatic = async (TEMP_DIR: string) => {
     filePath,
     name: 'convertSettingsContentToStatic',
     transformer: (code) => {
-      const imports = extractDynamicImportsFromMap(code);
+      const allImports = extractDynamicImportsFromMap(code);
 
       invariant(
-        imports.length > 0,
+        allImports.length > 0,
         '[convertSettingsContentToStatic] No dynamic imports found in SettingsContent.tsx',
       );
 
-      console.log(`    Found ${imports.length} dynamic imports in componentMap`);
+      // Filter out business tabs — they rely on electron IPC services and should
+      // not be statically imported when business features are disabled.
+      const imports = allImports.filter((imp) => !BUSINESS_TABS.has(imp.key));
+
+      console.log(
+        `    Found ${allImports.length} dynamic imports, converting ${imports.length} (excluded ${allImports.length - imports.length} business tabs)`,
+      );
 
       const staticImports = generateStaticImports(imports);
       const staticComponentMap = generateStaticComponentMap(imports);

@@ -575,6 +575,58 @@ describe('Browser', () => {
     });
   });
 
+  describe('renderer diagnostics listeners', () => {
+    it('should register renderer diagnostics handlers', () => {
+      const didFailLoadHandler = mockBrowserWindow.webContents.on.mock.calls.find(
+        (call) => call[0] === 'did-fail-load',
+      )?.[1];
+      const renderGoneHandler = mockBrowserWindow.webContents.on.mock.calls.find(
+        (call) => call[0] === 'render-process-gone',
+      )?.[1];
+      const consoleMessageHandler = mockBrowserWindow.webContents.on.mock.calls.find(
+        (call) => call[0] === 'console-message',
+      )?.[1];
+      const unresponsiveHandler = mockBrowserWindow.on.mock.calls.find(
+        (call) => call[0] === 'unresponsive',
+      )?.[1];
+      const responsiveHandler = mockBrowserWindow.on.mock.calls.find(
+        (call) => call[0] === 'responsive',
+      )?.[1];
+
+      expect(didFailLoadHandler).toBeDefined();
+      expect(renderGoneHandler).toBeDefined();
+      expect(consoleMessageHandler).toBeDefined();
+      expect(unresponsiveHandler).toBeDefined();
+      expect(responsiveHandler).toBeDefined();
+    });
+
+    it('should tolerate diagnostic callbacks invocation', () => {
+      const didFailLoadHandler = mockBrowserWindow.webContents.on.mock.calls.find(
+        (call) => call[0] === 'did-fail-load',
+      )?.[1];
+      const renderGoneHandler = mockBrowserWindow.webContents.on.mock.calls.find(
+        (call) => call[0] === 'render-process-gone',
+      )?.[1];
+      const consoleMessageHandler = mockBrowserWindow.webContents.on.mock.calls.find(
+        (call) => call[0] === 'console-message',
+      )?.[1];
+
+      expect(() =>
+        didFailLoadHandler({}, -2, 'ERR_FAILED', 'app://next/index.html', true),
+      ).not.toThrow();
+      expect(() => renderGoneHandler({}, { exitCode: 1, reason: 'crashed' })).not.toThrow();
+      expect(() =>
+        consoleMessageHandler(
+          {},
+          3,
+          'Unexpected boot error captured by BootErrorBoundary',
+          42,
+          'app://next/index.html',
+        ),
+      ).not.toThrow();
+    });
+  });
+
   describe('close event handling', () => {
     let closeHandler: (e: any) => void;
 

@@ -1,20 +1,20 @@
-import path from 'node:path';
+import { join } from 'node:path';
 
 import { app } from 'electron';
 import { pathExistsSync } from 'fs-extra';
 
-export const mainDir = path.join(__dirname);
+export const mainDir = join(__dirname);
 
-export const preloadDir = path.join(mainDir, '../preload');
+export const preloadDir = join(mainDir, '../preload');
 
-export const resourcesDir = path.join(mainDir, '../../resources');
+export const resourcesDir = join(mainDir, '../../resources');
 
-export const buildDir = path.join(mainDir, '../../build');
+export const buildDir = join(mainDir, '../../build');
 
 const appPath = app.getAppPath();
 
-const nextExportOutDir = path.join(appPath, 'dist', 'next', 'out');
-const nextExportDefaultDir = path.join(appPath, 'dist', 'next');
+const nextExportOutDir = join(appPath, 'dist', 'next', 'out');
+const nextExportDefaultDir = join(appPath, 'dist', 'next');
 
 export const nextExportDir = pathExistsSync(nextExportOutDir)
   ? nextExportOutDir
@@ -22,10 +22,10 @@ export const nextExportDir = pathExistsSync(nextExportOutDir)
 
 export const userDataDir = app.getPath('userData');
 
-export const appStorageDir = path.join(userDataDir, 'lobehub-storage');
+export const appStorageDir = join(userDataDir, 'lobehub-storage');
 
 // Legacy local database directory used in older desktop versions
-export const legacyLocalDbDir = path.join(appStorageDir, 'lobehub-local-db');
+export const legacyLocalDbDir = join(appStorageDir, 'lobehub-local-db');
 
 // ------  Application storage directory ---- //
 
