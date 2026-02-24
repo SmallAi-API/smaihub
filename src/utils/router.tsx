@@ -143,16 +143,16 @@ export interface RouteConfig {
  */
 export function renderRoutes(routes: RouteConfig[]): ReactElement[] {
   return routes.map((route, index) => {
-    const { path, element, children, index: isIndex } = route;
+    const { path, element, errorElement, children, index: isIndex } = route;
 
     const childRoutes = children ? renderRoutes(children) : undefined;
 
     if (isIndex) {
-      return <Route index element={element} key={`index-${index}`} />;
+      return <Route index element={element} errorElement={errorElement} key={`index-${index}`} />;
     }
 
     return (
-      <Route element={element} key={path || index} path={path}>
+      <Route element={element} errorElement={errorElement} key={path || index} path={path}>
         {childRoutes}
       </Route>
     );

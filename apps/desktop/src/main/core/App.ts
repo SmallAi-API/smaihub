@@ -367,7 +367,7 @@ export class App {
    */
   private services = new Map<Class<any>, any>();
 
-  private ipcServer: ElectronIPCServer;
+  private ipcServer!: ElectronIPCServer;
   private ipcServerEventMap: IPCEventMap = new Map();
   shortcutMethodMap: ShortcutMethodMap = new Map();
   protocolHandlerMap: ProtocolHandlerMap = new Map();
@@ -378,7 +378,7 @@ export class App {
 
     IoCContainer.shortcuts.get(ControllerClass)?.forEach((shortcut) => {
       this.shortcutMethodMap.set(shortcut.name, async () => {
-        controller[shortcut.methodName]();
+        (controller as any)[shortcut.methodName]();
       });
     });
 
@@ -424,7 +424,7 @@ export class App {
         try {
           return await controller[methodName](payload);
         } catch (error) {
-          return { error: error.message };
+          return { error: (error as Error).message };
         }
       };
     });

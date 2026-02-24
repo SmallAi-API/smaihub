@@ -13,7 +13,6 @@ import { cloudSandboxService } from '@/services/cloudSandbox';
 import { localFileService } from '@/services/electron/localFileService';
 import { marketApiService } from '@/services/marketApi';
 import { agentSkillService } from '@/services/skill';
-import { useChatStore } from '@/store/chat';
 
 // Create runtime with client-side service
 const runtime = new SkillsExecutionRuntime({
@@ -35,6 +34,8 @@ const runtime = new SkillsExecutionRuntime({
 
       // Cloud: execute via Cloud Sandbox with execScript tool
       // Server will automatically resolve zipUrl based on config.name
+      // Dynamic import to avoid circular dependency (this file is inside the tool store)
+      const { useChatStore } = await import('@/store/chat');
       const chatState = useChatStore.getState();
       const topicId = chatState.activeTopicId || 'default';
 
@@ -80,6 +81,8 @@ const runtime = new SkillsExecutionRuntime({
     },
     exportFile: async (path, filename) => {
       // Get current session context
+      // Dynamic import to avoid circular dependency (this file is inside the tool store)
+      const { useChatStore } = await import('@/store/chat');
       const chatState = useChatStore.getState();
       const topicId = chatState.activeTopicId || 'default';
 
@@ -148,6 +151,8 @@ const runtime = new SkillsExecutionRuntime({
 
       // Cloud: execute via Cloud Sandbox
       // Get current session context for sandbox isolation
+      // Dynamic import to avoid circular dependency (this file is inside the tool store)
+      const { useChatStore } = await import('@/store/chat');
       const chatState = useChatStore.getState();
       const topicId = chatState.activeTopicId || 'default';
 
