@@ -30,7 +30,7 @@ import {
 // Dynamic imports to avoid circular dependency
 // (this file is imported by store/tool via executors/index.ts → executor.ts)
 const lazyToolStore = async () => {
-  const { getToolStoreState } = await import('@/store/tool');
+  const { getToolStoreState } = await import('@/store/tool/store');
   return getToolStoreState();
 };
 const lazyToolSelectors = () => import('@/store/tool/selectors');

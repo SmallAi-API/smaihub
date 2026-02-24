@@ -1,20 +1,20 @@
-import type {
-  EditorRuntime,
-  EditTitleArgs,
-  GetPageContentArgs,
-  InitDocumentArgs,
-  ModifyNodesArgs,
-  ReplaceTextArgs,
+import {
+  type EditorRuntime,
+  type EditTitleArgs,
+  type GetPageContentArgs,
+  type InitDocumentArgs,
+  type ModifyNodesArgs,
+  type ReplaceTextArgs,
 } from '@lobechat/editor-runtime';
-import type { BuiltinToolResult } from '@lobechat/types';
+import { type BuiltinToolResult } from '@lobechat/types';
 import { BaseExecutor } from '@lobechat/types';
 
-import type {
-  EditTitleState,
-  GetPageContentState,
-  InitDocumentState,
-  ModifyNodesState,
-  ReplaceTextState,
+import {
+  type EditTitleState,
+  type GetPageContentState,
+  type InitDocumentState,
+  type ModifyNodesState,
+  type ReplaceTextState,
 } from '../types';
 import { PageAgentIdentifier } from '../types';
 

@@ -203,6 +203,21 @@ jobs:
             throw "Renderer export looks incomplete: file count=$rendererFileCount"
           }
 
+          # 1.1) Validate renderer runtime flavor (must be webpack, not Turbopack)
+          $rendererIndexHtml = Get-Content -LiteralPath "$rendererRoot/index.html" -Raw
+          if ($rendererIndexHtml -match 'turbopack-[a-z0-9]+\.js') {
+            throw 'Renderer index still references Turbopack runtime.'
+          }
+          if ($rendererIndexHtml -notmatch 'webpack-[a-z0-9]+\.js') {
+            throw 'Renderer index does not reference webpack runtime.'
+          }
+
+          $turbopackChunks = Get-ChildItem -Path "$rendererRoot/_next/static/chunks" -File -Filter 'turbopack-*.js' -ErrorAction SilentlyContinue
+          if ($turbopackChunks) {
+            $badChunks = ($turbopackChunks | Select-Object -ExpandProperty Name) -join ', '
+            throw "Renderer output still contains Turbopack chunks: $badChunks"
+          }
+
           # 2) Validate packaged app output exists
           $releaseRoot = 'apps/desktop/release'
           $asarPath = "$releaseRoot/win-unpacked/resources/app.asar"

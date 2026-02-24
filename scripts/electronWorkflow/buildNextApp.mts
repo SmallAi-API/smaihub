@@ -110,7 +110,7 @@ const build = async () => {
 
   console.log('🏗  Running next build in shadow workspace...');
   try {
-    execSync('next build', {
+    execSync('next build --webpack', {
       cwd: TEMP_DIR,
       env: {
         ...process.env,
