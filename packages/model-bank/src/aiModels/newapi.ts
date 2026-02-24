@@ -908,7 +908,7 @@ const newapiChatModels: AIChatModelCard[] = [
     enabled: true,
     id: 'claude-opus-4-6',
     maxOutput: 128_000,
-    releasedAt: '2026-02-05',
+    releasedAt: '2026-02-24',
     settings: {
       extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'effort'],
       searchImpl: 'params',
@@ -929,7 +929,7 @@ const newapiChatModels: AIChatModelCard[] = [
     enabled: true,
     id: 'claude-sonnet-4-6',
     maxOutput: 64_000,
-    releasedAt: '2026-02-23',
+    releasedAt: '2026-02-24',
     settings: {
       extendParams: [
         'disableContextCaching',
