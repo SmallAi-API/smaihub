@@ -45,7 +45,9 @@ export const ListLocalFilesInspector = memo<
   return (
     <div className={cx(inspectorTextStyles.root, isLoading && shinyTextStyles.shinyText)}>
       <span>{t('builtins.lobe-local-system.apiName.listLocalFiles')}: </span>
-      <FilePathDisplay isDirectory filePath={path} />
+      <Flexbox allowShrink horizontal align={'center'} justify={'center'}>
+        <FilePathDisplay isDirectory filePath={path} />
+      </Flexbox>
       {!isLoading &&
         pluginState?.listResults &&
         (hasResults ? (

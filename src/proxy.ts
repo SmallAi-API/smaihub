@@ -18,6 +18,8 @@ export const config = {
     '/agent(.*)',
     '/group',
     '/group(.*)',
+    '/video',
+    '/video(.*)',
     '/changelog(.*)',
     '/settings(.*)',
     '/image',

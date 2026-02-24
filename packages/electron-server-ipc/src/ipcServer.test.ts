@@ -126,6 +126,7 @@ describe('ElectronIPCServer', () => {
 
   describe('connection and message handling', () => {
     let server: ElectronIPCServer;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let connectionHandler: Function;
 
     beforeEach(() => {

@@ -1,4 +1,5 @@
-import { app, clipboard, Menu, type MenuItemConstructorOptions, shell } from 'electron';
+import { type MenuItemConstructorOptions } from 'electron';
+import { app, clipboard, Menu, shell } from 'electron';
 
 import { isDev } from '@/const/env';
 
@@ -42,7 +43,7 @@ export class WindowsMenu extends BaseMenuPlatform implements IMenuPlatform {
 
   refresh(options?: MenuOptions): void {
     this.buildAndSetAppMenu(options);
-    // 如果有必要更新托盘菜单，可以在这里添加逻辑
+    // If it's necessary to update tray menu, logic can be added here
   }
 
   private getAppMenuTemplate(options?: MenuOptions): MenuItemConstructorOptions[] {

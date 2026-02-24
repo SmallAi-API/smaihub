@@ -140,13 +140,7 @@ export class BackendProxyProtocolManager {
         } catch (error) {
           this.logger.error(`${logPrefix} upstream fetch failed: ${rewrittenUrl}`, error);
 
-          return new Response('Upstream fetch failed, target url: ' + rewrittenUrl, {
-            headers: {
-              'Content-Type': 'text/plain; charset=utf-8',
-            },
-            status: 502,
-            statusText: 'Bad Gateway',
-          });
+          throw error;
         }
 
         const responseHeaders = new Headers(upstreamResponse.headers);
@@ -182,7 +176,7 @@ export class BackendProxyProtocolManager {
         });
       } catch (error) {
         this.logger.error(`${logPrefix} protocol.handle error:`, error);
-        return null;
+        throw error;
       }
     });
 

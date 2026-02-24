@@ -1,11 +1,12 @@
 // @vitest-environment node
+import { CHAT_GROUP_SESSION_ID_PREFIX } from '@lobechat/types';
 import { eq } from 'drizzle-orm';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import type { LobeChatDatabase } from '@/database/type';
+import { type LobeChatDatabase } from '@/database/type';
 
 import { getTestDB } from '../../core/getTestDB';
-import type { NewChatGroup } from '../../schemas';
+import { type NewChatGroup } from '../../schemas';
 import { agents as agentsTable, chatGroups, chatGroupsAgents, users } from '../../schemas';
 import { ChatGroupModel } from '../chatGroup';
 
@@ -237,7 +238,7 @@ describe('ChatGroupModel', () => {
         allowDM: true,
         revealDM: false,
       });
-      expect(result.id.startsWith('cg_')).toBe(true);
+      expect(result.id.startsWith(CHAT_GROUP_SESSION_ID_PREFIX)).toBe(true);
     });
 
     it('should create group with custom ID', async () => {
