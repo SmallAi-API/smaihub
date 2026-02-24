@@ -98,6 +98,7 @@ export function defineConfig() {
       '/page',
       '/settings',
       '/image',
+      '/video',
       '/labs',
       '/changelog',
       '/profile',
