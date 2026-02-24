@@ -1,38 +1,39 @@
 import { KLAVIS_SERVER_TYPES, LOBEHUB_SKILL_PROVIDERS } from '@lobechat/const';
 import { marketToolsResultsPrompt, modelsResultsPrompt } from '@lobechat/prompts';
-import type { BuiltinServerRuntimeOutput } from '@lobechat/types';
+import { type BuiltinServerRuntimeOutput } from '@lobechat/types';
 
 import { discoverService } from '@/services/discover';
 import { getAgentStoreState } from '@/store/agent';
 import { agentSelectors } from '@/store/agent/selectors/selectors';
 import { getAiInfraStoreState } from '@/store/aiInfra';
-import { getToolStoreState } from '@/store/tool';
-import {
-  builtinToolSelectors,
-  klavisStoreSelectors,
-  lobehubSkillStoreSelectors,
-  pluginSelectors,
-} from '@/store/tool/selectors';
 import { KlavisServerStatus } from '@/store/tool/slices/klavisStore/types';
 import { LobehubSkillStatus } from '@/store/tool/slices/lobehubSkillStore/types';
 import { getUserStoreState } from '@/store/user';
 import { userProfileSelectors } from '@/store/user/selectors';
 
-import type {
-  AvailableModel,
-  AvailableProvider,
-  GetAvailableModelsParams,
-  GetAvailableModelsState,
-  InstallPluginParams,
-  InstallPluginState,
-  MarketToolItem,
-  SearchMarketToolsParams,
-  SearchMarketToolsState,
-  UpdateAgentConfigParams,
-  UpdateConfigState,
-  UpdatePromptParams,
-  UpdatePromptState,
+import {
+  type AvailableModel,
+  type AvailableProvider,
+  type GetAvailableModelsParams,
+  type GetAvailableModelsState,
+  type InstallPluginParams,
+  type InstallPluginState,
+  type MarketToolItem,
+  type SearchMarketToolsParams,
+  type SearchMarketToolsState,
+  type UpdateAgentConfigParams,
+  type UpdateConfigState,
+  type UpdatePromptParams,
+  type UpdatePromptState,
 } from '../types';
+
+// Dynamic imports to avoid circular dependency
+// (this file is imported by store/tool via executors/index.ts → executor.ts)
+const lazyToolStore = async () => {
+  const { getToolStoreState } = await import('@/store/tool');
+  return getToolStoreState();
+};
+const lazyToolSelectors = () => import('@/store/tool/selectors');
 
 /**
  * Agent Builder Execution Runtime
@@ -104,7 +105,8 @@ export class AgentBuilderExecutionRuntime {
    */
   async searchMarketTools(args: SearchMarketToolsParams): Promise<BuiltinServerRuntimeOutput> {
     try {
-      const toolState = getToolStoreState();
+      const toolState = await lazyToolStore();
+      const { pluginSelectors } = await lazyToolSelectors();
 
       // Fetch from market
       const response = await discoverService.getMcpList({
@@ -401,7 +403,7 @@ export class AgentBuilderExecutionRuntime {
           console.log('[LobehubSkill] OAuth success message received for provider:', provider);
 
           // Refresh status to get the connected state
-          const server = await getToolStoreState().checkLobehubSkillStatus(provider);
+          const server = await (await lazyToolStore()).checkLobehubSkillStatus(provider);
           const isConnected = server?.status === LobehubSkillStatus.CONNECTED;
 
           resolveOnce({ cancelled: false, success: isConnected });
@@ -413,7 +415,7 @@ export class AgentBuilderExecutionRuntime {
       const checkAuthStatus = async (): Promise<boolean> => {
         try {
           // Check LobehubSkill status
-          const server = await getToolStoreState().checkLobehubSkillStatus(provider);
+          const server = await (await lazyToolStore()).checkLobehubSkillStatus(provider);
           return server?.status === LobehubSkillStatus.CONNECTED;
         } catch (error) {
           console.error('[LobehubSkill] Failed to check auth status:', error);
@@ -517,11 +519,12 @@ export class AgentBuilderExecutionRuntime {
 
       const checkAuthStatus = async (): Promise<boolean> => {
         try {
+          const { klavisStoreSelectors } = await lazyToolSelectors();
           // Refresh server status first
-          await getToolStoreState().refreshKlavisServerTools(identifier);
+          await (await lazyToolStore()).refreshKlavisServerTools(identifier);
 
           // Get fresh state after refresh (important: must get new state after refresh)
-          const freshToolStore = getToolStoreState();
+          const freshToolStore = await lazyToolStore();
           const server = klavisStoreSelectors
             .getServers(freshToolStore)
             .find((s) => s.identifier === identifier);
@@ -623,7 +626,13 @@ export class AgentBuilderExecutionRuntime {
     const { identifier, source } = args;
 
     try {
-      const toolState = getToolStoreState();
+      const toolState = await lazyToolStore();
+      const {
+        klavisStoreSelectors,
+        lobehubSkillStoreSelectors,
+        pluginSelectors,
+        builtinToolSelectors,
+      } = await lazyToolSelectors();
 
       if (source === 'official') {
         // Check if it's a Klavis tool
@@ -762,7 +771,9 @@ export class AgentBuilderExecutionRuntime {
                 };
               }
 
-              const newServer = await getToolStoreState().createKlavisServer({
+              const newServer = await (
+                await lazyToolStore()
+              ).createKlavisServer({
                 identifier,
                 serverName: klavisTypeInfo.serverName,
                 userId,
@@ -782,7 +793,7 @@ export class AgentBuilderExecutionRuntime {
 
                 if (newServer.isAuthenticated) {
                   // Already authenticated, refresh tools
-                  await getToolStoreState().refreshKlavisServerTools(newServer.identifier);
+                  await (await lazyToolStore()).refreshKlavisServerTools(newServer.identifier);
 
                   return {
                     content: `Successfully connected and enabled Klavis tool: ${klavisTypeInfo.label}`,
@@ -913,12 +924,11 @@ export class AgentBuilderExecutionRuntime {
                     typeof window !== 'undefined'
                       ? `${window.location.origin}/oauth/callback/success?provider=${encodeURIComponent(identifier)}`
                       : undefined;
-                  const authInfo = await getToolStoreState().getLobehubSkillAuthorizeUrl(
-                    identifier,
-                    {
-                      redirectUri,
-                    },
-                  );
+                  const authInfo = await (
+                    await lazyToolStore()
+                  ).getLobehubSkillAuthorizeUrl(identifier, {
+                    redirectUri,
+                  });
 
                   if (!authInfo.authorizeUrl) {
                     return {
@@ -1006,7 +1016,9 @@ export class AgentBuilderExecutionRuntime {
                   typeof window !== 'undefined'
                     ? `${window.location.origin}/oauth/callback/success?provider=${encodeURIComponent(identifier)}`
                     : undefined;
-                const authInfo = await getToolStoreState().getLobehubSkillAuthorizeUrl(identifier, {
+                const authInfo = await (
+                  await lazyToolStore()
+                ).getLobehubSkillAuthorizeUrl(identifier, {
                   redirectUri,
                 });
 
@@ -1163,7 +1175,7 @@ export class AgentBuilderExecutionRuntime {
       // Plugin needs to be installed - trigger actual installation from market
       try {
         // Call the store's installMCPPlugin to trigger the real installation flow
-        const installSuccess = await getToolStoreState().installMCPPlugin(identifier);
+        const installSuccess = await (await lazyToolStore()).installMCPPlugin(identifier);
 
         if (installSuccess) {
           // Installation successful, enable it for the agent
@@ -1178,8 +1190,8 @@ export class AgentBuilderExecutionRuntime {
           }
 
           // Refresh tool state to get the installed plugin info
-          await getToolStoreState().refreshPlugins();
-          const freshToolState = getToolStoreState();
+          await (await lazyToolStore()).refreshPlugins();
+          const freshToolState = await lazyToolStore();
           const installedPlugin =
             pluginSelectors.getInstalledPluginById(identifier)(freshToolState);
 
