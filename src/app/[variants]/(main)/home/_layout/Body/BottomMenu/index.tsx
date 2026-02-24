@@ -1,7 +1,7 @@
 import { Flexbox, Icon, Popover } from '@lobehub/ui';
 import { cssVar } from 'antd-style';
 import { BookOpenIcon, MessageCircle, SquareArrowOutUpRight } from 'lucide-react';
-import { memo, type ReactNode, useMemo } from 'react';
+import { Fragment, memo, type ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -122,7 +122,7 @@ const BottomMenu = memo(() => {
           navItem
         );
 
-        if (!item.url || isExternal) return content;
+        if (!item.url || isExternal) return <Fragment key={item.key}>{content}</Fragment>;
         const internalUrl = item.url;
 
         return (

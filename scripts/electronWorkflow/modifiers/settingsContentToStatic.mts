@@ -80,7 +80,7 @@ export const convertSettingsContentToStatic = async (TEMP_DIR: string) => {
       const imports = allImports.filter((imp) => !BUSINESS_TABS.has(imp.key));
 
       console.log(
-        `    Found ${allImports.length} dynamic imports, converting ${imports.length} (excluded ${allImports.length - imports.length} business tabs)`,
+        `Found ${allImports.length} dynamic imports, converting ${imports.length} (excluded ${allImports.length - imports.length} business tabs)`,
       );
 
       const staticImports = generateStaticImports(imports);

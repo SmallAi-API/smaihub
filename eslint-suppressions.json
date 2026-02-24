@@ -29,11 +29,6 @@
       "count": 2
     }
   },
-  "src/app/[variants]/(desktop)/desktop-onboarding/features/WelcomeStep.tsx": {
-    "@eslint-react/no-nested-component-definitions": {
-      "count": 1
-    }
-  },
   "src/app/[variants]/(main)/agent/features/Conversation/AgentWelcome/ToolAuthAlert.tsx": {
     "no-console": {
       "count": 1

@@ -1,9 +1,9 @@
 import { constants } from 'node:fs';
 import { access, mkdir, readdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
-import path from 'node:path';
+import * as path from 'node:path';
 
 import {
- type EditLocalFileParams,
+  type EditLocalFileParams,
   type EditLocalFileResult,
   type GlobFilesParams,
   type GlobFilesResult,
@@ -54,7 +54,42 @@ export default class LocalFileCtr extends ControllerModule {
 
   // ==================== File Operation ====================
 
-   @IpcMethod()
+  @IpcMethod()
+  async handleOpenLocalFile({ path: filePath }: OpenLocalFileParams): Promise<{
+    error?: string;
+    success: boolean;
+  }> {
+    logger.debug('Attempting to open file:', { filePath });
+
+    try {
+      await shell.openPath(filePath);
+      logger.debug('File opened successfully:', { filePath });
+      return { success: true };
+    } catch (error) {
+      logger.error(`Failed to open file ${filePath}:`, error);
+      return { error: (error as Error).message, success: false };
+    }
+  }
+
+  @IpcMethod()
+  async handleOpenLocalFolder({ path: targetPath, isDirectory }: OpenLocalFolderParams): Promise<{
+    error?: string;
+    success: boolean;
+  }> {
+    const folderPath = isDirectory ? targetPath : path.dirname(targetPath);
+    logger.debug('Attempting to open folder:', { folderPath, isDirectory, targetPath });
+
+    try {
+      await shell.openPath(folderPath);
+      logger.debug('Folder opened successfully:', { folderPath });
+      return { success: true };
+    } catch (error) {
+      logger.error(`Failed to open folder ${folderPath}:`, error);
+      return { error: (error as Error).message, success: false };
+    }
+  }
+
+  @IpcMethod()
   async handleShowOpenDialog({
     filters,
     multiple,
@@ -113,41 +148,6 @@ export default class LocalFileCtr extends ControllerModule {
         name,
       },
     };
-  }
-  
-  @IpcMethod()
-  async handleOpenLocalFile({ path: filePath }: OpenLocalFileParams): Promise<{
-    error?: string;
-    success: boolean;
-  }> {
-    logger.debug('Attempting to open file:', { filePath });
-
-    try {
-      await shell.openPath(filePath);
-      logger.debug('File opened successfully:', { filePath });
-      return { success: true };
-    } catch (error) {
-      logger.error(`Failed to open file ${filePath}:`, error);
-      return { error: (error as Error).message, success: false };
-    }
-  }
-
-  @IpcMethod()
-  async handleOpenLocalFolder({ path: targetPath, isDirectory }: OpenLocalFolderParams): Promise<{
-    error?: string;
-    success: boolean;
-  }> {
-    const folderPath = isDirectory ? targetPath : path.dirname(targetPath);
-    logger.debug('Attempting to open folder:', { folderPath, isDirectory, targetPath });
-
-    try {
-      await shell.openPath(folderPath);
-      logger.debug('Folder opened successfully:', { folderPath });
-      return { success: true };
-    } catch (error) {
-      logger.error(`Failed to open folder ${folderPath}:`, error);
-      return { error: (error as Error).message, success: false };
-    }
   }
 
   @IpcMethod()
@@ -356,6 +356,7 @@ export default class LocalFileCtr extends ControllerModule {
             comparison = a.modifiedTime.getTime() - b.modifiedTime.getTime();
           }
         }
+
         return sortOrder === 'desc' ? -comparison : comparison;
       });
 

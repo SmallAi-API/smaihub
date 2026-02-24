@@ -1,28 +1,9 @@
 // Shared route variants utilities for desktop and web builds
 
-export const DEFAULT_LANG = 'en-US';
+export const DEFAULT_LANG = 'zh-CN';
 
 // Supported locales (keep aligned with web resources)
-export const locales = [
-  'ar',
-  'bg-BG',
-  'de-DE',
-  'en-US',
-  'es-ES',
-  'fr-FR',
-  'ja-JP',
-  'ko-KR',
-  'pt-BR',
-  'ru-RU',
-  'tr-TR',
-  'zh-CN',
-  'zh-TW',
-  'vi-VN',
-  'fa-IR',
-  'it-IT',
-  'pl-PL',
-  'nl-NL',
-] as const;
+export const locales = ['en-US', 'zh-CN', 'zh-TW'] as const;
 
 export type Locales = (typeof locales)[number];
 

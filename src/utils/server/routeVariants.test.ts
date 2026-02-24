@@ -35,15 +35,6 @@ describe('RouteVariants', () => {
       expect(result).toBe('zh-CN__1');
     });
 
-    it('should serialize variants with different locales', () => {
-      const variants: IRouteVariants = {
-        isMobile: false,
-        locale: 'ja-JP',
-      };
-      const result = RouteVariants.serializeVariants(variants);
-      expect(result).toBe('ja-JP__0');
-    });
-
     it('should serialize variants with custom colors', () => {
       const variants: IRouteVariants = {
         isMobile: true,
@@ -232,17 +223,6 @@ describe('RouteVariants', () => {
       expect(result).toEqual({
         ...DEFAULT_VARIANTS,
         locale: 'zh-CN',
-      });
-    });
-
-    it('should create variants with multiple custom options', () => {
-      const result = RouteVariants.createVariants({
-        isMobile: true,
-        locale: 'ja-JP',
-      });
-      expect(result).toEqual({
-        isMobile: true,
-        locale: 'ja-JP',
       });
     });
 

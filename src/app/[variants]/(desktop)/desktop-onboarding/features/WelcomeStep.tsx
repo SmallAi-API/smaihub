@@ -28,7 +28,7 @@ const WelcomeStep = memo<WelcomeStepProps>(({ onNext }) => {
     onNext();
   };
 
-  const IconAvatar = useCallback(({ icon }: { icon: IconProps['icon'] }) => {
+  const renderIconAvatar = useCallback((icon: IconProps['icon']) => {
     return (
       <Block
         shadow
@@ -69,15 +69,15 @@ const WelcomeStep = memo<WelcomeStepProps>(({ onNext }) => {
       </Flexbox>
       <Steps
         current={null as any}
-        direction={'vertical'}
+        orientation={'vertical'}
         items={[
           {
-            description: (
+            content: (
               <Text as={'p'} color={cssVar.colorTextSecondary} style={{ marginBottom: 16 }}>
                 {t('telemetry.rows.create.desc')}
               </Text>
             ),
-            icon: <IconAvatar icon={PencilRulerIcon} />,
+            icon: renderIconAvatar(PencilRulerIcon),
             title: (
               <Text as={'h2'} fontSize={16}>
                 {t('telemetry.rows.create.title')}
@@ -85,12 +85,12 @@ const WelcomeStep = memo<WelcomeStepProps>(({ onNext }) => {
             ),
           },
           {
-            description: (
+            content: (
               <Text as={'p'} color={cssVar.colorTextSecondary} style={{ marginBottom: 16 }}>
                 {t('telemetry.rows.collaborate.desc')}
               </Text>
             ),
-            icon: <IconAvatar icon={HeartHandshakeIcon} />,
+            icon: renderIconAvatar(HeartHandshakeIcon),
             title: (
               <Text as={'h2'} fontSize={16}>
                 {t('telemetry.rows.collaborate.title')}
@@ -98,12 +98,12 @@ const WelcomeStep = memo<WelcomeStepProps>(({ onNext }) => {
             ),
           },
           {
-            description: (
+            content: (
               <Text as={'p'} color={cssVar.colorTextSecondary}>
                 {t('telemetry.rows.evolve.desc')}
               </Text>
             ),
-            icon: <IconAvatar icon={BrainIcon} />,
+            icon: renderIconAvatar(BrainIcon),
             title: (
               <Text as={'h2'} fontSize={16}>
                 {t('telemetry.rows.evolve.title')}

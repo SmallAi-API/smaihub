@@ -27,7 +27,7 @@ export const defaultProxySettings: NetworkProxySettings = {
 export const STORE_DEFAULTS: ElectronMainStore = {
   dataSyncConfig: { storageMode: 'cloud' },
   encryptedTokens: {},
-  locale: 'auto',
+  locale: 'zh-CN',
   networkProxy: defaultProxySettings,
   shortcuts: DEFAULT_SHORTCUTS_CONFIG,
   storagePath: appStorageDir,
