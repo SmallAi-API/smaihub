@@ -67,6 +67,12 @@ export const ErrorBoundary = ({ resetPath }: ErrorBoundaryProps) => {
   const error = useRouteError() as Error;
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (error) {
+      console.error('[RouterErrorBoundary]', error?.message || error, error?.stack);
+    }
+  }, [error]);
+
   const reset = useCallback(() => {
     navigate(resetPath);
   }, [navigate, resetPath]);
