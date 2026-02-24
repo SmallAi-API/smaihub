@@ -204,11 +204,6 @@
       "count": 3
     }
   },
-  "src/features/CommandMenu/SearchResults.tsx": {
-    "no-console": {
-      "count": 1
-    }
-  },
   "src/features/Conversation/Error/OllamaBizError/index.tsx": {
     "regexp/no-dupe-characters-character-class": {
       "count": 1
