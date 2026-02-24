@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef } from 'react';
 
-import type { MainBroadcastEventKey, MainBroadcastParams } from './events';
+import { type MainBroadcastEventKey, type MainBroadcastParams } from './events';
 
 interface ElectronAPI {
   ipcRenderer: {

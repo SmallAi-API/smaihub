@@ -1,8 +1,8 @@
-import type { NavigationBroadcastEvents } from './navigation';
-import type { ProtocolBroadcastEvents } from './protocol';
-import type { RemoteServerBroadcastEvents } from './remoteServer';
-import type { SystemBroadcastEvents } from './system';
-import type { AutoUpdateBroadcastEvents } from './update';
+import { type NavigationBroadcastEvents } from './navigation';
+import { type ProtocolBroadcastEvents } from './protocol';
+import { type RemoteServerBroadcastEvents } from './remoteServer';
+import { type SystemBroadcastEvents } from './system';
+import { type AutoUpdateBroadcastEvents } from './update';
 
 /**
  * main -> render broadcast events

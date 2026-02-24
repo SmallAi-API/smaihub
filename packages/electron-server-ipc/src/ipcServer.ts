@@ -6,7 +6,7 @@ import path from 'node:path';
 import debug from 'debug';
 
 import { SOCK_FILE, SOCK_INFO_FILE, WINDOW_PIPE_FILE } from './const';
-import type { ElectronIPCEventHandler } from './types';
+import { type ElectronIPCEventHandler } from './types';
 
 const log = debug('electron-server-ipc:server');
 

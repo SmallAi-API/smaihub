@@ -1,4 +1,4 @@
-import type { StreamInvokeRequestParams } from './types';
+import { type StreamInvokeRequestParams } from './types';
 
 type IpcInvoke = <T = unknown>(event: string, ...data: unknown[]) => Promise<T>;
 

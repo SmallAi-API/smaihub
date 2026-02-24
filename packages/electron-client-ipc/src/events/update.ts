@@ -1,4 +1,4 @@
-import type { ProgressInfo, UpdateInfo } from '../types';
+import { type ProgressInfo, type UpdateInfo } from '../types';
 
 export interface AutoUpdateBroadcastEvents {
   manualUpdateAvailable: (info: UpdateInfo) => void;

@@ -1,4 +1,4 @@
-import type { ProxyTRPCStreamRequestParams } from './types';
+import { type ProxyTRPCStreamRequestParams } from './types';
 import { headersToRecord } from './utils/headers';
 import { getRequestBody } from './utils/request';
 
