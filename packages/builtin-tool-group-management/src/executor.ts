@@ -5,22 +5,22 @@
  * Note: Member management (searchAgent, inviteAgent, createAgent, removeAgent)
  * is handled by group-agent-builder. This executor focuses on orchestration.
  */
-import type {
-  BroadcastParams,
-  CreateWorkflowParams,
-  DelegateParams,
-  ExecuteTaskParams,
-  ExecuteTasksParams,
-  InterruptParams,
-  SpeakParams,
-  SummarizeParams,
-  VoteParams,
+import {
+  type BroadcastParams,
+  type CreateWorkflowParams,
+  type DelegateParams,
+  type ExecuteTaskParams,
+  type ExecuteTasksParams,
+  type InterruptParams,
+  type SpeakParams,
+  type SummarizeParams,
+  type VoteParams,
 } from '@lobechat/builtin-tool-group-management';
 import {
   GroupManagementApiName,
   GroupManagementIdentifier,
 } from '@lobechat/builtin-tool-group-management';
-import type { BuiltinToolContext, BuiltinToolResult } from '@lobechat/types';
+import { type BuiltinToolContext, type BuiltinToolResult } from '@lobechat/types';
 import { BaseExecutor } from '@lobechat/types';
 
 class GroupManagementExecutor extends BaseExecutor<typeof GroupManagementApiName> {
