@@ -876,7 +876,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       'GPT-OSS 120B 是一款拥有 1200 亿参数的顶尖语言模型，内置浏览器搜索和代码执行功能，并具备推理能力。',
     displayName: 'GPT OSS 120B',
-
     id: 'gpt-oss-120b',
     releasedAt: '2025-08-06',
     type: 'chat',
@@ -890,7 +889,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       'GPT-OSS 20B 是一款拥有 200 亿参数的顶尖语言模型，内置浏览器搜索和代码执行功能，并具备推理能力。',
     displayName: 'GPT OSS 20B',
-
     id: 'gpt-oss-20b',
     releasedAt: '2025-08-06',
     type: 'chat',
@@ -905,9 +903,57 @@ const newapiChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 200_000,
     description:
+      'Claude Opus 4.6 is Anthropic’s most intelligent model for building agents and coding.',
+    displayName: 'Claude Opus 4.6',
+    enabled: true,
+    id: 'claude-opus-4-6',
+    maxOutput: 128_000,
+    releasedAt: '2026-02-05',
+    settings: {
+      extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'effort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 200_000,
+    description: 'Claude Sonnet 4.6 is Anthropic’s best combination of speed and intelligence.',
+    displayName: 'Claude Sonnet 4.6',
+    enabled: true,
+    id: 'claude-sonnet-4-6',
+    maxOutput: 64_000,
+    releasedAt: '2026-02-23',
+    settings: {
+      extendParams: [
+        'disableContextCaching',
+        'enableAdaptiveThinking',
+        'enableReasoning',
+        'reasoningBudgetToken',
+        'effort',
+      ],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 200_000,
+    description:
       'Claude Opus 4.5 是 Anthropic 的旗舰模型，结合了卓越的智能与可扩展性能，适合需要最高质量回应和推理能力的复杂任务。',
     displayName: 'Claude Opus 4.5',
-    enabled: true,
     id: 'claude-opus-4-5-20251101',
     maxOutput: 64_000,
     releasedAt: '2025-11-24',
@@ -929,7 +975,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       'Claude Opus 4.5 是 Anthropic 的旗舰模型，结合了卓越的智能与可扩展性能，适合需要最高质量回应和推理能力的复杂任务。',
     displayName: 'Claude Opus 4.5 Thinking',
-    enabled: true,
     id: 'claude-opus-4-5-20251101-thinking',
     maxOutput: 64_000,
     releasedAt: '2025-11-24',
@@ -950,7 +995,6 @@ const newapiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 200_000,
     description: 'Claude Sonnet 4.5 是 Anthropic 迄今为止最智能的模型。',
     displayName: 'Claude Sonnet 4.5',
-    enabled: true,
     id: 'claude-sonnet-4-5-20250929',
     maxOutput: 64_000,
     releasedAt: '2025-09-30',
@@ -970,7 +1014,6 @@ const newapiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 200_000,
     description: 'Claude Sonnet 4.5 是 Anthropic 迄今为止最智能的模型。',
     displayName: 'Claude Sonnet 4.5 Thinking',
-    enabled: true,
     id: 'claude-sonnet-4-5-20250929-thinking',
     maxOutput: 64_000,
     releasedAt: '2025-09-30',
@@ -1126,7 +1169,30 @@ const newapiChatModels: AIChatModelCard[] = [
     releasedAt: '2024-11-19',
     type: 'chat',
   },
-
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_048_576 + 65_536,
+    description:
+      'Gemini 3.1 Pro Preview provides better thinking, improved token efficiency, and a reliable experience optimized for software engineering behavior.',
+    displayName: 'Gemini 3.1 Pro Preview',
+    enabled: true,
+    id: 'gemini-3.1-pro-preview',
+    maxOutput: 65_536,
+    releasedAt: '2026-02-24',
+    settings: {
+      extendParams: ['thinkingLevel3', 'urlContext'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
   {
     abilities: {
       functionCall: true,
@@ -1139,7 +1205,7 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 3 Pro 是 全球最佳的多模态理解模型，也是 Google 迄今为止最强大的智能体和氛围编程模型，提供更丰富的视觉效果和更深层次的交互性，所有这些都建立在最先进的推理能力基础之上。',
     displayName: 'Gemini 3.0 Pro Preview',
-    enabled: true,
+
     id: 'gemini-3-pro-preview',
     maxOutput: 65_536,
     releasedAt: '2025-11-19',
@@ -1162,7 +1228,7 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 3 Pro 是 全球最佳的多模态理解模型，也是 Google 迄今为止最强大的智能体和氛围编程模型，提供更丰富的视觉效果和更深层次的交互性，所有这些都建立在最先进的推理能力基础之上。',
     displayName: 'Gemini 3.0 Pro Preview Thinking',
-    enabled: true,
+
     id: 'gemini-3-pro-preview-thinking',
     maxOutput: 65_536,
     releasedAt: '2025-11-19',
