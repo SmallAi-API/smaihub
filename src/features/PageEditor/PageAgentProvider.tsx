@@ -49,7 +49,6 @@ export const PageAgentProvider = memo<PageAgentProviderProps>(({ children }) => 
       context={context}
       hasInitMessages={!!messages}
       messages={messages}
-      operationState={operationState}
       onMessagesChange={(msgs, ctx) => {
         replaceMessages(msgs, { context: ctx });
       }}
