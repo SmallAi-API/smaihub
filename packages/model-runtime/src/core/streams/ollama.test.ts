@@ -1,8 +1,22 @@
-import type { ChatResponse } from 'ollama/browser';
+import { type ChatResponse } from 'ollama/browser';
 import { describe, expect, it, vi } from 'vitest';
 
 import * as uuidModule from '../../utils/uuid';
 import { OllamaStream } from './ollama';
+
+const readStringChunks = async (stream: ReadableStream<string>) => {
+  const chunks: string[] = [];
+  const reader = stream.getReader();
+
+  while (true) {
+    const { done, value } = await reader.read();
+
+    if (done) break;
+    if (value !== undefined) chunks.push(value);
+  }
+
+  return chunks;
+};
 
 describe('OllamaStream', () => {
   describe('should transform Ollama stream to protocol stream', () => {
@@ -31,11 +45,7 @@ describe('OllamaStream', () => {
 
         const protocolStream = OllamaStream(mockOllamaStream);
 
-        const chunks: string[] = [];
-
-        for await (const chunk of protocolStream) {
-          chunks.push(chunk as string);
-        }
+        const chunks = await readStringChunks(protocolStream);
 
         expect(chunks).toEqual(
           [
@@ -87,11 +97,7 @@ describe('OllamaStream', () => {
           onCompletion: onCompletionMock,
         });
 
-        const chunks: string[] = [];
-
-        for await (const chunk of protocolStream) {
-          chunks.push(chunk as string);
-        }
+        const chunks = await readStringChunks(protocolStream);
 
         expect(chunks).toEqual([
           'id: chat_1\n',
@@ -130,11 +136,7 @@ describe('OllamaStream', () => {
         onCompletion: onCompletionMock,
       });
 
-      const chunks: string[] = [];
-
-      for await (const chunk of protocolStream) {
-        chunks.push(chunk as string);
-      }
+      const chunks = await readStringChunks(protocolStream);
 
       expect(chunks).toEqual([
         'id: chat_1\n',
@@ -205,11 +207,7 @@ describe('OllamaStream', () => {
         onToolsCalling: onToolCall,
       });
 
-      const chunks: string[] = [];
-
-      for await (const chunk of protocolStream) {
-        chunks.push(chunk as string);
-      }
+      const chunks = await readStringChunks(protocolStream);
 
       expect(chunks).toEqual(
         [
@@ -273,11 +271,7 @@ describe('OllamaStream', () => {
         onToolsCalling: onToolCall,
       });
 
-      const chunks: string[] = [];
-
-      for await (const chunk of protocolStream) {
-        chunks.push(chunk as string);
-      }
+      const chunks = await readStringChunks(protocolStream);
 
       expect(chunks).toEqual(
         [
@@ -303,11 +297,7 @@ describe('OllamaStream', () => {
 
     const protocolStream = OllamaStream(mockOllamaStream);
 
-    const chunks: string[] = [];
-
-    for await (const chunk of protocolStream) {
-      chunks.push(chunk as string);
-    }
+    const chunks = await readStringChunks(protocolStream);
 
     expect(chunks).toEqual([]);
   });

@@ -1,8 +1,23 @@
-import type { InvokeModelWithResponseStreamResponse } from '@aws-sdk/client-bedrock-runtime';
+import { type InvokeModelWithResponseStreamResponse } from '@aws-sdk/client-bedrock-runtime';
 import { describe, expect, it, vi } from 'vitest';
 
 import * as uuidModule from '../../../utils/uuid';
 import { AWSBedrockLlamaStream } from './llama';
+
+const readDecodedChunks = async (stream: ReadableStream<Uint8Array>) => {
+  const decoder = new TextDecoder();
+  const chunks: string[] = [];
+  const reader = stream.getReader();
+
+  while (true) {
+    const { done, value } = await reader.read();
+
+    if (done) break;
+    if (value) chunks.push(decoder.decode(value, { stream: true }));
+  }
+
+  return chunks;
+};
 
 describe('AWSBedrockLlamaStream', () => {
   it('should transform Bedrock Llama stream to protocol stream', async () => {
@@ -26,12 +41,7 @@ describe('AWSBedrockLlamaStream', () => {
       onCompletion: onCompletionMock,
     });
 
-    const decoder = new TextDecoder();
-    const chunks: string[] = [];
-
-    for await (const chunk of protocolStream) {
-      chunks.push(decoder.decode(chunk, { stream: true }));
-    }
+    const chunks = await readDecodedChunks(protocolStream);
 
     expect(chunks).toEqual([
       'id: chat_1\n',
@@ -75,12 +85,7 @@ describe('AWSBedrockLlamaStream', () => {
       onCompletion: onCompletionMock,
     });
 
-    const decoder = new TextDecoder();
-    const chunks: string[] = [];
-
-    for await (const chunk of protocolStream) {
-      chunks.push(decoder.decode(chunk, { stream: true }));
-    }
+    const chunks = await readDecodedChunks(protocolStream);
 
     expect(chunks).toEqual([
       'id: chat_1\n',
@@ -136,12 +141,7 @@ describe('AWSBedrockLlamaStream', () => {
       onCompletion: onCompletionMock,
     });
 
-    const decoder = new TextDecoder();
-    const chunks: string[] = [];
-
-    for await (const chunk of protocolStream) {
-      chunks.push(decoder.decode(chunk, { stream: true }));
-    }
+    const chunks = await readDecodedChunks(protocolStream);
 
     expect(chunks).toEqual([
       'id: chat_2\n',
@@ -170,12 +170,7 @@ describe('AWSBedrockLlamaStream', () => {
 
     const protocolStream = AWSBedrockLlamaStream(mockBedrockStream);
 
-    const decoder = new TextDecoder();
-    const chunks: string[] = [];
-
-    for await (const chunk of protocolStream) {
-      chunks.push(decoder.decode(chunk, { stream: true }));
-    }
+    const chunks = await readDecodedChunks(protocolStream);
 
     expect(chunks).toEqual([]);
   });
