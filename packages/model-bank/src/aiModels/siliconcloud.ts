@@ -1,4 +1,4 @@
-import type { AIChatModelCard, AIImageModelCard } from '../types/aiModel';
+import { type AIChatModelCard, type AIImageModelCard } from '../types/aiModel';
 
 // https://siliconflow.cn/zh-cn/models
 const siliconcloudChatModels: AIChatModelCard[] = [

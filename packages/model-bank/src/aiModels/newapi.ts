@@ -30,6 +30,19 @@ const NANO_BANANA_ASPECT_RATIOS = [
   '16:9', // 1376x768 / 2752x1536 / 5504x3072
   '21:9', // 1584x672 / 3168x1344 / 6336x2688
 ];
+
+const NANO_BANANA_2_ASPECT_RATIOS = [
+  '1:1', // 1024x1024 / 2048x2048 / 4096x4096
+  '1:4',
+  '1:8',
+  '2.76:1',
+  '4:1',
+  '4:3', // 1200x896 / 2400x1792 / 4800x3584
+  '8:1',
+  '9:16', // 768x1376 / 1536x2752 / 3072x5504
+  '16:9', // 1376x768 / 2752x1536 / 5504x3072
+];
+
 export const nanoBananaProParameters: ModelParamsSchema = {
   aspectRatio: {
     default: '1:1',
@@ -42,6 +55,21 @@ export const nanoBananaProParameters: ModelParamsSchema = {
   resolution: {
     default: '1K',
     enum: ['1K', '2K', '4K'],
+  },
+};
+
+export const nanoBanana2Parameters: ModelParamsSchema = {
+  aspectRatio: {
+    default: '1:1',
+    enum: NANO_BANANA_2_ASPECT_RATIOS,
+  },
+  imageUrls: {
+    default: [],
+  },
+  prompt: { default: '' },
+  resolution: {
+    default: '2K',
+    enum: ['2K', '4K'],
   },
 };
 
@@ -2154,6 +2182,16 @@ export const newapiSTTModels: AISTTModelCard[] = [
 // 图像生成模型
 export const newapiImageModels: AIImageModelCard[] = [
   // https://platform.openai.com/docs/models/gpt-image-1
+  {
+    description:
+      'Gemini 3.1 Flash Image（Nano Banana Pro 2）是 Google 在2026年2月份推出的图像生成模型。',
+    displayName: 'Nano Banana 2',
+    enabled: true,
+    id: 'gemini-3.1-flash-image-preview:image',
+    parameters: nanoBanana2Parameters,
+    releasedAt: '2026-02-27',
+    type: 'image',
+  },
   {
     description:
       'Gemini 3 Pro Image（Nano Banana Pro）是 Google 的图像生成模型，同时支持多模态对话。',

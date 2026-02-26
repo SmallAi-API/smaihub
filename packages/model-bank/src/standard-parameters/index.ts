@@ -1,5 +1,4 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix, typescript-sort-keys/interface */
-import type { Simplify } from 'type-fest';
+import { type Simplify } from 'type-fest';
 import { z } from 'zod';
 
 export const MAX_SEED = 2 ** 31 - 1;

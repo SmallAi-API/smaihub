@@ -1,10 +1,10 @@
 import { imageUrlToBase64 } from '@lobechat/utils';
 import { cleanObject } from '@lobechat/utils/object';
 import createDebug from 'debug';
-import type { RuntimeImageGenParamsValue } from 'model-bank';
+import { type RuntimeImageGenParamsValue } from 'model-bank';
 import type OpenAI from 'openai';
 
-import type { CreateImagePayload, CreateImageResponse } from '../../types/image';
+import { type CreateImagePayload, type CreateImageResponse } from '../../types/image';
 import { getModelPricing } from '../../utils/getModelPricing';
 import { parseDataUri } from '../../utils/uriParser';
 import { convertImageUrlToFile } from '../contextBuilders/openai';
@@ -213,6 +213,37 @@ async function generateByChatModel(
         log('Successfully extracted image from chat response');
         return { imageUrl: image.image_url.url };
       }
+    }
+  }
+
+  // Check content array for image_url parts (OpenAI-compatible multimodal response)
+  const msgContent = (message as any).content;
+  if (Array.isArray(msgContent)) {
+    for (const part of msgContent) {
+      const url = part?.image_url?.url || part?.image_url?.image_url?.url;
+      if (url) {
+        log('Successfully extracted image from content array');
+        return { imageUrl: url };
+      }
+    }
+  }
+
+  // Check string content for markdown-embedded base64 images
+  // Same regex as streaming handler in openai.ts
+  if (typeof msgContent === 'string' && msgContent.length > 0) {
+    const mdRegex = /!\[[^\]]*\]\(\s*(data:image\/[\d+.A-Za-z-]+;base64,[^\s)]+)\s*\)/;
+    const mdMatch = mdRegex.exec(msgContent);
+    if (mdMatch?.[1]) {
+      log('Successfully extracted markdown base64 image from content');
+      return { imageUrl: mdMatch[1] };
+    }
+
+    // Fallback: raw base64 data URI without markdown wrapper
+    const rawRegex = /(data:image\/[\d+.A-Za-z-]+;base64,[A-Za-z0-9+/]+=*)/;
+    const rawMatch = rawRegex.exec(msgContent);
+    if (rawMatch?.[1]) {
+      log('Successfully extracted raw base64 image from content');
+      return { imageUrl: rawMatch[1] };
     }
   }
 
