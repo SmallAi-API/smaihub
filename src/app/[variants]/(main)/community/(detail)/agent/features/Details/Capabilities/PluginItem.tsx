@@ -1,3 +1,4 @@
+import { builtinTools } from '@lobechat/builtin-tools';
 import {
   getLobehubSkillProviderById,
   KLAVIS_SERVER_TYPES,
@@ -13,7 +14,6 @@ import { Link } from 'react-router-dom';
 import urlJoin from 'url-join';
 
 import { useDiscoverStore } from '@/store/discover';
-import { builtinTools } from '@/tools';
 
 /**
  * Icon component for built-in tools (Klavis & LobehubSkill)
@@ -25,7 +25,6 @@ const BuiltinToolIcon = memo<Pick<KlavisServerType | LobehubSkillProviderType, '
     if (typeof icon === 'string') {
       return <Image alt={label} height={40} src={icon} style={{ flex: 'none' }} width={40} />;
     }
-
     // Use theme color fill, automatically adapts in dark mode
     return <Icon fill={cssVar.colorText} icon={icon} size={40} />;
   },

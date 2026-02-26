@@ -57,7 +57,7 @@ const BuiltinToolInspectors: Record<string, Record<string, BuiltinInspector>> = 
   [MemoryManifest.identifier]: MemoryInspectors as Record<string, BuiltinInspector>,
   [NotebookManifest.identifier]: NotebookInspectors as Record<string, BuiltinInspector>,
   [PageAgentManifest.identifier]: PageAgentInspectors as Record<string, BuiltinInspector>,
-    [SkillsManifest.identifier]: SkillsInspectors as Record<string, BuiltinInspector>,
+  [SkillsManifest.identifier]: SkillsInspectors as Record<string, BuiltinInspector>,
   [WebBrowsingManifest.identifier]: WebBrowsingInspectors as Record<string, BuiltinInspector>,
 };
 

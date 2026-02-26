@@ -1,8 +1,8 @@
-import type { IPluginErrorType } from '@lobehub/chat-plugin-sdk';
-import type { PartialDeep } from 'type-fest';
+import { type IPluginErrorType } from '@lobehub/chat-plugin-sdk';
+import { type PartialDeep } from 'type-fest';
 import { z } from 'zod';
 
-import type { LobeToolRenderType } from '../../tool';
+import { type LobeToolRenderType } from '../../tool';
 
 // ToolIntervention must be defined first to avoid circular dependency
 export interface ToolIntervention {
