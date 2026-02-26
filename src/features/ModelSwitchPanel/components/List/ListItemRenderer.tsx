@@ -30,7 +30,6 @@ import { SingleProviderModelItem } from './SingleProviderModelItem';
 interface ListItemRendererProps {
   activeKey: string;
   extraControls?: (modelId: string, providerId: string) => ReactNode;
-  isScrolling: boolean;
   item: ListItem;
   newLabel: string;
   onClose: () => void;
@@ -38,18 +37,10 @@ interface ListItemRendererProps {
 }
 
 export const ListItemRenderer = memo<ListItemRendererProps>(
-  ({ activeKey, extraControls, isScrolling, item, newLabel, onModelChange, onClose }) => {
+  ({ activeKey, extraControls, item, newLabel, onModelChange, onClose }) => {
     const { t } = useTranslation('components');
     const navigate = useNavigate();
     const [detailOpen, setDetailOpen] = useState(false);
-    const [prevIsScrolling, setPrevIsScrolling] = useState(isScrolling);
-
-    if (isScrolling && !prevIsScrolling) {
-      setDetailOpen(false);
-    }
-    if (isScrolling !== prevIsScrolling) {
-      setPrevIsScrolling(isScrolling);
-    }
 
     switch (item.type) {
       case 'no-provider': {
@@ -201,7 +192,6 @@ export const ListItemRenderer = memo<ListItemRendererProps>(
               activeKey={activeKey}
               data={item.data}
               extraControls={extraControls}
-              isScrolling={isScrolling}
               newLabel={newLabel}
               onClose={onClose}
               onModelChange={onModelChange}

@@ -32,25 +32,16 @@ interface MultipleProvidersModelItemProps {
   activeKey: string;
   data: ModelWithProviders;
   extraControls?: (modelId: string, providerId: string) => ReactNode;
-  isScrolling: boolean;
   newLabel: string;
   onClose: () => void;
   onModelChange: (modelId: string, providerId: string) => Promise<void>;
 }
 
 export const MultipleProvidersModelItem = memo<MultipleProvidersModelItemProps>(
-  ({ activeKey, data, extraControls, isScrolling, newLabel, onModelChange, onClose }) => {
+  ({ activeKey, data, extraControls, newLabel, onModelChange, onClose }) => {
     const { t } = useTranslation('components');
     const navigate = useNavigate();
     const [submenuOpen, setSubmenuOpen] = useState(false);
-    const [prevIsScrolling, setPrevIsScrolling] = useState(isScrolling);
-
-    if (isScrolling && !prevIsScrolling) {
-      setSubmenuOpen(false);
-    }
-    if (isScrolling !== prevIsScrolling) {
-      setPrevIsScrolling(isScrolling);
-    }
 
     const activeProvider = data.providers.find((p) => menuKey(p.id, data.model.id) === activeKey);
     const isActive = !!activeProvider;

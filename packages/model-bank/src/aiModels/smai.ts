@@ -650,18 +650,7 @@ const smaiChatModels: AIChatModelCard[] = [
     },
     type: 'chat',
   },
-  {
-    abilities: {
-      vision: true,
-    },
-    contextWindowTokens: 128_000,
-    description:
-      'ChatGPT-4o 是一款动态模型，实时更新以保持当前最新版本。它结合了强大的语言理解与生成能力，适合于大规模应用场景，包括客户服务、教育和技术支持。',
-    displayName: 'ChatGPT-4o',
-    id: 'chatgpt-4o-latest',
-    releasedAt: '2024-08-14',
-    type: 'chat',
-  },
+
   {
     abilities: {
       functionCall: true,

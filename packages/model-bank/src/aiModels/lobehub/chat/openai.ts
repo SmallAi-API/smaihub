@@ -1,4 +1,4 @@
-import type { AIChatModelCard } from '../../../types/aiModel';
+import { type AIChatModelCard } from '../../../types/aiModel';
 
 export const openaiChatModels: AIChatModelCard[] = [
   {
@@ -254,24 +254,6 @@ export const openaiChatModels: AIChatModelCard[] = [
       ],
     },
     releasedAt: '2024-05-13',
-    type: 'chat',
-  },
-  {
-    abilities: {
-      vision: true,
-    },
-    contextWindowTokens: 128_000,
-    description:
-      'ChatGPT-4o is a dynamic model updated in real time. It combines strong understanding and generation for large-scale use cases like customer support, education, and technical support.',
-    displayName: 'ChatGPT-4o',
-    id: 'chatgpt-4o-latest',
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 5, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 15, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2024-08-14',
     type: 'chat',
   },
   {
