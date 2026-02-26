@@ -1,4 +1,4 @@
-import type { BuiltinToolManifest } from '@lobechat/types';
+import { type BuiltinToolManifest } from '@lobechat/types';
 
 import { systemPrompt } from './systemRole';
 import { NotebookApiName, NotebookIdentifier } from './types';
@@ -95,9 +95,8 @@ export const NotebookManifest: BuiltinToolManifest = {
   identifier: NotebookIdentifier,
   meta: {
     avatar: '📓',
-    description: 'Create and manage documents in the topic notebook',
-    readme:
-      'Create and manage persistent documents within conversation topics. Save notes, reports, articles, and markdown content that stays accessible across sessions.',
+    description:
+      'Save and organize notes, reports, and drafts within the current topic — for temporary or session-scoped content',
     title: 'Notebook',
   },
   systemRole: systemPrompt,

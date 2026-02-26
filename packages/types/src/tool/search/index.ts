@@ -1,6 +1,6 @@
-import type { CrawlUniformResult } from '@lobechat/web-crawler';
+import { type CrawlUniformResult } from '@lobechat/web-crawler';
 
-import type { CrawlMultiPagesQuery } from '../crawler';
+import { type CrawlMultiPagesQuery } from '../crawler';
 
 export interface SearchParams {
   searchCategories?: string[];
@@ -42,6 +42,7 @@ export interface UniformSearchResult {
 
 export interface UniformSearchResponse {
   costTime: number;
+  errorDetail?: string;
   query: string;
   resultNumbers: number;
   results: UniformSearchResult[];

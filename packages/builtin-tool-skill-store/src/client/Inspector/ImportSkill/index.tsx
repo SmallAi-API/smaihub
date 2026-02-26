@@ -1,6 +1,6 @@
 'use client';
 
-import type { BuiltinInspectorProps } from '@lobechat/types';
+import { type BuiltinInspectorProps } from '@lobechat/types';
 import { createStaticStyles, cssVar, cx } from 'antd-style';
 import { Check, X } from 'lucide-react';
 import { memo } from 'react';
@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 import { highlightTextStyles, inspectorTextStyles, shinyTextStyles } from '@/styles';
 
-import type { ImportSkillParams, ImportSkillState } from '../../../types';
+import { type ImportSkillParams, type ImportSkillState } from '../../../types';
 
 const styles = createStaticStyles(({ css }) => ({
   statusIcon: css`
@@ -28,7 +28,7 @@ export const ImportSkillInspector = memo<
   if (isArgumentsStreaming && !url) {
     return (
       <div className={cx(inspectorTextStyles.root, shinyTextStyles.shinyText)}>
-        <span>{t('builtins.lobe-skills.apiName.importSkill')}</span>
+        <span>{t('builtins.lobe-skill-store.apiName.importSkill')}</span>
       </div>
     );
   }
@@ -43,7 +43,7 @@ export const ImportSkillInspector = memo<
         (isArgumentsStreaming || isLoading) && shinyTextStyles.shinyText,
       )}
     >
-      <span>{t('builtins.lobe-skills.apiName.importSkill')}: </span>
+      <span>{t('builtins.lobe-skill-store.apiName.importSkill')}: </span>
       {displayName && <span className={highlightTextStyles.primary}>{displayName}</span>}
       {!isLoading &&
         hasResult &&

@@ -84,7 +84,10 @@ export const createAgentToolsEngine = (workingModel: WorkingModel) =>
   createToolsEngine({
     defaultToolIds,
     // Create search-aware enableChecker for this request
-    enableChecker: ({ pluginId }) => {
+    enableChecker: ({ pluginId, context }) => {
+      // Explicitly activated tools (via lobe-tools activateTools) bypass all filters
+      if (context?.isExplicitActivation) return true;
+
       // Check platform-specific constraints (e.g., LocalSystem desktop-only)
       if (!shouldEnableTool(pluginId)) {
         return false;

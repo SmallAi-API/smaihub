@@ -1,4 +1,4 @@
-import type { BuiltinToolManifest } from '@lobechat/types';
+import { type BuiltinToolManifest } from '@lobechat/types';
 import {
   ACTIVITY_TYPES,
   CONTEXT_OBJECT_TYPES,
@@ -9,7 +9,7 @@ import {
   MERGE_STRATEGIES,
   RELATIONSHIPS,
 } from '@lobechat/types';
-import type { JSONSchema7 } from 'json-schema';
+import { type JSONSchema7 } from 'json-schema';
 
 import { systemPrompt } from './systemRole';
 import { MemoryApiName } from './types';
@@ -812,9 +812,8 @@ export const MemoryManifest: BuiltinToolManifest = {
   identifier: 'lobe-user-memory',
   meta: {
     avatar: '🧠',
-    description: 'Remember user preferences, activities, and experiences across conversations',
-    readme:
-      'Build a personalized knowledge base about you. Remember preferences, track activities and experiences, store identity information, and recall relevant context in future conversations.',
+    description:
+      'Store and recall user preferences, activities, identities, and experiences across conversations',
     title: 'Memory',
   },
   systemRole: systemPrompt,

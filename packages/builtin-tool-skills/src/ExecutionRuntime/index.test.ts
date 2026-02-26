@@ -7,9 +7,6 @@ const createMockService = (overrides?: Partial<SkillRuntimeService>): SkillRunti
   findAll: vi.fn().mockResolvedValue({ data: [], total: 0 }),
   findById: vi.fn().mockResolvedValue(undefined),
   findByName: vi.fn().mockResolvedValue(undefined),
-  importFromGitHub: vi.fn(),
-  importFromUrl: vi.fn(),
-  importFromZipUrl: vi.fn(),
   readResource: vi.fn(),
   ...overrides,
 });

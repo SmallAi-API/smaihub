@@ -1,4 +1,4 @@
-import type { BuiltinToolManifest } from '@lobechat/types';
+import { type BuiltinToolManifest } from '@lobechat/types';
 
 import { systemPrompt } from './systemRole';
 import { KnowledgeBaseApiName, KnowledgeBaseIdentifier } from './types';
@@ -52,9 +52,8 @@ export const KnowledgeBaseManifest: BuiltinToolManifest = {
   identifier: KnowledgeBaseIdentifier,
   meta: {
     avatar: '📚',
-    description: 'Search and retrieve information from knowledge bases',
-    readme:
-      'Search through your knowledge base using semantic vector search to find relevant files and content. Retrieve full documents for in-depth analysis and reference.',
+    description:
+      'Search uploaded documents and domain knowledge via semantic vector search — for persistent, reusable reference',
     title: 'Knowledge Base',
   },
   systemRole: systemPrompt,

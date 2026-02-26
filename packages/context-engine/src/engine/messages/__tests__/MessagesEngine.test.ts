@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { UIChatMessage } from '@/types/index';
+import { type UIChatMessage } from '@/types/index';
 
 import { MessagesEngine } from '../MessagesEngine';
-import type { MessagesEngineParams } from '../types';
+import { type MessagesEngineParams } from '../types';
 
 describe('MessagesEngine', () => {
   const createBasicMessages = (): UIChatMessage[] => [
@@ -24,6 +24,7 @@ describe('MessagesEngine', () => {
   ];
 
   const createBasicParams = (overrides?: Partial<MessagesEngineParams>): MessagesEngineParams => ({
+    enableSystemDate: false,
     messages: createBasicMessages(),
     model: 'gpt-4',
     provider: 'openai',
