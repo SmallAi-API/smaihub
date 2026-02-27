@@ -20,7 +20,7 @@
   "devDependencies": {
     "@lobechat/types": "workspace:*",
     "@types/json-schema": "^7.0.15",
-    "promptfoo": "^0.120.17"
+    "promptfoo": "0.120.17"
   },
   "peerDependencies": {
     "@lobehub/ui": "^4",
