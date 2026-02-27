@@ -1,12 +1,11 @@
 import { type UpdateInfo } from '@lobechat/electron-client-ipc';
-import { app as electronApp } from 'electron';
+import { app as electronApp, BrowserWindow as ElectronBrowserWindow } from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 
 import { isDev, isWindows } from '@/const/env';
 import { getDesktopEnv } from '@/env';
 import {
-  githubConfig,
   isStableChannel,
   UPDATE_CHANNEL as channel,
   UPDATE_SERVER_URL,
@@ -26,7 +25,6 @@ export class UpdaterManager {
   private downloading: boolean = false;
   private updateAvailable: boolean = false;
   private isManualCheck: boolean = false;
-  private usingFallbackProvider: boolean = false;
 
   constructor(app: AppCore) {
     this.app = app;
@@ -112,11 +110,19 @@ export class UpdaterManager {
     logger.info('[Updater Config] Build channel from config:', channel);
     logger.info('[Updater Config] isStableChannel:', isStableChannel);
     logger.info('[Updater Config] UPDATE_SERVER_URL:', UPDATE_SERVER_URL || '(not set)');
-    logger.info('[Updater Config] usingFallbackProvider:', this.usingFallbackProvider);
-    logger.info('[Updater Config] GitHub config:', JSON.stringify(githubConfig));
 
     if (manual) {
       this.mainWindow.broadcast('manualUpdateCheckStart');
+    }
+
+    if (!autoUpdater.forceDevUpdateConfig && !UPDATE_SERVER_URL) {
+      const message = 'UPDATE_SERVER_URL is not configured. S3 update check is disabled.';
+      logger.error(message);
+      if (manual) {
+        this.mainWindow.broadcast('updateError', message);
+      }
+      this.checking = false;
+      return;
     }
 
     try {
@@ -179,9 +185,8 @@ export class UpdaterManager {
     this.app.isQuiting = true;
 
     logger.info('Closing all windows before update installation...');
-    const { BrowserWindow, app } = require('electron');
     if (!isWindows) {
-      const allWindows = BrowserWindow.getAllWindows();
+      const allWindows = ElectronBrowserWindow.getAllWindows();
       allWindows.forEach((window) => {
         if (!window.isDestroyed()) {
           window.close();
@@ -190,7 +195,7 @@ export class UpdaterManager {
     }
 
     logger.info('Releasing single instance lock...');
-    app.releaseSingleInstanceLock();
+    electronApp.releaseSingleInstanceLock();
 
     setTimeout(() => {
       logger.info('Calling autoUpdater.quitAndInstall...');
@@ -304,78 +309,35 @@ export class UpdaterManager {
 
   /**
    * Configure update provider based on channel
-   * - Stable channel + UPDATE_SERVER_URL: Use generic HTTP provider (S3) as primary, channel=stable
-   * - Other channels (beta/nightly) or no S3: Use GitHub provider, channel unset (defaults to latest)
-   *
-   * Important: S3 has stable-mac.yml, GitHub has latest-mac.yml
+   * - Always use generic HTTP provider (S3)
+   * - Stable channel uses channel=stable (stable*.yml)
+   * - Non-stable channel uses configured channel value
    */
   private configureUpdateProvider() {
-    if (isStableChannel && UPDATE_SERVER_URL && !this.usingFallbackProvider) {
+    if (!UPDATE_SERVER_URL) {
+      logger.error('UPDATE_SERVER_URL is not configured. Updater requires S3 generic provider.');
+      return;
+    }
+
+    if (isStableChannel) {
       autoUpdater.channel = 'stable';
-      logger.info(`Configuring generic provider for stable channel (primary)`);
+      logger.info('Configuring generic provider for stable channel (S3 only)');
       logger.info(`Update server URL: ${UPDATE_SERVER_URL}`);
-      logger.info(`Channel set to: stable (will look for stable-mac.yml)`);
-
-      autoUpdater.setFeedURL({
-        provider: 'generic',
-        url: UPDATE_SERVER_URL,
-      });
+      logger.info('Channel set to: stable (will look for stable*.yml)');
     } else {
-      const reason = this.usingFallbackProvider ? '(fallback from S3)' : '';
-      logger.info(`Configuring GitHub provider for ${channel} channel ${reason}`);
-      if (autoUpdater.channel !== null) {
-        autoUpdater.channel = null;
-      }
-      logger.info('Channel left unset (defaults to latest-mac.yml for GitHub)');
-
-      const needPrerelease = channel !== 'stable';
-
-      autoUpdater.setFeedURL({
-        owner: githubConfig.owner,
-        provider: 'github',
-        repo: githubConfig.repo,
-      });
-
-      autoUpdater.allowPrerelease = needPrerelease;
-
-      logger.info(
-        `GitHub update URL configured: ${githubConfig.owner}/${githubConfig.repo}, allowPrerelease=${needPrerelease}`,
-      );
+      autoUpdater.channel = channel;
+      logger.info(`Configuring generic provider for ${channel} channel (S3 only)`);
+      logger.info(`Update server URL: ${UPDATE_SERVER_URL}`);
+      logger.info(`Channel set to: ${channel}`);
     }
+
+    autoUpdater.setFeedURL({
+      provider: 'generic',
+      url: UPDATE_SERVER_URL,
+    });
+
+    autoUpdater.allowPrerelease = channel !== 'stable';
   }
-
-  /**
-   * Switch to fallback provider (GitHub) and retry update check
-   * Called when primary provider (S3) fails
-   */
-  private switchToFallbackAndRetry = async () => {
-    if (!isStableChannel || !UPDATE_SERVER_URL || this.usingFallbackProvider) {
-      return false;
-    }
-
-    logger.info('Primary update server (S3) failed, switching to GitHub fallback...');
-    this.usingFallbackProvider = true;
-    this.configureUpdateProvider();
-
-    try {
-      await autoUpdater.checkForUpdates();
-      return true;
-    } catch (error) {
-      logger.error('Fallback provider (GitHub) also failed:', error);
-      return false;
-    }
-  };
-
-  /**
-   * Reset to primary provider for next update check
-   */
-  private resetToPrimaryProvider = () => {
-    if (this.usingFallbackProvider) {
-      logger.info('Resetting to primary update provider (S3)');
-      this.usingFallbackProvider = false;
-      this.configureUpdateProvider();
-    }
-  };
 
   private registerEvents() {
     logger.debug('Registering updater events');
@@ -390,10 +352,8 @@ export class UpdaterManager {
       logger.info(`Update available: ${info.version}`);
       this.updateAvailable = true;
 
-      this.resetToPrimaryProvider();
-
       if (this.isManualCheck) {
-        this.mainWindow.broadcast('manualUpdateAvailable', info);
+        this.mainWindow.broadcast('manualUpdateAvailable', this.toClientUpdateInfo(info));
       } else {
         logger.info('Auto check found update, starting download automatically...');
         this.downloadUpdate();
@@ -403,10 +363,8 @@ export class UpdaterManager {
     autoUpdater.on('update-not-available', (info) => {
       logger.info(`Update not available. Current: ${info.version}`);
 
-      this.resetToPrimaryProvider();
-
       if (this.isManualCheck) {
-        this.mainWindow.broadcast('manualUpdateNotAvailable', info);
+        this.mainWindow.broadcast('manualUpdateNotAvailable', this.toClientUpdateInfo(info));
       }
     });
 
@@ -429,16 +387,6 @@ export class UpdaterManager {
       logger.error('[Updater Error Context] Build channel from config:', channel);
       logger.error('[Updater Error Context] isStableChannel:', isStableChannel);
       logger.error('[Updater Error Context] UPDATE_SERVER_URL:', UPDATE_SERVER_URL || '(not set)');
-      logger.error('[Updater Error Context] usingFallbackProvider:', this.usingFallbackProvider);
-      logger.error('[Updater Error Context] GitHub config:', JSON.stringify(githubConfig));
-
-      if (!this.usingFallbackProvider && isStableChannel && UPDATE_SERVER_URL) {
-        logger.info('Attempting fallback to GitHub provider...');
-        const fallbackSucceeded = await this.switchToFallbackAndRetry();
-        if (fallbackSucceeded) {
-          return;
-        }
-      }
 
       if (this.isManualCheck) {
         this.mainWindow.broadcast('updateError', err.message);
@@ -457,7 +405,7 @@ export class UpdaterManager {
     autoUpdater.on('update-downloaded', (info) => {
       logger.info(`Update downloaded: ${info.version}`);
       this.downloading = false;
-      this.mainWindow.broadcast('updateDownloaded', info);
+      this.mainWindow.broadcast('updateDownloaded', this.toClientUpdateInfo(info));
     });
 
     logger.debug('Updater events registered');
@@ -485,5 +433,22 @@ export class UpdaterManager {
       releaseDate: new Date().toISOString(),
       version,
     };
+  }
+
+  private toClientUpdateInfo(
+    info: Pick<UpdateInfo, 'releaseDate' | 'version'> & {
+      releaseNotes?: UpdateInfo['releaseNotes'] | null;
+    },
+  ): UpdateInfo {
+    const normalized: UpdateInfo = {
+      releaseDate: info.releaseDate,
+      version: info.version,
+    };
+
+    if (info.releaseNotes !== null && info.releaseNotes !== undefined) {
+      normalized.releaseNotes = info.releaseNotes;
+    }
+
+    return normalized;
   }
 }
