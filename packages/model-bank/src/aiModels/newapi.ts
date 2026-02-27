@@ -1223,6 +1223,7 @@ const newapiChatModels: AIChatModelCard[] = [
     maxOutput: 32_768,
     releasedAt: '2026-02-27',
     settings: {
+      extendParams: ['imageAspectRatio', 'imageResolution2', 'thinkingLevel4'],
       searchImpl: 'params',
       searchProvider: 'google',
     },
@@ -2172,7 +2173,7 @@ export const newapiImageModels: AIImageModelCard[] = [
   {
     description:
       'Gemini 3.1 Flash Image（Nano Banana Pro 2）是 Google 在2026年2月份推出的图像生成模型。',
-    displayName: 'Nano Banana 2',
+    displayName: '🍌 Nano Banana 2',
     enabled: true,
     id: 'gemini-3.1-flash-image-preview:image',
     parameters: nanoBanana2Parameters,
@@ -2182,7 +2183,7 @@ export const newapiImageModels: AIImageModelCard[] = [
   {
     description:
       'Gemini 3 Pro Image（Nano Banana Pro）是 Google 的图像生成模型，同时支持多模态对话。',
-    displayName: 'Nano Banana Pro',
+    displayName: '🍌 Nano Banana Pro',
     enabled: true,
     id: 'gemini-3-pro-image-preview:image',
     parameters: nanoBananaProParameters,

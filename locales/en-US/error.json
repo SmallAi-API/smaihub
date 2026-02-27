@@ -9,7 +9,6 @@
   "import.importConfigFile.title": "Import Failed",
   "import.incompatible.description": "This file was exported from a higher version. Please try upgrading to the latest version and then re-importing.",
   "import.incompatible.title": "Current application does not support importing this file",
-
   "loginRequired.desc": "You will be redirected to the login page shortly",
   "loginRequired.title": "Please log in to use this feature",
   "notFound.backHome": "Back to Home",
