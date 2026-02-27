@@ -1,3 +1,6 @@
+# syntax=docker/dockerfile:1
+# check=skip=SecretsUsedInArgOrEnv
+
 ## Set global build ENV
 ARG NODEJS_VERSION="24"
 
