@@ -74,7 +74,6 @@ const Nav = memo(() => {
       },
       {
         icon: getRouteById('video')!.icon,
-        isNew: true,
         key: SidebarTabKey.Video,
         title: t('tab.video'),
         url: '/video',
@@ -82,6 +81,7 @@ const Nav = memo(() => {
       {
         hidden: !showAiImage,
         icon: getRouteById('image')!.icon,
+        isNew: true,
         key: SidebarTabKey.Image,
         title: t('tab.aiImage'),
         url: '/image',

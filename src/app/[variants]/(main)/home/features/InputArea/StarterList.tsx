@@ -34,7 +34,8 @@ type StarterTitleKey =
   | 'starter.createGroup'
   | 'starter.write'
   | 'starter.text2video'
-  | 'starter.deepResearch';
+  | 'starter.deepResearch'
+  | 'starter.nanoBanana2';
 
 interface StarterItem {
   disabled?: boolean;
@@ -75,6 +76,10 @@ const StarterList = memo(() => {
         titleKey: 'starter.write',
       },
       {
+        key: 'image',
+        titleKey: 'starter.nanoBanana2',
+      },
+      {
         hot: true,
         icon: VideoIcon,
         key: 'video',
@@ -97,6 +102,11 @@ const StarterList = memo(() => {
         return;
       }
 
+      if (key === 'image') {
+        navigate?.('/image?model=gemini-3.1-flash-image-preview:image');
+        return;
+      }
+
       // Toggle mode: if clicking the active mode, clear it; otherwise set it
       if (inputActiveMode === key) {
         setInputActiveMode(null);
@@ -104,7 +114,7 @@ const StarterList = memo(() => {
         setInputActiveMode(key);
       }
     },
-    [inputActiveMode, navigate, setInputActiveMode],
+    [inputActiveMode, setInputActiveMode, navigate],
   );
 
   return (

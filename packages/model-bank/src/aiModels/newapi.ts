@@ -18,7 +18,7 @@ export const gptImage1ParamsSchema: ModelParamsSchema = {
     enum: ['auto', '1024x1024', '1536x1024', '1024x1536'],
   },
 };
-const NANO_BANANA_ASPECT_RATIOS = [
+export const NANO_BANANA_ASPECT_RATIOS = [
   '1:1', // 1024x1024 / 2048x2048 / 4096x4096
   '2:3', // 848x1264 / 1696x2528 / 3392x5056
   '3:2', // 1264x848 / 2528x1696 / 5056x3392
@@ -31,16 +31,12 @@ const NANO_BANANA_ASPECT_RATIOS = [
   '21:9', // 1584x672 / 3168x1344 / 6336x2688
 ];
 
-const NANO_BANANA_2_ASPECT_RATIOS = [
-  '1:1', // 1024x1024 / 2048x2048 / 4096x4096
+export const NANO_BANANA_2_ASPECT_RATIOS = [
+  ...NANO_BANANA_ASPECT_RATIOS,
   '1:4',
-  '1:8',
-  '2.76:1',
   '4:1',
-  '4:3', // 1200x896 / 2400x1792 / 4800x3584
+  '1:8',
   '8:1',
-  '9:16', // 768x1376 / 1536x2752 / 3072x5504
-  '16:9', // 1376x768 / 2752x1536 / 5504x3072
 ];
 
 export const nanoBananaProParameters: ModelParamsSchema = {
@@ -68,8 +64,8 @@ export const nanoBanana2Parameters: ModelParamsSchema = {
   },
   prompt: { default: '' },
   resolution: {
-    default: '2K',
-    enum: ['2K', '4K'],
+    default: '1K',
+    enum: ['0.5K', '1K', '2K', '4K'],
   },
 };
 
@@ -83,6 +79,7 @@ export const qwenImageParamsSchema: ModelParamsSchema = {
   steps: { default: 30, max: 50, min: 2, step: 1 },
   width: { default: 1328, max: 1536, min: 512, step: 1 },
 };
+
 const newapiChatModels: AIChatModelCard[] = [
   {
     abilities: {
@@ -1212,6 +1209,27 @@ const newapiChatModels: AIChatModelCard[] = [
   },
   {
     abilities: {
+      imageOutput: true,
+      reasoning: true,
+      search: true,
+      vision: true,
+    },
+    contextWindowTokens: 131_072 + 32_768,
+    description:
+      'Gemini 3.1 Flash Image (Nano Banana 2) delivers Pro-level image quality at Flash speed with multimodal chat support.',
+    displayName: '🍌 Nano Banana 2',
+    enabled: true,
+    id: 'gemini-3.1-flash-image-preview',
+    maxOutput: 32_768,
+    releasedAt: '2026-02-27',
+    settings: {
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
       functionCall: true,
       reasoning: true,
       search: true,
@@ -1222,7 +1240,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 3 Pro 是 全球最佳的多模态理解模型，也是 Google 迄今为止最强大的智能体和氛围编程模型，提供更丰富的视觉效果和更深层次的交互性，所有这些都建立在最先进的推理能力基础之上。',
     displayName: 'Gemini 3.0 Pro Preview',
-
     id: 'gemini-3-pro-preview',
     maxOutput: 65_536,
     releasedAt: '2025-11-19',
@@ -1245,7 +1262,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 3 Pro 是 全球最佳的多模态理解模型，也是 Google 迄今为止最强大的智能体和氛围编程模型，提供更丰富的视觉效果和更深层次的交互性，所有这些都建立在最先进的推理能力基础之上。',
     displayName: 'Gemini 3.0 Pro Preview Thinking',
-
     id: 'gemini-3-pro-preview-thinking',
     maxOutput: 65_536,
     releasedAt: '2025-11-19',
@@ -1291,7 +1307,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 3 Pro 是全球最佳的多模态理解模型，也是 Google 迄今为止最强大的智能体和氛围编程模型，提供更丰富的视觉效果和更深层次的交互性，所有这些都建立在最先进的推理能力基础之上。',
     displayName: 'Gemini 3.0 Flash Preview Thinking',
-    enabled: true,
     id: 'gemini-3-flash-preview-thinking',
     maxOutput: 65_536,
     releasedAt: '2025-12-18',
@@ -1311,36 +1326,8 @@ const newapiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 131_072 + 32_768,
     description:
       'Gemini 3 Pro Image（Nano Banana Pro）是 Google 的图像生成模型，同时支持多模态对话。',
-    displayName: 'Nano Banana Pro',
-    enabled: true,
+    displayName: '🍌 Nano Banana Pro',
     id: 'nano-banana-pro-preview',
-    maxOutput: 32_768,
-    type: 'chat',
-  },
-  {
-    abilities: {
-      imageOutput: true,
-      reasoning: true,
-      vision: true,
-    },
-    contextWindowTokens: 131_072 + 32_768,
-    description: 'nano-banana-2-2k 是 Google 的图像生成模型，此模型支持2K生成图像。',
-    displayName: 'Nano Banana Pro 2k',
-    enabled: true,
-    id: 'nano-banana-2-2k',
-    maxOutput: 32_768,
-    type: 'chat',
-  },
-  {
-    abilities: {
-      imageOutput: true,
-      reasoning: true,
-      vision: true,
-    },
-    contextWindowTokens: 131_072 + 32_768,
-    description: 'nano-banana-2-4k 是 Google 的图像生成模型，最高支持4K图像生成。',
-    displayName: 'Nano Banana Pro 4k',
-    id: 'nano-banana-2-4k',
     maxOutput: 32_768,
     type: 'chat',
   },
