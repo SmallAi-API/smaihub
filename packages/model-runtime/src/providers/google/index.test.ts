@@ -1,5 +1,5 @@
 // @vitest-environment node
-import type { GenerateContentResponse } from '@google/genai';
+import { type GenerateContentResponse } from '@google/genai';
 import OpenAI from 'openai';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -73,7 +73,7 @@ describe('LobeGoogleAI', () => {
     });
 
     it('should withGrounding', () => {
-      const data = [
+      const _data = [
         {
           candidates: [{ content: { parts: [{ text: 'As' }], role: 'model' } }],
           usageMetadata: { promptTokenCount: 8, totalTokenCount: 8 },
@@ -440,10 +440,9 @@ describe('LobeGoogleAI', () => {
         const enhancedStream = instance['createEnhancedStream'](mockStream, abortController.signal);
 
         const reader = enhancedStream.getReader();
-        const chunks: any[] = [];
 
         // Read first value then cancel to trigger error chunk
-        chunks.push((await reader.read()).value);
+        const chunks: any[] = [(await reader.read()).value];
         abortController.abort();
 
         // Read all remaining chunks
@@ -494,10 +493,9 @@ describe('LobeGoogleAI', () => {
         const enhancedStream = instance['createEnhancedStream'](mockStream, abortController.signal);
 
         const reader = enhancedStream.getReader();
-        const chunks: any[] = [];
 
         // Read first value then collect remaining chunks (error included)
-        chunks.push((await reader.read()).value);
+        const chunks: any[] = [(await reader.read()).value];
         let result;
         while (!(result = await reader.read()).done) {
           chunks.push(result.value);
@@ -518,6 +516,7 @@ describe('LobeGoogleAI', () => {
       });
 
       it('should handle AbortError without data', async () => {
+        // eslint-disable-next-line require-yield
         const mockStream = (async function* () {
           throw new Error('aborted');
         })();
@@ -559,10 +558,9 @@ describe('LobeGoogleAI', () => {
         const enhancedStream = instance['createEnhancedStream'](mockStream, abortController.signal);
 
         const reader = enhancedStream.getReader();
-        const chunks: any[] = [];
 
         // Read first value then collect remaining chunks (parsing error)
-        chunks.push((await reader.read()).value);
+        const chunks: any[] = [(await reader.read()).value];
         let result;
         while (!(result = await reader.read()).done) {
           chunks.push(result.value);
@@ -677,5 +675,26 @@ describe('thinkingConfig includeThoughts logic', () => {
     const callArgs = (instance['client'].models.generateContentStream as any).mock.calls[0];
     const config = callArgs[0].config as any;
     expect(config.thinkingConfig?.thinkingLevel).toBe('high');
+  });
+});
+
+describe('models', () => {
+  it('should pass API Key via x-goog-api-key header instead of URL parameter', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      json: () => Promise.resolve({ models: [] }),
+      ok: true,
+    });
+    global.fetch = mockFetch;
+
+    const apiKey = 'test-google-key';
+    const localInstance = new LobeGoogleAI({ apiKey });
+
+    await localInstance.models();
+    const [url, options] = mockFetch.mock.calls[0];
+
+    expect(url).not.toContain('key=');
+    expect(options.headers).toMatchObject({
+      'x-goog-api-key': apiKey,
+    });
   });
 });

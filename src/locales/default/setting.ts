@@ -797,7 +797,7 @@ When I am ___, I need ___
   'tab.experiment': 'Experiment',
   'tab.hotkey': 'Hotkeys',
   'tab.image': 'Image Generation Service',
-    'tab.importFromGithub': 'Import from GitHub',
+  'tab.importFromGithub': 'Import from GitHub',
   'tab.importFromGithub.desc': 'Import from a public GitHub repository',
   'tab.importFromUrl': 'Import from URL',
   'tab.importFromUrl.desc': 'Import via a direct link to SKILL.md',
@@ -820,7 +820,7 @@ When I am ___, I need ___
   'tab.sync': 'Cloud Sync',
   'tab.systemTools': 'System Tools',
   'tab.tts': 'Text-to-Speech',
-   'tab.uploadZip': 'Upload Zip',
+  'tab.uploadZip': 'Upload Zip',
   'tab.uploadZip.desc': 'Upload a local .zip or .skill file',
   'tab.usage': 'Usage Statistics',
   'tools.add': 'Add Skill',
@@ -832,6 +832,11 @@ When I am ___, I need ___
   'tools.builtins.lobe-artifacts.readme':
     'Generate and live-preview interactive UI components, data visualizations, charts, SVG graphics, and web applications. Create rich visual content that users can interact with directly.',
   'tools.builtins.lobe-artifacts.title': 'Artifacts',
+  'tools.builtins.lobe-calculator.title': 'Calculator',
+  'tools.builtins.lobe-calculator.description':
+    'Perform mathematical calculations, solve equations, and work with symbolic expressions',
+  'tools.builtins.lobe-calculator.readme':
+    'Advanced mathematical calculator supporting basic arithmetic, algebraic equations, calculus operations, and symbolic math. Includes base conversion, equation solving, differentiation, integration, and more.',
   'tools.builtins.lobe-cloud-sandbox.description':
     'Execute code, run commands, and manage files in a secure cloud environment',
   'tools.builtins.lobe-cloud-sandbox.readme':
