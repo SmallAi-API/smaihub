@@ -908,7 +908,7 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 131_072 + 32_768,
     description:
       'Gemini 3.1 Flash Image (Nano Banana 2) delivers Pro-level image quality at Flash speed with multimodal chat support.',
-    displayName: '🍌 Nano Banana 2',
+    displayName: 'Nano Banana 2',
     enabled: true,
     id: 'gemini-3.1-flash-image-preview',
     maxOutput: 32_768,
@@ -1483,7 +1483,7 @@ export const smaiImageModels: AIImageModelCard[] = [
   {
     description:
       'Gemini 3.1 Flash Image（Nano Banana Pro 2）是 Google 在2026年2月份推出的图像生成模型。',
-    displayName: '🍌 Nano Banana 2',
+    displayName: 'Nano Banana 2',
     enabled: true,
     id: 'gemini-3.1-flash-image-preview:image',
     parameters: nanoBanana2Parameters,

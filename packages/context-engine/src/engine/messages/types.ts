@@ -1,23 +1,20 @@
 /* eslint-disable perfectionist/sort-interfaces */
-import {
-  type FileContent,
-  type KnowledgeBaseInfo,
-  type PageContentContext,
-} from '@lobechat/prompts';
-import { type RuntimeInitialContext, type RuntimeStepContext } from '@lobechat/types';
+import type { FileContent, KnowledgeBaseInfo, PageContentContext } from '@lobechat/prompts';
+import type { RuntimeInitialContext, RuntimeStepContext } from '@lobechat/types';
 
-import { type OpenAIChatMessage, type UIChatMessage } from '@/types/index';
+import type { OpenAIChatMessage, UIChatMessage } from '@/types/index';
 
-import { type AgentInfo } from '../../processors/GroupRoleTransform';
-import { type AgentBuilderContext } from '../../providers/AgentBuilderContextInjector';
-import { type EvalContext } from '../../providers/EvalContextSystemInjector';
-import { type GroupAgentBuilderContext } from '../../providers/GroupAgentBuilderContextInjector';
-import { type GroupMemberInfo } from '../../providers/GroupContextInjector';
-import { type GTDPlan } from '../../providers/GTDPlanInjector';
-import { type GTDTodoList } from '../../providers/GTDTodoInjector';
-import { type SkillMeta } from '../../providers/SkillContextProvider';
-import { type ToolDiscoveryMeta } from '../../providers/ToolDiscoveryProvider';
-import { type LobeToolManifest } from '../tools/types';
+import type { AgentInfo } from '../../processors/GroupRoleTransform';
+import type { AgentBuilderContext } from '../../providers/AgentBuilderContextInjector';
+import type { EvalContext } from '../../providers/EvalContextSystemInjector';
+import type { GroupAgentBuilderContext } from '../../providers/GroupAgentBuilderContextInjector';
+import type { GroupMemberInfo } from '../../providers/GroupContextInjector';
+import type { AgentManagementContext } from '../../providers/AgentManagementContextInjector';
+import type { GTDPlan } from '../../providers/GTDPlanInjector';
+import type { GTDTodoList } from '../../providers/GTDTodoInjector';
+import type { SkillMeta } from '../../providers/SkillContextProvider';
+import type { ToolDiscoveryMeta } from '../../providers/ToolDiscoveryProvider';
+import type { LobeToolManifest } from '../tools/types';
 
 /**
  * Model capability checker
@@ -249,6 +246,8 @@ export interface MessagesEngineParams {
   agentBuilderContext?: AgentBuilderContext;
   /** Eval context for injecting environment prompts into system message */
   evalContext?: EvalContext;
+  /** Agent Management context */
+  agentManagementContext?: AgentManagementContext;
   /** Agent group configuration for multi-agent scenarios */
   agentGroup?: AgentGroupConfig;
   /** Group Agent Builder context */
@@ -304,6 +303,7 @@ export interface MessagesEngineResult {
 export { type AgentInfo } from '../../processors/GroupRoleTransform';
 export { type AgentBuilderContext } from '../../providers/AgentBuilderContextInjector';
 export { type EvalContext } from '../../providers/EvalContextSystemInjector';
+export { type AgentManagementContext } from '../../providers/AgentManagementContextInjector';
 export { type GroupAgentBuilderContext } from '../../providers/GroupAgentBuilderContextInjector';
 export { type GTDPlan } from '../../providers/GTDPlanInjector';
 export { type GTDTodoItem, type GTDTodoList } from '../../providers/GTDTodoInjector';

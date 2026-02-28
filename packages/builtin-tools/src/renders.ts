@@ -1,5 +1,7 @@
 import { AgentBuilderManifest } from '@lobechat/builtin-tool-agent-builder';
 import { AgentBuilderRenders } from '@lobechat/builtin-tool-agent-builder/client';
+import { AgentManagementManifest } from '@lobechat/builtin-tool-agent-management';
+import { AgentManagementRenders } from '@lobechat/builtin-tool-agent-management/client';
 import { CloudSandboxManifest } from '@lobechat/builtin-tool-cloud-sandbox';
 import { CloudSandboxRenders } from '@lobechat/builtin-tool-cloud-sandbox/client';
 import { GroupAgentBuilderManifest } from '@lobechat/builtin-tool-group-agent-builder';
@@ -24,12 +26,14 @@ import {
   WebBrowsingRenders,
 } from '@lobechat/builtin-tool-web-browsing/client';
 import { type BuiltinRender } from '@lobechat/types';
+
 /**
  * Builtin tools renders registry
  * Organized by toolset (identifier) -> API name
  */
 const BuiltinToolsRenders: Record<string, Record<string, BuiltinRender>> = {
   [AgentBuilderManifest.identifier]: AgentBuilderRenders as Record<string, BuiltinRender>,
+  [AgentManagementManifest.identifier]: AgentManagementRenders as Record<string, BuiltinRender>,
   [CloudSandboxManifest.identifier]: CloudSandboxRenders as Record<string, BuiltinRender>,
   [GroupAgentBuilderManifest.identifier]: GroupAgentBuilderRenders as Record<string, BuiltinRender>,
   [GroupManagementManifest.identifier]: GroupManagementRenders as Record<string, BuiltinRender>,

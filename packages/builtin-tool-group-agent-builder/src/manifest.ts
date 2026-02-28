@@ -245,7 +245,7 @@ export const GroupAgentBuilderManifest: BuiltinToolManifest = {
               },
               model: {
                 description:
-                  'The AI model identifier (e.g., "gpt-4o", "claude-haiku-4-5-20251001")',
+                  'The AI model identifier (e.g., "gpt-4o", "claude-sonnet-4-5-20250929")',
                 type: 'string',
               },
               params: {

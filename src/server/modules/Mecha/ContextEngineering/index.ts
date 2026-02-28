@@ -56,6 +56,7 @@ export const serverMessagesEngine = async ({
   userMemory,
   agentBuilderContext,
   evalContext,
+   agentManagementContext,
   pageContentContext,
 }: ServerMessagesEngineParams): Promise<OpenAIChatMessage[]> => {
   const engine = new MessagesEngine({
@@ -119,6 +120,7 @@ export const serverMessagesEngine = async ({
     // Extended contexts
     ...(agentBuilderContext && { agentBuilderContext }),
     ...(evalContext && { evalContext }),
+     ...(agentManagementContext && { agentManagementContext }),
     ...(pageContentContext && { pageContentContext }),
   });
 

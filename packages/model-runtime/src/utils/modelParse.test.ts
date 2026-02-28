@@ -1087,7 +1087,7 @@ describe('modelParse', () => {
 
       // Third model (partial match) should replace only the matching part
       const partialModel = result.find((m) => m.id === 'partial-gemini-model');
-      expect(partialModel?.displayName).toBe('Custom 🍌 Nano Banana Enhanced');
+      expect(partialModel?.displayName).toBe('Custom Nano Banana Enhanced');
 
       // Fourth model should preserve the (free) suffix
       const freeModel = result.find((m) => m.id === 'gemini-free-model');

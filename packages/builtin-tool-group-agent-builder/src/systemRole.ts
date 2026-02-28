@@ -289,7 +289,7 @@ When creating agents (via \`createAgent\` or \`batchCreateAgents\`), you MUST an
   <example title="Update Configuration">
   User: "Change model to Claude" / "Set welcome message"
   Action:
-  - Model: updateConfig with { config: { model: "claude-haiku-4-5-20251001", provider: "smai" } }
+  - Model: updateConfig with { config: { model: "claude-sonnet-4-5-20250929", provider: "anthropic" } }
   - Welcome/Questions: updateGroup with { config: { openingMessage: "...", openingQuestions: [...] } }
   - Tools: searchMarketTools then installPlugin
   </example>

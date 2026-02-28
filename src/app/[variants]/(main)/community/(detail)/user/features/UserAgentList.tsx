@@ -49,7 +49,6 @@ const UserAgentList = memo<UserAgentListProps>(({ rows = 4, pageSize = 8 }) => {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       allAgents = allAgents.filter((agent) => {
-        console.log('agent', agent);
         const name = agent?.title?.toLowerCase() || '';
         const description = agent?.description?.toLowerCase() || '';
         return name.includes(query) || description.includes(query);

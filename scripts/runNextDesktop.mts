@@ -1,10 +1,11 @@
-import * as dotenv from 'dotenv';
-import dotenvExpand from 'dotenv-expand';
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 
-const isDesktop = process.env.NEXT_PUBLIC_IS_DESKTOP_APP === '1';
+import * as dotenv from 'dotenv';
+import dotenvExpand from 'dotenv-expand';
+
+const isDesktop = process.env.DESKTOP_BUILD === 'true';
 
 if (isDesktop) {
   const envDesktop = path.resolve(process.cwd(), '.env.desktop');

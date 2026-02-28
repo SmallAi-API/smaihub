@@ -1,7 +1,7 @@
 import debug from 'debug';
 
 import { BaseProvider } from '../base/BaseProvider';
-import { type PipelineContext, type ProcessorOptions } from '../types';
+import type { PipelineContext, ProcessorOptions } from '../types';
 
 const log = debug('context-engine:provider:SystemDateProvider');
 

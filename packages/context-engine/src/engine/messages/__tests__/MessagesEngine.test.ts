@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { type UIChatMessage } from '@/types/index';
+import type { UIChatMessage } from '@/types/index';
 
 import { MessagesEngine } from '../MessagesEngine';
-import { type MessagesEngineParams } from '../types';
+import type { MessagesEngineParams } from '../types';
 
 describe('MessagesEngine', () => {
   const createBasicMessages = (): UIChatMessage[] => [

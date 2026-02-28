@@ -93,7 +93,7 @@ export class DiscoverService {
 
     log(
       'DiscoverService initialized with market baseURL: %s, hasAuth: %s, userId: %s',
-      process.env.NEXT_PUBLIC_MARKET_BASE_URL,
+      process.env.MARKET_BASE_URL,
       !!(accessToken || userInfo),
       userInfo?.userId,
     );

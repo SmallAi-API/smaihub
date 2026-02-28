@@ -34,21 +34,7 @@
       "count": 1
     }
   },
-  "src/app/[variants]/(main)/agent/profile/features/Header/AgentForkTag.tsx": {
-    "no-console": {
-      "count": 1
-    }
-  },
-  "src/app/[variants]/(main)/community/(detail)/agent/features/AgentForkTag.tsx": {
-    "no-console": {
-      "count": 1
-    }
-  },
-  "src/app/[variants]/(main)/community/(detail)/user/features/UserAgentList.tsx": {
-    "no-console": {
-      "count": 1
-    }
-  },
+
   "src/app/[variants]/(main)/community/components/VirtuosoGridList/index.tsx": {
     "@eslint-react/no-nested-component-definitions": {
       "count": 2
@@ -69,11 +55,7 @@
       "count": 1
     }
   },
-  "src/app/[variants]/(main)/memory/features/MemoryAnalysis/index.tsx": {
-    "no-console": {
-      "count": 1
-    }
-  },
+
   "src/app/[variants]/(main)/resource/features/hooks/useResourceManagerUrlSync.ts": {
     "react-hooks/exhaustive-deps": {
       "count": 1
@@ -130,11 +112,7 @@
       "count": 1
     }
   },
-  "src/components/FeedbackModal/index.tsx": {
-    "no-console": {
-      "count": 1
-    }
-  },
+
   "src/components/Loading/CircleLoading/index.tsx": {
     "unicorn/no-anonymous-default-export": {
       "count": 1
@@ -227,11 +205,7 @@
       "count": 3
     }
   },
-  "src/features/DevPanel/CacheViewer/index.tsx": {
-    "react-hooks/rules-of-hooks": {
-      "count": 1
-    }
-  },
+
   "src/features/PluginsUI/Render/utils/iframeOnReady.test.ts": {
     "unicorn/no-invalid-remove-event-listener": {
       "count": 1
@@ -298,11 +272,7 @@
       "count": 1
     }
   },
-  "src/libs/observability/traceparent.test.ts": {
-    "import/first": {
-      "count": 1
-    }
-  },
+
   "src/libs/oidc-provider/http-adapter.ts": {
     "@typescript-eslint/ban-types": {
       "count": 1
@@ -321,11 +291,7 @@
       "count": 1
     }
   },
-  "src/libs/trpc/middleware/openTelemetry.test.ts": {
-    "import/first": {
-      "count": 1
-    }
-  },
+
   "src/locales/default/welcome.ts": {
     "sort-keys-fix/sort-keys-fix": {
       "count": 1
@@ -334,16 +300,7 @@
       "count": 1
     }
   },
-  "src/server/manifest.ts": {
-    "object-shorthand": {
-      "count": 3
-    }
-  },
-  "src/server/modules/KeyVaultsEncrypt/index.ts": {
-    "object-shorthand": {
-      "count": 2
-    }
-  },
+
   "src/server/modules/ModelRuntime/apiKeyManager.test.ts": {
     "unicorn/no-new-array": {
       "count": 1
@@ -360,11 +317,6 @@
     }
   },
   "src/server/routers/lambda/agent.ts": {
-    "no-console": {
-      "count": 1
-    }
-  },
-  "src/server/routers/lambda/aiAgent.ts": {
     "no-console": {
       "count": 1
     }
@@ -834,14 +786,6 @@
   },
   "src/utils/server/parseModels.ts": {
     "prefer-const": {
-      "count": 1
-    }
-  },
-  "tests/setup.ts": {
-    "import/first": {
-      "count": 1
-    },
-    "import/newline-after-import": {
       "count": 1
     }
   }

@@ -4,13 +4,11 @@
  * Central registry for all builtin tool executors.
  * Executors are registered as class instances by identifier.
  */
-import { AgentBuilderIdentifier, AgentBuilderManifest } from '@lobechat/builtin-tool-agent-builder';
+import { agentBuilderExecutor } from '@lobechat/builtin-tool-agent-builder/executor';
+import { agentManagementExecutor } from '@lobechat/builtin-tool-agent-management/executor';
 import { calculatorExecutor } from '@lobechat/builtin-tool-calculator/executor';
 import { cloudSandboxExecutor } from '@lobechat/builtin-tool-cloud-sandbox/executor';
-import {
-  GroupAgentBuilderIdentifier,
-  GroupAgentBuilderManifest,
-} from '@lobechat/builtin-tool-group-agent-builder';
+import { groupAgentBuilderExecutor } from '@lobechat/builtin-tool-group-agent-builder/executor';
 import { groupManagementExecutor } from '@lobechat/builtin-tool-group-management/executor';
 import { gtdExecutor } from '@lobechat/builtin-tool-gtd/executor';
 import { knowledgeBaseExecutor } from '@lobechat/builtin-tool-knowledge-base/executor';
@@ -36,39 +34,6 @@ import { webBrowsing } from './lobe-web-browsing';
  */
 const executorRegistry = new Map<string, IBuiltinToolExecutor>();
 
-type LazyExecutorLoader = () => Promise<IBuiltinToolExecutor>;
-
-const lazyExecutorLoaders = new Map<string, LazyExecutorLoader>([
-  [
-    AgentBuilderIdentifier,
-    async () =>
-      (await import('@lobechat/builtin-tool-agent-builder/executor')).agentBuilderExecutor,
-  ],
-  [
-    GroupAgentBuilderIdentifier,
-    async () =>
-      (await import('@lobechat/builtin-tool-group-agent-builder/executor'))
-        .groupAgentBuilderExecutor,
-  ],
-]);
-
-const lazyExecutorApiNames = new Map<string, string[]>([
-  [AgentBuilderIdentifier, AgentBuilderManifest.api.map((item) => item.name)],
-  [GroupAgentBuilderIdentifier, GroupAgentBuilderManifest.api.map((item) => item.name)],
-]);
-
-const ensureExecutor = async (identifier: string): Promise<IBuiltinToolExecutor | undefined> => {
-  const registered = executorRegistry.get(identifier);
-  if (registered) return registered;
-
-  const loader = lazyExecutorLoaders.get(identifier);
-  if (!loader) return;
-
-  const executor = await loader();
-  executorRegistry.set(executor.identifier, executor);
-  return executor;
-};
-
 /**
  * Get a builtin tool executor by identifier
  *
@@ -88,12 +53,7 @@ export const getExecutor = (identifier: string): IBuiltinToolExecutor | undefine
  */
 export const hasExecutor = (identifier: string, apiName: string): boolean => {
   const executor = executorRegistry.get(identifier);
-  if (executor) return executor.hasApi(apiName);
-
-  const apiNames = lazyExecutorApiNames.get(identifier);
-  if (!apiNames) return false;
-
-  return apiNames.includes(apiName);
+  return executor?.hasApi(apiName) ?? false;
 };
 
 /**
@@ -102,7 +62,7 @@ export const hasExecutor = (identifier: string, apiName: string): boolean => {
  * @returns Array of registered identifiers
  */
 export const getRegisteredIdentifiers = (): string[] => {
-  return Array.from(new Set([...executorRegistry.keys(), ...lazyExecutorLoaders.keys()]));
+  return Array.from(executorRegistry.keys());
 };
 
 /**
@@ -113,9 +73,7 @@ export const getRegisteredIdentifiers = (): string[] => {
  */
 export const getApiNamesForIdentifier = (identifier: string): string[] => {
   const executor = executorRegistry.get(identifier);
-  if (executor) return executor.getApiNames();
-
-  return lazyExecutorApiNames.get(identifier) ?? [];
+  return executor?.getApiNames() ?? [];
 };
 
 /**
@@ -133,7 +91,7 @@ export const invokeExecutor = async (
   params: any,
   ctx: BuiltinToolContext,
 ): Promise<BuiltinToolResult> => {
-  const executor = await ensureExecutor(identifier);
+  const executor = executorRegistry.get(identifier);
 
   if (!executor) {
     return {
@@ -171,8 +129,11 @@ const registerExecutors = (executors: IBuiltinToolExecutor[]): void => {
 
 // Register all executor instances
 registerExecutors([
-  cloudSandboxExecutor,
+  agentBuilderExecutor,
+  agentManagementExecutor,
   calculatorExecutor,
+  cloudSandboxExecutor,
+  groupAgentBuilderExecutor,
   groupManagementExecutor,
   gtdExecutor,
   knowledgeBaseExecutor,

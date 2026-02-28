@@ -2,7 +2,7 @@ import { type AvailableToolItem, availableToolsPrompts } from '@lobechat/prompts
 import debug from 'debug';
 
 import { BaseFirstUserContentProvider } from '../base/BaseFirstUserContentProvider';
-import { type PipelineContext, type ProcessorOptions } from '../types';
+import type { PipelineContext, ProcessorOptions } from '../types';
 
 const log = debug('context-engine:provider:ToolDiscoveryProvider');
 
