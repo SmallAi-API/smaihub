@@ -1,7 +1,7 @@
 /* eslint-disable perfectionist/sort-interfaces */
-import { type AgentManagementContext } from '@lobechat/context-engine';
 import {
   type AgentBuilderContext,
+  type AgentManagementContext,
   type EvalContext,
   type FileContent,
   type KnowledgeBaseInfo,

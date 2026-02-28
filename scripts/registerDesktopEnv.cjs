@@ -9,6 +9,7 @@
  *
  *   node -r ./scripts/registerDesktopEnv.cjs ./node_modules/next/dist/bin/next build
  */
+/* eslint-disable @typescript-eslint/no-require-imports */
 
 const path = require('node:path');
 const dotenv = require('dotenv');
