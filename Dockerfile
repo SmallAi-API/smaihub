@@ -105,16 +105,7 @@ RUN rm -rf src/app/desktop "src/app/(backend)/trpc/desktop"
 # run build standalone for docker version
 RUN npm run build:docker
 
-# Prepare desktop export assets for Electron packaging (if generated)
-RUN set -e && \
-    if [ -d "/app/out" ]; then \
-        mkdir -p /app/apps/desktop/dist/next && \
-        cp -a /app/out/. /app/apps/desktop/dist/next/ && \
-        echo "Copied Next export output into /app/apps/desktop/dist/next"; \
-    else \
-        echo "No Next export output found at /app/out, creating empty directory" && \
-        mkdir -p /app/apps/desktop/dist/next; \
-    fi
+
 
 ## Application image, copy all the files for production
 FROM busybox:latest AS app
@@ -128,8 +119,7 @@ COPY --from=builder /app/public /app/public
 COPY --from=builder /app/.next/static /app/.next/static
 # Copy SPA assets (Vite build output)
 COPY --from=builder /app/public/spa /app/public/spa
-# Copy Next export output for desktop renderer
-COPY --from=builder /app/apps/desktop/dist/next /app/apps/desktop/dist/next
+
 
 # Copy database migrations
 COPY --from=builder /app/packages/database/migrations /app/migrations
