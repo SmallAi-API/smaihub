@@ -3,10 +3,9 @@ import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useKnowledgeBaseStore } from '@/store/library';
-import { type CreateKnowledgeBaseParams } from '@/types/knowledgeBase';
 
 interface CreateFormProps {
-   id?: string;
+  id?: string;
   initialValues?: { name?: string; description?: string };
   onClose?: () => void;
   onSuccess?: (id: string) => void;
@@ -15,23 +14,22 @@ interface CreateFormProps {
 const CreateForm = memo<CreateFormProps>(({ id, initialValues, onClose, onSuccess }) => {
   const { t } = useTranslation('knowledgeBase');
   const [loading, setLoading] = useState(false);
-   const [name, setName] = useState(initialValues?.name || '');
+  const [name, setName] = useState(initialValues?.name || '');
   const [description, setDescription] = useState(initialValues?.description || '');
   const createNewKnowledgeBase = useKnowledgeBaseStore((s) => s.createNewKnowledgeBase);
 
-   const updateKnowledgeBase = useKnowledgeBaseStore((s) => s.updateKnowledgeBase);
+  const updateKnowledgeBase = useKnowledgeBaseStore((s) => s.updateKnowledgeBase);
 
   const isEditMode = !!id;
 
   const handleSubmit = async () => {
     if (!name.trim()) return;
 
- 
     setLoading(true);
-      const values = { name: name.trim(), description: description.trim() };
+    const values = { name: name.trim(), description: description.trim() };
 
     try {
-    if (isEditMode) {
+      if (isEditMode) {
         await updateKnowledgeBase(id, values);
         setLoading(false);
         onClose?.();
@@ -53,7 +51,7 @@ const CreateForm = memo<CreateFormProps>(({ id, initialValues, onClose, onSucces
   };
 
   return (
-   <Flexbox gap={16}>
+    <Flexbox gap={16}>
       <Input
         autoFocus
         placeholder={t('createNew.name.placeholder')}
@@ -69,7 +67,7 @@ const CreateForm = memo<CreateFormProps>(({ id, initialValues, onClose, onSucces
           onChange={(e) => setDescription(e.target.value)}
         />
       </Flexbox>
-      <Button block loading={loading} onClick={handleSubmit} type={'primary'}>
+      <Button block loading={loading} type={'primary'} onClick={handleSubmit}>
         {isEditMode ? t('createNew.edit.confirm') : t('createNew.confirm')}
       </Button>
     </Flexbox>

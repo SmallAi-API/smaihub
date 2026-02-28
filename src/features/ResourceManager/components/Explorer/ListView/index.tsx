@@ -60,7 +60,7 @@ const ListView = memo(function ListView() {
   const [
     libraryId,
     category,
-   
+
     selectFileIds,
     setSelectedFileIds,
     pendingRenameItemId,
@@ -107,12 +107,12 @@ const ListView = memo(function ListView() {
       category: libraryId ? undefined : category,
       libraryId,
       parentId: currentFolderSlug || null,
-    
+
       showFilesInKnowledgeBase: false,
       sortType,
       sorter,
     }),
-      [category, currentFolderSlug, libraryId, sorter, sortType],
+    [category, currentFolderSlug, libraryId, sorter, sortType],
   );
 
   const { isLoading, isValidating } = useFetchResources(queryParams);
@@ -124,7 +124,7 @@ const ListView = memo(function ListView() {
     return (
       currentQueryParams.libraryId !== queryParams.libraryId ||
       currentQueryParams.parentId !== queryParams.parentId ||
-       currentQueryParams.category !== queryParams.category
+      currentQueryParams.category !== queryParams.category
     );
   }, [currentQueryParams, queryParams]);
 
@@ -326,6 +326,7 @@ const ListView = memo(function ListView() {
   }, [clearScrollTimers]);
 
   // Memoize footer component to show skeleton loaders when loading more
+  // eslint-disable-next-line @eslint-react/no-nested-component-definitions
   const Footer = useCallback(() => {
     if (isLoadingMore && hasMore) return <ListViewSkeleton columnWidths={columnWidths} />;
 

@@ -16,7 +16,7 @@ import { messageStateSlice } from './state';
  * - Sending messages
  */
 export interface MessageAction
-  extends MessageCRUDAction, MessageStateAction, MessageReactionAction {
+  extends MessageCRUDAction, MessageReactionAction, MessageStateAction {
   /**
    * Add an AI message (convenience method)
    */
@@ -59,7 +59,7 @@ export const messageSlice: StateCreator<
     const parentId = displayMessages.length > 0 ? displayMessages.at(-1)?.id : undefined;
 
     const id = await state.createMessage({
-      agentId: agentId,
+      agentId,
       content,
       parentId,
       role: 'assistant',

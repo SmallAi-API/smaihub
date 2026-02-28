@@ -74,12 +74,12 @@ const SearchInput = memo(() => {
           ref={inputRef}
           size="small"
           style={{ width: 200 }}
+          value={localQuery}
           suffix={
             localQuery ? (
               <XIcon size={14} style={{ cursor: 'pointer' }} onClick={handleCollapse} />
             ) : undefined
           }
-          value={localQuery}
           onBlur={handleBlur}
           onChange={(e) => setLocalQuery(e.target.value)}
           onKeyDown={handleKeyDown}

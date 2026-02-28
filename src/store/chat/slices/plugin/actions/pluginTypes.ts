@@ -32,11 +32,10 @@ export const pluginTypes = (set: Setter, get: () => ChatStore, _api?: unknown) =
 
 export class PluginTypesActionImpl {
   readonly #get: () => ChatStore;
-  readonly #set: Setter;
 
   constructor(set: Setter, get: () => ChatStore, _api?: unknown) {
     void _api;
-    this.#set = set;
+    void set;
     this.#get = get;
   }
 

@@ -55,7 +55,7 @@ const resources = {
   discover,
   download,
   editor,
-  eval: eval_,
+  'eval': eval_,
   electron,
   error,
   file,

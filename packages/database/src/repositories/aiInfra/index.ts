@@ -458,8 +458,9 @@ export class AiInfraRepos {
   };
 
   /**
-   * Get enabled providers sorted by user preference.
-   * Used for dynamic embedding provider selection.
+   * Get enabled providers sorted by user preference
+   * Used for dynamic embedding provider selection
+   * Returns all enabled providers regardless of whether they have embedding models configured
    */
   getEnabledEmbeddingProviders = async (): Promise<EnabledProvider[]> => {
     return this.getUserEnabledProviderList();

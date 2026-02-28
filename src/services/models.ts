@@ -75,7 +75,7 @@ export class ModelsService {
       const runtimeProvider = resolveRuntimeProvider(provider);
       const enableFetchOnClient = isEnableFetchOnClient(provider);
 
-      console.log('enableFetchOnClient：', enableFetchOnClient);
+      console.info('enableFetchOnClient：', enableFetchOnClient);
       let res: Response;
       if (enableFetchOnClient) {
         const agentRuntime = await initializeWithClientStore({
@@ -150,7 +150,7 @@ export class ModelsService {
         }
 
         if (progress.status === 'canceled') {
-          console.log('progress:', progress);
+          console.info('progress:', progress);
         }
 
         if (progress.status === 'error') {
