@@ -80,6 +80,9 @@ class OIDCAdapter {
       case 'PushedAuthorizationRequest': {
         return oidcAuthorizationCodes;
       } // 使用相同的表
+      case 'BackchannelAuthenticationRequest': {
+        return oidcAuthorizationCodes;
+      } // 使用相同的表
       case 'Grant': {
         return oidcGrants;
       }

@@ -7,9 +7,10 @@ export const CURRENT_VERSION = pkg.version;
 export const isDesktop = typeof __ELECTRON__ !== 'undefined' && !!__ELECTRON__;
 
 const desktopSelfHostEnv = process.env.NEXT_PUBLIC_DESKTOP_ENABLE_SELFHOST;
+
 export const isDesktopSelfHostEnabled =
   desktopSelfHostEnv === undefined
-    ? true
+    ? false
     : !['0', 'false', 'no', 'off'].includes(desktopSelfHostEnv.toLowerCase());
 
 // @ts-ignore

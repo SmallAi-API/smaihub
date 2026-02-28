@@ -27,7 +27,7 @@ export default class BrowserWindowsCtr extends ControllerModule {
         ? { tab: typeof options === 'string' ? options : undefined }
         : options;
 
-    console.log('[BrowserWindowsCtr] Received request to open settings', normalizedOptions);
+    console.info('[BrowserWindowsCtr] Received request to open settings', normalizedOptions);
 
     try {
       let fullPath: string;
@@ -106,7 +106,7 @@ export default class BrowserWindowsCtr extends ControllerModule {
   @IpcMethod()
   async interceptRoute(params: InterceptRouteParams) {
     const { path, source } = params;
-    console.log(
+    console.info(
       `[BrowserWindowsCtr] Received route interception request: ${path}, source: ${source}`,
     );
 
@@ -115,11 +115,11 @@ export default class BrowserWindowsCtr extends ControllerModule {
 
     // If no matching route found, return not intercepted
     if (!matchedRoute) {
-      console.log(`[BrowserWindowsCtr] No matching route configuration found: ${path}`);
+      console.info(`[BrowserWindowsCtr] No matching route configuration found: ${path}`);
       return { intercepted: false, path, source };
     }
 
-    console.log(
+    console.info(
       `[BrowserWindowsCtr] Intercepted route: ${path}, target window: ${matchedRoute.targetWindow}`,
     );
 
@@ -153,7 +153,7 @@ export default class BrowserWindowsCtr extends ControllerModule {
     uniqueId?: string;
   }) {
     try {
-      console.log('[BrowserWindowsCtr] Creating multi-instance window:', params);
+      console.info('[BrowserWindowsCtr] Creating multi-instance window:', params);
 
       const result = this.app.browserManager.createMultiInstanceWindow(
         params.templateId,

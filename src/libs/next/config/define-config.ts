@@ -349,6 +349,9 @@ export function defineConfig(config: CustomNextConfig) {
     // @napi-rs/canvas is a native module that can't be bundled by Turbopack
     // pdfjs-dist uses @napi-rs/canvas for DOMMatrix polyfill in Node.js environment
     serverExternalPackages: config.serverExternalPackages ?? [
+      // oidc-provider relies on constructor.name for model adapter lookup.
+      // Keeping it external avoids potential name mangling during server bundling.
+      'oidc-provider',
       'pdfkit',
       '@napi-rs/canvas',
       'pdfjs-dist',
