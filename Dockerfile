@@ -124,6 +124,8 @@ COPY --from=base /distroless/ /
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder /app/.next/standalone /app/
+COPY --from=builder /app/public /app/public
+COPY --from=builder /app/.next/static /app/.next/static
 # Copy SPA assets (Vite build output)
 COPY --from=builder /app/public/spa /app/public/spa
 # Copy Next export output for desktop renderer
