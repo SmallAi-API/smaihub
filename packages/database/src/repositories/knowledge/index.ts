@@ -1,11 +1,11 @@
-import type { QueryFileListParams } from '@lobechat/types';
+import { type QueryFileListParams } from '@lobechat/types';
 import { FilesTabs, SortType } from '@lobechat/types';
 import { sql } from 'drizzle-orm';
 
 import { DocumentModel } from '../../models/document';
 import { FileModel } from '../../models/file';
 import { documents, files, knowledgeBaseFiles } from '../../schemas';
-import type { LobeChatDatabase } from '../../type';
+import { type LobeChatDatabase } from '../../type';
 
 export interface KnowledgeItem {
   chunkTaskId?: string | null;
@@ -176,7 +176,7 @@ export class KnowledgeRepo {
         'file' as source_type
       FROM ${files} f
       LEFT JOIN ${documents} d
-        ON f.id = d.file_id
+         ON f.id = d.file_id AND d.source_type = 'file'
       WHERE f.user_id = ${this.userId}
         AND NOT EXISTS (
           SELECT 1 FROM ${knowledgeBaseFiles}
@@ -387,7 +387,7 @@ export class KnowledgeRepo {
           ON f.id = kbf.file_id
           AND kbf.knowledge_base_id = ${knowledgeBaseId}
         LEFT JOIN ${documents} d
-          ON f.id = d.file_id
+          ON f.id = d.file_id AND d.source_type = 'file'
         WHERE ${sql.join(kbWhereConditions, sql` AND `)}
       `;
     }
@@ -422,7 +422,7 @@ export class KnowledgeRepo {
         'file' as source_type
       FROM ${files} f
       LEFT JOIN ${documents} d
-        ON f.id = d.file_id
+       ON f.id = d.file_id AND d.source_type = 'file'
       WHERE ${sql.join(whereConditions, sql` AND `)}
     `;
   }
