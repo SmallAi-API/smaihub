@@ -54,7 +54,13 @@ const EmptyState = memo<EmptyStateProps>(({ onAddDataset }) => {
           </Flexbox>
         }
       >
-        <Button icon={Plus} size="small" style={{ marginTop: 16 }} type="primary" onClick={onAddDataset}>
+        <Button
+          icon={Plus}
+          size="small"
+          style={{ marginTop: 16 }}
+          type="primary"
+          onClick={onAddDataset}
+        >
           {t('dataset.actions.addDataset')}
         </Button>
       </Empty>

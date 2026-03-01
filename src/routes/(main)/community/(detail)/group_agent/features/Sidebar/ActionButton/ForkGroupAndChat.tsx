@@ -120,7 +120,6 @@ const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
         };
         // Filter out null/undefined values
         supervisorConfig = Object.fromEntries(
-           
           Object.entries(rawConfig).filter(([_, v]) => v != null),
         );
       }

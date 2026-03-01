@@ -45,7 +45,13 @@ const TestCasePreviewModal = memo<TestCasePreviewModalProps>(({ open, testCase, 
   const { t } = useTranslation('eval');
 
   return (
-    <Modal footer={null} open={open} title={t('testCase.preview.title')} width={600} onCancel={onClose}>
+    <Modal
+      footer={null}
+      open={open}
+      title={t('testCase.preview.title')}
+      width={600}
+      onCancel={onClose}
+    >
       {testCase && (
         <Flexbox gap={16}>
           <Flexbox gap={4}>
