@@ -35,7 +35,7 @@ import {
 } from './types';
 
 if (process.env.VERCEL) {
-  debug.log = console.log.bind(console);
+  debug.log = console.info.bind(console);
 }
 
 const log = debug('lobe-server:agent-runtime-service');

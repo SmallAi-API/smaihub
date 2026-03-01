@@ -95,6 +95,7 @@ export interface RouteAttemptResult {
   remark?: string;
   routerId?: string;
   success: boolean;
+  userId?: string;
 }
 
 export interface CreateRouterRuntimeOptions<T extends Record<string, any> = any> {
@@ -349,6 +350,7 @@ export const createRouterRuntime = ({
               remark,
               routerId: matchedRouter.id,
               success: true,
+              userId: this._options.userId,
             })
             .catch((e) => {
               log('onRouteAttempt callback error: %O', e);
@@ -369,6 +371,7 @@ export const createRouterRuntime = ({
               remark,
               routerId: matchedRouter.id,
               success: false,
+              userId: this._options.userId,
             })
             .catch((e) => {
               log('onRouteAttempt callback error: %O', e);
