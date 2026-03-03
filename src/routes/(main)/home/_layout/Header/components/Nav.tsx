@@ -16,6 +16,7 @@ import { electronSystemService } from '@/services/electron/system';
 import { useGlobalStore } from '@/store/global';
 import { SidebarTabKey } from '@/store/global/initialState';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
+import { isModifierClick } from '@/utils/navigation';
 
 const handleExternalLink = (url: string) => {
   if (isDesktop) {
@@ -135,6 +136,7 @@ const Nav = memo(() => {
             key={item.key}
             to={item.url}
             onClick={(e) => {
+              if (isModifierClick(e)) return;
               e.preventDefault();
               item?.onClick?.();
               if (item.url) {

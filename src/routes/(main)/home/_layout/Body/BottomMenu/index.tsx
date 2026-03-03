@@ -11,6 +11,7 @@ import NavItem, { type NavItemProps } from '@/features/NavPanel/components/NavIt
 import { useActiveTabKey } from '@/hooks/useActiveTabKey';
 import { electronSystemService } from '@/services/electron/system';
 import { SidebarTabKey } from '@/store/global/initialState';
+import { isModifierClick } from '@/utils/navigation';
 
 const handleExternalLink = (url: string) => {
   if (isDesktop) {
@@ -130,6 +131,7 @@ const BottomMenu = memo(() => {
             key={item.key}
             to={internalUrl}
             onClick={(e) => {
+              if (isModifierClick(e)) return;
               e.preventDefault();
               navigate(internalUrl);
             }}
