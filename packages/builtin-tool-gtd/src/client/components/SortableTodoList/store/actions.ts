@@ -27,11 +27,11 @@ export const createActions = (
 ): TodoListStore => {
   // Save implementation (used by both debounced and immediate save)
   const performSave = async () => {
-    console.log('[performSave] called, onSave:', !!internals.onSave);
+    console.info('[performSave] called, onSave:', !!internals.onSave);
     if (!internals.onSave) return;
 
     const { items, isDirty } = get();
-    console.log('[performSave] isDirty:', isDirty, 'items:', items.length);
+    console.info('[performSave] isDirty:', isDirty, 'items:', items.length);
     if (!isDirty) return;
 
     set({ saveStatus: 'saving' });
@@ -39,9 +39,9 @@ export const createActions = (
     try {
       // Convert TodoListItem[] to TodoItem[] (remove id)
       const todoItems: TodoItem[] = items.map(({ status, text }) => ({ status, text }));
-      console.log('[performSave] calling onSave with', todoItems.length, 'items');
+      console.info('[performSave] calling onSave with', todoItems.length, 'items');
       await internals.onSave(todoItems);
-      console.log('[performSave] onSave completed');
+      console.info('[performSave] onSave completed');
       set({ isDirty: false, saveStatus: 'saved' });
     } catch {
       set({ saveStatus: 'error' });
@@ -64,7 +64,6 @@ export const createActions = (
     ...initialState,
     items: defaultItems.map((item) => ({ ...item, id: generateId() })),
 
-    /* eslint-disable sort-keys-fix/sort-keys-fix */
     addItem: () => {
       const { items, newItemText } = get();
       if (!newItemText.trim()) return;
@@ -99,9 +98,9 @@ export const createActions = (
 
       try {
         const todoItems: TodoItem[] = items.map(({ status, text }) => ({ status, text }));
-        console.log('[saveNow] force saving', todoItems.length, 'items');
+        console.info('[saveNow] force saving', todoItems.length, 'items');
         await internals.onSave(todoItems);
-        console.log('[saveNow] save completed');
+        console.info('[saveNow] save completed');
         set({ isDirty: false, saveStatus: 'saved' });
 
         setTimeout(() => {

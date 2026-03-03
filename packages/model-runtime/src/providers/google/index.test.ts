@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { type GenerateContentResponse } from '@google/genai';
+import type { GenerateContentResponse } from '@google/genai';
 import OpenAI from 'openai';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -73,7 +73,7 @@ describe('LobeGoogleAI', () => {
     });
 
     it('should withGrounding', () => {
-      const _data = [
+      const data = [
         {
           candidates: [{ content: { parts: [{ text: 'As' }], role: 'model' } }],
           usageMetadata: { promptTokenCount: 8, totalTokenCount: 8 },
@@ -440,9 +440,9 @@ describe('LobeGoogleAI', () => {
         const enhancedStream = instance['createEnhancedStream'](mockStream, abortController.signal);
 
         const reader = enhancedStream.getReader();
+        const chunks: any[] = [(await reader.read()).value];
 
         // Read first value then cancel to trigger error chunk
-        const chunks: any[] = [(await reader.read()).value];
         abortController.abort();
 
         // Read all remaining chunks
@@ -493,9 +493,9 @@ describe('LobeGoogleAI', () => {
         const enhancedStream = instance['createEnhancedStream'](mockStream, abortController.signal);
 
         const reader = enhancedStream.getReader();
+        const chunks: any[] = [(await reader.read()).value];
 
         // Read first value then collect remaining chunks (error included)
-        const chunks: any[] = [(await reader.read()).value];
         let result;
         while (!(result = await reader.read()).done) {
           chunks.push(result.value);
@@ -558,9 +558,9 @@ describe('LobeGoogleAI', () => {
         const enhancedStream = instance['createEnhancedStream'](mockStream, abortController.signal);
 
         const reader = enhancedStream.getReader();
+        const chunks: any[] = [(await reader.read()).value];
 
         // Read first value then collect remaining chunks (parsing error)
-        const chunks: any[] = [(await reader.read()).value];
         let result;
         while (!(result = await reader.read()).done) {
           chunks.push(result.value);
@@ -615,7 +615,7 @@ describe('thinkingConfig includeThoughts logic', () => {
     expect(config.thinkingConfig?.includeThoughts).toBe(true);
   });
 
-  it('should enable thinking for gemini-3-pro-image models', async () => {
+  it('should let API decide thinking for gemini-3-pro-image models without explicit params', async () => {
     const mockStreamData = (async function* (): AsyncGenerator<GenerateContentResponse> {})();
     vi.spyOn(instance['client'].models, 'generateContentStream').mockResolvedValue(mockStreamData);
 
@@ -627,7 +627,8 @@ describe('thinkingConfig includeThoughts logic', () => {
 
     const callArgs = (instance['client'].models.generateContentStream as any).mock.calls[0];
     const config = callArgs[0].config;
-    expect(config.thinkingConfig?.includeThoughts).toBe(true);
+    // Gemini 3 models without explicit thinkingLevel/thinkingBudget → let API decide
+    expect(config.thinkingConfig?.includeThoughts).toBeUndefined();
   });
 
   it('should enable thinking for thinking-enabled models', async () => {

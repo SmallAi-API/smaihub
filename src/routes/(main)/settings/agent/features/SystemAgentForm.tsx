@@ -48,7 +48,6 @@ const SystemAgentForm = memo(
                 await updateSystemAgent(systemAgentKey, props);
                 setLoading(false);
               }}
-              virtual={false}
               // value={value}
             />
           ),

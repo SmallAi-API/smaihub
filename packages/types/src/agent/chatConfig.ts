@@ -12,6 +12,7 @@ export interface WorkingModel {
 export interface AgentMemoryChatConfig {
   memory?: {
     effort?: UserMemoryEffort;
+    enabled?: boolean;
     toolPermission?: 'read-only' | 'read-write';
   };
 }
@@ -132,6 +133,7 @@ export const MemoryChatConfigSchema = z.object({
   memory: z
     .object({
       effort: z.enum(['low', 'medium', 'high']).optional(),
+      enabled: z.boolean().optional(),
       toolPermission: z.enum(['read-only', 'read-write']).optional(),
     })
     .optional(),
