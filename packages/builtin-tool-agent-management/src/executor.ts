@@ -67,8 +67,14 @@ class AgentManagementExecutor extends BaseExecutor<typeof AgentManagementApiName
     params: CallAgentParams,
     ctx: BuiltinToolContext,
   ): Promise<BuiltinToolResult> => {
-    const { agentId, instruction, runAsTask, taskTitle, timeout, skipCallSupervisor = false } =
-      params;
+    const {
+      agentId,
+      instruction,
+      runAsTask,
+      taskTitle,
+      timeout,
+      skipCallSupervisor = false,
+    } = params;
 
     if (runAsTask) {
       // Execute as async task using GTD exec_task pattern
@@ -194,7 +200,7 @@ class AgentManagementExecutor extends BaseExecutor<typeof AgentManagementApiName
           // The message.agentId will still be current agent, but metadata stores subAgentId + scope
           await get().internal_execAgentRuntime({
             context: { ...conversationContext, subAgentId: agentId, scope: 'sub_agent' },
-            messages: messages,
+            messages,
             parentMessageId: ctx.messageId,
             parentMessageType: 'tool',
           });

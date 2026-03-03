@@ -1,7 +1,7 @@
 import createDebug from 'debug';
 
-import { type CreateVideoOptions } from '../../../core/openaiCompatibleFactory';
-import { type CreateVideoPayload, type CreateVideoResponse } from '../../../types/video';
+import type { CreateVideoOptions } from '../../../core/openaiCompatibleFactory';
+import type { CreateVideoPayload, CreateVideoResponse } from '../../../types/video';
 
 const log = createDebug('lobe-video:volcengine');
 

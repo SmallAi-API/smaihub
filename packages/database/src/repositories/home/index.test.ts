@@ -2,12 +2,12 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { getTestDB } from '../../core/getTestDB';
-import { NewAgent, agents } from '../../schemas/agent';
-import { NewChatGroup, chatGroups, chatGroupsAgents } from '../../schemas/chatGroup';
+import { agents } from '../../schemas/agent';
+import { chatGroups, chatGroupsAgents } from '../../schemas/chatGroup';
 import { agentsToSessions } from '../../schemas/relations';
-import { NewSession, NewSessionGroup, sessionGroups, sessions } from '../../schemas/session';
+import { sessionGroups, sessions } from '../../schemas/session';
 import { users } from '../../schemas/user';
-import { LobeChatDatabase } from '../../type';
+import type { LobeChatDatabase } from '../../type';
 import { HomeRepository } from './index';
 
 const userId = 'home-test-user';
@@ -160,6 +160,7 @@ describe('HomeRepository', () => {
     });
 
     it('should return custom avatar when chat group has one set', async () => {
+      // eslint-disable-next-line unused-imports/no-unused-vars
       const [group] = await serverDB
         .insert(chatGroups)
         .values({

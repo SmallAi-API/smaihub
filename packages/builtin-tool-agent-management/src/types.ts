@@ -10,40 +10,23 @@ export const AgentManagementIdentifier = 'lobe-agent-management';
  * Agent Management API Names
  */
 export const AgentManagementApiName = {
-  
-  
   // ==================== Execution ====================
-/** Call an agent to handle a task */
-callAgent: 'callAgent',
-  
-  
+  /** Call an agent to handle a task */
+  callAgent: 'callAgent',
 
+  // ==================== Agent CRUD ====================
+  /** Create a new agent */
+  createAgent: 'createAgent',
 
-// ==================== Agent CRUD ====================
-/** Create a new agent */
-createAgent: 'createAgent',
-  
-  
+  /** Delete an agent */
+  deleteAgent: 'deleteAgent',
 
+  // ==================== Search ====================
+  /** Search agents (user's own and marketplace) */
+  searchAgent: 'searchAgent',
 
-/** Delete an agent */
-deleteAgent: 'deleteAgent',
-
-  
-  
-  
-
-
-// ==================== Search ====================
-/** Search agents (user's own and marketplace) */
-searchAgent: 'searchAgent',
-
-  
-  
-  
-
-/** Update an existing agent */
-updateAgent: 'updateAgent',
+  /** Update an existing agent */
+  updateAgent: 'updateAgent',
 } as const;
 
 export type AgentManagementApiNameType =
@@ -266,6 +249,11 @@ export interface CallAgentParams {
    */
   runAsTask?: boolean;
   /**
+   * If true (and in a group context), skip calling supervisor after agent responds.
+   * Only relevant when used within agent groups. Default: false
+   */
+  skipCallSupervisor?: boolean;
+  /**
    * Task title (required when runAsTask is true)
    */
   taskTitle?: string;
@@ -277,7 +265,6 @@ export interface CallAgentParams {
    * If true (and in a group context), skip calling supervisor after agent responds.
    * Only relevant when used within agent groups. Default: false
    */
-  skipCallSupervisor?: boolean;
 }
 
 export interface CallAgentState {
@@ -294,11 +281,11 @@ export interface CallAgentState {
    */
   mode: 'speak' | 'task';
   /**
-   * Task ID if running as background task
-   */
-  taskId?: string;
-  /**
    * Whether to skip calling supervisor after agent responds (only relevant in group context)
    */
   skipCallSupervisor?: boolean;
+  /**
+   * Task ID if running as background task
+   */
+  taskId?: string;
 }

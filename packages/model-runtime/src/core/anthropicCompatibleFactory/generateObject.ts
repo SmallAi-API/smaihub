@@ -1,7 +1,7 @@
 import type Anthropic from '@anthropic-ai/sdk';
 import debug from 'debug';
 
-import { GenerateObjectOptions, GenerateObjectPayload } from '../../types';
+import type { GenerateObjectOptions, GenerateObjectPayload } from '../../types';
 import { buildAnthropicMessages, buildAnthropicTools } from '../contextBuilders/anthropic';
 
 const log = debug('lobe-model-runtime:anthropic:generate-object');
@@ -66,7 +66,7 @@ export const createAnthropicGenerateObject = async (
         messages: anthropicMessages,
         model,
         system: systemPrompts,
-        tool_choice: tool_choice,
+        tool_choice,
         tools: finalTools,
       },
       { signal: options?.signal },

@@ -24,6 +24,13 @@ vi.mock('../../utils/imageToBase64', () => ({
 }));
 
 describe('google contextBuilders', () => {
+  describe('GEMINI_MAGIC_THOUGHT_SIGNATURE', () => {
+    it('should use skip_thought_signature_validator for Vertex AI compatibility', () => {
+      // Vertex AI only accepts `skip_thought_signature_validator`, not `context_engineering_is_the_way_to_go`
+      // see: https://github.com/pydantic/pydantic-ai/issues/3881
+      expect(GEMINI_MAGIC_THOUGHT_SIGNATURE).toBe('skip_thought_signature_validator');
+    });
+  });
   describe('buildGooglePart', () => {
     it('should handle text type messages', async () => {
       const content: UserMessageContentPart = {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import fs from 'node:fs';
 import net from 'node:net';
 import os from 'node:os';
@@ -13,7 +14,7 @@ export class ElectronIpcClient {
   private socketPath: string | null = null;
   private connected: boolean = false;
   private socket: net.Socket | null = null;
-  // eslint-disable-next-line @typescript-eslint/ban-types
+
   private requestQueue: Map<string, { reject: Function; resolve: Function }> = new Map();
 
   private reconnectTimeout: NodeJS.Timeout | null = null;
@@ -196,8 +197,6 @@ export class ElectronIpcClient {
       const request = { id, method, params };
       log('Created request with ID: %s', id);
 
-      let requestTimeoutId: NodeJS.Timeout;
-
       const cleanupAndResolve = (value: T) => {
         clearTimeout(requestTimeoutId);
         this.requestQueue.delete(id);
@@ -222,7 +221,7 @@ export class ElectronIpcClient {
       this.requestQueue.set(id, { reject: cleanupAndReject, resolve: cleanupAndResolve });
       log('Added request to queue, current queue size: %d', this.requestQueue.size);
 
-      requestTimeoutId = setTimeout(() => {
+      const requestTimeoutId: NodeJS.Timeout = setTimeout(() => {
         const pendingRequest = this.requestQueue.get(id);
         if (pendingRequest) {
           // Request is still in queue, indicating timeout

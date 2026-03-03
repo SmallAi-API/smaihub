@@ -1,11 +1,11 @@
-import { type RAGEvalEvaluationItem } from '@lobechat/types';
+import type { RAGEvalEvaluationItem } from '@lobechat/types';
 import { EvalEvaluationStatus } from '@lobechat/types';
-import { type SQL } from 'drizzle-orm';
+import type { SQL } from 'drizzle-orm';
 import { and, count, desc, eq, inArray } from 'drizzle-orm';
 
-import { type NewEvalEvaluationItem } from '../../schemas';
+import type { NewEvalEvaluationItem } from '../../schemas';
 import { evalDatasets, evalEvaluation, evaluationRecords } from '../../schemas';
-import { type LobeChatDatabase } from '../../type';
+import type { LobeChatDatabase } from '../../type';
 
 export class EvalEvaluationModel {
   private userId: string;

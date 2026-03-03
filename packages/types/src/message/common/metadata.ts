@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { type PageSelection } from './pageSelection';
+import type { PageSelection } from './pageSelection';
 import { PageSelectionSchema } from './pageSelection';
 
 export interface ModelTokensUsage {

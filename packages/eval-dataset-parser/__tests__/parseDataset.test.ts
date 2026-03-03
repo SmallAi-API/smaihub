@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+// eslint-disable-next-line unicorn/import-style
 import { resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -8,14 +9,19 @@ import { parseDataset } from '../src';
 const fixtures = resolve(__dirname, 'fixtures');
 
 describe('parseDataset - CSV', () => {
-  const csv = readFileSync(resolve(fixtures, 'sample.csv'), 'utf-8');
+  const csv = readFileSync(resolve(fixtures, 'sample.csv'), 'utf8');
 
   it('should parse CSV with headers', () => {
     const result = parseDataset(csv, { format: 'csv' });
     expect(result.headers).toEqual(['id', 'prompt', 'type', 'answer']);
     expect(result.totalCount).toBe(3);
     expect(result.rows).toHaveLength(3);
-    expect(result.rows[0]).toMatchObject({ id: 1, prompt: 'What is 2+2?', type: 'math', answer: 4 });
+    expect(result.rows[0]).toMatchObject({
+      id: 1,
+      prompt: 'What is 2+2?',
+      type: 'math',
+      answer: 4,
+    });
   });
 
   it('should support preview mode', () => {
@@ -26,7 +32,7 @@ describe('parseDataset - CSV', () => {
 });
 
 describe('parseDataset - JSONL', () => {
-  const jsonl = readFileSync(resolve(fixtures, 'sample.jsonl'), 'utf-8');
+  const jsonl = readFileSync(resolve(fixtures, 'sample.jsonl'), 'utf8');
 
   it('should parse JSONL', () => {
     const result = parseDataset(jsonl, { format: 'jsonl' });
@@ -65,20 +71,20 @@ describe('parseDataset - JSON', () => {
 
 describe('parseDataset - auto detection', () => {
   it('should auto-detect CSV by filename', () => {
-    const csv = readFileSync(resolve(fixtures, 'sample.csv'), 'utf-8');
+    const csv = readFileSync(resolve(fixtures, 'sample.csv'), 'utf8');
     const result = parseDataset(csv, { filename: 'sample.csv' });
     expect(result.format).toBe('csv');
     expect(result.headers).toContain('prompt');
   });
 
   it('should auto-detect JSONL by filename', () => {
-    const jsonl = readFileSync(resolve(fixtures, 'sample.jsonl'), 'utf-8');
+    const jsonl = readFileSync(resolve(fixtures, 'sample.jsonl'), 'utf8');
     const result = parseDataset(jsonl, { filename: 'sample.jsonl' });
     expect(result.format).toBe('jsonl');
   });
 
   it('should auto-detect JSON by content', () => {
-    const json = readFileSync(resolve(fixtures, 'sample.json'), 'utf-8');
+    const json = readFileSync(resolve(fixtures, 'sample.json'), 'utf8');
     const result = parseDataset(json);
     expect(result.format).toBe('json');
   });

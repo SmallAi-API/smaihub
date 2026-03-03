@@ -3,7 +3,7 @@ import type OpenAI from 'openai';
 import { toFile } from 'openai';
 
 import { disableStreamModels, systemToUserModels } from '../../const/models';
-import { type ChatStreamPayload, type OpenAIChatMessage } from '../../types';
+import type { ChatStreamPayload, OpenAIChatMessage } from '../../types';
 import { parseDataUri } from '../../utils/uriParser';
 
 type ConvertMessageContentOptions = {
