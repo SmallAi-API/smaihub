@@ -82,7 +82,11 @@ const CloudBanner = memo<{ mobile?: boolean }>(({ mobile }) => {
       <div className={styles.background} />
       <Center horizontal className={styles.wrapper} gap={16} width={'100%'}>
         {isTruncated ? <Marquee pauseOnHover>{content}</Marquee> : content}
-        <a href={`${OFFICIAL_URL}?utm_source=${UTM_SOURCE}&utm_medium=banner`} rel="noreferrer" target="_blank">
+        <a
+          href={`${OFFICIAL_URL}?utm_source=${UTM_SOURCE}&utm_medium=banner`}
+          rel="noreferrer"
+          target="_blank"
+        >
           <Button size={'small'} type="primary">
             {t('alert.cloud.action')} <Icon icon={ArrowRightIcon} />
           </Button>

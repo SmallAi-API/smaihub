@@ -276,13 +276,31 @@ jobs:
       - name: List final artifacts
         run: ls -R release
 
-      - name: Upload to Release
-        uses: softprops/action-gh-release@v1
+      - name: Preflight release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Preparing release upload for tag:"
+          echo "  ${{ github.event_name == 'workflow_dispatch' && format('v{0}', needs.check-stable.outputs.version) || github.event.release.tag_name }}"
+          echo ""
+          echo "Collected files:"
+          find release -maxdepth 1 -type f -print0 | xargs -0 -I{} sh -c 'printf "  - %s (%s bytes)\n" "$(basename "{}")" "$(stat -c%s "{}" 2>/dev/null || stat -f%z "{}")"'
+          echo ""
+          echo "Summary:"
+          find release -maxdepth 1 -type f | wc -l | xargs -I{} echo "  total files: {}"
+          find release -maxdepth 1 -type f -name "*.exe*" | wc -l | xargs -I{} echo "  exe files: {}"
+          find release -maxdepth 1 -type f -name "latest*" | wc -l | xargs -I{} echo "  latest* manifests: {}"
+
+      - name: Upload to Release (attempt 1/3)
+        id: upload_release_1
+        continue-on-error: true
+        uses: softprops/action-gh-release@v2
         with:
           # 手动触发时使用输入的版本号创建 tag
           tag_name: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', needs.check-stable.outputs.version) || github.event.release.tag_name }}
           # 手动触发时创建为 draft
           draft: ${{ github.event_name == 'workflow_dispatch' }}
+          fail_on_unmatched_files: true
           files: |
             release/stable*
             release/latest*
@@ -294,8 +312,60 @@ jobs:
             release/*.snap*
             release/*.rpm*
             release/*.tar.gz*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
+
+      - name: Upload to Release (attempt 2/3)
+        id: upload_release_2
+        if: steps.upload_release_1.outcome == 'failure'
+        continue-on-error: true
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', needs.check-stable.outputs.version) || github.event.release.tag_name }}
+          draft: ${{ github.event_name == 'workflow_dispatch' }}
+          fail_on_unmatched_files: true
+          files: |
+            release/stable*
+            release/latest*
+            release/*.dmg*
+            release/*.zip*
+            release/*.exe*
+            release/*.AppImage
+            release/*.deb*
+            release/*.snap*
+            release/*.rpm*
+            release/*.tar.gz*
+          token: ${{ github.token }}
+
+      - name: Upload to Release (attempt 3/3)
+        id: upload_release_3
+        if: steps.upload_release_1.outcome == 'failure' && steps.upload_release_2.outcome == 'failure'
+        continue-on-error: true
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', needs.check-stable.outputs.version) || github.event.release.tag_name }}
+          draft: ${{ github.event_name == 'workflow_dispatch' }}
+          fail_on_unmatched_files: true
+          files: |
+            release/stable*
+            release/latest*
+            release/*.dmg*
+            release/*.zip*
+            release/*.exe*
+            release/*.AppImage
+            release/*.deb*
+            release/*.snap*
+            release/*.rpm*
+            release/*.tar.gz*
+          token: ${{ github.token }}
+
+      - name: Assert release upload success
+        if: steps.upload_release_1.outcome == 'failure' && steps.upload_release_2.outcome == 'failure' && steps.upload_release_3.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "::error::Release upload failed after 3 attempts."
+          echo "::error::Likely causes: transient GitHub Release API failure (5xx/Unicorn) or asset conflict."
+          echo "::error::Inspect the 3 upload attempts above for the first non-HTML API error."
+          exit 1
 
   # ============================================
   # 发布到 S3 更新服务器

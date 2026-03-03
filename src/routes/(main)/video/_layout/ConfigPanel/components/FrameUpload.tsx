@@ -8,7 +8,7 @@ interface FrameUploadProps {
 }
 
 const FrameUpload = memo<FrameUploadProps>(({ paramName }) => {
-const { value, setValue, maxFileSize, imageConstraints } =
+  const { value, setValue, maxFileSize, imageConstraints } =
     useVideoGenerationConfigParam(paramName);
 
   const handleChange = (
@@ -20,7 +20,7 @@ const { value, setValue, maxFileSize, imageConstraints } =
 
   return (
     <ImageUpload
-    imageConstraints={imageConstraints}
+      imageConstraints={imageConstraints}
       maxFileSize={maxFileSize}
       placeholderHeight={120}
       value={value}

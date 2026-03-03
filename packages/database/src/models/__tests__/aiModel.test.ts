@@ -301,6 +301,7 @@ describe('AiModelModel', () => {
       expect(models).toHaveLength(1);
       expect(models[0].enabled).toBe(false);
     });
+
     it('should preserve type property when disabling all models', async () => {
       // Create models with type information
       await aiProviderModel.create({

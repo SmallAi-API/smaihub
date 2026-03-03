@@ -317,7 +317,6 @@ describe('createSidebarUISlice', () => {
   });
 
   // ========== UI State Actions ==========
-  
 
   describe('setAgentUpdatingId', () => {
     it('should set agent updating id', () => {
@@ -345,7 +344,6 @@ describe('createSidebarUISlice', () => {
     });
   });
 
- 
   describe('setGroupUpdatingId', () => {
     it('should set group updating id', () => {
       const { result } = renderHook(() => useHomeStore());

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import  { type App } from '@/core/App';
+import { type App } from '@/core/App';
 
 import LocalFileCtr from '../LocalFileCtr';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import type { BuiltinRenderProps } from '@lobechat/types';
-import { Block, Markdown, Tag , Flexbox } from '@lobehub/ui';
+import { Block, Markdown, Tag, Flexbox } from '@lobehub/ui';
 import { createStaticStyles } from 'antd-style';
 import { memo } from 'react';
 

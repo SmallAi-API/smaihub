@@ -1,8 +1,8 @@
 ---
 title: Lobe Chat API Client-Server Interaction Logic
 description: >-
-  Explore the client-server interaction logic of Lobe Chat API, including event
-  sequences.
+  Explore the client-server interaction logic of Lobe Chat API, including event sequences.
+
 tags:
   - Lobe Chat API
   - Client-Server Interaction
@@ -76,24 +76,20 @@ sequenceDiagram
 1. **Client Initiates Request**: The client calls the createAssistantMessage method of the frontend ChatService.
 
 2. **Frontend Processes Request**:
-
    - `src/services/chat.ts` preprocesses messages, tools, and parameters
    - Calls getChatCompletion to prepare request parameters
    - Uses `src/utils/fetch/fetchSSE.ts` to send request to backend API
 
 3. **Backend Processes Request**:
-
    - `src/app/(backend)/webapi/chat/[provider]/route.ts` receives the request
    - Initializes AgentRuntime
    - Creates the appropriate model instance based on user configuration and provider
 
 4. **Model Call**:
-
    - `src/libs/agent-runtime/AgentRuntime.ts` calls the respective model provider's API
    - Returns streaming response
 
 5. **Process Response**:
-
    - Backend converts model response to Stream and returns it
    - Frontend processes streaming response via fetchSSE and [fetchEventSource](https://github.com/Azure/fetch-event-source)
    - Handles different types of events (text, tool calls, reasoning, etc.)
@@ -102,14 +98,12 @@ sequenceDiagram
 6. **Plugin Calling Scenario**:
 
    When the AI model returns a `tool_calls` field in its response, it triggers the plugin calling process:
-
    - AI model returns response containing `tool_calls`, indicating a need to call tools
    - Frontend handles tool calls via the `internal_callPluginApi` method
    - Calls `runPluginApi` method to execute plugin functionality, including retrieving plugin settings and manifest, creating authentication headers, and sending requests to the plugin gateway
    - After plugin execution completes, the result is returned to the AI model, which generates the final response based on the result
 
    **Real-world Examples**:
-
    - **Search Plugin**: When a user needs real-time information, the AI calls a web search plugin to retrieve the latest data
    - **DALL-E Plugin**: When a user requests image generation, the AI calls the DALL-E plugin to create images
    - **Midjourney Plugin**: Provides higher quality image generation capabilities by calling the Midjourney service via API
@@ -119,9 +113,7 @@ sequenceDiagram
    Preset tasks are specific predefined functions that are typically triggered when users perform specific actions (rather than being part of the regular chat flow). These tasks use the `fetchPresetTaskResult` method, which is similar to the normal chat flow but uses specially designed prompt chains.
 
    **Execution Timing**: Preset tasks are mainly triggered in the following scenarios:
-
    1. **Agent Information Auto-generation**: Triggered when users create or edit an agent
-
       - Agent avatar generation (via `autoPickEmoji` method)
       - Agent description generation (via `autocompleteAgentDescription` method)
       - Agent tag generation (via `autocompleteAgentTags` method)
@@ -208,7 +200,6 @@ AgentRuntime is a core abstraction layer in Lobe Chat that encapsulates a unifie
 2. **Model Initialization**: Through the static `initializeWithProvider` method, it initializes the corresponding runtime instance based on the specified provider and configuration parameters.
 
 3. **Capability Encapsulation**:
-
    - `chat` method: Handles chat streaming requests
    - `models` method: Retrieves model lists
    - Supports text embedding, text-to-image, text-to-speech, and other functionalities (if supported by the model provider)
@@ -243,7 +234,6 @@ AgentRuntime is a core abstraction layer in Lobe Chat that encapsulates a unifie
    ```
 
    **Adapter Implementation Examples**:
-
    1. **OpenRouter Adapter**: OpenRouter is a unified API that allows access to AI models from multiple providers. Lobe Chat implements support for OpenRouter through an adapter:
 
       ```ts
@@ -342,7 +332,6 @@ AgentRuntime is a core abstraction layer in Lobe Chat that encapsulates a unifie
       ```
 
    **Different Model Implementations**:
-
    - `src/libs/agent-runtime/openai/index.ts` - OpenAI implementation
    - `src/libs/agent-runtime/anthropic/index.ts` - Anthropic implementation
    - `src/libs/agent-runtime/google/index.ts` - Google implementation

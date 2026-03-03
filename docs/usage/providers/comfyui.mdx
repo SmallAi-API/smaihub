@@ -1,8 +1,8 @@
 ---
 title: ''
 description: >-
-  Learn to configure ComfyUI in LobeHub for high-quality image generation and
-  editing.
+  Learn to configure ComfyUI in LobeHub for high-quality image generation and editing.
+
 tags:
   - ComfyUI
   - FLUX
@@ -78,6 +78,7 @@ In the chat interface:
 
 ```plaintext
 Generate an image: A cute orange cat sitting on a sunny windowsill, warm lighting, detailed fur texture
+```
 ````
 
 **Using FLUX Dev (High-Quality Generation)**:
@@ -97,7 +98,8 @@ Edit this image: Change the background to a starry night sky, keep the main subj
 Then upload the original image you want to edit.
 
 <Callout type={'info'}>
-  Image editing requires uploading the original image first, followed by a description of the desired changes.
+  Image editing requires uploading the original image first, followed by a description of the
+  desired changes.
 </Callout>
 
 ## Authentication Configuration Guide
@@ -206,51 +208,51 @@ Comfy-Manager is an extension manager for ComfyUI that simplifies installing and
 <details>
   <summary><b>📦 Steps to Install Comfy-Manager</b></summary>
 
-  #### Method 1: Manual Installation (Recommended)
+#### Method 1: Manual Installation (Recommended)
 
-  ```bash
-  # Navigate to ComfyUI's custom_nodes directory
-  cd ComfyUI/custom_nodes
+```bash
+# Navigate to ComfyUI's custom_nodes directory
+cd ComfyUI/custom_nodes
 
-  # Clone the Comfy-Manager repository
-  git clone https://github.com/ltdrdata/ComfyUI-Manager.git
+# Clone the Comfy-Manager repository
+git clone https://github.com/ltdrdata/ComfyUI-Manager.git
 
-  # Restart the ComfyUI server
-  # After restarting, you should see a "Manager" button in the UI
-  ```
+# Restart the ComfyUI server
+# After restarting, you should see a "Manager" button in the UI
+```
 
-  #### Method 2: One-Click Install Script
+#### Method 2: One-Click Install Script
 
-  ```bash
-  # Run from the ComfyUI root directory
-  curl -fsSL https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/install.sh | bash
-  ```
+```bash
+# Run from the ComfyUI root directory
+curl -fsSL https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/install.sh | bash
+```
 
-  #### Verify Installation
+#### Verify Installation
 
-  1. Restart the ComfyUI server
-  2. Visit `http://localhost:8000`
-  3. You should see a "Manager" button in the bottom-right corner
+1. Restart the ComfyUI server
+2. Visit `http://localhost:8000`
+3. You should see a "Manager" button in the bottom-right corner
 
-  #### Using Comfy-Manager
+#### Using Comfy-Manager
 
-  **Install Models**:
+**Install Models**:
 
-  1. Click the "Manager" button
-  2. Select "Install Models"
-  3. Search for the desired model (e.g., FLUX, SD3.5)
-  4. Click "Install" to download automatically
+1. Click the "Manager" button
+2. Select "Install Models"
+3. Search for the desired model (e.g., FLUX, SD3.5)
+4. Click "Install" to download automatically
 
-  **Install Node Extensions**:
+**Install Node Extensions**:
 
-  1. Click the "Manager" button
-  2. Select "Install Custom Nodes"
-  3. Search for nodes (e.g., ControlNet, AnimateDiff)
-  4. Click "Install" and restart the server
+1. Click the "Manager" button
+2. Select "Install Custom Nodes"
+3. Search for nodes (e.g., ControlNet, AnimateDiff)
+4. Click "Install" and restart the server
 
-  **Manage Installed Content**:
+**Manage Installed Content**:
 
-  1. Click the "Manager" button
-  2. Select "Installed" to view installed extensions
-  3. You can update, disable, or uninstall extensions
-</details>
+1. Click the "Manager" button
+2. Select "Installed" to view installed extensions
+3. You can update, disable, or uninstall extensions
+   </details>

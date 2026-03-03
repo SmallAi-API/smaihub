@@ -34,10 +34,7 @@ const SelectForm = memo<CreateFormProps>(({ onClose, knowledgeBaseId, fileIds })
           <Trans
             i18nKey={'addToKnowledgeBase.addSuccess'}
             ns={'knowledgeBase'}
-            components={[
-              <span key="0" />,
-              <Link key="1" to={`/knowledge/library/${values.id}`} />,
-            ]}
+            components={[<span key="0" />, <Link key="1" to={`/knowledge/library/${values.id}`} />]}
           />
         ),
       });

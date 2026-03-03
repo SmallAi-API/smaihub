@@ -52,12 +52,9 @@ vi.mock('@/utils/sleep', () => ({
   sleep: vi.fn().mockResolvedValue(undefined),
 }));
 
-
-
 const bootstrapToolStoreWithDesktop = async (isDesktopEnv: boolean) => {
   vi.resetModules();
   vi.mock('zustand/traditional');
- 
 
   vi.doMock('@lobechat/const', async () => {
     const actual = await vi.importActual<typeof LobechatConstModule>('@lobechat/const');
@@ -75,7 +72,6 @@ const bootstrapToolStoreWithDesktop = async (isDesktopEnv: boolean) => {
     vi.resetModules();
     vi.doUnmock('@lobechat/const');
     vi.mock('zustand/traditional');
-  
   };
 
   return {
@@ -122,7 +118,7 @@ afterEach(() => {
 });
 
 afterAll(() => {
- vi.resetModules();
+  vi.resetModules();
 });
 
 describe('mcpStore actions', () => {

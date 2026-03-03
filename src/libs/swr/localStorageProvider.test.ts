@@ -103,10 +103,7 @@ describe('createLocalStorageProvider', () => {
         version: '1.0.0',
       };
 
-      localStorage.setItem(
-        'lobechat-swr-cache',
-        JSON.stringify([['valid-key', validEntry]]),
-      );
+      localStorage.setItem('lobechat-swr-cache', JSON.stringify([['valid-key', validEntry]]));
 
       const provider = createLocalStorageProvider({
         ttl: 60 * 1000, // 1 minute
@@ -125,10 +122,7 @@ describe('createLocalStorageProvider', () => {
         version: '1.0.0',
       };
 
-      localStorage.setItem(
-        'lobechat-swr-cache',
-        JSON.stringify([['expired-key', expiredEntry]]),
-      );
+      localStorage.setItem('lobechat-swr-cache', JSON.stringify([['expired-key', expiredEntry]]));
 
       const provider = createLocalStorageProvider({
         ttl: 60 * 60 * 1000, // 1 hour
@@ -148,10 +142,7 @@ describe('createLocalStorageProvider', () => {
         version: '0.9.0',
       };
 
-      localStorage.setItem(
-        'lobechat-swr-cache',
-        JSON.stringify([['old-key', oldVersionEntry]]),
-      );
+      localStorage.setItem('lobechat-swr-cache', JSON.stringify([['old-key', oldVersionEntry]]));
 
       const provider = createLocalStorageProvider({
         version: '1.0.0',

@@ -151,54 +151,54 @@ describe('UserModel', () => {
       expect(updated?.fullName).toBe('Updated Name');
       expect(updated?.avatar).toBe('https://example.com/avatar.jpg');
     });
-  });
 
-  it('should normalize empty string email to null', async () => {
-    await userModel.updateUser({
-      email: '',
+    it('should normalize empty string email to null', async () => {
+      await userModel.updateUser({
+        email: '',
+      });
+
+      const updated = await serverDB.query.users.findFirst({
+        where: eq(users.id, userId),
+      });
+
+      expect(updated?.email).toBeNull();
     });
 
-    const updated = await serverDB.query.users.findFirst({
-      where: eq(users.id, userId),
+    it('should normalize empty string phone to null', async () => {
+      await userModel.updateUser({
+        phone: '',
+      });
+
+      const updated = await serverDB.query.users.findFirst({
+        where: eq(users.id, userId),
+      });
+
+      expect(updated?.phone).toBeNull();
     });
 
-    expect(updated?.email).toBeNull();
-  });
+    it('should normalize empty string username to null', async () => {
+      await userModel.updateUser({
+        username: '  ',
+      });
 
-  it('should normalize empty string phone to null', async () => {
-    await userModel.updateUser({
-      phone: '',
+      const updated = await serverDB.query.users.findFirst({
+        where: eq(users.id, userId),
+      });
+
+      expect(updated?.username).toBeNull();
     });
 
-    const updated = await serverDB.query.users.findFirst({
-      where: eq(users.id, userId),
+    it('should trim username when updating', async () => {
+      await userModel.updateUser({
+        username: '  myuser  ',
+      });
+
+      const updated = await serverDB.query.users.findFirst({
+        where: eq(users.id, userId),
+      });
+
+      expect(updated?.username).toBe('myuser');
     });
-
-    expect(updated?.phone).toBeNull();
-  });
-
-  it('should normalize empty string username to null', async () => {
-    await userModel.updateUser({
-      username: '  ',
-    });
-
-    const updated = await serverDB.query.users.findFirst({
-      where: eq(users.id, userId),
-    });
-
-    expect(updated?.username).toBeNull();
-  });
-
-  it('should trim username when updating', async () => {
-    await userModel.updateUser({
-      username: '  myuser  ',
-    });
-
-    const updated = await serverDB.query.users.findFirst({
-      where: eq(users.id, userId),
-    });
-
-    expect(updated?.username).toBe('myuser');
   });
 
   describe('deleteSetting', () => {
@@ -670,6 +670,30 @@ describe('UserModel', () => {
 
         expect(result.userName).toBe('User');
         expect(result.responseLanguage).toBe('en-US');
+      });
+    });
+
+    describe('getUserPreference', () => {
+      it('should return user preference after update', async () => {
+        await serverDB
+          .update(users)
+          .set({ preference: { telemetry: true, useCmdEnterKey: false } })
+          .where(eq(users.id, userId));
+
+        const result = await userModel.getUserPreference();
+        expect(result).toBeDefined();
+        expect(result).toMatchObject({ telemetry: true, useCmdEnterKey: false });
+      });
+
+      it('should return default preference for existing user', async () => {
+        const result = await userModel.getUserPreference();
+        expect(result).toBeDefined();
+      });
+
+      it('should return undefined for non-existent user', async () => {
+        const nonExistentModel = new UserModel(serverDB, 'non-existent-user');
+        const result = await nonExistentModel.getUserPreference();
+        expect(result).toBeUndefined();
       });
     });
   });

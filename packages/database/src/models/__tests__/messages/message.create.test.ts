@@ -1,4 +1,4 @@
-import { type DBMessageItem } from '@lobechat/types';
+import type { DBMessageItem } from '@lobechat/types';
 import { eq } from 'drizzle-orm';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -18,7 +18,7 @@ import {
   sessions,
   users,
 } from '../../../schemas';
-import { type LobeChatDatabase } from '../../../type';
+import type { LobeChatDatabase } from '../../../type';
 import { MessageModel } from '../../message';
 import { codeEmbedding } from '../fixtures/embedding';
 

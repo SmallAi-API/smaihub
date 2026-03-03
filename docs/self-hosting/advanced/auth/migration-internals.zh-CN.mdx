@@ -2,6 +2,7 @@
 title: 认证迁移原理 - 技术深入解析
 description: >-
   LobeChat 认证迁移的技术原理解析，包括数据库 Schema、迁移原理和问题排查指南。
+
 tags:
   - 认证
   - 迁移
@@ -14,7 +15,8 @@ tags:
 本文档解释 LobeChat 认证迁移的技术原理，适合有数据库和开发经验的用户，帮助理解迁移的底层逻辑。
 
 <Callout type={'info'}>
-  如需分步迁移指南，请参阅 [NextAuth 迁移](/docs/self-hosting/advanced/auth/nextauth-to-betterauth) 或 [Clerk 迁移](/docs/self-hosting/advanced/auth/clerk-to-betterauth)。
+  如需分步迁移指南，请参阅 [NextAuth 迁移](/docs/self-hosting/advanced/auth/nextauth-to-betterauth)
+  或 [Clerk 迁移](/docs/self-hosting/advanced/auth/clerk-to-betterauth)。
 </Callout>
 
 ## 核心数据库 Schema
@@ -27,11 +29,11 @@ tags:
 
 关键字段：
 
-| 字段                                | 说明         |
-| --------------------------------- | ---------- |
+| 字段                              | 说明                 |
+| --------------------------------- | -------------------- |
 | `id`                              | 用户唯一标识（主键） |
 | `email`                           | 用户邮箱地址（唯一） |
-| `avatar`, `firstName`, `lastName` | 个人资料信息     |
+| `avatar`, `firstName`, `lastName` | 个人资料信息         |
 
 ### Accounts 表
 
@@ -66,9 +68,7 @@ tags:
 
 ## 迁移原理
 
-<Callout type={'warning'}>
-  迁移不会保留登录会话。用户在迁移后必须重新登录。
-</Callout>
+<Callout type={'warning'}>迁移不会保留登录会话。用户在迁移后必须重新登录。</Callout>
 
 ### 简单迁移
 
@@ -194,7 +194,7 @@ tags:
 <Cards>
   <Card href={'/docs/self-hosting/advanced/auth/nextauth-to-betterauth'} title={'NextAuth 迁移指南'} />
 
-  <Card href={'/docs/self-hosting/advanced/auth/clerk-to-betterauth'} title={'Clerk 迁移指南'} />
+<Card href={'/docs/self-hosting/advanced/auth/clerk-to-betterauth'} title={'Clerk 迁移指南'} />
 
   <Card href={'/docs/self-hosting/advanced/auth'} title={'认证服务配置'} />
 </Cards>

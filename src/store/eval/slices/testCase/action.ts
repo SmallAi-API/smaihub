@@ -43,8 +43,7 @@ export const createTestCaseSlice: StateCreator<
   refreshTestCases: async (datasetId) => {
     // Mutate all SWR keys that start with [FETCH_TEST_CASES_KEY, datasetId]
     await mutate(
-      (key) =>
-        Array.isArray(key) && key[0] === FETCH_TEST_CASES_KEY && key[1] === datasetId,
+      (key) => Array.isArray(key) && key[0] === FETCH_TEST_CASES_KEY && key[1] === datasetId,
     );
   },
 

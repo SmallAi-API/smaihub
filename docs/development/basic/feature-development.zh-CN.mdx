@@ -55,9 +55,9 @@ export const agents = pgTable(
 调整完 schema 后我们需要运行 `npm run db:generate，` 使用 drizzle-kit 自带的数据库迁移能力生成对应的用于迁移到最新 schema 的 sql 代码。执行后会产生四个文件：
 
 - src/database/migrations/meta/\_journal.json：保存每次迁移的相关信息
-- src/database/migrations/0021\_add\_agent\_opening\_settings.sql：此次迁移的 sql 命令
+- src/database/migrations/0021_add_agent_opening_settings.sql：此次迁移的 sql 命令
 - src/database/client/migrations.json：pglite 使用的此次迁移的 sql 命令
-- src/database/migrations/meta/0021\_snapshot.json：当前最新的完整数据库快照
+- src/database/migrations/meta/0021_snapshot.json：当前最新的完整数据库快照
 
 注意脚本默认生成的迁移 sql 文件名不会像 `0021_add_agent_opening_settings.sql` 这样语义清晰，你需要自己手动对它重命名并且更新 `src/database/migrations/meta/_journal.json`。
 

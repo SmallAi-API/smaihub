@@ -54,7 +54,9 @@ ENABLE_OIDC=1
 
 将生成的环境变量添加到您的部署配置中。
 
-<Callout>如果您之前已配置 `OIDC_JWKS_KEY`，无需修改。系统会自动回退使用 `OIDC_JWKS_KEY`（向后兼容）。</Callout>
+<Callout>
+  如果您之前已配置 `OIDC_JWKS_KEY`，无需修改。系统会自动回退使用 `OIDC_JWKS_KEY`（向后兼容）。
+</Callout>
 
 如果您使用一键部署方式（如 Vercel、Railway 等平台）部署 LobeHub，您需要：
 
@@ -89,9 +91,9 @@ proxy_buffers       8 16k;
 proxy_busy_buffers_size 32k;
 ```
 
-### invalid\_redirect\_uri 错误
+### invalid_redirect_uri 错误
 
-**问题：** 授权过程中遇到 "redirect\_uri did not match any of the client's registered redirect\_uris" 错误。
+**问题：** 授权过程中遇到 "redirect_uri did not match any of the client's registered redirect_uris" 错误。
 
 **解决方案：**
 

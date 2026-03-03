@@ -356,7 +356,7 @@ export interface TaskStatusResult {
   currentActivity?: TaskCurrentActivity;
   /** Error message if task failed */
   error?: string;
-   /**
+  /**
    * Parsed UI messages from conversation-flow
    * Used for displaying intermediate steps in server task
    */

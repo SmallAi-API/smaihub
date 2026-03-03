@@ -7,6 +7,5 @@ export interface BusinessFileUploadCheckParams {
 }
 
 export async function businessFileUploadCheck(
-   
   _params: BusinessFileUploadCheckParams,
 ): Promise<void> {}

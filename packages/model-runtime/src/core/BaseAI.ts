@@ -6,7 +6,7 @@ import type {
   ChatStreamPayload,
   CreateImagePayload,
   CreateImageResponse,
-    CreateVideoPayload,
+  CreateVideoPayload,
   CreateVideoResponse,
   Embeddings,
   EmbeddingsOptions,
@@ -27,7 +27,7 @@ export interface LobeRuntimeAI {
   chat?: (payload: ChatStreamPayload, options?: ChatMethodOptions) => Promise<Response>;
   createImage?: (payload: CreateImagePayload) => Promise<CreateImageResponse>;
 
-   createVideo?: (payload: CreateVideoPayload) => Promise<CreateVideoResponse>;
+  createVideo?: (payload: CreateVideoPayload) => Promise<CreateVideoResponse>;
 
   embeddings?: (payload: EmbeddingsPayload, options?: EmbeddingsOptions) => Promise<Embeddings[]>;
 
@@ -36,10 +36,10 @@ export interface LobeRuntimeAI {
     options?: GenerateObjectOptions,
   ) => Promise<any>;
 
-   handleCreateVideoWebhook?: (
+  handleCreateVideoWebhook?: (
     payload: HandleCreateVideoWebhookPayload,
   ) => Promise<HandleCreateVideoWebhookResult>;
-  
+
   models?: () => Promise<any>;
 
   // Model management related interface

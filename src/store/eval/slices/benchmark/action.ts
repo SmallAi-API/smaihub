@@ -1,12 +1,12 @@
 import isEqual from 'fast-deep-equal';
-import  { type SWRResponse } from 'swr';
-import  { type StateCreator } from 'zustand/vanilla';
+import { type SWRResponse } from 'swr';
+import { type StateCreator } from 'zustand/vanilla';
 
 import { mutate, useClientDataSWR } from '@/libs/swr';
 import { agentEvalService } from '@/services/agentEval';
-import  { type EvalStore } from '@/store/eval/store';
+import { type EvalStore } from '@/store/eval/store';
 
-import { type BenchmarkDetailDispatch,benchmarkDetailReducer } from './reducer';
+import { type BenchmarkDetailDispatch, benchmarkDetailReducer } from './reducer';
 
 const FETCH_BENCHMARKS_KEY = 'FETCH_BENCHMARKS';
 const FETCH_BENCHMARK_DETAIL_KEY = 'FETCH_BENCHMARK_DETAIL';

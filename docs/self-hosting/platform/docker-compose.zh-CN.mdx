@@ -13,9 +13,10 @@ tags:
 <div style={{display:"flex", gap: 4}}>
   [![][docker-release-shield]][docker-release-link]
 
-  [![][docker-size-shield]][docker-size-link]
+[![][docker-size-shield]][docker-size-link]
 
-  [![][docker-pulls-shield]][docker-pulls-link]
+[![][docker-pulls-shield]][docker-pulls-link]
+
 </div>
 
 ## 快速启动
@@ -23,14 +24,14 @@ tags:
 <Callout type="info">
   **系统兼容性说明**
 
-  - 支持 Unix 环境（Linux/macOS）的一键部署
+- 支持 Unix 环境（Linux/macOS）的一键部署
 
-  - Windows 用户需通过 [WSL 2](https://aka.ms/wsl) 运行
+- Windows 用户需通过 [WSL 2](https://aka.ms/wsl) 运行
 
-  - 一键启动脚本为首次部署专用，非首次部署请参考 [自定义部署](#自定义部署) 章节
+- 一键启动脚本为首次部署专用，非首次部署请参考 [自定义部署](#自定义部署) 章节
 
-  - 端口占用检查：确保 `3210`、`8000`、`9000`、`9001` 端口可用
-</Callout>
+- 端口占用检查：确保 `3210`、`8000`、`9000`、`9001` 端口可用
+  </Callout>
 
 执行以下命令初始化部署环境，目录 `lobe-chat-db` 将用于存放你的配置文件和后续的数据库文件。
 
@@ -60,59 +61,60 @@ bash <(curl -fsSL https://lobe.li/setup.sh) -l zh_CN
 <Steps>
   ### 在交互式脚本中完成剩余配置
 
-  持续回车采用默认配置。
+持续回车采用默认配置。
 
-  ### 查看配置生成报告
+### 查看配置生成报告
 
-  你需要在脚本运行结束后查看配置生成报告，包括 Casdoor 管理员的帐号、用户账号和它们的初始登录密码。
+你需要在脚本运行结束后查看配置生成报告，包括 Casdoor 管理员的帐号、用户账号和它们的初始登录密码。
 
-  <Callout type="warning">请使用用户账号登录 LobeHub，管理员账号仅用于管理 Casdoor。</Callout>
+<Callout type="warning">请使用用户账号登录 LobeHub，管理员账号仅用于管理 Casdoor。</Callout>
 
-  ```log
-  安全密钥生成结果如下：
-  LobeHub:
-    - URL: http://localhost:3210
-    - Username: user
-    - Password: c66f8c
-  Casdoor:
-    - URL: http://localhost:8000
-    - Username: admin
-    - Password: c66f8c
-  Minio:
-    - URL: http://localhost:9000
-    - Username: admin
-    - Password: 8c82ea41
-  ```
+```log
+安全密钥生成结果如下：
+LobeHub:
+  - URL: http://localhost:3210
+  - Username: user
+  - Password: c66f8c
+Casdoor:
+  - URL: http://localhost:8000
+  - Username: admin
+  - Password: c66f8c
+Minio:
+  - URL: http://localhost:9000
+  - Username: admin
+  - Password: 8c82ea41
+```
 
-  ### 启动 Docker
+### 启动 Docker
 
-  ```sh
-  docker compose up -d
-  ```
+```sh
+docker compose up -d
+```
 
-  ### 检查日志
+### 检查日志
 
-  ```sh
-  docker logs -f lobe-chat
-  ```
+```sh
+docker logs -f lobe-chat
+```
 
-  如果你在容器中看到了以下日志，则说明已经启动成功：
+如果你在容器中看到了以下日志，则说明已经启动成功：
 
-  ```log
-  [Database] Start to migration...
-  ✅ database migration pass.
-  -------------------------------------
-    ▲ Next.js 14.x.x
-    - Local:        http://localhost:3210
-    - Network:      http://0.0.0.0:3210
+```log
+[Database] Start to migration...
+✅ database migration pass.
+-------------------------------------
+  ▲ Next.js 14.x.x
+  - Local:        http://localhost:3210
+  - Network:      http://0.0.0.0:3210
 
-   ✓ Starting...
-   ✓ Ready in 95ms
-  ```
+ ✓ Starting...
+ ✓ Ready in 95ms
+```
 
-  ### 访问应用
+### 访问应用
 
-  通过 [http://localhost:3210](http://localhost:3210) 访问你的 LobeHub 服务。应用的账号密码在步骤`2`的报告中。
+通过 [http://localhost:3210](http://localhost:3210) 访问你的 LobeHub 服务。应用的账号密码在步骤`2`的报告中。
+
 </Steps>
 
 ### 端口模式
@@ -120,61 +122,61 @@ bash <(curl -fsSL https://lobe.li/setup.sh) -l zh_CN
 <Steps>
   ### 在交互式脚本中完成剩余配置
 
-  在端口模式中，你需要根据脚本提示完成：
+在端口模式中，你需要根据脚本提示完成：
 
-  - 服务器 IP 地址设置：以便局域网 / 公网访问。
-  - 安全密钥重新生成：我们强烈建议你重新生成安全密钥，如果你缺少脚本所需的密钥生成库，我们建议你参考 [自定义部署](#自定义部署) 章节对密钥进行修改。
+- 服务器 IP 地址设置：以便局域网 / 公网访问。
+- 安全密钥重新生成：我们强烈建议你重新生成安全密钥，如果你缺少脚本所需的密钥生成库，我们建议你参考 [自定义部署](#自定义部署) 章节对密钥进行修改。
 
-  ### 查看配置生成报告
+### 查看配置生成报告
 
-  你需要在脚本运行结束后查看配置生成报告，包括 Casdoor 管理员的帐号、用户账号和它们的初始登录密码。
+你需要在脚本运行结束后查看配置生成报告，包括 Casdoor 管理员的帐号、用户账号和它们的初始登录密码。
 
-  <Callout type="warning">请使用用户账号登录 LobeHub，管理员账号仅用于管理 Casdoor。</Callout>
+<Callout type="warning">请使用用户账号登录 LobeHub，管理员账号仅用于管理 Casdoor。</Callout>
 
-  ```log
-  安全密钥生成结果如下：
-  LobeHub:
-    - URL: http://your_server_ip:3210
-    - Username: user
-    - Password: 837e26
-  Casdoor:
-    - URL: http://your_server_ip:8000
-    - Username: admin
-    - Password: 837e26
-  Minio:
-    - URL: http://your_server_ip:9000
-    - Username: admin
-    - Password: dbac8440
-  ```
+```log
+安全密钥生成结果如下：
+LobeHub:
+  - URL: http://your_server_ip:3210
+  - Username: user
+  - Password: 837e26
+Casdoor:
+  - URL: http://your_server_ip:8000
+  - Username: admin
+  - Password: 837e26
+Minio:
+  - URL: http://your_server_ip:9000
+  - Username: admin
+  - Password: dbac8440
+```
 
-  ### 启动 Docker
+### 启动 Docker
 
-  ```sh
-  docker compose up -d
-  ```
+```sh
+docker compose up -d
+```
 
-  ### 检查日志
+### 检查日志
 
-  ```sh
-  docker logs -f lobe-chat
-  ```
+```sh
+docker logs -f lobe-chat
+```
 
-  如果你在容器中看到了以下日志，则说明已经启动成功：
+如果你在容器中看到了以下日志，则说明已经启动成功：
 
-  ```log
-  [Database] Start to migration...
-  ✅ database migration pass.
-  -------------------------------------
-    ▲ Next.js 14.x.x
-    - Local:        http://your_server_ip:3210
-    - Network:      http://0.0.0.0:3210
-   ✓ Starting...
-   ✓ Ready in 95ms
-  ```
+```log
+[Database] Start to migration...
+✅ database migration pass.
+-------------------------------------
+  ▲ Next.js 14.x.x
+  - Local:        http://your_server_ip:3210
+  - Network:      http://0.0.0.0:3210
+ ✓ Starting...
+ ✓ Ready in 95ms
+```
 
-  ### 访问应用
+### 访问应用
 
-  你可以通过 `http://your_server_ip:3210` 访问你的 LobeHub 服务。应用的账号密码在步骤`2`的报告中。
+你可以通过 `http://your_server_ip:3210` 访问你的 LobeHub 服务。应用的账号密码在步骤`2`的报告中。
 
   <Callout type="warning">
     请注意，如果你的服务能够被公网访问，我们强烈建议你参考 [文档](https://lobehub.com/zh/docs/self-hosting/advanced/auth/providers/casdoor) 关闭注册功能。
@@ -186,14 +188,14 @@ bash <(curl -fsSL https://lobe.li/setup.sh) -l zh_CN
 <Steps>
   ### 完成反向代理配置
 
-  在域名模式中，你需要完成反向代理配置，并确保局域网 / 公网能访问到以下服务。请使用反向代理将以下服务端口映射到域名：
+在域名模式中，你需要完成反向代理配置，并确保局域网 / 公网能访问到以下服务。请使用反向代理将以下服务端口映射到域名：
 
-  | 域名                     | 反代端口   | 是否必选 |
-  | ---------------------- | ------ | ---- |
-  | `lobe.example.com`     | `3210` | 必选   |
-  | `auth.example.com`     | `8000` | 必选   |
-  | `minio.example.com`    | `9000` | 必选   |
-  | `minio-ui.example.com` | `9001` |      |
+| 域名                   | 反代端口 | 是否必选 |
+| ---------------------- | -------- | -------- |
+| `lobe.example.com`     | `3210`   | 必选     |
+| `auth.example.com`     | `8000`   | 必选     |
+| `minio.example.com`    | `9000`   | 必选     |
+| `minio-ui.example.com` | `9001`   |          |
 
   <Callout type="important">
     如果你使用如 [宝塔面板](https://www.bt.cn/) 等面板软件进行反向代理配置，
@@ -212,17 +214,18 @@ bash <(curl -fsSL https://lobe.li/setup.sh) -l zh_CN
 
     ⚠️ 请不要在此类面板软件的反向代理设置中开启任何形式的缓存，以免影响服务的正常运行。
     详情请见 [https://github.com/lobehub/lobe-chat/discussions/5986](https://github.com/lobehub/lobe-chat/discussions/5986)
+
   </Callout>
 
-  ### 在交互式脚本中完成剩余配置
+### 在交互式脚本中完成剩余配置
 
-  在域名模式中，你需要根据脚本提示完成：
+在域名模式中，你需要根据脚本提示完成：
 
-  - LobeHub 服务的域名设置：`lobe.example.com`
-  - Minio 服务的域名设置：`minio.example.com`
-  - Casdoor 服务的域名设置：`auth.example.com`
-  - 选择访问协议：`http` 或 `https`
-  - 安全密钥重新生成：我们强烈建议你重新生成安全密钥，如果你缺少脚本所需的密钥生成库，我们建议你参考 [自定义部署](#自定义部署) 章节对密钥进行修改。
+- LobeHub 服务的域名设置：`lobe.example.com`
+- Minio 服务的域名设置：`minio.example.com`
+- Casdoor 服务的域名设置：`auth.example.com`
+- 选择访问协议：`http` 或 `https`
+- 安全密钥重新生成：我们强烈建议你重新生成安全密钥，如果你缺少脚本所需的密钥生成库，我们建议你参考 [自定义部署](#自定义部署) 章节对密钥进行修改。
 
   <Callout type="warning">
     以下问题可能导致你的服务无法正常访问：
@@ -232,58 +235,59 @@ bash <(curl -fsSL https://lobe.li/setup.sh) -l zh_CN
     - 如果你使用 Cloudflare 的域名解析服务并开启了 `全程代理`，请使用 `https` 协议。
 
     - 如果你使用了 HTTPS 协议，请确保你的域名证书已经正确配置，一键部署默认不支持自签发证书。
+
   </Callout>
 
-  ### 查看配置生成报告
+### 查看配置生成报告
 
-  你需要在脚本运行结束后查看配置生成报告，包括 Casdoor 管理员的初始登录密码。
+你需要在脚本运行结束后查看配置生成报告，包括 Casdoor 管理员的初始登录密码。
 
-  <Callout type="warning">请使用用户账号登录 LobeHub，管理员账号仅用于管理 Casdoor。</Callout>
+<Callout type="warning">请使用用户账号登录 LobeHub，管理员账号仅用于管理 Casdoor。</Callout>
 
-  ```log
-  安全密钥生成结果如下：
-  LobeHub:
-    - URL: https://lobe.example.com
-    - Username: user
-    - Password: 837e26
-  Casdoor:
-    - URL: https://auth.example.com
-    - Username: admin
-    - Password: 837e26
-  Minio:
-    - URL: https://minio.example.com
-    - Username: admin
-    - Password: dbac8440
-  ```
+```log
+安全密钥生成结果如下：
+LobeHub:
+  - URL: https://lobe.example.com
+  - Username: user
+  - Password: 837e26
+Casdoor:
+  - URL: https://auth.example.com
+  - Username: admin
+  - Password: 837e26
+Minio:
+  - URL: https://minio.example.com
+  - Username: admin
+  - Password: dbac8440
+```
 
-  ### 启动 Docker
+### 启动 Docker
 
-  ```sh
-  docker compose up -d
-  ```
+```sh
+docker compose up -d
+```
 
-  ### 检查日志
+### 检查日志
 
-  ```sh
-  docker logs -f lobe-chat
-  ```
+```sh
+docker logs -f lobe-chat
+```
 
-  如果你在容器中看到了以下日志，则说明已经启动成功：
+如果你在容器中看到了以下日志，则说明已经启动成功：
 
-  ```log
-  [Database] Start to migration...
-  ✅ database migration pass.
-  -------------------------------------
-    ▲ Next.js 14.x.x
-    - Local:        https://localhost:3210
-    - Network:      http://0.0.0.0:3210
-    ✓ Starting...
-    ✓ Ready in 95ms
-  ```
+```log
+[Database] Start to migration...
+✅ database migration pass.
+-------------------------------------
+  ▲ Next.js 14.x.x
+  - Local:        https://localhost:3210
+  - Network:      http://0.0.0.0:3210
+  ✓ Starting...
+  ✓ Ready in 95ms
+```
 
-  ### 访问应用
+### 访问应用
 
-  你可以通过 `https://lobe.example.com` 访问你的 LobeHub 服务。应用的账号密码在步骤`3`的报告中。
+你可以通过 `https://lobe.example.com` 访问你的 LobeHub 服务。应用的账号密码在步骤`3`的报告中。
 
   <Callout type="warning">
     请注意，如果你的服务能够被公网访问，我们强烈建议你参考 [文档](https://lobehub.com/zh/docs/self-hosting/advanced/auth/providers/casdoor) 关闭注册功能。
@@ -393,7 +397,6 @@ lobe-chat      | [auth][error] r3: "response" is not a conform Authorization Ser
 - 请参考 [域名模式](#域名模式) 章节中的反向代理配置注意事项。
 
 - 一个直接的排查方式，你可以直接访问 `https://auth.example.com/.well-known/openid-configuration`，如果
-
   - 返回了非 JSON 格式的数据，则说明你的反向代理配置错误。
   - 如果返回的 JSON 格式数据中的 `"issuer": "URL"` 字段不是你配置的 `https://auth.example.com`，则说明你的环境变量配置错误。
 
@@ -512,14 +515,13 @@ docker compose up -d
 
 运行后会获得三个文件
 
-- init\_data.json
+- init_data.json
 - docker-compose.yml
 - .env
 
 接下来，修改配置文件以实现域名发布
 
 1. 修改 `docker-compose.yml` 文件
-
    1. 修改 `minio`的`MINIO_API_CORS_ALLOW_ORIGIN`字段。
 
    ```yaml
@@ -628,9 +630,10 @@ docker compose up -d # 重新启动
 <Callout type="warning">
   请记得注意配置对应 S3 服务商的 CORS 跨域配置，以确保 LobeHub 能够正常访问 S3 服务。
 
-  在本文中，你需要允许 `https://lobe.example.com` 的跨域请求。这既可以在 MinIO WebUI 的 `Configuration - API - Cors Allow Origin` 中配置，也可以在 Docker Compose 中的 `minio - environment - MINIO_API_CORS_ALLOW_ORIGIN` 中配置。
+在本文中，你需要允许 `https://lobe.example.com` 的跨域请求。这既可以在 MinIO WebUI 的 `Configuration - API - Cors Allow Origin` 中配置，也可以在 Docker Compose 中的 `minio - environment - MINIO_API_CORS_ALLOW_ORIGIN` 中配置。
 
-  如果你使用第二种方法（这也是默认的方法）进行配置，你将无法再在 MinIO WebUI 中配置。
+如果你使用第二种方法（这也是默认的方法）进行配置，你将无法再在 MinIO WebUI 中配置。
+
 </Callout>
 
 你需要首先访问 WebUI 来进行配置：
@@ -655,15 +658,16 @@ docker compose up -d # 重新启动
 #### 使用 `INTERNAL_APP_URL` 配置内部服务器通信
 
 <Callout type="info">
-  如果你在 CDN（如 Cloudflare）或反向代理后部署 LobeHub，你可以配置内部服务器到服务器通信以绕过 CDN / 代理层，以获得更好的性能。
+  如果你在 CDN（如 Cloudflare）或反向代理后部署 LobeHub，你可以配置内部服务器到服务器通信以绕过 CDN
+  / 代理层，以获得更好的性能。
 </Callout>
 
 你可以配置 `INTERNAL_APP_URL` 环境变量：
 
 ```yaml
 environment:
-  - 'APP_URL=https://lobe.example.com'  # 浏览器访问的公开 URL
-  - 'INTERNAL_APP_URL=http://localhost:3210'  # 服务器到服务器调用的内部 URL
+  - 'APP_URL=https://lobe.example.com' # 浏览器访问的公开 URL
+  - 'INTERNAL_APP_URL=http://localhost:3210' # 服务器到服务器调用的内部 URL
 ```
 
 **工作原理：**
@@ -680,7 +684,8 @@ environment:
 - `http://127.0.0.1:3210` - 备用本地主机地址
 
 <Callout type="tip">
-  对于使用 `network_mode: 'service:network-service'` 的 Docker Compose 部署，请使用 `http://localhost:3210` 作为 `INTERNAL_APP_URL`。
+  对于使用 `network_mode: 'service:network-service'` 的 Docker Compose 部署，请使用
+  `http://localhost:3210` 作为 `INTERNAL_APP_URL`。
 </Callout>
 
 #### 配置文件
@@ -775,6 +780,7 @@ services:
     restart: always
     command: >
       server /etc/minio/data --address ":${MINIO_PORT}" --console-address ":9001"
+
 
   casdoor:
     image: casbin/casdoor

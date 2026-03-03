@@ -95,7 +95,6 @@ export class MessagesEngine {
   }
 
   /**
-   *
    * Process messages and return only the messages array
    * This is a convenience method for simpler use cases
    */

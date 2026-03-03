@@ -87,8 +87,7 @@ const ChatPage = () => {
       renderItem={(message) => (
         <List.Item>
           <Typography.Text>{message.content}</Typography.Text>
-
-</List.Item>
+        </List.Item>
       )}
     />
   );
@@ -126,13 +125,11 @@ const ChatPage = () => {
         renderItem={(message) => (
           <List.Item>
             <Typography.Text>{message.content}</Typography.Text>
-
-</List.Item>
+          </List.Item>
         )}
       />
       <Button onClick={handleSend}>Send</Button>
-
-</>
+    </>
   );
 };
 

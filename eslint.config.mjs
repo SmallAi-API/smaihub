@@ -135,4 +135,11 @@ export default eslint(
       'no-console': 0,
     },
   },
+  // agent-tracing CLI - console output is the primary interface
+  {
+    files: ['packages/agent-tracing/**/*'],
+    rules: {
+      'no-console': 0,
+    },
+  },
 );

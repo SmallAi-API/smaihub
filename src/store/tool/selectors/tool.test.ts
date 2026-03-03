@@ -15,7 +15,7 @@ const mockBuiltinSkill = {
 };
 const mockState = {
   ...initialState,
-   builtinSkills: [mockBuiltinSkill],
+  builtinSkills: [mockBuiltinSkill],
   installedPlugins: [
     {
       identifier: 'plugin-1',
@@ -97,7 +97,7 @@ describe('toolSelectors', () => {
     it('should return the correct list of tool metadata', () => {
       const result = toolSelectors.metaList(mockState);
       expect(result).toEqual([
-         {
+        {
           author: 'LobeHub',
           identifier: 'test-skill',
           meta: { avatar: '🧪', description: 'A test skill', title: 'Test Skill' },

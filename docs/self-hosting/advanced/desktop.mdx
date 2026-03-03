@@ -56,7 +56,10 @@ Click the button below to generate `JWKS_KEY`:
 
 Add the generated environment variables to your deployment configuration.
 
-<Callout>If you have already configured `OIDC_JWKS_KEY`, no changes are needed. The system will automatically fall back to `OIDC_JWKS_KEY` for backward compatibility.</Callout>
+<Callout>
+  If you have already configured `OIDC_JWKS_KEY`, no changes are needed. The system will
+  automatically fall back to `OIDC_JWKS_KEY` for backward compatibility.
+</Callout>
 
 If you are deploying LobeHub using one-click deployment methods (such as Vercel, Railway, etc.), you need to:
 
@@ -91,9 +94,9 @@ proxy_buffers       8 16k;
 proxy_busy_buffers_size 32k;
 ```
 
-### invalid\_redirect\_uri Error
+### invalid_redirect_uri Error
 
-**Issue:** Encountering the error "redirect\_uri did not match any of the client's registered redirect\_uris" during the authorization process.
+**Issue:** Encountering the error "redirect_uri did not match any of the client's registered redirect_uris" during the authorization process.
 
 **Solution:**
 

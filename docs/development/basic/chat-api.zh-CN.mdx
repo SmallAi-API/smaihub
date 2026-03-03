@@ -74,24 +74,20 @@ sequenceDiagram
 1. **客户端发起请求**：客户端调用前端 ChatService 的 createAssistantMessage 方法。
 
 2. **前端处理请求**：
-
    - `src/services/chat.ts` 对消息、工具和参数进行预处理
    - 调用 getChatCompletion 准备请求参数
    - 使用 `src/utils/fetch/fetchSSE.ts` 发送请求到后端 API
 
 3. **后端处理请求**：
-
    - `src/app/(backend)/webapi/chat/[provider]/route.ts` 接收请求
    - 初始化 AgentRuntime
    - 根据用户配置和提供商创建相应的模型实例
 
 4. **模型调用**：
-
    - `src/libs/agent-runtime/AgentRuntime.ts` 调用相应模型提供商的 API
    - 返回流式响应
 
 5. **处理响应**：
-
    - 后端将模型响应转换为 Stream 返回
    - 前端通过 fetchSSE 和 [fetchEventSource](https://github.com/Azure/fetch-event-source) 处理流式响应
    - 对不同类型的事件（文本、工具调用、推理等）进行处理
@@ -100,14 +96,12 @@ sequenceDiagram
 6. **插件调用场景**：
 
    当 AI 模型在响应中返回 `tool_calls` 字段时，会触发插件调用流程：
-
    - AI 模型返回包含 `tool_calls` 的响应，表明需要调用工具
    - 前端通过 `internal_callPluginApi` 方法处理工具调用
    - 调用 `runPluginApi` 方法执行插件功能，包括获取插件设置和清单、创建认证请求头、发送请求到插件网关
    - 插件执行完成后，结果返回给 AI 模型，模型基于结果生成最终响应
 
    **实际应用示例**：
-
    - **搜索插件**：当用户需要获取实时信息时，AI 会调用网页搜索插件来获取最新数据
    - **DALL-E 插件**：用户要求生成图片时，AI 调用 DALL-E 插件创建图像
    - **Midjourney 插件**：提供更高质量的图像生成能力，通过 API 调用 Midjourney 服务
@@ -117,9 +111,7 @@ sequenceDiagram
    预设任务是指系统预定义的特定功能任务，通常在用户执行特定操作时触发（而非常规聊天流程的一部分）。这些任务使用 `fetchPresetTaskResult` 方法执行，该方法与正常聊天流程类似，但会使用专门设计的提示词（prompt chain）。
 
    **执行时机**：预设任务主要在以下场景被触发：
-
    1. **角色信息自动生成**：当用户创建或编辑角色时触发
-
       - 角色头像生成（通过 `autoPickEmoji` 方法）
       - 角色描述生成（通过 `autocompleteAgentDescription` 方法）
       - 角色标签生成（通过 `autocompleteAgentTags` 方法）
@@ -206,7 +198,6 @@ AgentRuntime 是 Lobe Chat 中的一个核心抽象层，它封装了与不同 A
 2. **模型初始化**：通过 `initializeWithProvider` 静态方法，根据指定的提供商和配置参数初始化对应的运行时实例。
 
 3. **能力封装**：
-
    - `chat` 方法：处理聊天流式请求
    - `models` 方法：获取模型列表
    - 支持文本嵌入、文本到图像、文本到语音等功能（如果模型提供商支持）
@@ -241,7 +232,6 @@ AgentRuntime 是 Lobe Chat 中的一个核心抽象层，它封装了与不同 A
    ```
 
    **适配器实现示例**：
-
    1. **OpenRouter 适配器**：OpenRouter 是一个统一 API，可以通过它访问多个模型提供商的 AI 模型。Lobe Chat 通过适配器实现对 OpenRouter 的支持：
 
       ```ts

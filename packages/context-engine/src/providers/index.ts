@@ -18,6 +18,7 @@ export { SystemRoleInjector } from './SystemRoleInjector';
 export { ToolDiscoveryProvider } from './ToolDiscoveryProvider';
 export { ToolSystemRoleProvider } from './ToolSystemRole';
 export { UserMemoryInjector } from './UserMemoryInjector';
+
 // Re-export types
 export type {
   AgentBuilderContext,

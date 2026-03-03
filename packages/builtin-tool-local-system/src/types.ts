@@ -1,4 +1,4 @@
-import  {
+import {
   type GetCommandOutputResult,
   type GlobFilesResult,
   type GrepContentResult,

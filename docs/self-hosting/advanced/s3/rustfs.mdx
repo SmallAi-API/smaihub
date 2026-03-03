@@ -12,7 +12,10 @@ tags:
 We need to configure an S3-compatible storage service in the server-side database to store files.
 
 <Callout type={'info'}>
-Due to recent changes in MinIO's commercial strategy, we no longer recommend MinIO as the S3 storage backend. Please migrate to open-source solutions such as [RustFS](https://rustfs.com/) or [ceph](https://ceph.io/), or to cloud providers like Tencent Cloud Object Storage or Cloudflare R2.
+  Due to recent changes in MinIO's commercial strategy, we no longer recommend MinIO as the S3
+  storage backend. Please migrate to open-source solutions such as [RustFS](https://rustfs.com/) or
+  [ceph](https://ceph.io/), or to cloud providers like Tencent Cloud Object Storage or Cloudflare
+  R2.
 </Callout>
 
 ## Configuration Steps
@@ -36,18 +39,18 @@ We recommend using Docker Compose to deploy RustFS:
 
 ```yml
 services:
-    rustfs:
-        image: rustfs/rustfs:latest
-        container_name: lobe-rustfs
-        ports:
-            - '9000:9000'
-            - '9001:9001'
-        environment:
-            - RUSTFS_CONSOLE_ENABLE=true
-            - RUSTFS_ACCESS_KEY=<YOUR_ACCESS_KEY>
-            - RUSTFS_SECRET_KEY=<YOUR_SECRET_KEY>
-        volumes:
-            - rustfs-data:/data
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: lobe-rustfs
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    environment:
+      - RUSTFS_CONSOLE_ENABLE=true
+      - RUSTFS_ACCESS_KEY=<YOUR_ACCESS_KEY>
+      - RUSTFS_SECRET_KEY=<YOUR_SECRET_KEY>
+    volumes:
+      - rustfs-data:/data
 
 volumes:
   rustfs-data:
@@ -65,34 +68,31 @@ Open the RustFS WebUI (`http://localhost:9001/`) and you will be redirected to t
 
 Click `Object Storage` in the left sidebar, then the `Create Bucket` button in the top-right corner to create a new bucket. This example uses the name `lobe`. Leave Versioning and Object Lock disabled (default settings).
 
-<Image alt={"Create Bucket"} src={'https://github.com/user-attachments/assets/27c37617-a813-4de5-b0bf-c7167999c856'} />
+<Image
+  alt={'Create Bucket'}
+  src={'https://github.com/user-attachments/assets/27c37617-a813-4de5-b0bf-c7167999c856'}
+/>
 
 Go to the bucket and click `Settings`, choose `Custom` for the policy, and paste the following JSON to make the bucket public-read/private-write:
 
 ```json
-{ 
-  "ID": "", 
-  "Version": "2012-10-17", 
-  "Statement": [ 
-    { 
-      "Sid": "", 
-      "Effect": "Allow", 
-      "Principal": { 
-        "AWS": [ 
-          "*" 
-        ] 
-      }, 
-      "Action": [ 
-        "s3:GetObject" 
-      ], 
-      "NotAction": [], 
-      "Resource": [ 
-        "arn:aws:s3:::lobe/*" 
-      ], 
-      "NotResource": [], 
-      "Condition": {} 
-    } 
-  ] 
+{
+  "ID": "",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": ["*"]
+      },
+      "Action": ["s3:GetObject"],
+      "NotAction": [],
+      "Resource": ["arn:aws:s3:::lobe/*"],
+      "NotResource": [],
+      "Condition": {}
+    }
+  ],
+  "Version": "2012-10-17"
 }
 ```
 
@@ -101,25 +101,32 @@ Save the settings to apply the policy.
 ### Configure Access Keys
 
 <Callout type={'warning'}>
-You can reuse the `RUSTFS_ACCESS_KEY` and `RUSTFS_SECRET_KEY` defined in the `docker-compose.yml`, but for better security we recommend creating a dedicated access key.
+  You can reuse the `RUSTFS_ACCESS_KEY` and `RUSTFS_SECRET_KEY` defined in the `docker-compose.yml`,
+  but for better security we recommend creating a dedicated access key.
 </Callout>
 
 Click `Access Key` in the left sidebar, then `Add Access Key` to create a new key. The name is arbitrary, and you can keep the default main-account policy.
 
 Copy the generated Access Key and Secret Key (the `Export` button lets you save the JSON locally). The English labels in the UI are confusing, but remember the shorter string is the Access Key and the longer string is the Secret Key (the exported JSON is correct).
 
-<Image alt={"Add Key"} src={'https://github.com/user-attachments/assets/81f18b20-3918-4f77-8571-07d0c4a79aec'} />
+<Image
+  alt={'Add Key'}
+  src={'https://github.com/user-attachments/assets/81f18b20-3918-4f77-8571-07d0c4a79aec'}
+/>
 
-<Image alt={"Export Key"} src={'https://github.com/user-attachments/assets/4dde41ec-985b-4781-8c77-aac65555a32f'} />
+<Image
+  alt={'Export Key'}
+  src={'https://github.com/user-attachments/assets/4dde41ec-985b-4781-8c77-aac65555a32f'}
+/>
 
 ### Configure Reverse Proxy
 
 You also need reverse-proxy rules so that RustFS is accessible from the LAN/public internet. Map the following ports to domains:
 
-| Domain                       | Port   | Required |
-| ---------------------------- | ------ | -------- |
-| `lobe-s3-api.example.com`    | `9000` | Yes      |
-| `lobe-s3-ui.example.com`     | `9001` |          |
+| Domain                    | Port   | Required |
+| ------------------------- | ------ | -------- |
+| `lobe-s3-api.example.com` | `9000` | Yes      |
+| `lobe-s3-ui.example.com`  | `9001` |          |
 
 After completing the reverse proxy, remember to configure the corresponding SSL certificate and enable HTTPS access.
 
@@ -139,4 +146,5 @@ S3_BUCKET=lobe
 S3_PUBLIC_DOMAIN=https://lobe-s3-api.example.com
 S3_ENABLE_PATH_STYLE=1
 ```
+
 </Steps>

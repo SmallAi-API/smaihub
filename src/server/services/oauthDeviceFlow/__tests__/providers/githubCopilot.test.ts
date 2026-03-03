@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { OAuthDeviceFlowService } from '../../index';
-import { getOAuthService,GithubCopilotOAuthService } from '../../providers/githubCopilot';
+import { getOAuthService, GithubCopilotOAuthService } from '../../providers/githubCopilot';
 
 // Mock fetch
 const mockFetch = vi.fn();

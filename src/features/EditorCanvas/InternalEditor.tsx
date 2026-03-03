@@ -26,7 +26,7 @@ const IMAGE_FILTERS = [
   { extensions: ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'avif'], name: 'Images' },
 ];
 /**
-* Base plugins for the editor (without image and toolbar, which need dynamic config)
+ * Base plugins for the editor (without image and toolbar, which need dynamic config)
  */
 const STATIC_PLUGINS = [
   ReactLiteXmlPlugin,
@@ -37,7 +37,6 @@ const STATIC_PLUGINS = [
   ReactLinkPlugin,
   ReactTablePlugin,
   ReactMathPlugin,
- 
 ];
 
 export interface InternalEditorProps extends EditorCanvasProps {
@@ -65,7 +64,7 @@ const InternalEditor = memo<InternalEditorProps>(
   }) => {
     const { t } = useTranslation('file');
     const editorState = useEditorState(editor);
- const handleImageUpload = useImageUpload();
+    const handleImageUpload = useImageUpload();
 
     const handlePickFile = useCallback(async (): Promise<File | null> => {
       if (!isDesktop) return null;
@@ -84,16 +83,15 @@ const InternalEditor = memo<InternalEditorProps>(
     const plugins = useMemo(() => {
       // If custom plugins provided, use them directly
       if (customPlugins) return customPlugins;
-const imagePlugin = Editor.withProps(ReactImagePlugin, {
+      const imagePlugin = Editor.withProps(ReactImagePlugin, {
         defaultBlockImage: true,
         handleUpload: handleImageUpload,
         onPickFile: isDesktop ? handlePickFile : undefined,
       });
       // Build base plugins with optional extra plugins prepended
-       const basePlugins = extraPlugins
+      const basePlugins = extraPlugins
         ? [...extraPlugins, ...STATIC_PLUGINS, imagePlugin]
         : [...STATIC_PLUGINS, imagePlugin];
-
 
       // Add toolbar if enabled
       if (floatingToolbar) {
@@ -113,7 +111,7 @@ const imagePlugin = Editor.withProps(ReactImagePlugin, {
       }
 
       return basePlugins;
-     }, [
+    }, [
       customPlugins,
       editor,
       editorState,

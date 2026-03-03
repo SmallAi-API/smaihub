@@ -1,12 +1,12 @@
 import isEqual from 'fast-deep-equal';
-import  { type SWRResponse } from 'swr';
-import  { type StateCreator } from 'zustand/vanilla';
+import { type SWRResponse } from 'swr';
+import { type StateCreator } from 'zustand/vanilla';
 
 import { mutate, useClientDataSWR } from '@/libs/swr';
 import { agentEvalService } from '@/services/agentEval';
-import  { type EvalStore } from '@/store/eval/store';
+import { type EvalStore } from '@/store/eval/store';
 
-import { type DatasetDetailDispatch,datasetDetailReducer } from './reducer';
+import { type DatasetDetailDispatch, datasetDetailReducer } from './reducer';
 
 const FETCH_DATASETS_KEY = 'FETCH_DATASETS';
 const FETCH_DATASET_DETAIL_KEY = 'FETCH_DATASET_DETAIL';

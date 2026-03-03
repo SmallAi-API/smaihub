@@ -90,7 +90,7 @@ export class ModelRuntime {
   async handleCreateVideoWebhook(payload: HandleCreateVideoWebhookPayload) {
     return this._runtime.handleCreateVideoWebhook?.(payload);
   }
-  
+
   async models() {
     return this._runtime.models?.();
   }

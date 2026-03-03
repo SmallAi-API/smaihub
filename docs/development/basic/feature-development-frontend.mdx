@@ -1,8 +1,8 @@
 ---
 title: How to Develop a New Feature
 description: >-
-  Learn how to implement the Chat Messages feature in LobeHub using Next.js and
-  TypeScript.
+  Learn how to implement the Chat Messages feature in LobeHub using Next.js and TypeScript.
+
 tags:
   - LobeHub
   - Next.js
@@ -89,8 +89,7 @@ const ChatPage = () => {
       renderItem={(message) => (
         <List.Item>
           <Typography.Text>{message.content}</Typography.Text>
-
-</List.Item>
+        </List.Item>
       )}
     />
   );
@@ -128,13 +127,11 @@ const ChatPage = () => {
         renderItem={(message) => (
           <List.Item>
             <Typography.Text>{message.content}</Typography.Text>
-
-</List.Item>
+          </List.Item>
         )}
       />
       <Button onClick={handleSend}>Send</Button>
-
-</>
+    </>
   );
 };
 

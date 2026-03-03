@@ -32,7 +32,6 @@ const PDFViewer = memo<PDFViewerProps>(({ url, fileId }) => {
   const [containerWidth, setContainerWidth] = useState<number>();
   const [isLoaded, setIsLoaded] = useState(false);
 
-   
   const onResize = useCallback<ResizeObserverCallback>((entries) => {
     const [entry] = entries;
 

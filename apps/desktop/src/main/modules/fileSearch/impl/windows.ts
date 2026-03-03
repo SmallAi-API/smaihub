@@ -1,4 +1,3 @@
- 
 import { type Stats } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import * as os from 'node:os';

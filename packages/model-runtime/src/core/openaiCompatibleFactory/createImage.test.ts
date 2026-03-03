@@ -567,7 +567,7 @@ describe('createOpenAICompatibleImage', () => {
       };
 
       // Mock fetch for image download
-      const mockArrayBuffer = new Uint8Array([0xFF, 0xD8, 0xFF, 0xE0]).buffer;
+      const mockArrayBuffer = new Uint8Array([0xff, 0xd8, 0xff, 0xe0]).buffer;
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
         arrayBuffer: async () => mockArrayBuffer,

@@ -32,7 +32,7 @@ export const ExecuteAgentTasksInspector = memo<BuiltinInspectorProps<ExecuteTask
   ({ args, partialArgs, isArgumentsStreaming }) => {
     const { t } = useTranslation('plugin');
 
-     // Handle case where LLM returns tasks as stringified JSON instead of array
+    // Handle case where LLM returns tasks as stringified JSON instead of array
     const tasks = useMemo(() => {
       const rawTasks = args?.tasks || partialArgs?.tasks;
       if (!rawTasks) return [];

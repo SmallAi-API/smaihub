@@ -498,6 +498,7 @@ describe('AiProviderModel', () => {
 
       expect(provider?.keyVaults).toEqual({});
     });
+
     it('should handle keyVaults decryption failure gracefully', async () => {
       const providerId = 'aihubmix';
       await serverDB.insert(aiProviders).values({

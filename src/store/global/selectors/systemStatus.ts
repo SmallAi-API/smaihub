@@ -106,7 +106,7 @@ export const systemStatusSelectors = {
   showLeftPanel,
   showRightPanel,
   showSystemRole,
-   showVideoPanel,
+  showVideoPanel,
   showVideoTopicPanel,
   systemStatus,
   tokenDisplayFormatShort,
