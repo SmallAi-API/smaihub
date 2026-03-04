@@ -21,19 +21,25 @@ export const getDetailsToken = (usage: ModelUsage, modelCard?: LobeDefaultAiMode
 
   const outputImageTokens = usage.outputImageTokens || (usage as any).imageTokens || 0;
 
-  const outputTextTokens = usage.outputTextTokens
-    ? usage.outputTextTokens
-    : totalOutputTokens -
-      outputReasoningTokens -
-      (usage.outputAudioTokens || 0) -
-      outputImageTokens;
+  const inputToolTokens = usage.inputToolTokens || 0;
+
+  const outputTextTokens =
+    typeof usage.outputTextTokens === 'number'
+      ? usage.outputTextTokens
+      : Math.max(
+          0,
+          totalOutputTokens -
+            outputReasoningTokens -
+            (usage.outputAudioTokens || 0) -
+            outputImageTokens,
+        );
 
   const inputWriteCacheTokens = usage.inputWriteCacheTokens || 0;
   const inputCacheTokens = usage.inputCachedTokens || (usage as any).cachedTokens || 0;
 
   const inputCacheMissTokens = usage?.inputCacheMissTokens
     ? usage?.inputCacheMissTokens
-    : totalInputTokens - (inputCacheTokens || 0);
+    : totalInputTokens - (inputCacheTokens || 0) - inputToolTokens;
 
   // Pricing
   const formatPrice = getPrice(modelCard?.pricing || { units: [] });
@@ -56,9 +62,16 @@ export const getDetailsToken = (usage: ModelUsage, modelCard?: LobeDefaultAiMode
   const totalInputCredit = (
     !!totalInputTokens ? calcCredit(totalInputTokens, formatPrice.input) : 0
   ) as number;
+  const inputToolCredit = (
+    !!inputToolTokens ? calcCredit(inputToolTokens, formatPrice.input) : 0
+  ) as number;
 
   const totalCredit =
-    inputCacheMissCredit + inputCachedCredit + inputWriteCachedCredit + totalOutputCredit;
+    inputCacheMissCredit +
+    inputCachedCredit +
+    inputWriteCachedCredit +
+    inputToolCredit +
+    totalOutputCredit;
 
   return {
     inputAudio: !!usage.inputAudioTokens
@@ -86,6 +99,12 @@ export const getDetailsToken = (usage: ModelUsage, modelCard?: LobeDefaultAiMode
       ? {
           credit: calcCredit(inputTextTokens, formatPrice.input),
           token: inputTextTokens,
+        }
+      : undefined,
+    inputTool: !!inputToolTokens
+      ? {
+          credit: inputToolCredit,
+          token: inputToolTokens,
         }
       : undefined,
 

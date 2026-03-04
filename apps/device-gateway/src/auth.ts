@@ -1,6 +1,6 @@
-import { importJWK, jwtVerify } from 'jose';
+import { CryptoKey, importJWK, jwtVerify } from 'jose';
 
-import { Env } from './types';
+import type { Env } from './types';
 
 let cachedKey: CryptoKey | null = null;
 

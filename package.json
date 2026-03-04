@@ -24,7 +24,9 @@
   },
   "license": "MIT",
   "author": "smai.ai <wasskayyy@gmail.com>",
-  "sideEffects": false,
+  "sideEffects": [
+    "./src/initialize.ts"
+  ],
   "workspaces": [
     "packages/*",
     "packages/business/*",
@@ -37,7 +39,7 @@
     "build:docker": "pnpm run build:spa && pnpm run build:spa:mobile && pnpm run build:spa:copy && cross-env NODE_OPTIONS=--max-old-space-size=8192 DOCKER=true next build && pnpm run build-sitemap",
     "build:next": "cross-env NODE_OPTIONS=--max-old-space-size=8192 next build",
     "build:spa": "rm -rf public/spa && cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
-    "build:spa:copy": "tsx scripts/buildSpaCopy.mts",
+    "build:spa:copy": "tsx scripts/copySpaBuild.mts && tsx scripts/generateSpaTemplates.mts",
     "build:spa:mobile": "cross-env NODE_OPTIONS=--max-old-space-size=8192 MOBILE=true vite build",
     "build:vercel": "bun run build && bun run db:migrate",
     "build-migrate-db": "bun run db:migrate",
@@ -398,7 +400,7 @@
     "@edge-runtime/vm": "^5.0.0",
     "@huggingface/tasks": "^0.19.80",
     "@inquirer/prompts": "^8.2.0",
-     "@lobechat/agent-tracing": "workspace:*",
+    "@lobechat/agent-tracing": "workspace:*",
     "@lobechat/types": "workspace:*",
     "@lobehub/i18n-cli": "^1.26.0",
     "@lobehub/lint": "2.1.5",

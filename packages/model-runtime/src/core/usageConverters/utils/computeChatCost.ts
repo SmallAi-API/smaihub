@@ -57,8 +57,12 @@ type UnitQuantityResolver = (usage: ModelTokensUsage) => number | undefined;
 
 const UNIT_QUANTITY_RESOLVERS: Partial<Record<PricingUnitName, UnitQuantityResolver>> = {
   textInput: (usage) => {
+        const toolTokens = usage.inputToolTokens ?? 0;
     if (usage.inputCacheMissTokens !== undefined) {
-      return usage.inputCacheMissTokens;
+       // inputCacheMissTokens only covers non-cached prompt tokens;
+      // tool-use tokens (e.g. grounding results) are billed at the same input rate
+      // and must be added here because there is no separate toolInput pricing unit.
+      return usage.inputCacheMissTokens + toolTokens;
     }
 
     if (typeof usage.inputCachedTokens === 'number' && typeof usage.totalInputTokens === 'number') {
@@ -67,6 +71,13 @@ const UNIT_QUANTITY_RESOLVERS: Partial<Record<PricingUnitName, UnitQuantityResol
       );
     }
 
+     // When tool tokens are present, totalInputTokens already includes them
+    // (set by the converter as promptTokenCount + toolUsePromptTokenCount).
+    // Prefer totalInputTokens over inputTextTokens to avoid underbilling.
+    if (toolTokens > 0) {
+      return usage.totalInputTokens;
+    }
+    
     return usage.inputTextTokens ?? usage.totalInputTokens;
   },
   textInput_cacheRead: (usage) => usage.inputCachedTokens,

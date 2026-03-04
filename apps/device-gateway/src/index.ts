@@ -1,6 +1,6 @@
 import { verifyDesktopToken } from './auth';
 import { DeviceGatewayDO } from './DeviceGatewayDO';
-import { Env } from './types';
+import type { Env } from './types';
 
 export { DeviceGatewayDO };
 
@@ -18,9 +18,10 @@ export default {
       const token = url.searchParams.get('token');
       if (!token) return new Response('Missing token', { status: 401 });
 
-      try {
-        const { userId } = await verifyDesktopToken(env, token);
+    
 
+      try {
+      
         const id = env.DEVICE_GATEWAY.idFromName(`user:${userId}`);
         const stub = env.DEVICE_GATEWAY.get(id);
 
@@ -41,6 +42,7 @@ export default {
       }
 
       const body = (await request.clone().json()) as { userId: string };
+      if (!body.userId) return new Response('Missing userId', { status: 400 });
       const id = env.DEVICE_GATEWAY.idFromName(`user:${body.userId}`);
       const stub = env.DEVICE_GATEWAY.get(id);
       return stub.fetch(request);
