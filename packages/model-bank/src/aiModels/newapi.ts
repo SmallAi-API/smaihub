@@ -50,7 +50,7 @@ export const nanoBananaProParameters: ModelParamsSchema = {
   },
   prompt: { default: '' },
   resolution: {
-    default: 'auto',
+    default: '1K',
     enum: ['1K', '2K', '4K'],
   },
 };

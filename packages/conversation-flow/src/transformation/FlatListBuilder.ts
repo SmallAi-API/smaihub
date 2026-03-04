@@ -805,7 +805,7 @@ export class FlatListBuilder {
           'inputCitationTokens',
           'inputImageTokens',
           'inputTextTokens',
-            'inputToolTokens',
+          'inputToolTokens',
           'inputWriteCacheTokens',
           'latency',
           'outputAudioTokens',
