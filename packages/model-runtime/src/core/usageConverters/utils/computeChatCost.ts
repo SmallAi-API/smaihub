@@ -1,4 +1,3 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix */
 import { CREDITS_PER_DOLLAR, USD_TO_CNY } from '@lobechat/const/currency';
 import type { ModelTokensUsage } from '@lobechat/types';
 import debug from 'debug';
@@ -57,9 +56,10 @@ type UnitQuantityResolver = (usage: ModelTokensUsage) => number | undefined;
 
 const UNIT_QUANTITY_RESOLVERS: Partial<Record<PricingUnitName, UnitQuantityResolver>> = {
   textInput: (usage) => {
-        const toolTokens = usage.inputToolTokens ?? 0;
+    const toolTokens = usage.inputToolTokens ?? 0;
+
     if (usage.inputCacheMissTokens !== undefined) {
-       // inputCacheMissTokens only covers non-cached prompt tokens;
+      // inputCacheMissTokens only covers non-cached prompt tokens;
       // tool-use tokens (e.g. grounding results) are billed at the same input rate
       // and must be added here because there is no separate toolInput pricing unit.
       return usage.inputCacheMissTokens + toolTokens;
@@ -71,13 +71,13 @@ const UNIT_QUANTITY_RESOLVERS: Partial<Record<PricingUnitName, UnitQuantityResol
       );
     }
 
-     // When tool tokens are present, totalInputTokens already includes them
+    // When tool tokens are present, totalInputTokens already includes them
     // (set by the converter as promptTokenCount + toolUsePromptTokenCount).
     // Prefer totalInputTokens over inputTextTokens to avoid underbilling.
     if (toolTokens > 0) {
       return usage.totalInputTokens;
     }
-    
+
     return usage.inputTextTokens ?? usage.totalInputTokens;
   },
   textInput_cacheRead: (usage) => usage.inputCachedTokens,

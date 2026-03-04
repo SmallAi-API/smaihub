@@ -236,10 +236,11 @@ const transformGoogleGenerativeAIStream = (
     const { groundingChunks, imageSearchQueries, webSearchQueries } =
       candidate.groundingMetadata ?? {};
     if (groundingChunks) {
-         const webChunks = groundingChunks.filter((chunk) => chunk.web);
+      const webChunks = groundingChunks.filter((chunk) => chunk.web);
       const imageChunks = groundingChunks.filter((chunk) => chunk.image);
+
       return [
-          ...(text ? [{ data: text, id: context.id, type: 'text' as const }] : []),
+        ...(text ? [{ data: text, id: context.id, type: 'text' as const }] : []),
         {
           data: {
             citations:
@@ -280,7 +281,7 @@ const transformGoogleGenerativeAIStream = (
           type: 'grounding',
         },
         ...usageChunks,
-        ].filter(Boolean) as StreamProtocolChunk[];
+      ].filter(Boolean) as StreamProtocolChunk[];
     }
 
     // Check for image data before handling finishReason
