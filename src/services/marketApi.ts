@@ -5,6 +5,7 @@ import {
 } from '@lobehub/market-sdk';
 
 import { lambdaClient } from '@/libs/trpc/client';
+import { discoverService } from '@/services/discover';
 import {
   type AgentForkRequest,
   type AgentForkResponse,
@@ -240,6 +241,7 @@ export class MarketApiService {
     pageSize: number;
     total: number;
   }> {
+    await discoverService.injectMPToken();
     return lambdaClient.market.skill.searchSkill.query(params);
   }
 

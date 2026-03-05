@@ -56,6 +56,7 @@ export const searchRouter = router({
             'mcp',
             'plugin',
             'communityAgent',
+            'knowledgeBase',
           ])
           .optional(),
       }),
@@ -72,7 +73,9 @@ export const searchRouter = router({
       // Database searches (agent, topic, file, folder, message, page, memory)
       if (
         !type ||
-        ['agent', 'topic', 'file', 'folder', 'message', 'page', 'memory'].includes(type)
+        ['agent', 'topic', 'file', 'folder', 'message', 'page', 'memory', 'knowledgeBase'].includes(
+          type,
+        )
       ) {
         searchPromises.push(ctx.searchRepo.search(input));
       }

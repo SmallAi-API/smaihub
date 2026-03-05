@@ -53,7 +53,14 @@ export const defaultClients: ClientMetadata[] = [
     // 公共客户端，无密钥
     token_endpoint_auth_method: 'none',
   },
-
+  {
+    application_type: 'native',
+    client_id: 'lobehub-cli',
+    client_name: 'LobeHub CLI',
+    grant_types: ['urn:ietf:params:oauth:grant-type:device_code', 'refresh_token'],
+    response_types: [],
+    token_endpoint_auth_method: 'none',
+  },
   {
     application_type: 'web',
     client_id: 'lobehub-market',

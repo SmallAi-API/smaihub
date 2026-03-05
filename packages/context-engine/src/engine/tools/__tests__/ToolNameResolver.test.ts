@@ -259,6 +259,7 @@ describe('ToolNameResolver', () => {
       expect(result[0].identifier).toBe('plugin1');
       expect(result[1].identifier).toBe('plugin2');
     });
+
     it('should recover tool type from manifest if model strips the suffix (e.g. GLM-4)', () => {
       const toolCalls = [
         {

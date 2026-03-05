@@ -1,7 +1,7 @@
 export default {
   'authorize.cancel': 'Not Now',
   'authorize.confirm': 'Create Your Profile',
-  'authorize.description': 'Your community profile is separate from your LobeHub user account.',
+  'authorize.description': 'Your community profile is separate from your smai.ai user account.',
   'authorize.footer.agreement':
     'By continuing, you confirm that you have read and agree to the <terms>Terms and Conditions</terms> and <privacy>Privacy Policy</privacy>.',
   'authorize.footer.privacy': 'Privacy Policy',

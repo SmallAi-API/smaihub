@@ -482,11 +482,11 @@ export class LobeGoogleAI implements LobeRuntimeAI {
       return [{ urlContext: {} }];
     }
     if (hasSearch) {
-      return [{ googleSearch: {} }];
+      return [googleSearchTool!];
     }
 
     // Finally consider function declarations
-    return [googleSearchTool!];
+    return buildGoogleTools(tools);
   }
 }
 

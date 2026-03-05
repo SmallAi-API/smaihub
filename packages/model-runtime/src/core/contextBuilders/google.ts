@@ -25,10 +25,14 @@ const isImageTypeSupported = (mimeType: string | null): boolean => {
 };
 
 /**
- * Magic thoughtSignature
- * @see https://ai.google.dev/gemini-api/docs/thought-signatures#model-behavior:~:text=context_engineering_is_the_way_to_go
+ * Magic thoughtSignature to bypass Gemini thought signature validation.
+ * Use `skip_thought_signature_validator` instead of `context_engineering_is_the_way_to_go`
+ * because Vertex AI only accepts `skip_thought_signature_validator`.
+ * @see https://ai.google.dev/gemini-api/docs/thought-signatures
+ * @see https://github.com/pydantic/pydantic-ai/issues/3881
  */
-export const GEMINI_MAGIC_THOUGHT_SIGNATURE = 'context_engineering_is_the_way_to_go';
+
+export const GEMINI_MAGIC_THOUGHT_SIGNATURE = 'skip_thought_signature_validator';
 
 /**
  * Convert OpenAI content part to Google Part format
@@ -269,6 +273,7 @@ const sanitizeSchemaForGoogle = (schema: Record<string, any>): Record<string, an
   for (const [key, value] of Object.entries(schema)) {
     // Strip unsupported JSON Schema keywords (e.g. examples, default, $schema)
     if (UNSUPPORTED_SCHEMA_KEYS.has(key)) continue;
+
     // Convert 'const' to 'enum' with single value (Google doesn't support 'const')
     if (key === 'const') {
       result['enum'] = [value];
@@ -331,9 +336,19 @@ export const buildGoogleTools = (
 ): GoogleFunctionCallTool[] | undefined => {
   if (!tools || tools.length === 0) return;
 
+  // Deduplicate by function name to prevent Vertex AI 400 error:
+  // "Duplicate function declaration found: xxx"
+  const seenToolNames = new Set<string>();
+  const uniqueTools = tools.filter((tool) => {
+    const name = tool.function.name;
+    if (seenToolNames.has(name)) return false;
+    seenToolNames.add(name);
+    return true;
+  });
+
   return [
     {
-      functionDeclarations: tools.map((tool) => buildGoogleTool(tool)),
+      functionDeclarations: uniqueTools.map((tool) => buildGoogleTool(tool)),
     },
   ];
 };

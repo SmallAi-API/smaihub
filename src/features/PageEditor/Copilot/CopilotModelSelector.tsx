@@ -76,7 +76,7 @@ const CopilotModelSelector = memo(() => {
       </ModelSwitchPanel>
       {isModelHasExtendParams && (
         <ActionPopover
-          content={<ControlsForm />}
+          content={<ControlsForm agentId={agentId} />}
           minWidth={350}
           open={settingsOpen}
           placement={'topRight'}

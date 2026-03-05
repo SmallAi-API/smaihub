@@ -18,10 +18,8 @@ export default {
       const token = url.searchParams.get('token');
       if (!token) return new Response('Missing token', { status: 401 });
 
-    
-
       try {
-      
+        const { userId } = await verifyDesktopToken(env, token);
         const id = env.DEVICE_GATEWAY.idFromName(`user:${userId}`);
         const stub = env.DEVICE_GATEWAY.get(id);
 
