@@ -63,6 +63,9 @@ runs:
           exit 0
         fi
 
+        # 强制使用 virtual-hosted-style 寻址（腾讯云 COS 等要求）
+        aws configure set default.s3.addressing_style virtual
+
         # 构建端点参数
         ENDPOINT_ARG=""
         if [ -n "$S3_ENDPOINT" ]; then
