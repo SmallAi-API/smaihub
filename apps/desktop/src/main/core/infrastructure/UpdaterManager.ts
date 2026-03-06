@@ -27,6 +27,7 @@ export class UpdaterManager {
   private checking: boolean = false;
   private downloading: boolean = false;
   private updateAvailable: boolean = false;
+  private updateProviderConfigured: boolean = true;
   private currentChannel: UpdateChannel = UPDATE_CHANNEL;
   /** Incremented on each channel switch to invalidate in-flight checks */
   private checkGeneration: number = 0;
@@ -106,9 +107,20 @@ export class UpdaterManager {
     autoUpdater.autoInstallOnAppQuit = false;
     autoUpdater.allowDowngrade = false;
 
+    if (isWindows) {
+      // Use full NSIS package updates to avoid stale blockmap lookups from previous providers.
+      const windowsUpdater = autoUpdater as typeof autoUpdater & {
+        disableDifferentialDownload?: boolean;
+        disableWebInstaller?: boolean;
+      };
+      windowsUpdater.disableDifferentialDownload = true;
+      windowsUpdater.disableWebInstaller = true;
+    }
+
     const useDevConfig = isDev || FORCE_DEV_UPDATE_CONFIG;
     if (useDevConfig) {
       autoUpdater.forceDevUpdateConfig = true;
+      this.updateProviderConfigured = true;
       logger.info(
         `Using dev update config (isDev=${isDev}, FORCE_DEV_UPDATE_CONFIG=${FORCE_DEV_UPDATE_CONFIG})`,
       );
@@ -118,7 +130,7 @@ export class UpdaterManager {
       logger.info(
         `Production mode: channel=${this.currentChannel}, allowPrerelease=${this.currentChannel !== 'stable'}`,
       );
-      this.configureUpdateProvider();
+      this.updateProviderConfigured = this.configureUpdateProvider();
     }
 
     this.registerEvents();
@@ -150,7 +162,7 @@ export class UpdaterManager {
     logger.info(`allowDowngrade=${isDowngrade}`);
 
     autoUpdater.allowPrerelease = channel !== 'stable';
-    this.configureUpdateProvider();
+    this.updateProviderConfigured = this.configureUpdateProvider();
 
     this.mainWindow.broadcast('updateChannelChanged', channel);
 
@@ -168,6 +180,19 @@ export class UpdaterManager {
    */
   public checkForUpdates = async ({ manual = false }: { manual?: boolean } = {}) => {
     if (this.checking || this.downloading) return;
+    if (!this.updateProviderConfigured) {
+      const error = 'Update server is not configured. Set UPDATE_SERVER_URL to enable updates.';
+      logger.warn(`[Updater] ${error}`);
+
+      if (manual) {
+        this.setStage('error', { error });
+        setTimeout(() => {
+          if (this.stage === 'error') this.setStage('idle');
+        }, 3000);
+      }
+
+      return;
+    }
 
     this.checking = true;
     this.activeGeneration = this.checkGeneration;
@@ -396,19 +421,12 @@ export class UpdaterManager {
         provider: 'generic',
         url: feedUrl,
       });
+      return true;
     } else {
-      // Fallback to GitHub when no S3 URL configured (local dev)
-      logger.info(
-        `No UPDATE_SERVER_URL configured, falling back to GitHub provider for ${this.currentChannel} channel`,
+      logger.error(
+        `No UPDATE_SERVER_URL configured. GitHub fallback is disabled for ${this.currentChannel} channel.`,
       );
-
-      autoUpdater.setFeedURL({
-        owner: 'lobehub',
-        provider: 'github',
-        repo: 'lobehub',
-      });
-
-      autoUpdater.allowPrerelease = this.currentChannel !== 'stable';
+      return false;
     }
   }
 

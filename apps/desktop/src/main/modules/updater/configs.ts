@@ -3,8 +3,19 @@ import type { UpdateChannel } from '@lobechat/electron-client-ipc';
 import { isDev } from '@/const/env';
 import { getDesktopEnv } from '@/env';
 
+const normalizeEnvValue = (value: string | undefined) => {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  return trimmed ? trimmed : undefined;
+};
+
+const runtimeEnv = getDesktopEnv();
+
 // Build-time default channel, can be overridden at runtime via store
-const rawChannel = getDesktopEnv().UPDATE_CHANNEL || 'stable';
+const rawChannel =
+  normalizeEnvValue(runtimeEnv.UPDATE_CHANNEL) ||
+  normalizeEnvValue(process.env.UPDATE_CHANNEL) ||
+  'stable';
 const VALID_CHANNELS = new Set<UpdateChannel>(['stable', 'nightly', 'canary']);
 export const UPDATE_CHANNEL: UpdateChannel = VALID_CHANNELS.has(rawChannel as UpdateChannel)
   ? (rawChannel as UpdateChannel)
@@ -15,7 +26,9 @@ export const UPDATE_CHANNEL: UpdateChannel = VALID_CHANNELS.has(rawChannel as Up
 // S3 base URL for all channels
 // e.g., https://releases.lobehub.com
 // Each channel resolves to {base}/{channel}/
-export const UPDATE_SERVER_URL = getDesktopEnv().UPDATE_SERVER_URL;
+export const UPDATE_SERVER_URL =
+  normalizeEnvValue(runtimeEnv.UPDATE_SERVER_URL) ||
+  normalizeEnvValue(process.env.UPDATE_SERVER_URL);
 
 export const updaterConfig = {
   app: {

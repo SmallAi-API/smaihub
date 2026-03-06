@@ -32,6 +32,8 @@ vi.mock('electron-updater', () => ({
     channel: 'stable',
     checkForUpdates: vi.fn(),
     currentVersion: undefined as any,
+    disableDifferentialDownload: false,
+    disableWebInstaller: false,
     downloadUpdate: vi.fn(),
     forceDevUpdateConfig: false,
     logger: null as any,
@@ -86,6 +88,7 @@ vi.mock('@/env', () => ({
 // Mock isDev
 vi.mock('@/const/env', () => ({
   isDev: false,
+  isWindows: true,
 }));
 
 describe('UpdaterManager', () => {
@@ -106,6 +109,8 @@ describe('UpdaterManager', () => {
     (autoUpdater as any).allowDowngrade = false;
     (autoUpdater as any).forceDevUpdateConfig = false;
     (autoUpdater as any).currentVersion = undefined;
+    (autoUpdater as any).disableDifferentialDownload = false;
+    (autoUpdater as any).disableWebInstaller = false;
 
     // Capture registered events
     registeredEvents = new Map();
@@ -156,6 +161,15 @@ describe('UpdaterManager', () => {
       expect(autoUpdater.channel).toBe('stable');
       expect(autoUpdater.allowPrerelease).toBe(false);
       expect(autoUpdater.allowDowngrade).toBe(false);
+      expect((autoUpdater as any).disableDifferentialDownload).toBe(true);
+      expect((autoUpdater as any).disableWebInstaller).toBe(true);
+      expect(autoUpdater.setFeedURL).toHaveBeenCalledWith({
+        provider: 'generic',
+        url: 'https://mock.update.server/stable',
+      });
+      expect(autoUpdater.setFeedURL).not.toHaveBeenCalledWith(
+        expect.objectContaining({ provider: 'github' }),
+      );
     });
 
     it('should register all event listeners', async () => {
