@@ -63,8 +63,11 @@ runs:
           exit 0
         fi
 
-        # 强制使用 virtual-hosted-style 寻址（腾讯云 COS 等要求）
+        # 腾讯云 COS 兼容性配置
+        # virtual: COS 要求 virtual-hosted-style 寻址
+        # payload_signing_enabled: COS 要求 multipart upload 带 Content-Length
         aws configure set default.s3.addressing_style virtual
+        aws configure set default.s3.payload_signing_enabled true
 
         # 构建端点参数
         ENDPOINT_ARG=""
