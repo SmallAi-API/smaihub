@@ -35,6 +35,7 @@ const Conversation = memo(() => {
     s.useFetchAgentConfig,
   ]);
   const currentAgentId = useConversationStore(conversationSelectors.agentId);
+
   useEffect(() => {
     if (!currentAgentId) return;
 
@@ -61,6 +62,7 @@ const Conversation = memo(() => {
     agentByIdSelectors.getAgentModelProviderById(currentAgentId)(s),
   );
   const { handleUploadFiles } = useUploadFiles({ model, provider });
+
   const handleAgentChange = useCallback(
     (id: string) => {
       if (!id || id === currentAgentId || isChatGroupSessionId(id)) return;
@@ -82,6 +84,7 @@ const Conversation = memo(() => {
   );
 
   const modelSelector = useMemo(() => <CopilotModelSelector />, []);
+
   return (
     <DragUploadZone
       style={{ flex: 1, height: '100%', minWidth: 300 }}

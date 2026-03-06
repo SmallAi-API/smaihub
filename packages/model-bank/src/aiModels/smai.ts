@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import { type ModelParamsSchema } from '../standard-parameters';
 import {
   PRESET_VIDEO_ASPECT_RATIOS,
@@ -80,7 +81,7 @@ export const NANO_BANANA_2_ASPECT_RATIOS = [
 
 export const nanoBananaProParameters: ModelParamsSchema = {
   aspectRatio: {
-     default: 'auto',
+    default: 'auto',
     enum: NANO_BANANA_ASPECT_RATIOS,
   },
   imageUrls: {
@@ -95,7 +96,7 @@ export const nanoBananaProParameters: ModelParamsSchema = {
 
 export const nanoBanana2Parameters: ModelParamsSchema = {
   aspectRatio: {
-     default: 'auto',
+    default: 'auto',
     enum: NANO_BANANA_2_ASPECT_RATIOS,
   },
   imageUrls: {
@@ -148,6 +149,26 @@ export const smaiVideoModels: AIVideoModelCard[] = [
 ];
 
 const smaiChatModels: AIChatModelCard[] = [
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_050_000,
+    description:
+      "GPT-5.4 is OpenAI's latest model for complex professional work and a drop-in replacement for GPT-5.2 and GPT-5.3 Codex.",
+    displayName: 'GPT-5.4',
+    enabled: true,
+    id: 'gpt-5.4',
+    maxOutput: 128_000,
+    releasedAt: '2026-03-06',
+    settings: {
+      extendParams: ['gpt5_2ReasoningEffort', 'textVerbosity'],
+    },
+    type: 'chat',
+  },
   {
     abilities: {
       functionCall: true,
@@ -928,7 +949,7 @@ const smaiChatModels: AIChatModelCard[] = [
     maxOutput: 32_768,
     releasedAt: '2026-02-27',
     settings: {
-      extendParams: ['imageAspectRatio', 'imageResolution2', 'thinkingLevel4'],
+      extendParams: ['imageAspectRatio2', 'imageResolution2', 'thinkingLevel4'],
       searchImpl: 'params',
       searchProvider: 'google',
     },

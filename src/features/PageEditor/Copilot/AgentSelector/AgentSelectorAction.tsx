@@ -42,6 +42,7 @@ const AgentSelectorAction = memo<AgentSelectorActionProps>(({ onAgentChange }) =
   const { t } = useTranslation(['chat', 'common']);
   const [open, setOpen] = useState(false);
   const agentId = useConversationStore(conversationSelectors.agentId);
+
   const agents = useHomeStore(homeAgentListSelectors.allAgents);
   const isAgentListInit = useHomeStore(homeAgentListSelectors.isAgentListInit);
   const pageAgentId = useAgentStore((s) => s.builtinAgentIdMap['page-agent']);

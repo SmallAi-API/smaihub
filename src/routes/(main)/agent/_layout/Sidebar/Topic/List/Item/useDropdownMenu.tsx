@@ -25,9 +25,11 @@ export const useTopicItemDropdownMenu = ({
   const { t } = useTranslation(['topic', 'common']);
   const { modal } = App.useApp();
   const navigate = useNavigate();
+
   const openTopicInNewWindow = useGlobalStore((s) => s.openTopicInNewWindow);
   const activeAgentId = useAgentStore((s) => s.activeAgentId);
   const addTab = useElectronStore((s) => s.addTab);
+
   const [autoRenameTopicTitle, duplicateTopic, removeTopic] = useChatStore((s) => [
     s.autoRenameTopicTitle,
     s.duplicateTopic,

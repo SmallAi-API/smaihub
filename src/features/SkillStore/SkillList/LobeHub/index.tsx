@@ -22,7 +22,6 @@ import { LobehubSkillStatus } from '@/store/tool/slices/lobehubSkillStore/types'
 import BuiltinItem from '../Builtin/Item';
 import Empty from '../Empty';
 import { gridStyles } from '../style';
-import WantMoreSkills from '../WantMoreSkills';
 import Item from './Item';
 
 interface LobeHubListProps {
@@ -211,7 +210,6 @@ export const LobeHubList = memo<LobeHubListProps>(({ keywords }) => {
           );
         })}
       </div>
-      <WantMoreSkills />
     </>
   );
 });

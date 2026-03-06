@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import { type ModelParamsSchema } from '../standard-parameters';
 import {
   type AIChatModelCard,

@@ -14,6 +14,7 @@ import { messageMapKey } from '@/store/chat/utils/messageMapKey';
 interface PageAgentProviderProps {
   children: ReactNode;
 }
+
 export const PageAgentProvider = memo<PageAgentProviderProps>(({ children }) => {
   const useInitBuiltinAgent = useAgentStore((s) => s.useInitBuiltinAgent);
   const pageAgentId = useAgentStore(builtinAgentSelectors.pageAgentId);

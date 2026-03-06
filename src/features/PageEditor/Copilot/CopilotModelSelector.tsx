@@ -39,6 +39,7 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
 const CopilotModelSelector = memo(() => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const agentId = useConversationStore(conversationSelectors.agentId);
+
   const [model, provider, updateAgentConfigById] = useAgentStore((s) => [
     agentByIdSelectors.getAgentModelById(agentId)(s),
     agentByIdSelectors.getAgentModelProviderById(agentId)(s),
@@ -76,7 +77,7 @@ const CopilotModelSelector = memo(() => {
       </ModelSwitchPanel>
       {isModelHasExtendParams && (
         <ActionPopover
-          content={<ControlsForm agentId={agentId} />}
+          content={<ControlsForm />}
           minWidth={350}
           open={settingsOpen}
           placement={'topRight'}

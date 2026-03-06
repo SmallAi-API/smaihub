@@ -16,6 +16,7 @@ const CopilotToolbar = memo(() => {
   const { t } = useTranslation('topic');
   const [topicPopoverOpen, setTopicPopoverOpen] = useState(false);
   const agentId = useConversationStore(conversationSelectors.agentId);
+
   useChatStore((s) => s.useFetchTopics)(true, { agentId });
 
   const [activeTopicId, switchTopic, topics] = useChatStore((s) => [

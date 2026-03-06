@@ -21,7 +21,7 @@ export default LobeHub;
 
 export const planCardModels = [
   'claude-sonnet-4-5-20250929',
-  'gemini-3-pro-preview',
-  'gpt-5.2',
+  'gemini-3.1-pro-preview',
+  'gpt-5.4',
   'deepseek-chat',
 ];

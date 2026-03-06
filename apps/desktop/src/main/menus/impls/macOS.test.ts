@@ -65,6 +65,8 @@ const createMockApp = () => {
     },
     updaterManager: {
       checkForUpdates: vi.fn(),
+      getUpdaterState: vi.fn(() => ({ stage: 'idle' })),
+      installNow: vi.fn(),
       simulateUpdateAvailable: vi.fn(),
       simulateDownloadProgress: vi.fn(),
       simulateUpdateDownloaded: vi.fn(),

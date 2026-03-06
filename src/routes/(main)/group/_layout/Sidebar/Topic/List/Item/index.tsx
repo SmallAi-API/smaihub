@@ -1,7 +1,7 @@
 import { ActionIcon, Flexbox, Icon, Skeleton, Tag } from '@lobehub/ui';
 import { cssVar } from 'antd-style';
 import { MessageSquareDashed, Star } from 'lucide-react';
-import { memo, Suspense, useCallback, useMemo } from 'react';
+import { memo, Suspense, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { isDesktop } from '@/const/version';
@@ -29,8 +29,9 @@ const TopicItem = memo<TopicItemProps>(({ id, title, fav, active, threadId }) =>
   const { t } = useTranslation('topic');
 
   const toggleMobileTopic = useGlobalStore((s) => s.toggleMobileTopic);
-  const addTab = useElectronStore((s) => s.addTab);
   const [activeGroupId, switchTopic] = useAgentGroupStore((s) => [s.activeGroupId, s.switchTopic]);
+
+  const addTab = useElectronStore((s) => s.addTab);
 
   // Construct href for cmd+click support
   const href = useMemo(() => {
@@ -52,14 +53,28 @@ const TopicItem = memo<TopicItemProps>(({ id, title, fav, active, threadId }) =>
     [id],
   );
 
+  const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const handleClick = useCallback(() => {
     if (editing) return;
-    switchTopic(id);
-    toggleMobileTopic(false);
+    if (isDesktop) {
+      clickTimerRef.current = setTimeout(() => {
+        clickTimerRef.current = null;
+        switchTopic(id);
+        toggleMobileTopic(false);
+      }, 250);
+    } else {
+      switchTopic(id);
+      toggleMobileTopic(false);
+    }
   }, [editing, id, switchTopic, toggleMobileTopic]);
 
   const handleDoubleClick = useCallback(() => {
     if (!id || !activeGroupId || !isDesktop) return;
+    if (clickTimerRef.current) {
+      clearTimeout(clickTimerRef.current);
+      clickTimerRef.current = null;
+    }
     const reference = pluginRegistry.parseUrl(`/group/${activeGroupId}`, `topic=${id}`);
     if (reference) {
       addTab(reference);
