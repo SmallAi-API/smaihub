@@ -64,9 +64,8 @@ runs:
         fi
 
         # 腾讯云 COS 兼容性配置
-        # virtual: COS 要求 virtual-hosted-style 寻址
-        # payload_signing_enabled: COS 要求 multipart upload 带 Content-Length
         aws configure set default.s3.addressing_style virtual
+        aws configure set default.s3.multipart_threshold 512MB
         aws configure set default.s3.payload_signing_enabled true
 
         # 构建端点参数
