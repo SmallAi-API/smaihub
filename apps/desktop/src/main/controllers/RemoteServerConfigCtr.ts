@@ -1,7 +1,7 @@
 import querystring from 'node:querystring';
 import { URL } from 'node:url';
 
-import { type DataSyncConfig } from '@lobechat/electron-client-ipc';
+import type { DataSyncConfig } from '@lobechat/electron-client-ipc';
 import retry from 'async-retry';
 import { safeStorage, session as electronSession } from 'electron';
 

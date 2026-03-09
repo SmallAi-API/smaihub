@@ -1,6 +1,5 @@
 import { ToolNameResolver } from './ToolNameResolver';
-import type { LobeToolManifest } from './types';
-
+import type { LobeToolManifest, UniformTool } from './types';
 // Create a singleton instance for backward compatibility
 const resolver = new ToolNameResolver();
 
@@ -27,6 +26,20 @@ export function validateManifest(manifest: any): manifest is LobeToolManifest {
     Array.isArray(manifest.api) &&
     manifest.api.length > 0,
   );
+}
+
+/**
+ * Convert a tool manifest into LLM-compatible UniformTool definitions
+ */
+export function generateToolsFromManifest(manifest: LobeToolManifest): UniformTool[] {
+  return manifest.api.map((api) => ({
+    function: {
+      description: api.description,
+      name: new ToolNameResolver().generate(manifest.identifier, api.name, manifest.type),
+      parameters: api.parameters,
+    },
+    type: 'function' as const,
+  }));
 }
 
 /**

@@ -208,6 +208,12 @@ export class StreamingExecutorActionImpl {
         },
         modelRuntimeConfig,
         operationId: operationId ?? agentId,
+        operationToolSet: {
+          enabledToolIds,
+          manifestMap: toolManifestMap,
+          sourceMap: {},
+          tools: toolsDetailed.tools ?? [],
+        },
         toolManifestMap,
         userInterventionConfig,
       });

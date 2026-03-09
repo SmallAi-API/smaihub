@@ -36,6 +36,7 @@ registerKbCommand(program);
 registerMemoryCommand(program);
 registerAgentCommand(program);
 registerGenerateCommand(program);
+registerGenerateCommand(program);
 registerFileCommand(program);
 registerSkillCommand(program);
 registerTopicCommand(program);
