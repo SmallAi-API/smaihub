@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import urlJoin from 'url-join';
 
+import { useMarketAuth } from '@/layout/AuthProvider/MarketAuth';
 import { chatGroupService } from '@/services/chatGroup';
 import { discoverService } from '@/services/discover';
 import { marketApiService } from '@/services/marketApi';
@@ -47,7 +48,7 @@ const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
   const { t } = useTranslation('discover');
   const navigate = useNavigate();
   const loadGroups = useAgentGroupStore((s) => s.loadGroups);
-
+  const { isAuthenticated, signIn } = useMarketAuth();
   const meta = {
     avatar,
     backgroundColor,
@@ -57,6 +58,14 @@ const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
   };
 
   const handleForkAndChat = async () => {
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      try {
+        await signIn();
+      } catch {
+        return;
+      }
+    }
     try {
       setIsLoading(true);
 

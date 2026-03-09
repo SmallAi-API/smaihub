@@ -355,6 +355,71 @@ describe('ConversationLifecycle actions', () => {
       });
     });
 
+    describe('optimistic topic updatedAt', () => {
+      it('should optimistically update topic updatedAt when sending message to existing topic', async () => {
+        const { result } = renderHook(() => useChatStore());
+        const topicId = TEST_IDS.TOPIC_ID;
+
+        const dispatchTopicSpy = vi.spyOn(result.current, 'internal_dispatchTopic');
+
+        vi.spyOn(aiChatService, 'sendMessageInServer').mockResolvedValue({
+          messages: [
+            createMockMessage({ id: TEST_IDS.USER_MESSAGE_ID, role: 'user', topicId }),
+            createMockMessage({ id: TEST_IDS.ASSISTANT_MESSAGE_ID, role: 'assistant', topicId }),
+          ],
+          assistantMessageId: TEST_IDS.ASSISTANT_MESSAGE_ID,
+          userMessageId: TEST_IDS.USER_MESSAGE_ID,
+        } as any);
+
+        await act(async () => {
+          await result.current.sendMessage({
+            message: TEST_CONTENT.USER_MESSAGE,
+            context: { agentId: TEST_IDS.SESSION_ID, topicId, threadId: null },
+          });
+        });
+
+        // Should call internal_dispatchTopic with updateTopic to touch updatedAt
+        expect(dispatchTopicSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'updateTopic',
+            id: topicId,
+            value: { updatedAt: expect.any(Number) },
+          }),
+        );
+      });
+
+      it('should NOT optimistically update topic updatedAt when server returns topics (new topic)', async () => {
+        const { result } = renderHook(() => useChatStore());
+
+        const dispatchTopicSpy = vi.spyOn(result.current, 'internal_dispatchTopic');
+
+        vi.spyOn(aiChatService, 'sendMessageInServer').mockResolvedValue({
+          messages: [
+            createMockMessage({ id: TEST_IDS.USER_MESSAGE_ID, role: 'user' }),
+            createMockMessage({ id: TEST_IDS.ASSISTANT_MESSAGE_ID, role: 'assistant' }),
+          ],
+          topics: { items: [{ id: 'new-topic', title: 'New Topic' }], total: 1 },
+          topicId: 'new-topic',
+          isCreateNewTopic: true,
+          assistantMessageId: TEST_IDS.ASSISTANT_MESSAGE_ID,
+          userMessageId: TEST_IDS.USER_MESSAGE_ID,
+        } as any);
+
+        await act(async () => {
+          await result.current.sendMessage({
+            message: TEST_CONTENT.USER_MESSAGE,
+            context: createTestContext(),
+          });
+        });
+
+        // Should NOT call internal_dispatchTopic with updateTopic for updatedAt
+        const updateTopicCalls = dispatchTopicSpy.mock.calls.filter(
+          ([payload]) => payload.type === 'updateTopic' && 'updatedAt' in (payload.value || {}),
+        );
+        expect(updateTopicCalls).toHaveLength(0);
+      });
+    });
+
     describe('new topic creation cleanup', () => {
       it('should clear _new key data when new topic is created', async () => {
         const { result } = renderHook(() => useChatStore());
