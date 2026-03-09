@@ -789,6 +789,80 @@ describe('LobeOpenAICompatibleFactory', () => {
         }
       });
 
+      it('should detect ExceededContextWindow from error message text', async () => {
+        const apiError = new OpenAI.APIError(
+          400,
+          {
+            error: {
+              message:
+                "This model's maximum context length is 131072 tokens. However, your messages resulted in 140000 tokens.",
+            },
+            status: 400,
+          },
+          'Error message',
+          {},
+        );
+
+        vi.spyOn(instance['client'].chat.completions, 'create').mockRejectedValue(apiError);
+
+        try {
+          await instance.chat({
+            messages: [{ content: 'Hello', role: 'user' }],
+            model: 'mistralai/mistral-7b-instruct:free',
+            temperature: 0,
+          });
+        } catch (e) {
+          expect(e).toEqual({
+            endpoint: defaultBaseURL,
+            error: {
+              error: {
+                message:
+                  "This model's maximum context length is 131072 tokens. However, your messages resulted in 140000 tokens.",
+              },
+              status: 400,
+            },
+            errorType: AgentRuntimeErrorType.ExceededContextWindow,
+            provider,
+          });
+        }
+      });
+
+      it('should detect QuotaLimitReached from error message text', async () => {
+        const apiError = new OpenAI.APIError(
+          429,
+          {
+            error: {
+              message: 'Resource has been exhausted (e.g. check quota).',
+            },
+            status: 429,
+          },
+          'Error message',
+          {},
+        );
+
+        vi.spyOn(instance['client'].chat.completions, 'create').mockRejectedValue(apiError);
+
+        try {
+          await instance.chat({
+            messages: [{ content: 'Hello', role: 'user' }],
+            model: 'mistralai/mistral-7b-instruct:free',
+            temperature: 0,
+          });
+        } catch (e) {
+          expect(e).toEqual({
+            endpoint: defaultBaseURL,
+            error: {
+              error: {
+                message: 'Resource has been exhausted (e.g. check quota).',
+              },
+              status: 429,
+            },
+            errorType: AgentRuntimeErrorType.QuotaLimitReached,
+            provider,
+          });
+        }
+      });
+
       it('should return AgentRuntimeError for non-OpenAI errors', async () => {
         // Arrange
         const genericError = new Error('Generic Error');

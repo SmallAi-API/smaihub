@@ -19,6 +19,8 @@ import { AgentRuntimeError } from '../../utils/createError';
 import { debugStream } from '../../utils/debugStream';
 import { desensitizeUrl } from '../../utils/desensitizeUrl';
 import { getModelPricing } from '../../utils/getModelPricing';
+import { isExceededContextWindowError } from '../../utils/isExceededContextWindowError';
+import { isQuotaLimitError } from '../../utils/isQuotaLimitError';
 import { MODEL_LIST_CONFIGS, processModelList } from '../../utils/modelParse';
 import { StreamingResponse } from '../../utils/response';
 import { type LobeRuntimeAI } from '../BaseAI';
@@ -284,6 +286,23 @@ export const handleDefaultAnthropicError = <T extends Record<string, any> = any>
 
   const { errorResult } = handleAnthropicError(error);
 
+  const errorMsg = errorResult.message || errorResult.error?.message;
+  if (isExceededContextWindowError(errorMsg)) {
+    return {
+      endpoint: desensitizedEndpoint,
+      error: errorResult,
+      errorType: AgentRuntimeErrorType.ExceededContextWindow,
+    };
+  }
+
+  if (isQuotaLimitError(errorMsg)) {
+    return {
+      endpoint: desensitizedEndpoint,
+      error: errorResult,
+      errorType: AgentRuntimeErrorType.QuotaLimitReached,
+    };
+  }
+
   return {
     endpoint: desensitizedEndpoint,
     error: errorResult,
@@ -443,8 +462,8 @@ export const createAnthropicCompatibleRuntime = <T extends Record<string, any> =
         const finalPayload = { ...postPayload, stream: shouldStream };
 
         if (debugParams?.chatCompletion?.()) {
-          console.log('[requestPayload]');
-          console.log(JSON.stringify(finalPayload), '\n');
+          console.info('[requestPayload]');
+          console.info(JSON.stringify(finalPayload), '\n');
         }
 
         const response = await this.client.messages.create(
@@ -658,6 +677,25 @@ export const createAnthropicCompatibleRuntime = <T extends Record<string, any> =
 
         return { headers: error?.headers, stack: error?.stack, status: error?.status };
       })();
+
+      const errorMsg = errorResult.message || errorResult.error?.message;
+      if (isExceededContextWindowError(errorMsg)) {
+        return AgentRuntimeError.chat({
+          endpoint: desensitizedEndpoint,
+          error: errorResult,
+          errorType: AgentRuntimeErrorType.ExceededContextWindow,
+          provider: this.id,
+        });
+      }
+
+      if (isQuotaLimitError(errorMsg)) {
+        return AgentRuntimeError.chat({
+          endpoint: desensitizedEndpoint,
+          error: errorResult,
+          errorType: AgentRuntimeErrorType.QuotaLimitReached,
+          provider: this.id,
+        });
+      }
 
       return AgentRuntimeError.chat({
         endpoint: desensitizedEndpoint,
