@@ -31,8 +31,7 @@ export const config = {
     '/me',
     '/me(.*)',
     '/share(.*)',
-    '/desktop-onboarding',
-    '/desktop-onboarding(.*)',
+
     '/onboarding',
     '/download(.*)',
     '/signup(.*)',
