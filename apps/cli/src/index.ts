@@ -4,6 +4,7 @@ import { registerAgentCommand } from './commands/agent';
 import { registerConfigCommand } from './commands/config';
 import { registerConnectCommand } from './commands/connect';
 import { registerDocCommand } from './commands/doc';
+import { registerEvalCommand } from './commands/eval';
 import { registerFileCommand } from './commands/file';
 import { registerGenerateCommand } from './commands/generate';
 import { registerKbCommand } from './commands/kb';
@@ -45,5 +46,6 @@ registerModelCommand(program);
 registerProviderCommand(program);
 registerPluginCommand(program);
 registerConfigCommand(program);
+registerEvalCommand(program);
 
 program.parse();
