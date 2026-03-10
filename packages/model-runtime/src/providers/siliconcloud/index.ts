@@ -1,5 +1,6 @@
 import { ModelProvider } from 'model-bank';
 
+import { transformSiliconCloudMessages } from '../../core/contextBuilders/siliconcloud';
 import type { OpenAICompatibleFactoryOptions } from '../../core/openaiCompatibleFactory';
 import { createOpenAICompatibleRuntime } from '../../core/openaiCompatibleFactory';
 import type { ChatCompletionErrorPayload } from '../../types';
@@ -110,6 +111,7 @@ export const params = {
       }
       return result;
     },
+    transformMessages: transformSiliconCloudMessages,
   },
   constructorOptions: {
     fetch: siliconFetch,
