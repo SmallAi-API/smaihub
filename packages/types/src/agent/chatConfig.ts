@@ -19,6 +19,7 @@ export interface AgentMemoryChatConfig {
 
 export interface LobeAgentChatConfig extends AgentMemoryChatConfig {
   autoCreateTopicThreshold: number;
+  codexMaxReasoningEffort?: 'low' | 'medium' | 'high' | 'xhigh';
   /**
    * Model ID to use for generating compression summaries
    */
@@ -148,6 +149,7 @@ export const MemoryChatConfigSchema = z.object({
 export const AgentChatConfigSchema = z
   .object({
     autoCreateTopicThreshold: z.number().default(2),
+    codexMaxReasoningEffort: z.enum(['low', 'medium', 'high', 'xhigh']).optional(),
     compressionModelId: z.string().optional(),
     disableContextCaching: z.boolean().optional(),
     effort: z.enum(['low', 'medium', 'high', 'max']).optional(),
