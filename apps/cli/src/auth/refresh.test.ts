@@ -8,6 +8,9 @@ vi.mock('./credentials', () => ({
   loadCredentials: vi.fn(),
   saveCredentials: vi.fn(),
 }));
+vi.mock('../settings', () => ({
+  loadSettings: vi.fn().mockReturnValue({ serverUrl: 'https://app.lobehub.com' }),
+}));
 
 describe('getValidToken', () => {
   beforeEach(() => {
@@ -31,7 +34,6 @@ describe('getValidToken', () => {
       accessToken: 'valid-token',
       expiresAt: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
       refreshToken: 'refresh-tok',
-      serverUrl: 'https://app.lobehub.com',
     };
     vi.mocked(loadCredentials).mockReturnValue(creds);
 
@@ -44,7 +46,6 @@ describe('getValidToken', () => {
   it('should return credentials when no expiresAt is set', async () => {
     const creds: StoredCredentials = {
       accessToken: 'valid-token',
-      serverUrl: 'https://app.lobehub.com',
     };
     vi.mocked(loadCredentials).mockReturnValue(creds);
 
@@ -59,7 +60,6 @@ describe('getValidToken', () => {
     const creds: StoredCredentials = {
       accessToken: 'expired-token',
       expiresAt: Math.floor(Date.now() / 1000) - 100, // expired
-      serverUrl: 'https://app.lobehub.com',
     };
     vi.mocked(loadCredentials).mockReturnValue(creds);
 
@@ -73,7 +73,6 @@ describe('getValidToken', () => {
       accessToken: 'expired-token',
       expiresAt: Math.floor(Date.now() / 1000) - 100,
       refreshToken: 'valid-refresh-token',
-      serverUrl: 'https://app.lobehub.com',
     };
     vi.mocked(loadCredentials).mockReturnValue(creds);
 
@@ -102,7 +101,6 @@ describe('getValidToken', () => {
       accessToken: 'expired-token',
       expiresAt: Math.floor(Date.now() / 1000) - 100,
       refreshToken: 'old-refresh-token',
-      serverUrl: 'https://app.lobehub.com',
     };
     vi.mocked(loadCredentials).mockReturnValue(creds);
 
@@ -125,7 +123,6 @@ describe('getValidToken', () => {
       accessToken: 'expired-token',
       expiresAt: Math.floor(Date.now() / 1000) - 100,
       refreshToken: 'valid-refresh-token',
-      serverUrl: 'https://app.lobehub.com',
     };
     vi.mocked(loadCredentials).mockReturnValue(creds);
 
@@ -145,7 +142,6 @@ describe('getValidToken', () => {
       accessToken: 'expired-token',
       expiresAt: Math.floor(Date.now() / 1000) - 100,
       refreshToken: 'valid-refresh-token',
-      serverUrl: 'https://app.lobehub.com',
     };
     vi.mocked(loadCredentials).mockReturnValue(creds);
 
@@ -164,7 +160,6 @@ describe('getValidToken', () => {
       accessToken: 'expired-token',
       expiresAt: Math.floor(Date.now() / 1000) - 100,
       refreshToken: 'valid-refresh-token',
-      serverUrl: 'https://app.lobehub.com',
     };
     vi.mocked(loadCredentials).mockReturnValue(creds);
 
@@ -183,7 +178,6 @@ describe('getValidToken', () => {
       accessToken: 'expired-token',
       expiresAt: Math.floor(Date.now() / 1000) - 100,
       refreshToken: 'valid-refresh-token',
-      serverUrl: 'https://app.lobehub.com',
     };
     vi.mocked(loadCredentials).mockReturnValue(creds);
 
@@ -199,9 +193,8 @@ describe('getValidToken', () => {
       accessToken: 'expired-token',
       expiresAt: Math.floor(Date.now() / 1000) - 100,
       refreshToken: 'my-refresh-token',
-      serverUrl: 'https://my-server.com',
     };
-    vi.mocked(loadCredentials).mockReturnValue(creds);
+    vi.mocked(loadSettings).mockReturnValueOnce({ serverUrl: 'https://my-server.com' });
 
     vi.mocked(fetch).mockResolvedValue({
       json: vi.fn().mockResolvedValue({
