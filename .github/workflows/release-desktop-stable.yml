@@ -303,14 +303,7 @@ jobs:
           fail_on_unmatched_files: true
           files: |
             release/latest*
-            release/*.dmg*
-            release/*.zip*
             release/*.exe*
-            release/*.AppImage
-            release/*.deb*
-            release/*.snap*
-            release/*.rpm*
-            release/*.tar.gz*
           token: ${{ github.token }}
 
       - name: Upload to Release (attempt 2/3)
@@ -324,14 +317,7 @@ jobs:
           fail_on_unmatched_files: true
           files: |
             release/latest*
-            release/*.dmg*
-            release/*.zip*
             release/*.exe*
-            release/*.AppImage
-            release/*.deb*
-            release/*.snap*
-            release/*.rpm*
-            release/*.tar.gz*
           token: ${{ github.token }}
 
       - name: Upload to Release (attempt 3/3)
@@ -345,14 +331,7 @@ jobs:
           fail_on_unmatched_files: true
           files: |
             release/latest*
-            release/*.dmg*
-            release/*.zip*
             release/*.exe*
-            release/*.AppImage
-            release/*.deb*
-            release/*.snap*
-            release/*.rpm*
-            release/*.tar.gz*
           token: ${{ github.token }}
 
       - name: Assert release upload success
