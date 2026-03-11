@@ -5,7 +5,7 @@ import {
   type WindowSizeParams,
 } from '@lobechat/electron-client-ipc';
 
-import { type AppBrowsersIdentifiers, type WindowTemplateIdentifiers } from '@/appBrowsers';
+import type { AppBrowsersIdentifiers, WindowTemplateIdentifiers } from '@/appBrowsers';
 import { getIpcContext } from '@/utils/ipc';
 import { findMatchingRoute } from '~common/routes';
 

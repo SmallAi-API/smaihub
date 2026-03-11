@@ -1,10 +1,12 @@
 import { Buffer } from 'node:buffer';
-import http, { type IncomingMessage, type OutgoingHttpHeaders } from 'node:http';
+import type { IncomingMessage, OutgoingHttpHeaders } from 'node:http';
+import http from 'node:http';
 import https from 'node:https';
 import { URL } from 'node:url';
 
-import { type ProxyTRPCStreamRequestParams } from '@lobechat/electron-client-ipc';
-import { ipcMain, type IpcMainEvent, type WebContents } from 'electron';
+import type { ProxyTRPCStreamRequestParams } from '@lobechat/electron-client-ipc';
+import type { IpcMainEvent, WebContents } from 'electron';
+import { ipcMain } from 'electron';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 
@@ -212,7 +214,7 @@ export default class RemoteServerSyncCtr extends ControllerModule {
       // Use union type
       headers: requestHeaders,
       hostname: url.hostname,
-      method: method,
+      method,
       path: url.pathname + url.search,
       port: url.port || (url.protocol === 'https:' ? 443 : 80),
       protocol: url.protocol,

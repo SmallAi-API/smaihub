@@ -1,4 +1,4 @@
-import { type Readable } from 'node:stream';
+import type { Readable } from 'node:stream';
 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import {
@@ -6,18 +6,12 @@ import {
   StdioClientTransport,
 } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import { type Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
-import { type Progress } from '@modelcontextprotocol/sdk/types.js';
+import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
+import type { Progress } from '@modelcontextprotocol/sdk/types.js';
 
 import { getDesktopEnv } from '@/env';
 
-import {
-  type MCPClientParams,
-  type McpPrompt,
-  type McpResource,
-  type McpTool,
-  type ToolCallResult,
-} from './types';
+import type { MCPClientParams, McpPrompt, McpResource, McpTool, ToolCallResult } from './types';
 
 /**
  * Custom error class for MCP connection errors that includes STDIO logs

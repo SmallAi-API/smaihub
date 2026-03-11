@@ -26,6 +26,7 @@ const DesktopOnboardingPage = memo(() => {
   const [isMac, setIsMac] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const flow = isMac
     ? [
         DesktopOnboardingScreen.Welcome,
@@ -145,7 +146,7 @@ const DesktopOnboardingPage = memo(() => {
       const next = flow[idx + 1];
 
       if (!next) {
-        // Complete onboarding.
+        // Complete onboarding - mark as completed and clear persisted screen state
         setDesktopOnboardingCompleted();
         clearDesktopOnboardingScreen();
 
@@ -164,7 +165,7 @@ const DesktopOnboardingPage = memo(() => {
       setSearchParams({ screen: next });
       return next;
     });
-  }, [isMac, setSearchParams]);
+  }, [flow, setSearchParams]);
 
   const goToPreviousStep = useCallback(() => {
     setCurrentScreen((prev) => {
@@ -173,7 +174,7 @@ const DesktopOnboardingPage = memo(() => {
       setSearchParams({ screen: prevScreen });
       return prevScreen;
     });
-  }, [isMac, setSearchParams]);
+  }, [flow, setSearchParams]);
 
   if (isLoading) {
     return <Loading debugId="DesktopOnboarding" />;

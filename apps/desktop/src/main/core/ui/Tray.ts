@@ -1,22 +1,13 @@
 import path from 'node:path';
 
-import {
-  type MainBroadcastEventKey,
-  type MainBroadcastParams,
-} from '@lobechat/electron-client-ipc';
-import {
-  app,
-  type DisplayBalloonOptions,
-  Menu,
-  type MenuItemConstructorOptions,
-  nativeImage,
-  Tray as ElectronTray,
-} from 'electron';
+import type { MainBroadcastEventKey, MainBroadcastParams } from '@lobechat/electron-client-ipc';
+import type { DisplayBalloonOptions, MenuItemConstructorOptions } from 'electron';
+import { app, Menu, nativeImage, Tray as ElectronTray } from 'electron';
 
 import { resourcesDir } from '@/const/dir';
 import { createLogger } from '@/utils/logger';
 
-import { type App } from '../App';
+import type { App } from '../App';
 
 // Create logger
 const logger = createLogger('core:Tray');

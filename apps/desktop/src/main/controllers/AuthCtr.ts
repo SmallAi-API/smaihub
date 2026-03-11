@@ -2,10 +2,10 @@ import crypto from 'node:crypto';
 import querystring from 'node:querystring';
 import { URL } from 'node:url';
 
-import {
-  type AuthorizationProgress,
-  type DataSyncConfig,
-  type MarketAuthorizationParams,
+import type {
+  AuthorizationProgress,
+  DataSyncConfig,
+  MarketAuthorizationParams,
 } from '@lobechat/electron-client-ipc';
 import { BrowserWindow, shell } from 'electron';
 
