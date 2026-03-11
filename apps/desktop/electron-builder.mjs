@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -104,6 +105,9 @@ const config = {
    */
   beforePack: async () => {
     await copyNativeModulesToSource();
+
+    console.info('📦 Downloading agent-browser binary...');
+    execSync('node scripts/download-agent-browser.mjs', { stdio: 'inherit', cwd: __dirname });
   },
   /**
    * AfterPack hook for post-processing:
@@ -285,6 +289,7 @@ const config = {
     releaseNotes: process.env.RELEASE_NOTES || undefined,
   },
 
+  extraResources: [{ from: 'resources/bin', to: 'bin' }],
   win: {
     executableName: 'smai.ai',
   },

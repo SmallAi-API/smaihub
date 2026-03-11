@@ -90,6 +90,7 @@ vi.mock('@/env', () => ({
 }));
 
 vi.mock('@/const/dir', () => ({
+  binDir: '/mock/bin',
   buildDir: '/mock/build',
   appStorageDir: '/mock/storage/path',
   userDataDir: '/mock/user/data',

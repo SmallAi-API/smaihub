@@ -10,6 +10,10 @@ export const resourcesDir = join(mainDir, '../../resources');
 
 export const buildDir = join(mainDir, '../../build');
 
+export const binDir = app.isPackaged
+  ? join(process.resourcesPath, 'bin')
+  : join(resourcesDir, 'bin');
+
 const appPath = app.getAppPath();
 
 export const rendererDir = join(appPath, 'dist', 'renderer');

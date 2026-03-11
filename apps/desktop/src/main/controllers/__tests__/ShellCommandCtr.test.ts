@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type App } from '@/core/App';
+import type { App } from '@/core/App';
 
 import ShellCommandCtr from '../ShellCommandCtr';
 
@@ -353,6 +353,37 @@ describe('ShellCommandCtr', () => {
         expect(mockSpawn).toHaveBeenCalledWith('/bin/sh', ['-c', 'ls'], expect.any(Object));
 
         Object.defineProperty(process, 'platform', { value: originalPlatform });
+      });
+
+      it('should pass cwd to spawn options when provided', async () => {
+        let exitCallback: (code: number) => void;
+
+        mockChildProcess.on.mockImplementation((event: string, callback: any) => {
+          if (event === 'exit') {
+            exitCallback = callback;
+            setTimeout(() => exitCallback(0), 10);
+          }
+          return mockChildProcess;
+        });
+
+        mockChildProcess.stdout.on.mockImplementation(() => mockChildProcess.stdout);
+        mockChildProcess.stderr.on.mockImplementation(() => mockChildProcess.stderr);
+
+        await shellCommandCtr.handleRunCommand({
+          command: 'pwd',
+          cwd: '/tmp/skill-runtime',
+          description: 'run from cwd',
+        });
+
+        expect(mockSpawn).toHaveBeenCalledWith(
+          '/bin/sh',
+          ['-c', 'pwd'],
+          expect.objectContaining({
+            cwd: '/tmp/skill-runtime',
+            env: process.env,
+            shell: false,
+          }),
+        );
       });
     });
   });
