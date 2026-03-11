@@ -128,7 +128,7 @@ const ModelSelect = memo<ModelSelectProps>((props) => {
           <ModelItemRender
             {...(option as ModelOption)}
             {...(option as ModelOption).abilities}
-            showInfoTag
+            showInfoTag={false}
           />
         )}
         style={{
