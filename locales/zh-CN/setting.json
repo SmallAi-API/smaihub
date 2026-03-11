@@ -700,6 +700,7 @@
   "tab.all": "全部",
   "tab.apikey": "API Key 管理",
   "tab.beta": "测试版",
+  "tab.beta.updateChannel.beta": "Beta",
   "tab.beta.updateChannel.canary": "Canary",
   "tab.beta.updateChannel.canaryDesc": "在每次 PR 合并时触发，每天多个构建。最不稳定。",
   "tab.beta.updateChannel.desc": "默认情况下，接收稳定更新的通知。夜间和 Canary 渠道接收可能不适合生产工作的预发布构建。",

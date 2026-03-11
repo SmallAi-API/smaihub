@@ -17,6 +17,8 @@ const rawChannel =
   normalizeEnvValue(process.env.UPDATE_CHANNEL) ||
   'stable';
 const VALID_CHANNELS = new Set<UpdateChannel>(['stable', 'nightly', 'canary']);
+/** Raw build channel for display (stable, nightly, canary, beta) */
+export const BUILD_CHANNEL: string = rawChannel;
 export const UPDATE_CHANNEL: UpdateChannel = VALID_CHANNELS.has(rawChannel as UpdateChannel)
   ? (rawChannel as UpdateChannel)
   : rawChannel === 'beta'
