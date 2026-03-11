@@ -72,6 +72,19 @@ export const messageRouter = router({
       });
     }),
 
+  listAll: messageProcedure
+    .input(
+      z
+        .object({
+          current: z.number().optional(),
+          pageSize: z.number().optional(),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      return ctx.messageModel.queryAll(input);
+    }),
+
   count: messageProcedure
     .input(
       z

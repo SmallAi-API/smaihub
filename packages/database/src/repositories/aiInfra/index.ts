@@ -398,6 +398,7 @@ export class AiInfraRepos {
       enabled?: boolean;
       limit?: number;
       offset?: number;
+      type?: string;
     },
   ) => {
     const aiModels = await this.aiModelModel.getModelListByProviderId(providerId);
@@ -419,6 +420,10 @@ export class AiInfraRepos {
 
     if (typeof options?.enabled === 'boolean') {
       list = list.filter((m) => m.enabled === options.enabled);
+    }
+
+    if (options?.type) {
+      list = list.filter((m) => m.type === options.type);
     }
 
     if (typeof options?.offset === 'number' || typeof options?.limit === 'number') {
