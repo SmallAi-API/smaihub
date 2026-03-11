@@ -1,6 +1,5 @@
 'use client';
 
-import { SOCIAL_URL } from '@lobechat/business-const';
 import { Flexbox, Icon, Tabs } from '@lobehub/ui';
 import { createStaticStyles } from 'antd-style';
 import { BookOpenIcon, HistoryIcon, SquareUserIcon } from 'lucide-react';
@@ -67,11 +66,7 @@ const Nav = memo<NavProps>(({ mobile, setActiveTab, activeTab = GroupAgentNavKey
   ) : (
     <Flexbox horizontal align={'center'} className={styles.nav} justify={'space-between'}>
       {nav}
-      <Flexbox horizontal gap={12}>
-        <a className={styles.link} href={SOCIAL_URL.discord} rel="noreferrer" target="_blank">
-          {t('groupAgents.details.nav.needHelp', { defaultValue: 'Need help?' })}
-        </a>
-      </Flexbox>
+      <Flexbox horizontal gap={12} />
     </Flexbox>
   );
 });

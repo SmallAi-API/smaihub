@@ -27,7 +27,7 @@ const Sidebar = memo<{ activeTab?: SkillNavKey; mobile?: boolean }>(
           desc: description,
           hashtags: tags,
           title: name,
-          url: urlJoin('https://lobehub.com/skills', identifier || ''),
+          url: urlJoin('https://www.smallai.asia/skills', identifier || ''),
         }}
       >
         {t('share')}

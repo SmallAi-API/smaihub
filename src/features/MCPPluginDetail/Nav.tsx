@@ -1,6 +1,5 @@
 'use client';
 
-import { SOCIAL_URL } from '@lobechat/business-const';
 import { type TabsProps } from '@lobehub/ui';
 import { Flexbox, Icon, Tabs, Tag } from '@lobehub/ui';
 import { createStaticStyles } from 'antd-style';
@@ -16,7 +15,6 @@ import {
 } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import urlJoin from 'url-join';
 
 import { useToolStore } from '@/store/tool';
 import { pluginSelectors } from '@/store/tool/selectors';
@@ -181,28 +179,6 @@ const Nav = memo<NavProps>(
     ) : (
       <Flexbox horizontal align={'center'} className={styles.nav} justify={'space-between'}>
         {nav}
-        {!inModal && (
-          <Flexbox horizontal gap={12}>
-            <a className={styles.link} href={SOCIAL_URL.discord} rel="noreferrer" target="_blank">
-              {t('mcp.details.nav.needHelp')}
-            </a>
-            {github?.url && (
-              <>
-                <a className={styles.link} href={github.url} rel="noreferrer" target="_blank">
-                  {t('mcp.details.nav.viewSourceCode')}
-                </a>
-                <a
-                  className={styles.link}
-                  href={urlJoin(github.url, 'issues')}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  {t('mcp.details.nav.reportIssue')}
-                </a>
-              </>
-            )}
-          </Flexbox>
-        )}
       </Flexbox>
     );
   },

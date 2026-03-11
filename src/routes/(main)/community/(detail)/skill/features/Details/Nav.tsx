@@ -6,7 +6,6 @@ import { createStaticStyles } from 'antd-style';
 import { BookOpenIcon, DownloadIcon, FileTextIcon, HistoryIcon, ListIcon } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import urlJoin from 'url-join';
 
 import { useDetailContext } from '../DetailProvider';
 import { SkillNavKey } from '../types';
@@ -112,31 +111,6 @@ const Nav = memo<{
   ) : (
     <Flexbox horizontal align={'center'} className={styles.nav} justify={'space-between'}>
       {nav}
-      <Flexbox horizontal gap={12}>
-        <a
-          className={styles.link}
-          href="https://discord.gg/AYFPHvv2jT"
-          rel="noopener noreferrer"
-          target={'_blank'}
-        >
-          {t('skills.details.nav.needHelp')}
-        </a>
-        {source && (
-          <a className={styles.link} href={source} rel="noopener noreferrer" target={'_blank'}>
-            {t('skills.details.nav.viewSourceCode')}
-          </a>
-        )}
-        {issueTarget && (
-          <a
-            className={styles.link}
-            href={urlJoin(issueTarget, 'issues')}
-            rel="noopener noreferrer"
-            target={'_blank'}
-          >
-            {t('skills.details.nav.reportIssue')}
-          </a>
-        )}
-      </Flexbox>
     </Flexbox>
   );
 });
