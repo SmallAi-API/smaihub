@@ -33,7 +33,7 @@ export class DiscordRestApi {
     log('updateChannelName: channel=%s, name=%s', channelId, truncatedName);
     await this.rest.patch(Routes.channel(channelId), { body: { name: truncatedName } });
   }
-  
+
   async createMessage(channelId: string, content: string): Promise<{ id: string }> {
     log('createMessage: channel=%s', channelId);
     const data = (await this.rest.post(Routes.channelMessages(channelId), {
