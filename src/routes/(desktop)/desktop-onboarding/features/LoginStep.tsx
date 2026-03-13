@@ -13,6 +13,7 @@ import urlJoin from 'url-join';
 import { OFFICIAL_SITE } from '@/const/url';
 import { isDesktop, isDesktopSelfHostEnabled } from '@/const/version';
 import UserInfo from '@/features/User/UserInfo';
+import { useIMECompositionEvent } from '@/hooks/useIMECompositionEvent';
 import { remoteServerService } from '@/services/electron/remoteServer';
 import { electronSystemService } from '@/services/electron/system';
 import { useElectronStore } from '@/store/electron';
@@ -69,6 +70,7 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
   const [showEndpoint, setShowEndpoint] = useState(false);
   const [hasLegacyLocalDb, setHasLegacyLocalDb] = useState(false);
   const [localRemainingSeconds, setLocalRemainingSeconds] = useState<number | null>(null);
+  const { compositionProps, isComposingRef } = useIMECompositionEvent();
 
   const [
     dataSyncConfig,
@@ -467,6 +469,7 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
           style={{ width: '100%' }}
           value={endpoint}
           onChange={(e) => setEndpoint(e.target.value)}
+          {...compositionProps}
           onContextMenu={async (e) => {
             if (!isDesktop) return;
             e.preventDefault();
@@ -481,7 +484,7 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
             });
           }}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' && !isComposingRef.current) {
               handleSelfhostConnect();
             }
           }}
