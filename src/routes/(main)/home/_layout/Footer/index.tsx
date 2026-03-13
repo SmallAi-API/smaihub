@@ -1,16 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useAnalytics } from '@lobehub/analytics/react';
 import { ActionIcon, DropdownMenu, Icon, type MenuProps } from '@lobehub/ui';
 import { Flexbox } from '@lobehub/ui';
-import { AppWindow, Book, CircleHelp, FlaskConical, KeyRound } from 'lucide-react';
+import { AppWindow, Book, CircleHelp, FlaskConical, KeyRound, Settings2 } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import HighlightNotification from '@/components/HighlightNotification';
-import LabsModal from '@/components/LabsModal';
-import ThemeButton from '@/features/User/UserPanel/ThemeButton';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors/systemStatus';
 import { useUserStore } from '@/store/user';
@@ -28,7 +27,6 @@ const Footer = memo(() => {
   const { t } = useTranslation('common');
   const { analytics } = useAnalytics();
 
-  const [isLabsModalOpen, setIsLabsModalOpen] = useState(false);
   const [isProductHuntCardOpen, setIsProductHuntCardOpen] = useState(false);
   const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
   const [isNotificationRead, updateSystemStatus] = useGlobalStore((s) => [
@@ -62,14 +60,6 @@ const Footer = memo(() => {
     }
   }, [isWithinTimeWindow, isNotificationRead, trackProductHuntEvent]);
 
-  const handleOpenLabsModal = () => {
-    setIsLabsModalOpen(true);
-  };
-
-  const handleCloseLabsModal = () => {
-    setIsLabsModalOpen(false);
-  };
-
   const handleOpenProductHuntCard = () => {
     setIsProductHuntCardOpen(true);
     trackProductHuntEvent('product_hunt_card_viewed', {
@@ -100,6 +90,14 @@ const Footer = memo(() => {
   const helpMenuItems: MenuProps['items'] = useMemo(
     () => [
       {
+        icon: <Icon icon={Settings2} />,
+        key: 'setting',
+        label: <Link to="/settings">{t('userPanel.setting')}</Link>,
+      },
+      {
+        type: 'divider' as const,
+      },
+      {
         icon: <Icon icon={KeyRound} />,
         key: 'apiKey',
         label: (
@@ -121,12 +119,15 @@ const Footer = memo(() => {
           </a>
         ),
       },
-      {
-        icon: <Icon icon={FlaskConical} />,
-        key: 'labs',
-        label: t('labs'),
-        onClick: handleOpenLabsModal,
-      },
+      ...(isDevMode
+        ? [
+            {
+              icon: <Icon icon={FlaskConical} />,
+              key: 'eval',
+              label: <Link to="/eval">Evaluation Lab</Link>,
+            },
+          ]
+        : []),
       ...(isWithinTimeWindow
         ? [
             {
@@ -138,25 +139,17 @@ const Footer = memo(() => {
           ]
         : []),
     ],
-    [t, isWithinTimeWindow],
+    [t, isDevMode, isWithinTimeWindow, handleOpenProductHuntCard],
   );
 
   return (
     <>
-      <Flexbox horizontal align={'center'} gap={2} justify={'space-between'} padding={8}>
-        <Flexbox horizontal align={'center'} flex={1} gap={2}>
-          <DropdownMenu items={helpMenuItems} placement="topLeft">
-            <ActionIcon aria-label={t('userPanel.help')} icon={CircleHelp} size={16} />
-          </DropdownMenu>
-        </Flexbox>
-        {isDevMode && (
-          <Link to="/eval">
-            <ActionIcon icon={FlaskConical} size={16} title="Evaluation Lab" />
-          </Link>
-        )}
-        <ThemeButton placement={'topCenter'} size={16} />
+      <Flexbox horizontal align={'center'} gap={2} padding={8}>
+        <DropdownMenu items={helpMenuItems} placement="topLeft">
+          <ActionIcon aria-label={t('userPanel.help')} icon={CircleHelp} size={16} />
+        </DropdownMenu>
       </Flexbox>
-      <LabsModal open={isLabsModalOpen} onClose={handleCloseLabsModal} />
+
       <HighlightNotification
         actionHref={PRODUCT_HUNT_NOTIFICATION.actionHref}
         actionLabel={t('productHunt.actionLabel')}

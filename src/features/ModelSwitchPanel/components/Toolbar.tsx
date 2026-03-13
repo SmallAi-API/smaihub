@@ -8,14 +8,15 @@ import { styles } from '../styles';
 import { type GroupMode } from '../types';
 
 interface ToolbarProps {
-  groupMode: GroupMode;
-  onGroupModeChange: (mode: GroupMode) => void;
+  groupMode?: GroupMode;
+  onGroupModeChange?: (mode: GroupMode) => void;
   onSearchKeywordChange: (keyword: string) => void;
   searchKeyword: string;
+  showGroupModeSwitch?: boolean;
 }
 
 export const Toolbar = memo<ToolbarProps>(
-  ({ groupMode, onGroupModeChange, searchKeyword, onSearchKeywordChange }) => {
+  ({ groupMode, onGroupModeChange, searchKeyword, onSearchKeywordChange, showGroupModeSwitch }) => {
     const { t } = useTranslation('components');
 
     return (
@@ -35,25 +36,27 @@ export const Toolbar = memo<ToolbarProps>(
           value={searchKeyword}
           variant="borderless"
           onChange={(e) => onSearchKeywordChange(e.target.value)}
-            onKeyDown={stopPropagation}
+          onKeyDown={stopPropagation}
         />
-        <Segmented
-          size="small"
-          value={groupMode}
-          options={[
-            {
-              icon: <Icon icon={Brain} />,
-              title: t('ModelSwitchPanel.byModel'),
-              value: 'byModel',
-            },
-            {
-              icon: <Icon icon={ProviderIcon} />,
-              title: t('ModelSwitchPanel.byProvider'),
-              value: 'byProvider',
-            },
-          ]}
-          onChange={(value) => onGroupModeChange(value as GroupMode)}
-        />
+        {showGroupModeSwitch && (
+          <Segmented
+            size="small"
+            value={groupMode}
+            options={[
+              {
+                icon: <Icon icon={Brain} />,
+                title: t('ModelSwitchPanel.byModel'),
+                value: 'byModel',
+              },
+              {
+                icon: <Icon icon={ProviderIcon} />,
+                title: t('ModelSwitchPanel.byProvider'),
+                value: 'byProvider',
+              },
+            ]}
+            onChange={(value) => onGroupModeChange?.(value as GroupMode)}
+          />
+        )}
       </Flexbox>
     );
   },

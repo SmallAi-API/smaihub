@@ -48,7 +48,7 @@ const Nav = memo(() => {
   const navigate = useNavigate();
   const { t } = useTranslation('common');
   const toggleCommandMenu = useGlobalStore((s) => s.toggleCommandMenu);
-  const { showMarket, showAiImage } = useServerConfigStore(featureFlagsSelectors);
+  const { showMarket } = useServerConfigStore(featureFlagsSelectors);
 
   const items: Item[] = useMemo(
     () => [
@@ -66,31 +66,12 @@ const Nav = memo(() => {
         title: t('tab.home'),
         url: '/',
       },
-      {
-        icon: getRouteById('page')!.icon,
-        key: SidebarTabKey.Pages,
-        title: t('tab.pages'),
-        url: '/page',
-      },
-      {
-        icon: getRouteById('video')!.icon,
-        key: SidebarTabKey.Video,
-        title: t('tab.video'),
-        url: '/video',
-      },
-      {
-        hidden: !showAiImage,
-        icon: getRouteById('image')!.icon,
-        isNew: true,
-        key: SidebarTabKey.Image,
-        title: t('tab.aiImage'),
-        url: '/image',
-      },
+
       {
         hidden: !showMarket,
         icon: getRouteById('community')!.icon,
         key: SidebarTabKey.Community,
-        title: t('tab.community'),
+        title: t('tab.marketplace'),
         url: '/community',
       },
       {
@@ -102,7 +83,7 @@ const Nav = memo(() => {
         url: 'https://api.smai.ai',
       },
     ],
-    [t],
+    [t, showMarket, toggleCommandMenu],
   );
 
   const newBadge = (

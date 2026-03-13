@@ -5,8 +5,9 @@ import { Flexbox, Text } from '@lobehub/ui';
 import { cssVar } from 'antd-style';
 import { memo } from 'react';
 
+import ThemeButton from '@/features/User/UserPanel/ThemeButton';
 import { useUserStore } from '@/store/user';
-import { userProfileSelectors } from '@/store/user/selectors';
+import { authSelectors, userProfileSelectors } from '@/store/user/selectors';
 
 import { type UserAvatarProps } from './UserAvatar';
 import UserAvatar from './UserAvatar';
@@ -17,10 +18,10 @@ export interface UserInfoProps extends FlexboxProps {
 }
 
 const UserInfo = memo<UserInfoProps>(({ avatarProps, onClick, ...rest }) => {
+  const isSignedIn = useUserStore(authSelectors.isLogin);
   const [nickname, username] = useUserStore((s) => [
     userProfileSelectors.nickName(s),
     userProfileSelectors.displayUserName(s),
-    s.subscriptionPlan,
   ]);
 
   return (
@@ -46,6 +47,7 @@ const UserInfo = memo<UserInfoProps>(({ avatarProps, onClick, ...rest }) => {
           )}
         </Flexbox>
       </Flexbox>
+      {isSignedIn && <ThemeButton placement={'right'} size={16} />}
     </Flexbox>
   );
 });

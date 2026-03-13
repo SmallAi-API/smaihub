@@ -41,13 +41,7 @@ const User = memo<{ lite?: boolean }>(({ lite }) => {
             {!isSignedIn && (nickname || username) ? (
               <ProductLogo color={cssVar.colorText} size={28} type={'text'} />
             ) : (
-              <Text
-                ellipsis
-                weight={500}
-                style={{
-                  flex: 1,
-                }}
-              >
+              <Text ellipsis style={{ flex: 1 }} weight={500}>
                 {nickname || username}
               </Text>
             )}

@@ -1,6 +1,6 @@
 'use client';
 
-import { type EmojiReaction } from '@lobechat/types';
+import type { EmojiReaction } from '@lobechat/types';
 import { Tag } from '@lobehub/ui';
 import isEqual from 'fast-deep-equal';
 import { type MouseEventHandler } from 'react';
@@ -14,7 +14,7 @@ import { useNewScreen } from '@/features/Conversation/Messages/components/useNew
 import { useAgentGroupStore } from '@/store/agentGroup';
 import { agentGroupSelectors } from '@/store/agentGroup/selectors';
 import { useUserStore } from '@/store/user';
-import { userProfileSelectors } from '@/store/user/selectors';
+import { userGeneralSettingsSelectors, userProfileSelectors } from '@/store/user/selectors';
 
 import { ReactionDisplay } from '../../components/Reaction';
 import { useAgentMeta } from '../../hooks';
@@ -46,7 +46,8 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
   // Get message and actionsConfig from ConversationStore
   const item = useConversationStore(dataSelectors.getDisplayMessageById(id), isEqual)!;
 
-  const { agentId, usage, createdAt, children, performance, model, provider, branch } = item;
+  const { agentId, usage, createdAt, children, performance, model, provider, branch, metadata } =
+    item;
   const avatar = useAgentMeta(agentId);
 
   // Get group member avatars for GroupAvatar
@@ -67,13 +68,11 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
     messageId: id,
   });
 
-  const setMessageItemActionElementPortialContext = useSetMessageItemActionElementPortialContext();
-  const setMessageItemActionTypeContext = useSetMessageItemActionTypeContext();
-
-  const reactions = (item.metadata?.reactions || []) as EmojiReaction[];
+  const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
   const addReaction = useConversationStore((s) => s.addReaction);
   const removeReaction = useConversationStore((s) => s.removeReaction);
   const userId = useUserStore(userProfileSelectors.userId)!;
+  const reactions: EmojiReaction[] = metadata?.reactions || [];
 
   const handleReactionClick = useCallback(
     (emoji: string) => {
@@ -87,13 +86,16 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
     [id, reactions, addReaction, removeReaction],
   );
 
-  const isActive = useCallback(
+  const isReactionActive = useCallback(
     (emoji: string) => {
       const reaction = reactions.find((r) => r.emoji === emoji);
       return !!reaction && reaction.users.includes(userId);
     },
     [reactions],
   );
+
+  const setMessageItemActionElementPortialContext = useSetMessageItemActionElementPortialContext();
+  const setMessageItemActionTypeContext = useSetMessageItemActionTypeContext();
 
   const onMouseEnter: MouseEventHandler<HTMLDivElement> = useCallback(
     (e) => {
@@ -120,7 +122,7 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
       titleAddon={<Tag>{t('supervisor.label')}</Tag>}
       actions={
         <>
-          {branch && (
+          {isDevMode && branch && (
             <MessageBranch
               activeBranchIndex={branch.activeBranchIndex}
               count={branch.count}
@@ -148,12 +150,12 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
           messageIndex={index}
         />
       )}
-      {model && (
+      {isDevMode && model && (
         <Usage model={model} performance={performance} provider={provider!} usage={usage} />
       )}
       {reactions.length > 0 && (
         <ReactionDisplay
-          isActive={isActive}
+          isActive={isReactionActive}
           messageId={id}
           reactions={reactions}
           onReactionClick={handleReactionClick}

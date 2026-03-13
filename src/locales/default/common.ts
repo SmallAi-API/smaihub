@@ -480,7 +480,7 @@ export default {
   'tab.docs': 'Docs',
   'tab.files': 'Files',
   'tab.home': 'Home',
-  'tab.knowledgeBase': 'Library',
+  'tab.marketplace': 'Marketplace',
   'tab.me': 'Me',
   'tab.memory': 'Memory',
   'tab.pages': 'Pages',

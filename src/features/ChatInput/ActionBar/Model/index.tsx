@@ -12,6 +12,8 @@ import ModelDetailPanel from '@/features/ModelSwitchPanel/components/ModelDetail
 import { useAgentStore } from '@/store/agent';
 import { agentByIdSelectors } from '@/store/agent/selectors';
 import { aiModelSelectors, useAiInfraStore } from '@/store/aiInfra';
+import { useUserStore } from '@/store/user';
+import { userGeneralSettingsSelectors } from '@/store/user/selectors';
 
 import { useAgentId } from '../../hooks/useAgentId';
 import Action from '../components/Action';
@@ -54,7 +56,7 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
 const ModelSwitch = memo(() => {
   const { t } = useTranslation('chat');
   const { dropdownPlacement } = useActionBarContext();
-
+  const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
   const agentId = useAgentId();
   const [model, provider, updateAgentConfigById] = useAgentStore((s) => [
     agentByIdSelectors.getAgentModelById(agentId)(s),
@@ -66,6 +68,8 @@ const ModelSwitch = memo(() => {
     aiModelSelectors.isModelHasExtendParams(model, provider),
   );
 
+  const showExtendParams = isDevMode && isModelHasExtendParams;
+
   const handleModelChange = useCallback(
     async (params: { model: string; provider: string }) => {
       await updateAgentConfigById(agentId, params);
@@ -74,7 +78,7 @@ const ModelSwitch = memo(() => {
   );
 
   return (
-    <Flexbox horizontal align={'center'} className={isModelHasExtendParams ? styles.container : ''}>
+    <Flexbox horizontal align={'center'} className={showExtendParams ? styles.container : ''}>
       <ModelSwitchPanel
         model={model}
         placement={dropdownPlacement}
@@ -82,7 +86,7 @@ const ModelSwitch = memo(() => {
         onModelChange={handleModelChange}
       >
         <Center
-          className={cx(styles.model, isModelHasExtendParams && styles.modelWithControl)}
+          className={cx(styles.model, showExtendParams && styles.modelWithControl)}
           height={36}
           width={36}
         >
@@ -92,7 +96,7 @@ const ModelSwitch = memo(() => {
         </Center>
       </ModelSwitchPanel>
 
-      {isModelHasExtendParams && (
+      {showExtendParams && (
         <Action
           icon={Settings2Icon}
           showTooltip={false}

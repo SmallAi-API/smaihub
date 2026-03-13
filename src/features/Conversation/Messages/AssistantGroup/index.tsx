@@ -1,8 +1,8 @@
 'use client';
 
-import { type AssistantContentBlock, type EmojiReaction } from '@lobechat/types';
+import type { AssistantContentBlock, EmojiReaction } from '@lobechat/types';
 import isEqual from 'fast-deep-equal';
-import { type MouseEventHandler } from 'react';
+import type { MouseEventHandler } from 'react';
 import { memo, Suspense, useCallback, useMemo } from 'react';
 
 import { MESSAGE_ACTION_BAR_PORTAL_ATTRIBUTES } from '@/const/messageActionPortal';
@@ -14,7 +14,7 @@ import { useAgentStore } from '@/store/agent';
 import { builtinAgentSelectors } from '@/store/agent/selectors';
 import { useGlobalStore } from '@/store/global';
 import { useUserStore } from '@/store/user';
-import { userProfileSelectors } from '@/store/user/selectors';
+import { userGeneralSettingsSelectors, userProfileSelectors } from '@/store/user/selectors';
 
 import { ReactionDisplay } from '../../components/Reaction';
 import { useAgentMeta } from '../../hooks';
@@ -49,7 +49,8 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
   // Get message and actionsConfig from ConversationStore
   const item = useConversationStore(dataSelectors.getDisplayMessageById(id), isEqual)!;
 
-  const { agentId, usage, createdAt, children, performance, model, provider, branch } = item;
+  const { agentId, usage, createdAt, children, performance, model, provider, branch, metadata } =
+    item;
   const avatar = useAgentMeta(agentId);
 
   // Collect fileList from all children blocks
@@ -79,6 +80,32 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
     messageId: id,
   });
 
+  const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
+  const addReaction = useConversationStore((s) => s.addReaction);
+  const removeReaction = useConversationStore((s) => s.removeReaction);
+  const userId = useUserStore(userProfileSelectors.userId)!;
+  const reactions: EmojiReaction[] = metadata?.reactions || [];
+
+  const handleReactionClick = useCallback(
+    (emoji: string) => {
+      const existing = reactions.find((r) => r.emoji === emoji);
+      if (existing && existing.users.includes(userId)) {
+        removeReaction(id, emoji);
+      } else {
+        addReaction(id, emoji);
+      }
+    },
+    [id, reactions, addReaction, removeReaction],
+  );
+
+  const isReactionActive = useCallback(
+    (emoji: string) => {
+      const reaction = reactions.find((r) => r.emoji === emoji);
+      return !!reaction && reaction.users.includes(userId);
+    },
+    [reactions],
+  );
+
   const setMessageItemActionElementPortialContext = useSetMessageItemActionElementPortialContext();
   const setMessageItemActionTypeContext = useSetMessageItemActionTypeContext();
 
@@ -105,31 +132,6 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
     }
   }, [isInbox]);
 
-  const reactions = (item.metadata?.reactions || []) as EmojiReaction[];
-  const addReaction = useConversationStore((s) => s.addReaction);
-  const removeReaction = useConversationStore((s) => s.removeReaction);
-  const userId = useUserStore(userProfileSelectors.userId)!;
-
-  const handleReactionClick = useCallback(
-    (emoji: string) => {
-      const existing = reactions.find((r) => r.emoji === emoji);
-      if (existing && existing.users.includes(userId)) {
-        removeReaction(id, emoji);
-      } else {
-        addReaction(id, emoji);
-      }
-    },
-    [id, reactions, addReaction, removeReaction],
-  );
-
-  const isActive = useCallback(
-    (emoji: string) => {
-      const reaction = reactions.find((r) => r.emoji === emoji);
-      return !!reaction && reaction.users.includes(userId);
-    },
-    [reactions],
-  );
-
   return (
     <ChatItem
       showTitle
@@ -140,7 +142,7 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
       actions={
         !disableEditing && (
           <>
-            {branch && (
+            {isDevMode && branch && (
               <MessageBranch
                 activeBranchIndex={branch.activeBranchIndex}
                 count={branch.count}
@@ -169,12 +171,12 @@ const GroupMessage = memo<GroupMessageProps>(({ id, index, disableEditing, isLat
           <FileListViewer items={aggregatedFileList} />
         </div>
       )}
-      {model && (
+      {isDevMode && model && (
         <Usage model={model} performance={performance} provider={provider!} usage={usage} />
       )}
       {reactions.length > 0 && (
         <ReactionDisplay
-          isActive={isActive}
+          isActive={isReactionActive}
           messageId={id}
           reactions={reactions}
           onReactionClick={handleReactionClick}

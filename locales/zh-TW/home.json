@@ -10,8 +10,8 @@
   "starter.deepResearch": "深入研究",
   "starter.developing": "開發中",
   "starter.image": "繪圖",
-  "starter.nanoBanana2": "納米香蕉 2",
-  "starter.seedance": "Seedance 2.0",
+  "starter.imageGeneration": "圖像生成",
   "starter.text2video": "影片",
+  "starter.videoGeneration": "視頻生成",
   "starter.write": "寫作"
 }
