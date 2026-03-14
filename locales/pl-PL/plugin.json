@@ -169,6 +169,8 @@
   "builtins.lobe-page-agent.apiName.updateNode": "Zaktualizuj węzeł",
   "builtins.lobe-page-agent.apiName.wrapNodes": "Zawiń węzły",
   "builtins.lobe-page-agent.title": "Strona",
+  "builtins.lobe-topic-reference.apiName.getTopicContext": "Pobierz kontekst tematu",
+  "builtins.lobe-topic-reference.title": "Odwołanie do tematu",
   "builtins.lobe-user-memory.apiName.addContextMemory": "Dodaj pamięć kontekstu",
   "builtins.lobe-user-memory.apiName.addExperienceMemory": "Dodaj pamięć doświadczenia",
   "builtins.lobe-user-memory.apiName.addIdentityMemory": "Dodaj pamięć tożsamości",

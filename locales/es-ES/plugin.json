@@ -169,6 +169,8 @@
   "builtins.lobe-page-agent.apiName.updateNode": "Actualizar nodo",
   "builtins.lobe-page-agent.apiName.wrapNodes": "Envolver nodos",
   "builtins.lobe-page-agent.title": "Página",
+  "builtins.lobe-topic-reference.apiName.getTopicContext": "Obtener contexto del tema",
+  "builtins.lobe-topic-reference.title": "Referencia de tema",
   "builtins.lobe-user-memory.apiName.addContextMemory": "Agregar memoria de contexto",
   "builtins.lobe-user-memory.apiName.addExperienceMemory": "Agregar memoria de experiencia",
   "builtins.lobe-user-memory.apiName.addIdentityMemory": "Agregar memoria de identidad",

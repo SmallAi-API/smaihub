@@ -169,6 +169,8 @@
   "builtins.lobe-page-agent.apiName.updateNode": "노드 업데이트",
   "builtins.lobe-page-agent.apiName.wrapNodes": "노드 감싸기",
   "builtins.lobe-page-agent.title": "문서",
+  "builtins.lobe-topic-reference.apiName.getTopicContext": "토픽 컨텍스트 가져오기",
+  "builtins.lobe-topic-reference.title": "토픽 참조",
   "builtins.lobe-user-memory.apiName.addContextMemory": "상황 기억 추가",
   "builtins.lobe-user-memory.apiName.addExperienceMemory": "경험 기억 추가",
   "builtins.lobe-user-memory.apiName.addIdentityMemory": "신원 기억 추가",

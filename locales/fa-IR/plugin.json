@@ -169,6 +169,8 @@
   "builtins.lobe-page-agent.apiName.updateNode": "به‌روزرسانی گره",
   "builtins.lobe-page-agent.apiName.wrapNodes": "بسته‌بندی گره‌ها",
   "builtins.lobe-page-agent.title": "صفحه",
+  "builtins.lobe-topic-reference.apiName.getTopicContext": "دریافت زمینه موضوع",
+  "builtins.lobe-topic-reference.title": "ارجاع به موضوع",
   "builtins.lobe-user-memory.apiName.addContextMemory": "افزودن حافظه زمینه",
   "builtins.lobe-user-memory.apiName.addExperienceMemory": "افزودن حافظه تجربه",
   "builtins.lobe-user-memory.apiName.addIdentityMemory": "افزودن حافظه هویتی",

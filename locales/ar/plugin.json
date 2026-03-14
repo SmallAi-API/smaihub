@@ -169,6 +169,8 @@
   "builtins.lobe-page-agent.apiName.updateNode": "تحديث العقدة",
   "builtins.lobe-page-agent.apiName.wrapNodes": "تغليف العقد",
   "builtins.lobe-page-agent.title": "الصفحة",
+  "builtins.lobe-topic-reference.apiName.getTopicContext": "الحصول على سياق الموضوع",
+  "builtins.lobe-topic-reference.title": "مرجع الموضوع",
   "builtins.lobe-user-memory.apiName.addContextMemory": "إضافة ذاكرة السياق",
   "builtins.lobe-user-memory.apiName.addExperienceMemory": "إضافة ذاكرة الخبرة",
   "builtins.lobe-user-memory.apiName.addIdentityMemory": "إضافة ذاكرة الهوية",

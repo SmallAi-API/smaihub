@@ -169,6 +169,8 @@
   "builtins.lobe-page-agent.apiName.updateNode": "Knoten aktualisieren",
   "builtins.lobe-page-agent.apiName.wrapNodes": "Knoten umschließen",
   "builtins.lobe-page-agent.title": "Seite",
+  "builtins.lobe-topic-reference.apiName.getTopicContext": "Themenkontext abrufen",
+  "builtins.lobe-topic-reference.title": "Themenreferenz",
   "builtins.lobe-user-memory.apiName.addContextMemory": "Kontextgedächtnis hinzufügen",
   "builtins.lobe-user-memory.apiName.addExperienceMemory": "Erfahrungsgedächtnis hinzufügen",
   "builtins.lobe-user-memory.apiName.addIdentityMemory": "Identitätsgedächtnis hinzufügen",

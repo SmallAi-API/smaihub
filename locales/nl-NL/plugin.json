@@ -169,6 +169,8 @@
   "builtins.lobe-page-agent.apiName.updateNode": "Knooppunt bijwerken",
   "builtins.lobe-page-agent.apiName.wrapNodes": "Knooppunten inpakken",
   "builtins.lobe-page-agent.title": "Pagina",
+  "builtins.lobe-topic-reference.apiName.getTopicContext": "Onderwerpcontext ophalen",
+  "builtins.lobe-topic-reference.title": "Onderwerpverwijzing",
   "builtins.lobe-user-memory.apiName.addContextMemory": "Contextgeheugen toevoegen",
   "builtins.lobe-user-memory.apiName.addExperienceMemory": "Ervaringsgeheugen toevoegen",
   "builtins.lobe-user-memory.apiName.addIdentityMemory": "Identiteitsgeheugen toevoegen",

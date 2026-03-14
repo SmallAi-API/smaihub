@@ -169,6 +169,8 @@
   "builtins.lobe-page-agent.apiName.updateNode": "Düğümü güncelle",
   "builtins.lobe-page-agent.apiName.wrapNodes": "Düğümleri sar",
   "builtins.lobe-page-agent.title": "Sayfa",
+  "builtins.lobe-topic-reference.apiName.getTopicContext": "Konu bağlamını al",
+  "builtins.lobe-topic-reference.title": "Konu referansı",
   "builtins.lobe-user-memory.apiName.addContextMemory": "Bağlam hafızası ekle",
   "builtins.lobe-user-memory.apiName.addExperienceMemory": "Deneyim hafızası ekle",
   "builtins.lobe-user-memory.apiName.addIdentityMemory": "Kimlik hafızası ekle",
