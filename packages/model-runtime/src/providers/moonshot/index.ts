@@ -21,8 +21,8 @@ export interface MoonshotModelCard {
   supports_image_in?: boolean;
 }
 
-const DEFAULT_MOONSHOT_BASE_URL = 'https://api.moonshot.ai/v1';
-const DEFAULT_MOONSHOT_ANTHROPIC_BASE_URL = 'https://api.moonshot.ai/anthropic';
+const DEFAULT_MOONSHOT_BASE_URL = 'https://api.moonshot.cn/v1';
+const DEFAULT_MOONSHOT_ANTHROPIC_BASE_URL = 'https://api.moonshot.cn/anthropic';
 
 // Shared constants and helpers
 const MOONSHOT_SEARCH_TOOL = { function: { name: '$web_search' }, type: 'builtin_function' } as any;
@@ -130,7 +130,7 @@ const buildMoonshotAnthropicPayload = async (
   const tools = appendSearchTool(basePayload.tools, payload.enabledSearch);
   const basePayloadWithSearch = { ...basePayload, tools };
 
-   if (!isK25 && !isNativeThinking) return basePayloadWithSearch;
+  if (!isK25 && !isNativeThinking) return basePayloadWithSearch;
 
   const resolvedThinkingBudget = payload.thinking?.budget_tokens
     ? Math.min(payload.thinking.budget_tokens, resolvedMaxTokens - 1)
@@ -161,7 +161,7 @@ const buildMoonshotOpenAIPayload = (
   const normalizedMessages = normalizeMessagesForOpenAI(messages, isThinkingEnabled);
   const moonshotTools = appendSearchTool(tools, enabledSearch);
 
-    if (isK25 || isNativeThinking) {
+  if (isK25 || isNativeThinking) {
     const thinkingParam =
       isNativeThinking || thinking?.type !== 'disabled'
         ? { type: 'enabled' }
