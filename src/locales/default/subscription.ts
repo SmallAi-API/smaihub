@@ -349,7 +349,7 @@ export default {
   'referral.rules.expiry':
     'Credit validity: Available referral credits will be cleared after 100 days of user inactivity',
   'referral.rules.missedCode':
-    'Missed invite code: You can <0>backfill</0> within 3 days of registration',
+    'Missed invite code: You can <0>backfill</0> within 3 days of registration. After backfilling, you still need to perform a valid action to receive rewards',
   'referral.rules.priority':
     'Credit consumption priority: Free credits → Subscription credits → Referral credits → Top-up credits',
   'referral.rules.registration':
@@ -358,6 +358,8 @@ export default {
   'referral.rules.title': 'Program Rules',
   'referral.rules.validInvitation':
     'Valid invitation: Invitee registers with your referral code and performs one valid action',
+  'referral.rules.antiAbuse':
+    'If fraudulent activity is detected (e.g., mass registration of disposable email accounts), the associated accounts will be permanently banned',
   'referral.rules.validOperation':
     'Valid action criteria: Send one message on Chat page, or generate one image on image page',
   'referral.stats.availableBalance': 'Available Balance',
@@ -392,9 +394,9 @@ export default {
   'switchToYearly.desc':
     'After switching, yearly billing will take effect immediately after paying the difference. Start date inherits from previous plan.',
   'switchToYearly.title': 'Switch to Yearly Billing',
-  'tab.billing': 'Billing',
-  'tab.credits': 'Credits',
-  'tab.plans': 'Subscription',
+  'tab.billing': 'Billing Management',
+  'tab.credits': 'Credits Management',
+  'tab.plans': 'Subscription Plans',
   'tab.referral': 'Referral Rewards',
   'tab.spend': 'Credits Details',
   'tab.usage': 'Usage Statistics',
