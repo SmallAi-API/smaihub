@@ -5,7 +5,7 @@ export const DEFAULT_COMMON_SETTINGS: UserGeneralConfig = {
   // contextMenuMode not set default value, use env to calc
   fontSize: 14,
   highlighterTheme: 'lobe-theme',
-  isDevMode: false,
+  isDevMode: true,
   isLiteMode: false,
   mermaidTheme: 'lobe-theme',
   telemetry: true,

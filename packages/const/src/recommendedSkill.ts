@@ -1,7 +1,7 @@
 export enum RecommendedSkillType {
   Builtin = 'builtin',
   Klavis = 'klavis',
-  Lobehub = 'lobehub',
+  Lobehub = 'Lobehub',
 }
 
 export interface RecommendedSkillItem {
