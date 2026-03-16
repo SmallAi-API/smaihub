@@ -2,20 +2,17 @@
 
 import { Flexbox, Icon, Tag } from '@lobehub/ui';
 import { cssVar } from 'antd-style';
-import { HomeIcon, KeyRound, SearchIcon, SquareArrowOutUpRight } from 'lucide-react';
-import { memo, useMemo } from 'react';
+import { SquareArrowOutUpRight } from 'lucide-react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { getRouteById } from '@/config/routes';
 import { isDesktop } from '@/const/version';
 import { type NavItemProps } from '@/features/NavPanel/components/NavItem';
 import NavItem from '@/features/NavPanel/components/NavItem';
 import { useActiveTabKey } from '@/hooks/useActiveTabKey';
+import { useNavLayout } from '@/hooks/useNavLayout';
 import { electronSystemService } from '@/services/electron/system';
-import { useGlobalStore } from '@/store/global';
-import { SidebarTabKey } from '@/store/global/initialState';
-import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { isModifierClick } from '@/utils/navigation';
 
 const handleExternalLink = (url: string) => {
@@ -23,7 +20,6 @@ const handleExternalLink = (url: string) => {
     void electronSystemService.openExternalLink(url);
     return;
   }
-
   window.open(url, '_blank', 'noopener,noreferrer');
 };
 
@@ -31,60 +27,11 @@ const externalIndicator = (
   <Icon color={cssVar.colorTextQuaternary} icon={SquareArrowOutUpRight} size={14} />
 );
 
-interface Item {
-  external?: boolean;
-  extra?: NavItemProps['extra'];
-  hidden?: boolean | undefined;
-  icon: NavItemProps['icon'];
-  isNew?: boolean;
-  key: string;
-  onClick?: () => void;
-  title: NavItemProps['title'];
-  url?: string;
-}
-
 const Nav = memo(() => {
   const tab = useActiveTabKey();
   const navigate = useNavigate();
   const { t } = useTranslation('common');
-  const toggleCommandMenu = useGlobalStore((s) => s.toggleCommandMenu);
-  const { showMarket } = useServerConfigStore(featureFlagsSelectors);
-
-  const items: Item[] = useMemo(
-    () => [
-      {
-        icon: SearchIcon,
-        key: 'search',
-        onClick: () => {
-          toggleCommandMenu(true);
-        },
-        title: t('tab.search'),
-      },
-      {
-        icon: HomeIcon,
-        key: SidebarTabKey.Home,
-        title: t('tab.home'),
-        url: '/',
-      },
-
-      {
-        hidden: !showMarket,
-        icon: getRouteById('community')!.icon,
-        key: SidebarTabKey.Community,
-        title: t('tab.marketplace'),
-        url: '/community',
-      },
-      {
-        external: true,
-        extra: externalIndicator,
-        icon: KeyRound,
-        key: 'api',
-        title: t('tab.apiAccess'),
-        url: 'https://api.smai.ai',
-      },
-    ],
-    [t, showMarket, toggleCommandMenu],
-  );
+  const { topNavItems: items } = useNavLayout();
 
   const newBadge = (
     <Tag color="blue" size="small">
@@ -95,21 +42,22 @@ const Nav = memo(() => {
   return (
     <Flexbox gap={1} paddingInline={4}>
       {items.map((item) => {
-        const extra = item.isNew ? newBadge : undefined;
-        const isExternal = item.external === true || item.url?.startsWith('http') === true;
+        const isExternal = item.external || item.url?.startsWith('http');
         const externalUrl = isExternal ? item.url : undefined;
+        const extra = item.isNew ? newBadge : isExternal ? externalIndicator : undefined;
+
         const content = (
           <NavItem
             active={tab === item.key}
             extra={extra}
             hidden={item.hidden}
             href={externalUrl}
-            icon={item.icon}
-            key={item.key}
+            icon={item.icon as NavItemProps['icon']}
             title={item.title}
             onClick={externalUrl ? () => handleExternalLink(externalUrl) : item.onClick}
           />
         );
+
         if (!item.url || isExternal) return content;
 
         return (
@@ -129,7 +77,7 @@ const Nav = memo(() => {
               active={tab === item.key}
               extra={extra}
               hidden={item.hidden}
-              icon={item.icon}
+              icon={item.icon as NavItemProps['icon']}
               title={item.title}
             />
           </Link>

@@ -10,10 +10,12 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import HighlightNotification from '@/components/HighlightNotification';
+import ThemeButton from '@/features/User/UserPanel/ThemeButton';
+import { useNavLayout } from '@/hooks/useNavLayout';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors/systemStatus';
 import { useUserStore } from '@/store/user';
-import { userGeneralSettingsSelectors } from '@/store/user/slices/settings/selectors';
+import { userGeneralSettingsSelectors } from '@/store/user/selectors';
 
 const PRODUCT_HUNT_NOTIFICATION = {
   actionHref: '/download',
@@ -26,7 +28,7 @@ const PRODUCT_HUNT_NOTIFICATION = {
 const Footer = memo(() => {
   const { t } = useTranslation('common');
   const { analytics } = useAnalytics();
-
+  const { footer } = useNavLayout();
   const [isProductHuntCardOpen, setIsProductHuntCardOpen] = useState(false);
   const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
   const [isNotificationRead, updateSystemStatus] = useGlobalStore((s) => [
@@ -60,13 +62,13 @@ const Footer = memo(() => {
     }
   }, [isWithinTimeWindow, isNotificationRead, trackProductHuntEvent]);
 
-  const handleOpenProductHuntCard = () => {
+  const handleOpenProductHuntCard = useCallback(() => {
     setIsProductHuntCardOpen(true);
     trackProductHuntEvent('product_hunt_card_viewed', {
       spm: 'homepage.product_hunt.viewed',
       trigger: 'menu_click',
     });
-  };
+  }, [setIsProductHuntCardOpen, trackProductHuntEvent]);
 
   const handleCloseProductHuntCard = () => {
     setIsProductHuntCardOpen(false);
@@ -89,14 +91,18 @@ const Footer = memo(() => {
 
   const helpMenuItems: MenuProps['items'] = useMemo(
     () => [
-      {
-        icon: <Icon icon={Settings2} />,
-        key: 'setting',
-        label: <Link to="/settings">{t('userPanel.setting')}</Link>,
-      },
-      {
-        type: 'divider' as const,
-      },
+      ...(footer.showSettingsEntry
+        ? [
+            {
+              icon: <Icon icon={Settings2} />,
+              key: 'setting',
+              label: <Link to="/settings">{t('userPanel.setting')}</Link>,
+            },
+            {
+              type: 'divider' as const,
+            },
+          ]
+        : []),
       {
         icon: <Icon icon={KeyRound} />,
         key: 'apiKey',
@@ -139,16 +145,37 @@ const Footer = memo(() => {
           ]
         : []),
     ],
-    [t, isDevMode, isWithinTimeWindow, handleOpenProductHuntCard],
+    [
+      footer.showSettingsEntry,
+      footer.layout,
+      footer.showEvalEntry,
+      t,
+      isWithinTimeWindow,
+      handleOpenProductHuntCard,
+    ],
   );
 
   return (
     <>
-      <Flexbox horizontal align={'center'} gap={2} padding={8}>
-        <DropdownMenu items={helpMenuItems} placement="topLeft">
-          <ActionIcon aria-label={t('userPanel.help')} icon={CircleHelp} size={16} />
-        </DropdownMenu>
-      </Flexbox>
+      {footer.layout === 'expanded' ? (
+        <Flexbox horizontal align={'center'} gap={2} justify={'space-between'} padding={8}>
+          <Flexbox horizontal align={'center'} flex={1} gap={2}>
+            <DropdownMenu items={helpMenuItems} placement="topLeft">
+              <ActionIcon aria-label={t('userPanel.help')} icon={CircleHelp} size={16} />
+            </DropdownMenu>
+            <Link to="/eval">
+              <ActionIcon icon={FlaskConical} size={16} title="Evaluation Lab" />
+            </Link>
+          </Flexbox>
+          <ThemeButton placement={'topCenter'} size={16} />
+        </Flexbox>
+      ) : (
+        <Flexbox horizontal align={'center'} gap={2} padding={8}>
+          <DropdownMenu items={helpMenuItems} placement="topLeft">
+            <ActionIcon aria-label={t('userPanel.help')} icon={CircleHelp} size={16} />
+          </DropdownMenu>
+        </Flexbox>
+      )}
 
       <HighlightNotification
         actionHref={PRODUCT_HUNT_NOTIFICATION.actionHref}
