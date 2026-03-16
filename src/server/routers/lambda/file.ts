@@ -53,7 +53,9 @@ export const fileRouter = router({
           await ctx.fileService.getFileMetadata(result.url);
         } catch (e: any) {
           if (FileService.isS3NotFound(e)) {
-            await ctx.fileModel.deleteGlobalFile(input.hash);
+            // Don't delete globalFiles — other files/messages may reference it.
+            // Just invalidate the URL so the client re-uploads.
+            await ctx.fileModel.invalidateGlobalFile(input.hash);
             return { isExist: false };
           }
         }
@@ -118,6 +120,12 @@ export const fileRouter = router({
         // if the file is not exist in global file, create a new one
         !isExist,
       );
+
+      // If globalFiles record already existed, update its URL to the newly uploaded path
+      // This handles re-upload after MinIO lifecycle cleanup
+      if (isExist) {
+        await ctx.fileModel.updateGlobalFileUrl(input.hash!, input.url);
+      }
 
       return { id, url: getFileProxyUrl(id) };
     }),

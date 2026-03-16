@@ -139,28 +139,24 @@ export class FileModel {
   };
 
   /**
-   * Delete a global file and all user files referencing it.
-   * Uses a transaction to first remove referencing files records,
-   * then delete the global_files record to avoid FK constraint violations.
+   * Invalidate a global file by clearing its URL.
+   * Used when S3 object no longer exists but we don't want to cascade-delete
+   * referencing files records (which may be linked to messages_files, etc.).
    */
+  invalidateGlobalFile = async (hashId: string) => {
+    return this.db.update(globalFiles).set({ url: '' }).where(eq(globalFiles.hashId, hashId));
+  };
+
   deleteGlobalFile = async (hashId: string) => {
-    return this.db.transaction(async (trx) => {
-      // 1. Find all files referencing this hash
-      const referencingFiles = await trx
-        .select({ id: files.id })
-        .from(files)
-        .where(eq(files.fileHash, hashId));
+    return this.db.delete(globalFiles).where(eq(globalFiles.hashId, hashId));
+  };
 
-      // 2. Delete related chunks and file records
-      if (referencingFiles.length > 0) {
-        const ids = referencingFiles.map((f) => f.id);
-        await this.deleteFileChunks(trx as any, ids);
-        await trx.delete(files).where(inArray(files.id, ids));
-      }
-
-      // 3. Now safe to delete global file
-      await trx.delete(globalFiles).where(eq(globalFiles.hashId, hashId));
-    });
+  /**
+   * Update the URL of a global file record.
+   * Used when re-uploading a file whose S3 object was deleted by lifecycle policy.
+   */
+  updateGlobalFileUrl = async (hashId: string, url: string) => {
+    return this.db.update(globalFiles).set({ url }).where(eq(globalFiles.hashId, hashId));
   };
 
   countUsage = async () => {
