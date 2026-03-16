@@ -1327,8 +1327,8 @@ describe('MessageModel Update Tests', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should return success false on database error', async () => {
-      // Try to add a file with a non-existent fileId (FK constraint violation)
+    it('should return success true and skip non-existent file IDs', async () => {
+      // Non-existent file IDs are silently filtered out instead of causing FK violation
       await serverDB.insert(messages).values({
         id: 'msg-add-files-err',
         userId,
@@ -1337,7 +1337,7 @@ describe('MessageModel Update Tests', () => {
       });
 
       const result = await messageModel.addFiles('msg-add-files-err', ['non-existent-file-id']);
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
     });
 
     it('should add multiple files at once', async () => {

@@ -798,6 +798,25 @@ export class MessageModel {
    * @param topicId - The topic ID to query groups for
    * @param timeRange - Optional time range to filter groups (for pagination support)
    */
+  /**
+   * Filter file IDs to only those that exist in the files table.
+   * Prevents FK violations when inserting into messages_files.
+   */
+  private filterExistingFileIds = async (
+    trx: Transaction | LobeChatDatabase,
+    fileIds: string[],
+  ): Promise<string[]> => {
+    if (fileIds.length === 0) return [];
+
+    const existing = await trx
+      .select({ id: files.id })
+      .from(files)
+      .where(and(inArray(files.id, fileIds), eq(files.userId, this.userId)));
+
+    const existingSet = new Set(existing.map((f) => f.id));
+    return fileIds.filter((id) => existingSet.has(id));
+  };
+
   private queryMessageGroupNodes = async (
     topicId: string,
     timeRange?: { endTime: Date; startTime: Date },
@@ -1292,9 +1311,14 @@ export class MessageModel {
       }
 
       if (files && files.length > 0) {
-        await trx
-          .insert(messagesFiles)
-          .values(files.map((file) => ({ fileId: file, messageId: id, userId: this.userId })));
+        const validFileIds = await this.filterExistingFileIds(trx, files);
+        if (validFileIds.length > 0) {
+          await trx
+            .insert(messagesFiles)
+            .values(
+              validFileIds.map((file) => ({ fileId: file, messageId: id, userId: this.userId })),
+            );
+        }
       }
 
       if (fileChunks && fileChunks.length > 0 && ragQueryId) {
@@ -1353,11 +1377,18 @@ export class MessageModel {
       await this.db.transaction(async (trx) => {
         // 1. insert message files
         if (imageList && imageList.length > 0) {
-          await trx
-            .insert(messagesFiles)
-            .values(
-              imageList.map((file) => ({ fileId: file.id, messageId: id, userId: this.userId })),
-            );
+          const imageFileIds = imageList.map((file) => file.id);
+          const validFileIds = await this.filterExistingFileIds(trx, imageFileIds);
+          if (validFileIds.length > 0) {
+            const validSet = new Set(validFileIds);
+            await trx
+              .insert(messagesFiles)
+              .values(
+                imageList
+                  .filter((file) => validSet.has(file.id))
+                  .map((file) => ({ fileId: file.id, messageId: id, userId: this.userId })),
+              );
+          }
         }
 
         // 2. Handle metadata merge if provided
@@ -1748,8 +1779,11 @@ export class MessageModel {
     if (fileIds.length === 0) return { success: true };
 
     try {
+      const validFileIds = await this.filterExistingFileIds(this.db, fileIds);
+      if (validFileIds.length === 0) return { success: true };
+
       await this.db.insert(messagesFiles).values(
-        fileIds.map((fileId) => ({
+        validFileIds.map((fileId) => ({
           fileId,
           messageId,
           userId: this.userId,
