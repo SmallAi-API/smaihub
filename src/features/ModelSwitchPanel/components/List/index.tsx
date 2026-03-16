@@ -65,6 +65,17 @@ export const List: FC<ListProps> = ({
 
   const listHeight = panelHeight - TOOLBAR_HEIGHT - FOOTER_HEIGHT;
 
+  const scrollListenersRef = useRef(new Set<() => void>());
+  const subscribeScroll = useCallback((cb: () => void) => {
+    scrollListenersRef.current.add(cb);
+    return () => {
+      scrollListenersRef.current.delete(cb);
+    };
+  }, []);
+  const handleListScroll = useCallback(() => {
+    scrollListenersRef.current.forEach((cb) => cb());
+  }, []);
+
   useLayoutEffect(() => {
     if (hasInitializedPositionRef.current) return;
 
@@ -79,7 +90,13 @@ export const List: FC<ListProps> = ({
   }, [listHeight, activeKey]);
 
   return (
-    <Flexbox className={styles.list} flex={1} ref={listRef} style={{ height: listHeight }}>
+    <Flexbox
+      className={styles.list}
+      flex={1}
+      ref={listRef}
+      style={{ height: listHeight }}
+      onScroll={handleListScroll}
+    >
       {listItems.map((item, index) => {
         const itemKey = menuKey(
           'provider' in item && item.provider ? item.provider.id : '',
@@ -105,6 +122,7 @@ export const List: FC<ListProps> = ({
             key={key}
             newLabel={newLabel}
             proLabel={proLabel}
+            subscribeScroll={subscribeScroll}
             onClose={handleClose}
             onModelChange={handleModelChange}
             onRestrictedModelClick={onRestrictedModelClick}
