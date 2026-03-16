@@ -1,13 +1,14 @@
 /* eslint-disable perfectionist/sort-interfaces */
-import {
-  type AgentBuilderContext,
-  type AgentManagementContext,
-  type DiscordContext,
-  type EvalContext,
-  type FileContent,
-  type KnowledgeBaseInfo,
-  type LobeToolManifest,
-  type UserMemoryData,
+import type {
+  AgentBuilderContext,
+  AgentManagementContext,
+  DiscordContext,
+  EvalContext,
+  FileContent,
+  KnowledgeBaseInfo,
+  LobeToolManifest,
+  SkillMeta,
+  UserMemoryData,
 } from '@lobechat/context-engine';
 import { type PageContentContext } from '@lobechat/prompts';
 import { type UIChatMessage } from '@lobechat/types';
@@ -112,6 +113,9 @@ export interface ServerMessagesEngineParams {
   /** System role */
   systemRole?: string;
 
+  // ========== Skills ==========
+  /** Skills configuration for <available_skills> injection */
+  skillsConfig?: { enabledSkills?: SkillMeta[] };
   // ========== Tools ==========
   /** Tools configuration */
   toolsConfig?: ServerToolsConfig;
