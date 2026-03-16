@@ -51,8 +51,15 @@ export const fileRouter = router({
       if (result?.isExist && result.url) {
         try {
           await ctx.fileService.getFileMetadata(result.url);
-        } catch (e) {
-          if ((e as any).Code === 'NoSuchKey' || (e as any).name === 'NoSuchKey') {
+        } catch (e: any) {
+          // HeadObjectCommand throws NotFound (404), GetObjectCommand throws NoSuchKey
+          const isNotFound =
+            e.name === 'NotFound' ||
+            e.name === 'NoSuchKey' ||
+            e.Code === 'NoSuchKey' ||
+            e.$metadata?.httpStatusCode === 404;
+
+          if (isNotFound) {
             await ctx.fileModel.deleteGlobalFile(input.hash);
             return { isExist: false };
           }
