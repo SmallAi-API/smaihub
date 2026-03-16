@@ -52,14 +52,7 @@ export const fileRouter = router({
         try {
           await ctx.fileService.getFileMetadata(result.url);
         } catch (e: any) {
-          // HeadObjectCommand throws NotFound (404), GetObjectCommand throws NoSuchKey
-          const isNotFound =
-            e.name === 'NotFound' ||
-            e.name === 'NoSuchKey' ||
-            e.Code === 'NoSuchKey' ||
-            e.$metadata?.httpStatusCode === 404;
-
-          if (isNotFound) {
+          if (FileService.isS3NotFound(e)) {
             await ctx.fileModel.deleteGlobalFile(input.hash);
             return { isExist: false };
           }
@@ -167,6 +160,16 @@ export const fileRouter = router({
       const item = await ctx.fileModel.findById(input.id);
 
       if (!item) throw new TRPCError({ code: 'NOT_FOUND', message: 'File not found' });
+
+      // Verify S3 object still exists; clean up if MinIO lifecycle deleted it
+      try {
+        await ctx.fileService.getFileMetadata(item.url);
+      } catch (e) {
+        if (FileService.isS3NotFound(e)) {
+          await ctx.fileModel.delete(input.id, serverDBEnv.REMOVE_GLOBAL_FILE);
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'File not found' });
+        }
+      }
 
       let embeddingTask = null;
       if (item.embeddingTaskId) {

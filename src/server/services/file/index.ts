@@ -17,6 +17,19 @@ import { type FileServiceImpl } from './impls/type';
  * Provides file operation services using a modular implementation approach
  */
 export class FileService {
+  /**
+   * Check if an error is an S3 "not found" error.
+   * HeadObjectCommand throws NotFound (404), GetObjectCommand throws NoSuchKey.
+   */
+  static isS3NotFound(e: any): boolean {
+    return (
+      e?.name === 'NotFound' ||
+      e?.name === 'NoSuchKey' ||
+      e?.Code === 'NoSuchKey' ||
+      e?.$metadata?.httpStatusCode === 404
+    );
+  }
+
   private userId: string;
   private fileModel: FileModel;
 
@@ -342,8 +355,8 @@ export class FileService {
       content = await this.getFileByteArray(file.url);
     } catch (e) {
       console.error(e);
-      // if file not found, delete it from db
-      if ((e as any).Code === 'NoSuchKey') {
+      // if file not found in S3 (e.g. MinIO lifecycle cleanup), delete it from db
+      if (FileService.isS3NotFound(e)) {
         await this.fileModel.delete(fileId, serverDBEnv.REMOVE_GLOBAL_FILE);
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'File not found' });
       }
