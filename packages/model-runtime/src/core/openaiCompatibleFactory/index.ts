@@ -47,6 +47,8 @@ import { convertOpenAIMessages, convertOpenAIResponseInputs } from '../contextBu
 import { resolveModelSamplingParameters } from '../parameterResolver';
 import type { OpenAIStreamOptions } from '../streams';
 import { OpenAIResponsesStream, OpenAIStream } from '../streams';
+import type { ChatPayloadForTransformStream } from '../streams/protocol';
+import { convertOpenAIResponseUsage, convertOpenAIUsage } from '../usageConverters/openai';
 import { createOpenAICompatibleImage } from './createImage';
 import { transformResponseAPIToStream, transformResponseToStream } from './nonStreamToStream';
 
@@ -662,9 +664,12 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
         !!schema,
       );
 
+      const pricing = await getModelPricing(model, this.id);
+      const usagePayload = { model, pricing, provider: this.id };
+
       if (tools) {
         log('using tools-based generation');
-        return this.generateObjectWithTools(payload, options);
+        return this.generateObjectWithTools(payload, options, usagePayload);
       }
 
       if (!schema) throw new Error('tools or schema is required');
@@ -699,6 +704,10 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
           },
           { headers: options?.headers, signal: options?.signal },
         );
+
+        if (res.usage) {
+          await options?.onUsage?.(convertOpenAIUsage(res.usage, usagePayload));
+        }
 
         const toolCalls = res.choices[0].message.tool_calls!;
 
@@ -749,6 +758,10 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
           { headers: options?.headers, signal: options?.signal },
         );
 
+        if (res.usage) {
+          await options?.onUsage?.(convertOpenAIResponseUsage(res.usage, usagePayload));
+        }
+
         const text = res.output_text;
         log('received structured output from Responses API, length: %d', text?.length || 0);
         try {
@@ -772,6 +785,10 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
         },
         { headers: options?.headers, signal: options?.signal },
       );
+      if (res.usage) {
+        await options?.onUsage?.(convertOpenAIUsage(res.usage, usagePayload));
+      }
+
       const text = res.choices[0].message.content!;
 
       log('received structured output from Chat Completions API, length: %d', text?.length || 0);
@@ -1083,6 +1100,7 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
     private async generateObjectWithTools(
       payload: GenerateObjectPayload,
       options?: GenerateObjectOptions,
+      usagePayload?: ChatPayloadForTransformStream,
     ) {
       const { messages, model, tools, responseApi } = payload;
       const log = debug(`${this.logPrefix}:generateObject`);
@@ -1130,6 +1148,10 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
           { headers: options?.headers, signal: options?.signal },
         );
 
+        if (res.usage) {
+          await options?.onUsage?.(convertOpenAIResponseUsage(res.usage, usagePayload));
+        }
+
         const functionCalls = res.output?.filter((item: any) => item.type === 'function_call');
 
         log('received %d function calls from Responses API', functionCalls?.length || 0);
@@ -1165,6 +1187,10 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
         },
         { headers: options?.headers, signal: options?.signal },
       );
+
+      if (res.usage) {
+        await options?.onUsage?.(convertOpenAIUsage(res.usage, usagePayload));
+      }
 
       const toolCalls = res.choices[0].message.tool_calls!;
 

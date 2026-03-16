@@ -279,6 +279,7 @@ export class LobeGoogleAI implements LobeRuntimeAI {
   async generateObject(payload: GenerateObjectPayload, options?: GenerateObjectOptions) {
     // Convert OpenAI messages to Google format
     const contents = await buildGoogleMessages(payload.messages);
+    const pricing = await getModelPricing(payload.model, this.provider);
 
     // Handle tools-based structured output
     if (payload.tools && payload.tools.length > 0) {
@@ -286,6 +287,7 @@ export class LobeGoogleAI implements LobeRuntimeAI {
         this.client,
         { contents, model: payload.model, tools: payload.tools },
         options,
+        pricing,
       );
     }
 
@@ -295,6 +297,7 @@ export class LobeGoogleAI implements LobeRuntimeAI {
         this.client,
         { contents, model: payload.model, schema: payload.schema },
         options,
+        pricing,
       );
     }
 
