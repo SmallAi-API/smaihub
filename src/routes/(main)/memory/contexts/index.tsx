@@ -49,7 +49,6 @@ const ContextsArea = memo(() => {
 
   // 当搜索或排序变化时重置列表
   useEffect(() => {
-    if (!apiSort) return;
     const sort = viewMode === 'grid' ? apiSort : undefined;
     resetContextsList({ q: searchValue || undefined, sort });
   }, [searchValue, apiSort, viewMode]);
