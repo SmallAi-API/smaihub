@@ -43,7 +43,23 @@ export const fileRouter = router({
     .use(checkFileStorageUsage)
     .input(z.object({ hash: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.fileModel.checkHash(input.hash);
+      const result = await ctx.fileModel.checkHash(input.hash);
+
+      // If hash exists in DB, verify the S3 object still exists
+      // This handles the case where MinIO lifecycle policies delete old files
+      // but the globalFiles DB record persists
+      if (result?.isExist && result.url) {
+        try {
+          await ctx.fileService.getFileMetadata(result.url);
+        } catch (e) {
+          if ((e as any).Code === 'NoSuchKey' || (e as any).name === 'NoSuchKey') {
+            await ctx.fileModel.deleteGlobalFile(input.hash);
+            return { isExist: false };
+          }
+        }
+      }
+
+      return result;
     }),
 
   createFile: fileProcedure
