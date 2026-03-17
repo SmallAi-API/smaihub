@@ -8,7 +8,6 @@ import {
   useConversationStore,
   virtuaListSelectors,
 } from '../../../store';
-import { useAutoScrollEnabled } from './useAutoScrollEnabled';
 
 /**
  * AutoScroll component - handles auto-scrolling logic during AI generation.
@@ -23,9 +22,8 @@ const AutoScroll = memo(() => {
   const isGenerating = useConversationStore(messageStateSelectors.isAIGenerating);
   const scrollToBottom = useConversationStore((s) => s.scrollToBottom);
   const dbMessages = useConversationStore(dataSelectors.dbMessages);
-  const isAutoScrollEnabled = useAutoScrollEnabled();
 
-  const shouldAutoScroll = isAutoScrollEnabled && atBottom && isGenerating && !isScrolling;
+  const shouldAutoScroll = atBottom && isGenerating && !isScrolling;
 
   // 获取最后一条消息的 content 长度，用于监听流式输出
   const lastMessage = dbMessages.at(-1);
