@@ -46,7 +46,6 @@ lobe-chat/
 - Git commit messages should prefix with gitmoji
 - Git branch name format: `username/feat/feature-name`
 - Use `.github/PULL_REQUEST_TEMPLATE.md` for PR descriptions
-- PR titles with `✨ feat/` or `🐛 fix` trigger releases
 
 ### Package Management
 
