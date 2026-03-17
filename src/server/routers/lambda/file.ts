@@ -61,6 +61,12 @@ export const fileRouter = router({
         }
       }
 
+      // If hash exists but URL is invalidated (empty), treat as non-existent
+      // so the client re-uploads the file to S3
+      if (result?.isExist && !result.url) {
+        return { isExist: false };
+      }
+
       return result;
     }),
 

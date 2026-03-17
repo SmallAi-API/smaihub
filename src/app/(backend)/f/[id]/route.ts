@@ -19,6 +19,8 @@ const buildCacheKey = (id: string) => `${FILE_PROXY_KEY_PREFIX}${id}`;
 
 interface CachedFileData {
   redirectUrl: string;
+  s3Key: string;
+  userId: string;
 }
 
 /**
@@ -47,8 +49,28 @@ export const GET = async (_req: Request, segmentData: { params: Params }) => {
       const cachedStr = await redisClient.get(cacheKey);
       const cached = cachedStr ? (JSON.parse(cachedStr) as CachedFileData) : null;
       if (cached?.redirectUrl) {
-        log('Cache hit for file: %s', id);
-        return Response.redirect(cached.redirectUrl, 302);
+        // Validate S3 object still exists before redirecting cached URL
+        if (cached.s3Key && cached.userId) {
+          const db = await getServerDB();
+          const cachedFileService = new FileService(db, cached.userId);
+          try {
+            await cachedFileService.getFileMetadata(cached.s3Key);
+            log('Cache hit for file: %s', id);
+            return Response.redirect(cached.redirectUrl, 302);
+          } catch (e) {
+            if (FileService.isS3NotFound(e)) {
+              log('Cached S3 object gone, cleaning up: %s', id);
+              const fileModel = new FileModel(db, cached.userId);
+              await fileModel.delete(id, serverDBEnv.REMOVE_GLOBAL_FILE);
+              await redisClient.del(cacheKey);
+              return new Response('File not found', { status: 404 });
+            }
+          }
+        } else {
+          // Legacy cache entry without s3Key, use it but it will refresh on next miss
+          log('Cache hit (legacy) for file: %s', id);
+          return Response.redirect(cached.redirectUrl, 302);
+        }
       }
       log('Cache miss for file: %s', id);
     }
@@ -93,9 +115,13 @@ export const GET = async (_req: Request, segmentData: { params: Params }) => {
 
     // Cache the presigned URL in Redis
     if (redisClient) {
-      await redisClient.set(cacheKey, JSON.stringify({ redirectUrl }), {
-        ex: PRESIGNED_URL_CACHE_TTL,
-      });
+      await redisClient.set(
+        cacheKey,
+        JSON.stringify({ redirectUrl, s3Key: file.url, userId: file.userId }),
+        {
+          ex: PRESIGNED_URL_CACHE_TTL,
+        },
+      );
       log('Cached presigned URL for file: %s (TTL: %ds)', id, PRESIGNED_URL_CACHE_TTL);
     }
 
