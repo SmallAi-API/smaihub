@@ -27,6 +27,7 @@ const mockRedirectToPage = vi.fn();
 const mockCloseWindow = vi.fn();
 const mockMinimizeWindow = vi.fn();
 const mockMaximizeWindow = vi.fn();
+const mockIsWindowMaximized = vi.fn();
 const mockRetrieveByIdentifier = vi.fn();
 const testSenderIdentifierString: string = 'test-window-event-id';
 
@@ -54,6 +55,7 @@ const mockApp = {
     closeWindow: mockCloseWindow,
     minimizeWindow: mockMinimizeWindow,
     maximizeWindow: mockMaximizeWindow,
+    isWindowMaximized: mockIsWindowMaximized,
     retrieveByIdentifier: mockRetrieveByIdentifier.mockImplementation(
       (identifier: AppBrowsersIdentifiers | string) => {
         if (identifier === 'some-other-window') {
@@ -131,6 +133,20 @@ describe('BrowserWindowsCtr', () => {
       runWithIpcContext(context, () => browserWindowsCtr.maximizeWindow());
       expect(mockGetIdentifierByWebContents).toHaveBeenCalledWith(context.sender);
       expect(mockMaximizeWindow).toHaveBeenCalledWith(testSenderIdentifierString);
+    });
+  });
+
+  describe('isWindowMaximized', () => {
+    it('should return maximized state for the sender window', () => {
+      mockIsWindowMaximized.mockReturnValueOnce(true);
+
+      const sender = {} as any;
+      const context = { sender, event: { sender } as any } as IpcContext;
+      const result = runWithIpcContext(context, () => browserWindowsCtr.isWindowMaximized());
+
+      expect(mockGetIdentifierByWebContents).toHaveBeenCalledWith(context.sender);
+      expect(mockIsWindowMaximized).toHaveBeenCalledWith(testSenderIdentifierString);
+      expect(result).toBe(true);
     });
   });
 

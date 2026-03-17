@@ -1,6 +1,7 @@
 import type { MainBroadcastEventKey, MainBroadcastParams } from '@lobechat/electron-client-ipc';
 import type { WebContents } from 'electron';
 
+import { isLinux } from '@/const/env';
 import RemoteServerConfigCtr from '@/controllers/RemoteServerConfigCtr';
 import { createLogger } from '@/utils/logger';
 
@@ -189,11 +190,15 @@ export class BrowserManager {
       // Dynamically determine initial path for main window
       if (browser.identifier === BrowsersIdentifiers.app) {
         const initialPath = isOnboardingCompleted ? '/' : '/desktop-onboarding';
-        browser = { ...browser, path: initialPath };
+        browser = {
+          ...browser,
+          keepAlive: isLinux ? false : browser.keepAlive,
+          path: initialPath,
+        };
         logger.debug(`Main window initial path: ${initialPath}`);
       }
 
-      if (browser.keepAlive) {
+      if (browser.keepAlive || browser.identifier === BrowsersIdentifiers.app) {
         this.retrieveOrInitialize(browser);
       }
     });
@@ -250,6 +255,11 @@ export class BrowserManager {
     } else {
       browser?.browserWindow.maximize();
     }
+  }
+
+  isWindowMaximized(identifier: string) {
+    const browser = this.browsers.get(identifier);
+    return browser?.browserWindow.isMaximized() ?? false;
   }
 
   setWindowSize(identifier: string, size: { height?: number; width?: number }) {

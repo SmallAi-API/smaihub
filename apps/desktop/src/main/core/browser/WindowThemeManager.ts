@@ -4,7 +4,7 @@ import { TITLE_BAR_HEIGHT } from '@lobechat/desktop-bridge';
 import { type BrowserWindow, type BrowserWindowConstructorOptions, nativeTheme } from 'electron';
 
 import { buildDir } from '@/const/dir';
-import { isDev, isMac, isWindows } from '@/const/env';
+import { isDev, isLinux, isMac, isWindows } from '@/const/env';
 import { createLogger } from '@/utils/logger';
 
 import {
@@ -26,6 +26,11 @@ interface WindowsThemeConfig {
     symbolColor: string;
   };
   titleBarStyle: 'hidden';
+}
+
+interface LinuxThemeConfig {
+  backgroundColor: string;
+  hasShadow: true;
 }
 
 /**
@@ -103,6 +108,9 @@ export class WindowThemeManager {
         visualEffectState: 'active',
       };
     }
+    if (isLinux) {
+      return this.getLinuxConfig();
+    }
     return {};
   }
 
@@ -115,6 +123,13 @@ export class WindowThemeManager {
       icon: isDev ? path.join(buildDir, 'icon-dev.ico') : undefined,
       titleBarOverlay: this.getWindowsTitleBarOverlay(isDarkMode),
       titleBarStyle: 'hidden',
+    };
+  }
+
+  private getLinuxConfig(): LinuxThemeConfig {
+    return {
+      backgroundColor: this.resolveIsDarkMode() ? BACKGROUND_DARK : BACKGROUND_LIGHT,
+      hasShadow: true,
     };
   }
 
@@ -170,6 +185,8 @@ export class WindowThemeManager {
     try {
       if (isWindows) {
         this.applyWindowsVisualEffects(isDarkMode);
+      } else if (isLinux) {
+        this.applyLinuxVisualEffects();
       } else if (isMac) {
         this.applyMacVisualEffects();
       }
@@ -192,6 +209,18 @@ export class WindowThemeManager {
     const config = this.getWindowsConfig(isDarkMode);
     this.browserWindow.setBackgroundColor(config.backgroundColor);
     this.browserWindow.setTitleBarOverlay(config.titleBarOverlay);
+  }
+
+  private applyLinuxVisualEffects(): void {
+    if (!this.browserWindow) return;
+
+    const config = this.getLinuxConfig();
+    const browserWindow = this.browserWindow as BrowserWindow & {
+      setHasShadow?: (hasShadow: boolean) => void;
+    };
+
+    browserWindow.setBackgroundColor(config.backgroundColor);
+    browserWindow.setHasShadow?.(true);
   }
 
   /**

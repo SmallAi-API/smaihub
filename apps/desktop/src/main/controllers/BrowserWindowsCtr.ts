@@ -74,6 +74,13 @@ export default class BrowserWindowsCtr extends ControllerModule {
   }
 
   @IpcMethod()
+  isWindowMaximized() {
+    return this.withSenderIdentifier((identifier) => {
+      return this.app.browserManager.isWindowMaximized(identifier);
+    });
+  }
+
+  @IpcMethod()
   setWindowSize(params: WindowSizeParams) {
     this.withSenderIdentifier((identifier) => {
       this.app.browserManager.setWindowSize(identifier, params);
@@ -223,11 +230,11 @@ export default class BrowserWindowsCtr extends ControllerModule {
     browser.show();
   }
 
-  private withSenderIdentifier(fn: (identifier: string) => void) {
+  private withSenderIdentifier<T>(fn: (identifier: string) => T): T | undefined {
     const context = getIpcContext();
-    if (!context) return;
+    if (!context) return undefined;
     const identifier = this.app.browserManager.getIdentifierByWebContents(context.sender);
-    if (!identifier) return;
-    fn(identifier);
+    if (!identifier) return undefined;
+    return fn(identifier);
   }
 }

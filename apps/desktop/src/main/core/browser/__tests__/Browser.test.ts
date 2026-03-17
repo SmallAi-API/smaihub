@@ -99,6 +99,7 @@ vi.mock('@/const/dir', () => ({
 
 vi.mock('@/const/env', () => ({
   isDev: false,
+  isLinux: false,
   isMac: false,
   isMacTahoe: false,
   isWindows: true,
@@ -240,6 +241,7 @@ describe('Browser', () => {
       });
 
       // Create new browser to trigger initialization with saved state
+      const _newBrowser = new Browser(defaultOptions, mockApp);
       const _newBrowser = new Browser(defaultOptions, mockApp);
 
       expect(MockBrowserWindow).toHaveBeenCalledWith(
@@ -389,7 +391,7 @@ describe('Browser', () => {
       it('should return true when shouldUseDarkColors is true', () => {
         mockNativeTheme.shouldUseDarkColors = true;
 
-        const darkBrowser = new Browser(defaultOptions, mockApp);
+        const _darkBrowser = new Browser(defaultOptions, mockApp);
         // Access private getter through handleAppThemeChange which uses isDarkMode
         darkBrowser.handleAppThemeChange();
         vi.advanceTimersByTime(0);
