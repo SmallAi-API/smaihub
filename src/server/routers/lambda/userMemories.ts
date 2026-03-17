@@ -173,7 +173,7 @@ const searchUserMemories = async (
       input: input.query,
       model: embeddingModel,
     },
-    { metadata: { trigger: RequestTrigger.Memory } },
+    { metadata: { trigger: RequestTrigger.Memory }, user: ctx.userId },
   );
 
   const effectiveEffort = normalizeMemoryEffort(input.effort ?? ctx.memoryEffort);
@@ -209,7 +209,7 @@ const getEmbeddingRuntime = async (serverDB: LobeChatDatabase, userId: string) =
   return { agentRuntime, embeddingModel };
 };
 
-const createEmbedder = (agentRuntime: any, embeddingModel: string) => {
+const createEmbedder = (agentRuntime: any, embeddingModel: string, userId: string) => {
   return async (value?: string | null): Promise<number[] | undefined> => {
     if (!value || value.trim().length === 0) return undefined;
 
@@ -219,7 +219,7 @@ const createEmbedder = (agentRuntime: any, embeddingModel: string) => {
         input: value,
         model: embeddingModel,
       },
-      { metadata: { trigger: RequestTrigger.Memory } },
+      { metadata: { trigger: RequestTrigger.Memory }, user: userId },
     );
 
     return embeddings?.[0];
@@ -496,7 +496,7 @@ export const userMemoriesRouter = router({
               input: texts,
               model: embeddingModel,
             },
-            { metadata: { trigger: RequestTrigger.Memory } },
+            { metadata: { trigger: RequestTrigger.Memory }, user: ctx.userId },
           );
 
           if (!response || response.length !== texts.length) {
@@ -982,7 +982,7 @@ export const userMemoriesRouter = router({
           ctx.serverDB,
           ctx.userId,
         );
-        const embed = createEmbedder(agentRuntime, embeddingModel);
+        const embed = createEmbedder(agentRuntime, embeddingModel, ctx.userId);
 
         const summaryEmbedding = await embed(input.summary);
         const detailsEmbedding = await embed(input.details);
@@ -1044,7 +1044,7 @@ export const userMemoriesRouter = router({
           ctx.serverDB,
           ctx.userId,
         );
-        const embed = createEmbedder(agentRuntime, embeddingModel);
+        const embed = createEmbedder(agentRuntime, embeddingModel, ctx.userId);
 
         const summaryEmbedding = await embed(input.summary);
         const detailsEmbedding = await embed(input.details);
@@ -1099,7 +1099,7 @@ export const userMemoriesRouter = router({
           ctx.serverDB,
           ctx.userId,
         );
-        const embed = createEmbedder(agentRuntime, embeddingModel);
+        const embed = createEmbedder(agentRuntime, embeddingModel, ctx.userId);
 
         const summaryEmbedding = await embed(input.summary);
         const detailsEmbedding = await embed(input.details);
@@ -1155,7 +1155,7 @@ export const userMemoriesRouter = router({
           ctx.serverDB,
           ctx.userId,
         );
-        const embed = createEmbedder(agentRuntime, embeddingModel);
+        const embed = createEmbedder(agentRuntime, embeddingModel, ctx.userId);
 
         const summaryEmbedding = await embed(input.summary);
         const detailsEmbedding = await embed(input.details);
@@ -1223,7 +1223,7 @@ export const userMemoriesRouter = router({
           ctx.serverDB,
           ctx.userId,
         );
-        const embed = createEmbedder(agentRuntime, embeddingModel);
+        const embed = createEmbedder(agentRuntime, embeddingModel, ctx.userId);
 
         const summaryEmbedding = await embed(input.summary);
         const detailsEmbedding = await embed(input.details);
@@ -1316,7 +1316,7 @@ export const userMemoriesRouter = router({
           ctx.serverDB,
           ctx.userId,
         );
-        const embed = createEmbedder(agentRuntime, embeddingModel);
+        const embed = createEmbedder(agentRuntime, embeddingModel, ctx.userId);
 
         let summaryVector1024: number[] | null | undefined;
         if (input.set.summary !== undefined) {

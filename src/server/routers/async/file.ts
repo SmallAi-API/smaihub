@@ -127,7 +127,7 @@ export const fileRouter = router({
                     input: chunks.map((c) => c.text),
                     model,
                   },
-                  { metadata: { trigger: RequestTrigger.FileEmbedding } },
+                  { metadata: { trigger: RequestTrigger.FileEmbedding }, user: ctx.userId },
                 );
 
                 const items: NewEmbeddingsItem[] =
