@@ -592,6 +592,88 @@ describe('convertOpenAIResponseInputs', () => {
     ]);
   });
 
+  it('should filter orphan tool calls when strictToolPairing is enabled', async () => {
+    const messages: OpenAIChatMessage[] = [
+      { role: 'user', content: 'Use tools carefully' },
+      {
+        role: 'assistant',
+        content: '',
+        tool_calls: [
+          {
+            id: 'call_paired',
+            type: 'function',
+            function: {
+              name: 'get_weather',
+              arguments: '{"city":"Hangzhou"}',
+            },
+          },
+          {
+            id: 'call_orphan',
+            type: 'function',
+            function: {
+              name: 'get_news',
+              arguments: '{"topic":"AI"}',
+            },
+          },
+        ],
+      },
+      {
+        role: 'tool',
+        content: '{"temp":22}',
+        tool_call_id: 'call_paired',
+      },
+    ];
+
+    const result = await convertOpenAIResponseInputs(messages, { strictToolPairing: true });
+
+    expect(result).toEqual([
+      { role: 'user', content: 'Use tools carefully' },
+      {
+        arguments: '{"city":"Hangzhou"}',
+        call_id: 'call_paired',
+        name: 'get_weather',
+        type: 'function_call',
+      },
+      {
+        call_id: 'call_paired',
+        output: '{"temp":22}',
+        type: 'function_call_output',
+      },
+    ]);
+  });
+
+  it('should drop assistant message with all orphaned tool_calls in strict mode', async () => {
+    const messages: OpenAIChatMessage[] = [
+      { role: 'user', content: 'Do something' },
+      {
+        role: 'assistant',
+        content: '',
+        tool_calls: [
+          {
+            id: 'call_orphan_1',
+            type: 'function',
+            function: { name: 'fn_a', arguments: '{}' },
+          },
+          {
+            id: 'call_orphan_2',
+            type: 'function',
+            function: { name: 'fn_b', arguments: '{}' },
+          },
+        ],
+      },
+      { role: 'assistant', content: 'Final answer' },
+    ];
+
+    const result = await convertOpenAIResponseInputs(messages, { strictToolPairing: true });
+
+    // The assistant message with all-orphaned tool_calls should produce no items,
+    // NOT fall through to the default builder which would spread tool_calls back.
+    expect(result).toEqual([
+      { role: 'user', content: 'Do something' },
+      { role: 'assistant', content: 'Final answer' },
+    ]);
+  });
+
   it('should extract reasoning.content into a separate reasoning item', async () => {
     const messages: OpenAIChatMessage[] = [
       { content: 'system prompts', role: 'system' },
