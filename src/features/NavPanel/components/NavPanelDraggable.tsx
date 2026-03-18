@@ -4,10 +4,11 @@ import { DraggablePanel, Freeze } from '@lobehub/ui';
 import { createStaticStyles, cssVar } from 'antd-style';
 import { AnimatePresence, motion, useIsPresent } from 'motion/react';
 import { type ReactNode } from 'react';
-import { memo, useLayoutEffect, useMemo, useRef } from 'react';
+import { memo, Suspense, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { isDesktop } from '@/const/version';
 import { TOGGLE_BUTTON_ID } from '@/features/NavPanel/ToggleLeftPanelButton';
+import Footer from '@/routes/(main)/home/_layout/Footer';
 import { USER_DROPDOWN_ICON_ID } from '@/routes/(main)/home/_layout/Header/components/User';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors';
@@ -53,10 +54,10 @@ const draggableStyles = createStaticStyles(({ css, cssVar }) => ({
 
     overflow: hidden;
     display: flex;
+    flex-direction: column;
 
     height: 100%;
-    min-height: 100%;
-    max-height: 100%;
+    min-height: 0;
   `,
   inner: css`
     position: relative;
@@ -245,6 +246,9 @@ export const NavPanelDraggable = memo<NavPanelDraggableProps>(({ activeContent }
           </div>
         )}
       </div>
+      <Suspense>
+        <Footer />
+      </Suspense>
     </DraggablePanel>
   );
 });
