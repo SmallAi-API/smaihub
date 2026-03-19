@@ -1453,6 +1453,52 @@ const smaiChatModels: AIChatModelCard[] = [
       functionCall: true,
       reasoning: true,
     },
+    contextWindowTokens: 1_048_576,
+    description:
+      'Xiaomi MiMo-V2-Pro 专为 Agent 场景深度优化。它拥有超过 1T 的总参数量（42B 激活参数），采用创新的混合注意力架构，并支持 1M 超长上下文长度。在强大的模型基座上，我们在更为广泛的 Agent 场景中持续 Scaling 算力，进一步拓展了智能的动作空间，实现了从 Coding 到 Claw 的重要泛化。',
+    displayName: 'MiMo-V2-Pro',
+    enabled: true,
+    id: 'mimo-v2-pro',
+    maxOutput: 128_000,
+    releasedAt: '2026-03-19',
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      vision: true,
+      reasoning: true,
+    },
+    contextWindowTokens: 256_000,
+    description:
+      'MiMo-V2-Omni 专为现实世界中复杂的多模态交互与执行场景而生。我们从底层构建了融合文本、视觉、语音的全模态基座，并以统一架构将“感知”与“行动”深度绑定。这不仅打破了传统模型“重理解、轻执行”的局限，更让模型原生具备了多模态感知、工具调用、函数执行及 GUI 操作能力。MiMo-V2-Omni 可无缝接入各大智能体框架，实现了从理解到操控的跨越，大幅降低了全模态 Agent 的落地门槛。',
+    displayName: 'MiMo-V2-Omni',
+    enabled: true,
+    id: 'mimo-v2-omni',
+    maxOutput: 64_000,
+    releasedAt: '2026-03-19',
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+    },
+    contextWindowTokens: 128_000,
+    description:
+      'Mimo V2 Flash模型采用 1:5 的 Global Attention 与 Sliding Window Attention (SWA) 混合结构，128 窗口大小',
+    displayName: 'Mimo V2 Flash',
+    enabled: true,
+    id: 'mimo-v2-flash',
+    maxOutput: 64_000,
+    releasedAt: '2026-03-19',
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+    },
     contextWindowTokens: 204_800,
     description: 'Same performance as M2.7 with significantly faster inference (~100 tps).',
     displayName: 'MiniMax M2.7 Highspeed',
@@ -1526,7 +1572,6 @@ const smaiChatModels: AIChatModelCard[] = [
     id: 'deepseek-ai/DeepSeek-R1',
     maxOutput: 8192,
     releasedAt: '2025-05-28',
-
     type: 'chat',
   },
 ];
@@ -1569,6 +1614,15 @@ export const smaiTTSModels: AITTSModelCard[] = [
     enabled: true,
     id: 'tts-1-hd',
     releasedAt: '2024-12-17',
+    type: 'tts',
+  },
+  {
+    description:
+      'Xiaomi MiMo-V2-TTS 是小米自主研发的语音合成大模型。它基于自研 Audio Tokenizer 和多码本语音-文本联合建模架构，经过上亿小时语音数据的大规模预训练与多维度强化学习，实现了高度可控的多粒度语音风格控制。MiMo-V2-TTS 支持从整体风格定调到局部情绪表达的精准调节，能在同一句话内完成语气转折和情感递变；真实还原人类说话的自然韵律；在唱歌时，也能准确表达音高和节奏，自然且富有表现力。',
+    displayName: 'MiMo-V2-TTS',
+    enabled: true,
+    id: 'mimo-v2-tts',
+    releasedAt: '2026-3-19',
     type: 'tts',
   },
 ];
