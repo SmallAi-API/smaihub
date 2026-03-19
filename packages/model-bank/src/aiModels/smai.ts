@@ -176,7 +176,6 @@ const smaiChatModels: AIChatModelCard[] = [
       functionCall: true,
       reasoning: true,
       search: true,
-      structuredOutput: true,
       vision: true,
     },
     contextWindowTokens: 400_000,
@@ -188,6 +187,7 @@ const smaiChatModels: AIChatModelCard[] = [
     maxOutput: 128_000,
     releasedAt: '2026-03-18',
     settings: {
+      extendParams: ['gpt5_2ReasoningEffort', 'textVerbosity'],
       searchImpl: 'params',
     },
     type: 'chat',
@@ -197,7 +197,6 @@ const smaiChatModels: AIChatModelCard[] = [
       functionCall: true,
       reasoning: true,
       search: true,
-      structuredOutput: true,
       vision: true,
     },
     contextWindowTokens: 400_000,
@@ -209,6 +208,7 @@ const smaiChatModels: AIChatModelCard[] = [
     maxOutput: 128_000,
     releasedAt: '2026-03-18',
     settings: {
+      extendParams: ['gpt5_2ReasoningEffort', 'textVerbosity'],
       searchImpl: 'params',
     },
     type: 'chat',
