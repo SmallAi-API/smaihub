@@ -1381,7 +1381,7 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 256_000,
     description: 'Grok 前沿多模态模型，专门针对高性能代理工具调用进行优化。',
     displayName: 'Grok 4.1 Fast',
-    enabled: true,
+
     id: 'grok-4-1-fast-non-reasoning',
     releasedAt: '2025-11-18',
     settings: {
@@ -1423,7 +1423,7 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       '我们最新最强大的旗舰模型，在自然语言处理、数学计算和推理方面表现卓越 —— 是一款完美的全能型选手。',
     displayName: 'Grok 4',
-    enabled: true,
+
     id: 'grok-4-0709',
     releasedAt: '2025-07-09',
     settings: {
@@ -1431,6 +1431,35 @@ const smaiChatModels: AIChatModelCard[] = [
       // extendParams: ['reasoningEffort'],
       searchImpl: 'params',
     },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+    },
+    contextWindowTokens: 204_800,
+    description:
+      'First self-evolving model with top-tier coding and agentic performance (~60 tps).',
+    displayName: 'MiniMax M2.7',
+    enabled: true,
+    id: 'MiniMax-M2.7',
+    maxOutput: 131_072,
+    releasedAt: '2026-03-18',
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+    },
+    contextWindowTokens: 204_800,
+    description: 'Same performance as M2.7 with significantly faster inference (~100 tps).',
+    displayName: 'MiniMax M2.7 Highspeed',
+    enabled: true,
+    id: 'MiniMax-M2.7-highspeed',
+    maxOutput: 131_072,
+    releasedAt: '2026-03-18',
     type: 'chat',
   },
   {
