@@ -98,6 +98,12 @@ export const userMemoryRouter = router({
       return ctx.activityModel.delete(input.id);
     }),
 
+  deleteAll: userMemoryProcedure.mutation(async ({ ctx }) => {
+    await ctx.userMemoryModel.deleteAll();
+
+    return { success: true };
+  }),
+
   // ============ Context CRUD ============
   deleteContext: userMemoryProcedure
     .input(z.object({ id: z.string() }))

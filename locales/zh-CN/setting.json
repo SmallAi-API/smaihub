@@ -743,7 +743,7 @@
   "tab.manualFill.desc": "手动配置自定义 MCP 技能",
   "tab.memory": "记忆设置",
   "tab.profile": "我的账号",
-  "tab.provider": "提供者",
+  "tab.provider": "模型服务",
   "tab.proxy": "代理",
   "tab.security": "安全",
   "tab.serviceModel": "服务模型",

@@ -233,21 +233,20 @@ describe('execAgent', () => {
         })
         .returning();
 
-      const [thread] = await serverDB
-        .insert(threads)
-        .values({
-          topicId: topic.id,
-          type: 'standalone',
-          userId,
-        })
-        .returning();
+      const threadId = 'thread-with-app-context';
+      await serverDB.insert(threads).values({
+        id: threadId,
+        topicId: topic.id,
+        type: 'standalone',
+        userId,
+      });
 
       const caller = aiAgentRouter.createCaller(createTestContext());
 
       const result = await caller.execAgent({
         agentId: testAgentId,
         appContext: {
-          threadId: thread.id,
+          threadId,
         },
         prompt: 'Test prompt',
       });
