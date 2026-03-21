@@ -6,7 +6,6 @@ import { ExternalLink } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import InfoTooltip from '@/components/InfoTooltip';
 import type { SerializedPlatformDefinition } from '@/server/services/bot/platforms/types';
 
 import { getPlatformIcon } from '../const';
@@ -38,15 +37,6 @@ const Header = memo<HeaderProps>(({ platformDef, currentConfig, onToggleEnable }
       <Flexbox horizontal align="center" gap={8}>
         {ColorIcon && <ColorIcon size={32} />}
         {platformDef.name}
-        {platformDef.documentation?.setupGuideUrl && (
-          <a
-            href={platformDef.documentation.setupGuideUrl}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <InfoTooltip title={t('channel.setupGuide')} />
-          </a>
-        )}
       </Flexbox>
       <Flexbox horizontal align="center" gap={8}>
         {platformDef.documentation?.portalUrl && (
