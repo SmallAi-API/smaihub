@@ -335,7 +335,7 @@ export default {
   'footer.star.title': 'Star us on GitHub',
   'footer.title': 'Need help? Contact WeChat: SmallAi2024',
   'fullscreen': 'Full Screen Mode',
-
+  'generation.hero.taglinePrefix': 'Start Creating with',
   'historyRange': 'History Range',
   'home.suggestQuestions': 'Try these examples',
   'import': 'Import',
