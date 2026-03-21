@@ -115,6 +115,7 @@ export interface SystemStatus {
   hideTopicSharePrivacyWarning?: boolean;
   imagePanelWidth: number;
   imageTopicPanelWidth?: number;
+  imageTopicViewMode?: 'grid' | 'list';
   /**
    * 应用初始化时不启用 PGLite，只有当用户手动开启时才启用
    */
@@ -181,6 +182,7 @@ export interface SystemStatus {
   topicPageSize?: number;
   videoPanelWidth: number;
   videoTopicPanelWidth?: number;
+  videoTopicViewMode?: 'grid' | 'list';
   zenMode?: boolean;
 }
 
@@ -232,6 +234,7 @@ export const INITIAL_STATUS = {
   hideThreadLimitAlert: false,
   hideTopicSharePrivacyWarning: false,
   imagePanelWidth: 320,
+  imageTopicViewMode: 'grid' as const,
   imageTopicPanelWidth: 80,
   knowledgeBaseModalViewMode: 'list' as const,
   leftPanelWidth: 320,
@@ -262,6 +265,7 @@ export const INITIAL_STATUS = {
   tokenDisplayFormatShort: true,
   topicPageSize: 20,
   videoPanelWidth: 320,
+  videoTopicViewMode: 'grid' as const,
   videoTopicPanelWidth: 80,
   zenMode: false,
 } satisfies SystemStatus;
