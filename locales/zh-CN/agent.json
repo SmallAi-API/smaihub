@@ -76,8 +76,15 @@
   "channel.testFailed": "连接测试失败",
   "channel.testSuccess": "连接测试通过",
   "channel.updateFailed": "更新状态失败",
-  "channel.validationError": "请填写应用程序 ID 和令牌",
-  "channel.verificationToken": "验证令牌",
-  "channel.verificationTokenHint": "可选。用于验证 webhook 事件源。",
-  "channel.verificationTokenPlaceholder": "在此粘贴您的验证令牌"
+  "channel.validationError": "请填写应用 ID 和 Token",
+  "channel.verificationToken": "Verification Token",
+  "channel.verificationTokenHint": "可选。用于验证事件推送来源。",
+  "channel.verificationTokenPlaceholder": "在此粘贴你的 Verification Token",
+  "channel.wechat.description": "通过 iLink Bot 将助手连接到微信，支持私聊和群聊。",
+  "channel.wechatQrExpired": "二维码已过期，请刷新获取新的二维码。",
+  "channel.wechatQrRefresh": "刷新二维码",
+  "channel.wechatQrScaned": "已扫码，请在微信中确认登录。",
+  "channel.wechatQrWait": "打开微信扫描二维码以连接。",
+  "channel.wechatScanTitle": "连接微信机器人",
+  "channel.wechatScanToConnect": "扫码连接"
 }
