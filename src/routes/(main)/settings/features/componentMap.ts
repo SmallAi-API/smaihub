@@ -52,6 +52,9 @@ export const componentMap = {
   [SettingsTabs.APIKey]: dynamic(() => import('../apikey'), {
     loading: loading('Settings > APIKey'),
   }),
+  [SettingsTabs.Creds]: dynamic(() => import('../creds'), {
+    loading: loading('Settings > Creds'),
+  }),
   [SettingsTabs.Security]: dynamic(() => import('../security'), {
     loading: loading('Settings > Security'),
   }),
