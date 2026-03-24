@@ -145,8 +145,8 @@ export default {
   'filterBy.timePeriod.week': 'Last 7 Days',
   'filterBy.timePeriod.year': 'Last Year',
   'footer.desc':
-    'Evolve with AI users worldwide. Become a creator to submit your agents and skills to the Lobe Hub Community.',
-  'footer.title': 'Share your creation on Lobe Hub Community today',
+    'Community from Lobe Hub. Become a creator to submit your agents and skills to the Lobe Hub Community.',
+  'footer.title': 'Share your creation on Lobe Hub Community',
 
   'fork.alreadyForked': 'You have already forked this agent. Navigating to your fork...',
 

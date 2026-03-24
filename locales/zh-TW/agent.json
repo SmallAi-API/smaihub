@@ -79,5 +79,12 @@
   "channel.validationError": "請填寫應用程式 ID 和令牌",
   "channel.verificationToken": "驗證令牌",
   "channel.verificationTokenHint": "可選。用於驗證 webhook 事件來源。",
-  "channel.verificationTokenPlaceholder": "在此粘貼您的驗證令牌"
+  "channel.verificationTokenPlaceholder": "在此粘貼您的驗證令牌",
+  "channel.wechat.description": "透過 iLink Bot 將此助手連接到微信，以便進行私人和群組聊天。",
+  "channel.wechatQrExpired": "QR 碼已過期。請刷新以獲取新的 QR 碼。",
+  "channel.wechatQrRefresh": "刷新 QR 碼",
+  "channel.wechatQrScaned": "QR 碼已掃描。請在微信中確認登錄。",
+  "channel.wechatQrWait": "打開微信並掃描 QR 碼以連接。",
+  "channel.wechatScanTitle": "連接微信機器人",
+  "channel.wechatScanToConnect": "掃描 QR 碼以連接"
 }

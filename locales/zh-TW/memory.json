@@ -10,7 +10,7 @@
   "activity.notes": "備註",
   "analysis.action.button": "請求記憶分析",
   "analysis.modal.cancel": "取消",
-  "analysis.modal.helper": "預設情況下，Lobe AI 將分析所有未處理的聊天記錄。您也可以選擇特定日期範圍進行分析，這是可選的。",
+  "analysis.modal.helper": "預設情況下，smai.ai 將分析所有未處理的聊天記錄。您可以選擇日期範圍進行分析。",
   "analysis.modal.rangePlaceholder": "未選擇範圍；將分析所有對話。",
   "analysis.modal.rangeSelected": "正在分析 {{start}} 到 {{end}} 的對話",
   "analysis.modal.submit": "請求記憶分析",
