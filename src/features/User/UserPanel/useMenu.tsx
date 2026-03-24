@@ -50,13 +50,6 @@ export const useMenu = () => {
   ]);
   const { userPanel } = useNavLayout();
   const businessMenuItems = useBusinessMenuItems(isLogin);
-  const { isIOS, isAndroid } = usePlatform();
-
-  const downloadUrl = useMemo(() => {
-    if (isIOS) return DOWNLOAD_URL.ios;
-    if (isAndroid) return DOWNLOAD_URL.android;
-    return DOWNLOAD_URL.default;
-  }, [isIOS, isAndroid]);
 
   const settings: MenuProps['items'] = [
     {
