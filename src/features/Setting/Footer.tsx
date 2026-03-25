@@ -6,7 +6,7 @@ import { MessageSquareHeart } from 'lucide-react';
 import { memo, type PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
+import { useServerConfigStore } from '@/store/serverConfig';
 
 const styles = createStaticStyles(
   ({ css, cssVar }) => css`
@@ -20,9 +20,11 @@ export const LayoutSettingsFooterClassName = 'settings-layout-footer';
 const Footer = memo<PropsWithChildren>(() => {
   const { t } = useTranslation('common');
 
-  const { hideGitHub } = useServerConfigStore(featureFlagsSelectors);
+  const hideGitHubEngagementFooter = useServerConfigStore((s) =>
+    Boolean(s.featureFlags.hideGitHub || s.serverConfig.enableBusinessFeatures),
+  );
 
-  return hideGitHub ? null : (
+  return hideGitHubEngagementFooter ? null : (
     <Flexbox flex={1} justify={'flex-end'}>
       <Center horizontal as={'footer'} className={styles} flex={'none'} padding={16} width={'100%'}>
         <div style={{ textAlign: 'center' }}>
