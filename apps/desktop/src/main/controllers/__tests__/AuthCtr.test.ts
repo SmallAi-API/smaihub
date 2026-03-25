@@ -99,6 +99,7 @@ const mockApp = {
     }
     return null;
   }),
+  getService: vi.fn(() => null),
 } as unknown as App;
 
 describe('AuthCtr', () => {
