@@ -8,6 +8,7 @@ import { SettingsTabs } from '@/store/global/initialState';
 import About from '../about';
 import Advanced from '../advanced';
 import APIKey from '../apikey';
+import Creds from '../creds';
 import Hotkey from '../hotkey';
 import Memory from '../memory';
 import Profile from '../profile';
@@ -16,6 +17,7 @@ import Proxy from '../proxy';
 import Security from '../security';
 import ServiceModel from '../service-model';
 import Skill from '../skill';
+import Stats from '../stats';
 import Storage from '../storage';
 import SystemTools from '../system-tools';
 
@@ -34,8 +36,10 @@ export const componentMap = {
 
   // Profile related tabs
   [SettingsTabs.Profile]: Profile,
+  [SettingsTabs.Stats]: Stats,
   [SettingsTabs.Usage]: Usage,
   [SettingsTabs.APIKey]: APIKey,
+  [SettingsTabs.Creds]: Creds,
   [SettingsTabs.Security]: Security,
   [SettingsTabs.Skill]: Skill,
   [SettingsTabs.Plans]: Plans,
