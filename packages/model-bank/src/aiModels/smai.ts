@@ -105,7 +105,7 @@ export const nanoBanana2Parameters: ModelParamsSchema = {
   prompt: { default: '' },
   resolution: {
     default: '1K',
-    enum: ['0.5K', '1K', '2K', '4K'],
+    enum: ['512', '1K', '2K', '4K'],
   },
 };
 
