@@ -1,8 +1,7 @@
 import { BRANDING_PROVIDER } from '@lobechat/business-const';
-import { ProviderCombine } from '@lobehub/icons';
-import { Avatar, Flexbox, Skeleton, Tag, Text } from '@lobehub/ui';
+import { Avatar, Flexbox, Skeleton, Text } from '@lobehub/ui';
 import { Divider } from 'antd';
-import { cssVar, cx } from 'antd-style';
+import { cx } from 'antd-style';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -13,8 +12,6 @@ import { getProviderLogoUrl } from '@/utils/providerLogo';
 
 import EnableSwitch from './EnableSwitch';
 import { styles } from './style';
-
-const isCodingPlanProvider = (id: string) => id.endsWith('codingplan');
 
 interface ProviderCardProps extends AiProviderListItem {
   loading?: boolean;
@@ -51,22 +48,10 @@ const ProviderCard = memo<ProviderCardProps>(
           >
             <Flexbox gap={12} width={'100%'}>
               <Flexbox horizontal align={'center'} justify={'space-between'}>
-                {source === 'builtin' ? (
-                  <Flexbox horizontal align={'center'} gap={8}>
-                    <ProviderCombine
-                      provider={id}
-                      size={24}
-                      style={{ color: cssVar.colorText }}
-                      title={name}
-                    />
-                    {isCodingPlanProvider(id) && <Tag color={'geekblue'}>{'Coding Plan'}</Tag>}
-                  </Flexbox>
-                ) : (
-                  <Flexbox horizontal align={'center'} gap={12}>
-                    <Avatar alt={name || id} avatar={getProviderLogoUrl(id, name)} size={28} />
-                    <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{name || id}</Text>
-                  </Flexbox>
-                )}
+                <Flexbox horizontal align={'center'} gap={12}>
+                  <Avatar alt={name || id} avatar={getProviderLogoUrl(id, name)} size={28} />
+                  <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{name || id}</Text>
+                </Flexbox>
               </Flexbox>
               <Text
                 className={styles.desc}
