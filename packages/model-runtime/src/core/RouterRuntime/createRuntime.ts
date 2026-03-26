@@ -1,8 +1,8 @@
 /**
  * @see https://github.com/lobehub/lobe-chat/discussions/6563
  */
-import { type GoogleGenAIOptions } from '@google/genai';
-import { type ChatModelCard } from '@lobechat/types';
+import type { GoogleGenAIOptions } from '@google/genai';
+import { AgentRuntimeErrorType, type ChatModelCard } from '@lobechat/types';
 import debug from 'debug';
 import type OpenAI from 'openai';
 import { type ClientOptions } from 'openai';
@@ -391,6 +391,14 @@ export const createRouterRuntime = ({
             .catch((e) => {
               log('onRouteAttempt callback error: %O', e);
             });
+
+          // Non-retryable errors: the request itself is invalid, retrying with another channel won't help
+          if (
+            (error as ChatCompletionErrorPayload)?.errorType ===
+            AgentRuntimeErrorType.ExceededContextWindow
+          ) {
+            throw error;
+          }
 
           if (attempt < totalOptions) {
             log(

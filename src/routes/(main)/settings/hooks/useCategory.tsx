@@ -126,7 +126,7 @@ export const useCategory = () => {
 
     // Agent group
     const agentItems: CategoryItem[] = [
-      {
+      (!enableBusinessFeatures || isDevMode) && {
         icon: Brain,
         key: SettingsTabs.Provider,
         label: t('tab.provider'),
