@@ -4,7 +4,7 @@
   "config.aspectRatio.unlock": "解鎖寬高比",
   "config.cfg.label": "引導強度",
   "config.header.desc": "簡單描述，即刻創作",
-  "config.header.title": "繪畫",
+  "config.header.title": "圖片",
   "config.height.label": "高度",
   "config.imageNum.label": "圖片數量",
   "config.imageUrl.label": "參考圖",
@@ -58,6 +58,6 @@
   "topic.deleteConfirm": "刪除生成主題",
   "topic.deleteConfirmDesc": "即將刪除該生成主題，刪除後將無法復原，請謹慎操作。",
   "topic.empty": "暫無生成主題",
-  "topic.title": "繪畫主題",
+  "topic.title": "圖片主題",
   "topic.untitled": "預設主題"
 }

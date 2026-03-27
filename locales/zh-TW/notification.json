@@ -1,0 +1,12 @@
+{
+  "image_generation_completed": "圖像 \"{{prompt}}\" 生成成功",
+  "image_generation_completed_title": "圖像已生成",
+  "inbox.archiveAll": "全部歸檔",
+  "inbox.empty": "尚無通知",
+  "inbox.emptyUnread": "沒有未讀通知",
+  "inbox.filterUnread": "僅顯示未讀",
+  "inbox.markAllRead": "全部標記為已讀",
+  "inbox.title": "通知",
+  "video_generation_completed": "視頻 \"{{prompt}}\" 生成成功",
+  "video_generation_completed_title": "視頻已生成"
+}
