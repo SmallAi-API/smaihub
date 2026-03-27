@@ -58,6 +58,7 @@ export const serverMessagesEngine = async ({
   historySummary,
   formatHistorySummary,
   knowledge,
+  agentDocuments,
   skillsConfig,
   toolsConfig,
   capabilities,
@@ -102,6 +103,7 @@ export const serverMessagesEngine = async ({
       fileContents: knowledge?.fileContents,
       knowledgeBases: knowledge?.knowledgeBases,
     },
+    agentDocuments,
 
     // Messages
     messages,
