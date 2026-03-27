@@ -13,6 +13,7 @@ import { serverConfigSelectors } from '@/store/serverConfig/selectors';
 import { useUserStore } from '@/store/user';
 import { settingsSelectors } from '@/store/user/slices/settings/selectors/settings';
 
+import ClaimResourcesModal from './ClaimResourcesModal';
 import { MarketAuthError } from './errors';
 import { marketAuthEvents } from './events';
 import MarketAuthConfirmModal from './MarketAuthConfirmModal';
@@ -26,6 +27,7 @@ import {
   type OIDCConfig,
 } from './types';
 import { useMarketUserProfile } from './useMarketUserProfile';
+import { type ClaimableResources } from './useSocialConnect';
 
 const MarketAuthContext = createContext<MarketAuthContextType | null>(null);
 
@@ -147,6 +149,11 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
   );
   const [pendingProfileSuccessCallback, setPendingProfileSuccessCallback] = useState<
     ((_profile: MarketUserProfile) => void) | null
+  >(null);
+  const [claimableResources, setClaimableResources] = useState<ClaimableResources | null>(null);
+  const [showClaimModal, setShowClaimModal] = useState(false);
+  const [pendingClaimSuccessCallback, setPendingClaimSuccessCallback] = useState<
+    (() => void) | null
   >(null);
 
   // 订阅 user store 的初始化状态，当 isUserStateInit 为 true 时，settings 数据已加载完成
@@ -487,7 +494,75 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
   }, []);
 
   /**
-   * 个人资料更新成功回调
+   * Show claim resources modal (called from ProfileSetupModal after save)
+   */
+  const handleShowClaimResources = useCallback((resources: ClaimableResources) => {
+    setClaimableResources(resources);
+    setShowClaimModal(true);
+  }, []);
+
+  /**
+   * Close claim resources modal
+   */
+  const handleCloseClaimModal = useCallback(() => {
+    setShowClaimModal(false);
+    setClaimableResources(null);
+    setPendingClaimSuccessCallback(null);
+  }, []);
+
+  /**
+   * Handle claim success - refresh user profile data
+   */
+  const handleClaimSuccess = useCallback(() => {
+    setShowClaimModal(false);
+    setClaimableResources(null);
+
+    // Call the pending success callback if provided (e.g., page-level mutate)
+    if (pendingClaimSuccessCallback) {
+      pendingClaimSuccessCallback();
+      setPendingClaimSuccessCallback(null);
+    }
+
+    // Also refresh all user-profile related SWR cache as fallback
+    globalMutate((key) => typeof key === 'string' && key.startsWith('user-profile'), undefined, {
+      revalidate: true,
+    });
+  }, [pendingClaimSuccessCallback]);
+
+  /**
+   * Check for claimable resources and show modal if any found
+   * Call this when user enters their profile page
+   * @param onClaimSuccess - Optional callback to run after successful claim (e.g., to refresh page data)
+   */
+  const checkAndShowClaimableResources = useCallback(
+    async (onClaimSuccess?: () => void): Promise<boolean> => {
+      // Only check if user is authenticated
+      if (status !== 'authenticated') {
+        return false;
+      }
+
+      try {
+        const result = await lambdaClient.market.socialProfile.scanClaimableResources.query();
+        if (result.plugins.length > 0 || result.skills.length > 0) {
+          // Store the callback for when claim succeeds
+          if (onClaimSuccess) {
+            setPendingClaimSuccessCallback(() => onClaimSuccess);
+          }
+          setClaimableResources(result);
+          setShowClaimModal(true);
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.error('[MarketAuth] Failed to check claimable resources:', error);
+        return false;
+      }
+    },
+    [status],
+  );
+
+  /**
+   * Profile update success callback
    */
   const handleProfileUpdateSuccess = useCallback(() => {
     // Profile is updated, modal will close automatically
@@ -637,6 +712,7 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
   }, [handleUnauthorized]);
 
   const contextValue: MarketAuthContextType = {
+    checkAndShowClaimableResources,
     getAccessToken,
     getCurrentUserInfo,
     getRefreshToken,
@@ -701,8 +777,17 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
         open={showProfileSetupModal}
         userProfile={userProfile}
         onClose={handleCloseProfileSetup}
+        onShowClaimResources={handleShowClaimResources}
         onSuccess={handleProfileSuccess}
       />
+      {claimableResources && (
+        <ClaimResourcesModal
+          open={showClaimModal}
+          resources={claimableResources}
+          onClose={handleCloseClaimModal}
+          onSuccess={handleClaimSuccess}
+        />
+      )}
     </MarketAuthContext>
   );
 };
