@@ -5,9 +5,10 @@ import { type ChatInputActionsProps, type Editor } from '@lobehub/editor/react';
 import { type CSSProperties } from 'react';
 import { memo } from 'react';
 
+import SafeBoundary from '@/components/ErrorBoundary';
+
 import DocumentIdMode from './DocumentIdMode';
 import EditorDataMode from './EditorDataMode';
-import { EditorErrorBoundary } from './ErrorBoundary';
 import InternalEditor from './InternalEditor';
 
 /**
@@ -147,18 +148,18 @@ export const EditorCanvas = memo<EditorCanvasWithEditorProps>(
     // documentId mode - fetch and render with loading/error states
     if (documentId) {
       return (
-        <EditorErrorBoundary>
+        <SafeBoundary alertTitle="Editor Error" variant="alert">
           <DocumentIdMode documentId={documentId} editor={editor} {...props} />
-        </EditorErrorBoundary>
+        </SafeBoundary>
       );
     }
 
     // editorData mode - render with provided data
     if (editorData) {
       return (
-        <EditorErrorBoundary>
+        <SafeBoundary alertTitle="Editor Error" variant="alert">
           <EditorDataMode editor={editor} editorData={editorData} entityId={entityId} {...props} />
-        </EditorErrorBoundary>
+        </SafeBoundary>
       );
     }
 
@@ -166,9 +167,9 @@ export const EditorCanvas = memo<EditorCanvasWithEditorProps>(
     if (!editor) return null;
 
     return (
-      <EditorErrorBoundary>
+      <SafeBoundary alertTitle="Editor Error" variant="alert">
         <InternalEditor editor={editor} {...props} />
-      </EditorErrorBoundary>
+      </SafeBoundary>
     );
   },
 );
