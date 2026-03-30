@@ -79,8 +79,8 @@ vi.mock('@/store/user/selectors', () => ({
   systemAgentSelectors: {
     thread: vi.fn(() => ({})),
   },
-   userGeneralSettingsSelectors: {
-    responseLanguage: vi.fn(() => undefined),
+  userGeneralSettingsSelectors: {
+    currentResponseLanguage: vi.fn(() => 'en-US'),
   },
   userProfileSelectors: {
     userAvatar: vi.fn(() => 'avatar-url'),

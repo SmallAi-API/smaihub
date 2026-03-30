@@ -3,8 +3,9 @@ import { z } from 'zod';
 
 import { type Plans } from '../subscription';
 import { TopicDisplayMode } from '../topic';
-import { type UserOnboarding } from './onboarding';
-import { type UserSettings } from './settings';
+import type { UserAgentOnboarding } from './agentOnboarding';
+import type { UserOnboarding } from './onboarding';
+import type { UserSettings } from './settings';
 
 export interface LobeUser {
   avatar?: string;
@@ -80,6 +81,7 @@ export type ReferralStatusString =
   | 'revoked';
 
 export interface UserInitializationState {
+  agentOnboarding?: UserAgentOnboarding;
   avatar?: string;
   canEnablePWAGuide?: boolean;
   canEnableTrace?: boolean;

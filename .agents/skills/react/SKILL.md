@@ -7,7 +7,10 @@ description: React component development guide. Use when working with React comp
 
 - Use antd-style for complex styles; for simple cases, use inline `style` attribute
 - Use `Flexbox` and `Center` from `@lobehub/ui` for layouts (see `references/layout-kit.md`)
-- Component priority: `src/components` > installed packages > `@lobehub/ui` > antd
+- Component priority: `src/components` > `@lobehub/ui/base-ui` > `@lobehub/ui` > custom implementation
+  - Always prefer `@lobehub/ui/base-ui` primitives (Select, Modal, DropdownMenu, Popover, Switch, ScrollArea…) over antd equivalents
+  - Fall back to `@lobehub/ui` higher-level components when base-ui has no match
+  - Only implement a custom component as a last resort — never reach for antd directly
 - Use selectors to access zustand store data
 
 ## @lobehub/ui Components

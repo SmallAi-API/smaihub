@@ -17,17 +17,18 @@ import { agentService } from '@/services/agent';
 import { discoverService } from '@/services/discover';
 
 import { GroupAgentBuilderExecutionRuntime } from './ExecutionRuntime';
-import {
-  type BatchCreateAgentsParams,
-  type CreateAgentParams,
-  type GetAgentInfoParams,
-  type InviteAgentParams,
-  type RemoveAgentParams,
-  type SearchAgentParams,
-  type UpdateAgentConfigWithIdParams,
-  type UpdateAgentPromptParams,
-  type UpdateGroupParams,
-  type UpdateGroupPromptParams,
+import type {
+  BatchCreateAgentsParams,
+  CreateAgentParams,
+  CreateGroupParams,
+  GetAgentInfoParams,
+  InviteAgentParams,
+  RemoveAgentParams,
+  SearchAgentParams,
+  UpdateAgentConfigWithIdParams,
+  UpdateAgentPromptParams,
+  UpdateGroupParams,
+  UpdateGroupPromptParams,
 } from './types';
 import { GroupAgentBuilderApiName, GroupAgentBuilderIdentifier } from './types';
 
@@ -54,6 +55,10 @@ class GroupAgentBuilderExecutor extends BaseExecutor<typeof GroupAgentBuilderApi
 
   searchAgent = async (params: SearchAgentParams): Promise<BuiltinToolResult> => {
     return groupAgentBuilderRuntime.searchAgent(params);
+  };
+
+  createGroup = async (params: CreateGroupParams): Promise<BuiltinToolResult> => {
+    return groupAgentBuilderRuntime.createGroup(params);
   };
 
   createAgent = async (

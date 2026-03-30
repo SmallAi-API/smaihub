@@ -303,18 +303,20 @@ export const mobileRoutes: RouteObject[] = [
     path: '/onboarding',
   },
   {
-    children: [
-      {
-        element: dynamicElement(() => import('@/routes/(download)/download'), 'Mobile > Download'),
-        index: true,
-      },
-    ],
-    element: dynamicLayout(
-      () => import('@/routes/(download)/download/_layout/RouteLayout'),
-      'Mobile > Download > Layout',
+    element: dynamicElement(
+      () => import('@/routes/onboarding/agent'),
+      'Mobile > Onboarding > Agent',
     ),
-    errorElement: <ErrorBoundary resetPath="/download" />,
-    path: '/download',
+    errorElement: <ErrorBoundary resetPath="/" />,
+    path: '/onboarding/agent',
+  },
+  {
+    element: dynamicElement(
+      () => import('@/routes/onboarding/classic'),
+      'Mobile > Onboarding > Classic',
+    ),
+    errorElement: <ErrorBoundary resetPath="/" />,
+    path: '/onboarding/classic',
   },
   ...BusinessMobileRoutesWithoutMainLayout,
 
