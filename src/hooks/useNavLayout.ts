@@ -63,13 +63,6 @@ export const useNavLayout = (): NavLayout => {
         },
 
         {
-          hidden: !showMarket,
-          icon: getRouteById('community')!.icon,
-          key: SidebarTabKey.Community,
-          title: t('tab.marketplace'),
-          url: '/community',
-        },
-        {
           external: true,
           icon: KeyRound,
           key: 'api',
@@ -77,7 +70,7 @@ export const useNavLayout = (): NavLayout => {
           url: 'https://api.smai.ai',
         },
       ] as NavItem[],
-    [t, toggleCommandMenu, showMarket],
+    [t, toggleCommandMenu],
   );
 
   const bottomMenuItems = useMemo(
@@ -89,7 +82,13 @@ export const useNavLayout = (): NavLayout => {
           title: t('tab.resource'),
           url: '/resource',
         },
-
+        {
+          hidden: !showMarket,
+          icon: getRouteById('community')!.icon,
+          key: SidebarTabKey.Community,
+          title: t('tab.marketplace'),
+          url: '/community',
+        },
         {
           external: true,
           icon: BookOpenIcon,
@@ -104,7 +103,7 @@ export const useNavLayout = (): NavLayout => {
           title: t('tab.support'),
         },
       ] as NavItem[],
-    [t],
+    [t, showMarket],
   );
 
   const footer = useMemo(
