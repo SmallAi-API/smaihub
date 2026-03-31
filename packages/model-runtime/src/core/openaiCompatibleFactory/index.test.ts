@@ -1880,7 +1880,7 @@ describe('LobeOpenAICompatibleFactory', () => {
 
       const payload = {
         messages: [{ content: 'Generate data', role: 'user' as const }],
-        model: 'gpt-5-mini',
+        model: 'gpt-5.4-mini',
         responseApi: true,
         schema: {
           name: 'test_tool',
