@@ -80,9 +80,9 @@ export interface ChatStreamPayload {
    */
   imageAspectRatio?: string;
   /**
-   * @title Image resolution for image generation (e.g., '1K', '2K', '4K')
+   * @title Image resolution for image generation (e.g., '512px', '1K', '2K', '4K')
    */
-  imageResolution?: '1K' | '2K' | '4K';
+  imageResolution?: '512px' | '1K' | '2K' | '4K';
   logprobs?: boolean;
   /**
    * @title Maximum length of generated text
