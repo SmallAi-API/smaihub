@@ -91,6 +91,70 @@ const newapiChatModels: AIChatModelCard[] = [
       structuredOutput: true,
       vision: true,
     },
+    contextWindowTokens: 1_050_000,
+    description:
+      'GPT-5.4 is the frontier model for complex professional work with highest reasoning capability.',
+    displayName: 'GPT-5.4',
+    enabled: true,
+    id: 'gpt-5.4',
+    maxOutput: 128_000,
+    releasedAt: '2026-03-05',
+    settings: {
+      extendParams: ['gpt5_2ReasoningEffort', 'textVerbosity'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      vision: true,
+    },
+    contextWindowTokens: 400_000,
+    description:
+      'GPT-5.4 mini 在同类模型中展现出了强劲的端到端性能。在我们的评估中，它在多项输出任务和引文召回 (citation recall) 上的表现超越了 Claude Haiku 4.5 或与其持平，且成本大幅降低。此外，它的端对端通过率 (pass rate) 高于体量更大的 GPT-5.4 模型，来源溯源 (source attribution) 能力也更强。',
+    displayName: 'GPT-5.4 Mini',
+    enabled: true,
+    id: 'gpt-5.4-mini',
+    maxOutput: 128_000,
+    releasedAt: '2026-03-18',
+    settings: {
+      extendParams: ['gpt5_2ReasoningEffort', 'textVerbosity'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      vision: true,
+    },
+    contextWindowTokens: 400_000,
+    description:
+      'GPT-5.4 nano 专为对速度和成本要求极高的任务而设计，例如分类、数据提取、排序和子代理。',
+    displayName: 'GPT-5.4 Nano',
+    enabled: true,
+    id: 'gpt-5.4-nano',
+    maxOutput: 128_000,
+    releasedAt: '2026-03-18',
+    settings: {
+      extendParams: ['gpt5_2ReasoningEffort', 'textVerbosity'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
     contextWindowTokens: 400_000,
     description:
       'GPT-5.3 Codex — 专为更深入的工作而打造，帮助用户以更高的完成度处理复杂任务，擅长编码、长文档总结、回答上传文件相关问题、逐步推导数学与逻辑问题，以及通过更清晰的结构和更有用的细节支持规划与决策。',
