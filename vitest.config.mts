@@ -33,8 +33,7 @@ export default defineConfig({
     {
       name: 'raw-md',
       transform(_, id) {
-        if (id.endsWith('.md'))
-          return { code: 'export default ""', map: null };
+        if (id.endsWith('.md')) return { code: 'export default ""', map: null };
       },
     },
     /**
@@ -118,6 +117,8 @@ export default defineConfig({
           '@pierre/diffs',
           '@pierre/diffs/react',
           'lru_map',
+          'lexical',
+          /@lexical\//,
         ],
       },
     },
