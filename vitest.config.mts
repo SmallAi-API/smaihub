@@ -112,6 +112,7 @@ export default defineConfig({
         inline: [
           'vitest-canvas-mock',
           /@emoji-mart/,
+          'emoji-mart',
           '@lobehub/ui',
           '@lobehub/fluent-emoji',
           '@pierre/diffs',
@@ -119,6 +120,7 @@ export default defineConfig({
           'lru_map',
           'lexical',
           /@lexical\//,
+          /@lobehub\//,
         ],
       },
     },
