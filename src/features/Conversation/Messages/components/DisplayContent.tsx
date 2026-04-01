@@ -12,6 +12,7 @@ import { RichContentRenderer } from './RichContentRenderer';
 const DisplayContent = memo<{
   addIdOnDOM?: boolean;
   content: string;
+  generating?: boolean;
   hasImages?: boolean;
   id: string;
   isMessageGenerating?: boolean;
@@ -23,6 +24,7 @@ const DisplayContent = memo<{
   ({
     markdownProps,
     content,
+    generating,
     isToolCallGenerating,
     isMessageGenerating,
     hasImages,
@@ -33,9 +35,8 @@ const DisplayContent = memo<{
     const message = normalizeThinkTags(processWithArtifact(content));
     if (isToolCallGenerating) return;
 
-    if ((!content && !hasImages) || content === LOADING_FLAT) {
-      return isMessageGenerating ? <ContentLoading id={id} /> : null;
-    }
+    if (content === LOADING_FLAT) return generating ? <ContentLoading id={id} /> : null;
+    if (!content && !hasImages) return <ContentLoading id={id} />;
 
     const contentParts = isMultimodal ? deserializeParts(tempDisplayContent || content) : null;
 
