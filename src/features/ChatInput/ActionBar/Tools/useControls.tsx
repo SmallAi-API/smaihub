@@ -300,10 +300,28 @@ export const useControls = ({ setUpdating }: { setUpdating: (updating: boolean) 
     [userAgentSkills, checked, togglePlugin, setUpdating],
   );
 
-  // Skills 列表项（包含 LobeHub Skill 和 Klavis）
-  // 已连接的排在前面
+  // Skills list items (including LobeHub Skill and Klavis)
+  // Connected items listed first, deduplicated by key (LobeHub takes priority)
   const skillItems = useMemo(() => {
-    const allItems = [...lobehubSkillItems, ...klavisServerItems];
+    // Deduplicate by key - LobeHub items take priority over Klavis
+    const seenKeys = new Set<string>();
+    const allItems: typeof lobehubSkillItems = [];
+
+    // Add LobeHub items first (they take priority)
+    for (const item of lobehubSkillItems) {
+      if (!seenKeys.has(item.key as string)) {
+        seenKeys.add(item.key as string);
+        allItems.push(item);
+      }
+    }
+
+    // Add Klavis items only if not already present
+    for (const item of klavisServerItems) {
+      if (!seenKeys.has(item.key as string)) {
+        seenKeys.add(item.key as string);
+        allItems.push(item);
+      }
+    }
 
     return allItems.sort((a, b) => {
       const isConnectedA =
