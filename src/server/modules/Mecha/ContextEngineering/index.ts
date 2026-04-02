@@ -60,6 +60,7 @@ export const serverMessagesEngine = async ({
   knowledge,
   agentDocuments,
   skillsConfig,
+  toolDiscoveryConfig,
   toolsConfig,
   capabilities,
   userMemory,
@@ -118,6 +119,7 @@ export const serverMessagesEngine = async ({
     timezone: userTimezone,
 
     // Tools configuration
+    toolDiscoveryConfig,
     toolsConfig: {
       manifests: toolsConfig?.manifests,
       tools: toolsConfig?.tools,
