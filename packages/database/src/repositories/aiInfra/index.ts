@@ -211,11 +211,11 @@ export class AiInfraRepos {
 
             // User hasn't modified local model
             if (!user)
-              return {
+              return injectSearchSettings(provider.id, {
                 ...item,
                 abilities: item.abilities || {},
                 providerId: provider.id,
-              };
+              });
 
             const mergedModel = {
               ...item,
