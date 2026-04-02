@@ -59,9 +59,6 @@ export const useCategory = () => {
     },
     ...(isLoginWithAuth ? profile : []),
     ...(isLoginWithAuth ? settings : []),
-    /* ↓ cloud slot ↓ */
-
-    /* ↑ cloud slot ↑ */
 
     ...(!hideDocs ? helps : []),
   ].filter(Boolean) as CellProps[];
