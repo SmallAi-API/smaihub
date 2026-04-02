@@ -6,6 +6,8 @@ import type {
 } from '@lobechat/types';
 import { and, desc, eq, inArray, isNotNull, isNull, ne, sql } from 'drizzle-orm';
 
+import { merge } from '@/utils/merge';
+
 import type { NewTask, NewTaskComment, TaskCommentItem, TaskItem } from '../schemas/task';
 import { taskComments, taskDependencies, taskDocuments, tasks } from '../schemas/task';
 import type { LobeChatDatabase } from '../type';
@@ -288,6 +290,21 @@ export class TaskModel {
     return result.length;
   }
 
+  // ========== Config ==========
+
+  /**
+   * Safely merge-update the task's config object.
+   * Reads the current config, shallow-merges the incoming partial, and writes back.
+   */
+  async updateTaskConfig(id: string, partial: Record<string, unknown>): Promise<TaskItem | null> {
+    const task = await this.findById(id);
+    if (!task) return null;
+
+    const current = (task.config as Record<string, unknown>) || {};
+    const config = merge(current, partial);
+    return this.update(id, { config });
+  }
+
   // ========== Checkpoint ==========
 
   getCheckpointConfig(task: TaskItem): CheckpointConfig {
@@ -295,11 +312,7 @@ export class TaskModel {
   }
 
   async updateCheckpointConfig(id: string, checkpoint: CheckpointConfig): Promise<TaskItem | null> {
-    const task = await this.findById(id);
-    if (!task) return null;
-
-    const config = { ...(task.config as Record<string, any>), checkpoint };
-    return this.update(id, { config });
+    return this.updateTaskConfig(id, { checkpoint });
   }
 
   // ========== Review Config ==========
@@ -309,11 +322,7 @@ export class TaskModel {
   }
 
   async updateReviewConfig(id: string, review: Record<string, any>): Promise<TaskItem | null> {
-    const task = await this.findById(id);
-    if (!task) return null;
-
-    const config = { ...(task.config as Record<string, any>), review };
-    return this.update(id, { config });
+    return this.updateTaskConfig(id, { review });
   }
 
   // Check if a task should pause after a topic completes
