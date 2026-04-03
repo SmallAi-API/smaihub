@@ -21,18 +21,15 @@ export const usePdfGeneration = (): PdfGenerationState => {
   const [pdfData, setPdfData] = useState<string | null>(null);
   const [filename, setFilename] = useState<string>('chat-export.pdf');
   const [error, setError] = useState<string | null>(null);
-  const [lastGeneratedKey, setLastGeneratedKey] = useState<string | null>(null);
 
   const exportPdfMutation = lambdaQuery.exporter.exportPdf.useMutation();
 
   const generatePdf = useCallback(
     async (params: PdfGenerationParams) => {
       const { content, sessionId, title, topicId } = params;
-      // Create a key to identify this specific request
-      const requestKey = `${sessionId}-${topicId || 'default'}-${content.length}`;
 
-      // Prevent multiple simultaneous requests or re-generating the same PDF
-      if (exportPdfMutation.isPending || lastGeneratedKey === requestKey) return;
+      // Prevent multiple simultaneous requests only; allow user to re-generate
+      if (exportPdfMutation.isPending) return;
 
       try {
         setError(null);
@@ -47,13 +44,12 @@ export const usePdfGeneration = (): PdfGenerationState => {
 
         setPdfData(result.pdf);
         setFilename(result.filename);
-        setLastGeneratedKey(requestKey);
       } catch (error) {
         console.error('Failed to generate PDF:', error);
         setError(error instanceof Error ? error.message : 'Failed to generate PDF');
       }
     },
-    [exportPdfMutation.mutateAsync, lastGeneratedKey],
+    [exportPdfMutation.mutateAsync],
   );
 
   const downloadPdf = useCallback(async () => {
