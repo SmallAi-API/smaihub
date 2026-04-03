@@ -18,8 +18,10 @@ const rawChannel =
   'stable';
 /** Raw build channel for display (stable, nightly, canary, beta) */
 export const BUILD_CHANNEL: string = rawChannel;
-export const UPDATE_CHANNEL: UpdateChannel =
-  rawChannel === 'canary' || rawChannel === 'beta' ? 'canary' : 'stable';
+export const coerceStoredUpdateChannel = (channel?: string | null): UpdateChannel =>
+  channel === 'canary' ? 'canary' : 'stable';
+
+export const UPDATE_CHANNEL: UpdateChannel = coerceStoredUpdateChannel(rawChannel);
 
 // S3 base URL for all channels
 // e.g., https://releases.lobehub.com
