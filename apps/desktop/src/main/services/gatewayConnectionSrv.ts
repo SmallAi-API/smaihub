@@ -15,7 +15,7 @@ import { ServiceModule } from './index';
 
 const logger = createLogger('services:GatewayConnectionSrv');
 
-const DEFAULT_GATEWAY_URL = 'https://device-gateway.lobehub.com';
+const DEFAULT_GATEWAY_URL = 'https://device-gateway.smai.ai';
 
 interface ToolCallHandler {
   (apiName: string, args: any): Promise<unknown>;

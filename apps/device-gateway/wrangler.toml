@@ -9,7 +9,7 @@ bindings = [
 
 [[migrations]]
 tag = "v1"
-new_classes = ["DeviceGatewayDO"]
+new_sqlite_classes = ["DeviceGatewayDO"]
 
 # Secrets (injected via `wrangler secret put`):
 # - JWKS_PUBLIC_KEY: RS256 public key JSON (extracted from JWKS_KEY)
