@@ -1,4 +1,4 @@
-import { type LobeChatPluginManifest } from '@lobehub/chat-plugin-sdk';
+import { type ToolManifest } from '@lobechat/types';
 import { describe, expect, it } from 'vitest';
 
 import { type ToolStoreState } from '../initialState';
@@ -26,7 +26,7 @@ const mockState = {
         createdAt: '2024-01-01',
         homepage: 'https://example.com/plugin-1',
         meta: { title: 'Plugin 1', description: 'Plugin 1 description' },
-      } as LobeChatPluginManifest,
+      } as ToolManifest,
       runtimeType: 'standalone',
       type: 'plugin',
     },
@@ -37,7 +37,7 @@ const mockState = {
         api: [{ name: 'api-2' }],
         author: 'Another Author',
         homepage: 'https://example.com/plugin-2',
-      } as LobeChatPluginManifest,
+      } as ToolManifest,
       runtimeType: 'default',
       type: 'plugin',
     },
@@ -65,7 +65,7 @@ const mockState = {
         identifier: 'builtin-1',
         api: [{ name: 'builtin-api-1' }],
         meta: { title: 'Builtin 1', description: 'Builtin 1 description' },
-      } as LobeChatPluginManifest,
+      } as ToolManifest,
     },
   ],
   pluginInstallLoading: {

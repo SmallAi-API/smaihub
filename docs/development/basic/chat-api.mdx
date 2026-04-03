@@ -95,98 +95,133 @@ sequenceDiagram
    - Handles different types of events (text, tool calls, reasoning, etc.)
    - Passes results back to client through callback functions
 
-6. **Plugin Calling Scenario**:
+### 6. Tool Calling Scenario
 
-   When the AI model returns a `tool_calls` field in its response, it triggers the plugin calling process:
-   - AI model returns response containing `tool_calls`, indicating a need to call tools
-   - Frontend handles tool calls via the `internal_callPluginApi` method
-   - Calls `runPluginApi` method to execute plugin functionality, including retrieving plugin settings and manifest, creating authentication headers, and sending requests to the plugin gateway
-   - After plugin execution completes, the result is returned to the AI model, which generates the final response based on the result
+When the AI model returns a `tool_calls` field in its
+response, the Agent issues a `call_tool` instruction.
+LobeHub supports three types of tools:
 
-   **Real-world Examples**:
-   - **Search Plugin**: When a user needs real-time information, the AI calls a web search plugin to retrieve the latest data
-   - **DALL-E Plugin**: When a user requests image generation, the AI calls the DALL-E plugin to create images
-   - **Midjourney Plugin**: Provides higher quality image generation capabilities by calling the Midjourney service via API
+**Builtin Tools**: Tools built into the application,
+executed directly via local executors.
 
-7. **Preset Task Processing**:
+- Frontend executes them directly on the client
+  via the `invokeBuiltinTool` method
+- Includes built-in features like search,
+  DALL-E image generation, etc.
 
-   Preset tasks are specific predefined functions that are typically triggered when users perform specific actions (rather than being part of the regular chat flow). These tasks use the `fetchPresetTaskResult` method, which is similar to the normal chat flow but uses specially designed prompt chains.
+**MCP Tools**: External tools connected via
+[Model Context Protocol](https://modelcontextprotocol.io/).
 
-   **Execution Timing**: Preset tasks are mainly triggered in the following scenarios:
-   1. **Agent Information Auto-generation**: Triggered when users create or edit an agent
-      - Agent avatar generation (via `autoPickEmoji` method)
-      - Agent description generation (via `autocompleteAgentDescription` method)
-      - Agent tag generation (via `autocompleteAgentTags` method)
-      - Agent title generation (via `autocompleteAgentTitle` method)
+- Frontend calls `MCPService` (`src/services/mcp.ts`)
+  via the `invokeMCPTypePlugin` method
+- Supports three connection modes:
+  stdio, HTTP (streamable-http/SSE), and cloud (Klavis)
+- MCP tool registration and discovery is managed
+  through MCP server configuration
 
-   2. **Message Translation**: Triggered when users manually click the translate button (via `translateMessage` method)
+**Plugin Tools**: Legacy plugin system,
+invoked via API gateway.
+This system is expected to be gradually deprecated
+in favor of the MCP tool system.
 
-   3. **Web Search**: When search is enabled but the model doesn't support tool calling, search functionality is implemented via `fetchPresetTaskResult`
+- Frontend calls them via the
+  `invokeBuiltinTool` method
+- Retrieves plugin settings and manifest,
+  creates authentication headers,
+  and sends requests to the plugin gateway
 
-   **Code Examples**:
+After tool execution completes, results are written to
+the message and returned to the Agent loop.
+The Agent then calls the LLM again to generate
+the final response based on tool results.
+The tool dispatch logic is in
+`src/store/chat/slices/plugin/actions/pluginTypes.ts`.
 
-   Agent avatar auto-generation implementation:
+### 7. Preset Task Processing
 
-   ```ts
-   // src/features/AgentSetting/store/action.ts
-   autoPickEmoji: async () => {
-     const { config, meta, dispatchMeta } = get();
-     const systemRole = config.systemRole;
+Preset tasks are predefined functions typically triggered
+when users perform specific actions
+(bypassing the Agent Runtime loop, calling LLM directly).
+These tasks use the `fetchPresetTaskResult` method,
+which is similar to the normal chat flow
+but uses specially designed prompt chains.
 
-     chatService.fetchPresetTaskResult({
-       onFinish: async (emoji) => {
-         dispatchMeta({ type: 'update', value: { avatar: emoji } });
-       },
-       onLoadingChange: (loading) => {
-         get().updateLoadingState('avatar', loading);
-       },
-       params: merge(
-         get().internal_getSystemAgentForMeta(),
-         chainPickEmoji([meta.title, meta.description, systemRole].filter(Boolean).join(',')),
-       ),
-       trace: get().getCurrentTracePayload({ traceName: TraceNameMap.EmojiPicker }),
-     });
-   };
-   ```
+**Execution Timing**: Preset tasks are mainly triggered in the following scenarios:
 
-   Translation feature implementation:
+1. **Agent Information Auto-generation**: Triggered when users create or edit an agent
+   - Agent avatar generation (via `autoPickEmoji` method)
+   - Agent description generation (via `autocompleteAgentDescription` method)
+   - Agent tag generation (via `autocompleteAgentTags` method)
+   - Agent title generation (via `autocompleteAgentTitle` method)
 
-   ```ts
-   // src/store/chat/slices/translate/action.ts
-   translateMessage: async (id, targetLang) => {
-     // ...omitted code...
+2. **Message Translation**: Triggered when users manually click the translate button (via `translateMessage` method)
 
-     // Detect language
-     chatService.fetchPresetTaskResult({
-       onFinish: async (data) => {
-         if (data && supportLocales.includes(data)) from = data;
-         await updateMessageTranslate(id, { content, from, to: targetLang });
-       },
-       params: merge(translationSetting, chainLangDetect(message.content)),
-       trace: get().getCurrentTracePayload({ traceName: TraceNameMap.LanguageDetect }),
-     });
+3. **Web Search**: When search is enabled but the model doesn't support tool calling, search functionality is implemented via `fetchPresetTaskResult`
 
-     // Perform translation
-     chatService.fetchPresetTaskResult({
-       onMessageHandle: (chunk) => {
-         if (chunk.type === 'text') {
-           content = chunk.text;
-           internal_dispatchMessage({
-             id,
-             type: 'updateMessageTranslate',
-             value: { content, from, to: targetLang },
-           });
-         }
-       },
-       onFinish: async () => {
-         await updateMessageTranslate(id, { content, from, to: targetLang });
-         internal_toggleChatLoading(false, id, n('translateMessage(end)', { id }) as string);
-       },
-       params: merge(translationSetting, chainTranslate(message.content, targetLang)),
-       trace: get().getCurrentTracePayload({ traceName: TraceNameMap.Translation }),
-     });
-   };
-   ```
+**Code Examples**:
+
+Agent avatar auto-generation implementation:
+
+```ts
+// src/features/AgentSetting/store/action.ts
+autoPickEmoji: async () => {
+  const { config, meta, dispatchMeta } = get();
+  const systemRole = config.systemRole;
+
+  chatService.fetchPresetTaskResult({
+    onFinish: async (emoji) => {
+      dispatchMeta({ type: 'update', value: { avatar: emoji } });
+    },
+    onLoadingChange: (loading) => {
+      get().updateLoadingState('avatar', loading);
+    },
+    params: merge(
+      get().internal_getSystemAgentForMeta(),
+      chainPickEmoji([meta.title, meta.description, systemRole].filter(Boolean).join(',')),
+    ),
+    trace: get().getCurrentTracePayload({ traceName: TraceNameMap.EmojiPicker }),
+  });
+};
+```
+
+Translation feature implementation:
+
+```ts
+// src/store/chat/slices/translate/action.ts
+translateMessage: async (id, targetLang) => {
+  // ...omitted code...
+
+  // Detect language
+  chatService.fetchPresetTaskResult({
+    onFinish: async (data) => {
+      if (data && supportLocales.includes(data)) from = data;
+      await updateMessageTranslate(id, { content, from, to: targetLang });
+    },
+    params: merge(translationSetting, chainLangDetect(message.content)),
+    trace: get().getCurrentTracePayload({ traceName: TraceNameMap.LanguageDetect }),
+  });
+
+  // Perform translation
+  chatService.fetchPresetTaskResult({
+    onMessageHandle: (chunk) => {
+      if (chunk.type === 'text') {
+        content = chunk.text;
+        internal_dispatchMessage({
+          id,
+          type: 'updateMessageTranslate',
+          value: { content, from, to: targetLang },
+        });
+      }
+    },
+    onFinish: async () => {
+      await updateMessageTranslate(id, { content, from, to: targetLang });
+      internal_toggleChatLoading(false, id, n('translateMessage(end)', { id }) as string);
+    },
+    params: merge(translationSetting, chainTranslate(message.content, targetLang)),
+    trace: get().getCurrentTracePayload({ traceName: TraceNameMap.Translation }),
+  });
+};
+```
 
 8. **Completion**:
    - When the stream ends, the onFinish callback is called, providing the complete response result
@@ -234,6 +269,7 @@ AgentRuntime is a core abstraction layer in Lobe Chat that encapsulates a unifie
    ```
 
    **Adapter Implementation Examples**:
+
    1. **OpenRouter Adapter**: OpenRouter is a unified API that allows access to AI models from multiple providers. Lobe Chat implements support for OpenRouter through an adapter:
 
       ```ts
@@ -332,6 +368,7 @@ AgentRuntime is a core abstraction layer in Lobe Chat that encapsulates a unifie
       ```
 
    **Different Model Implementations**:
+
    - `src/libs/agent-runtime/openai/index.ts` - OpenAI implementation
    - `src/libs/agent-runtime/anthropic/index.ts` - Anthropic implementation
    - `src/libs/agent-runtime/google/index.ts` - Google implementation

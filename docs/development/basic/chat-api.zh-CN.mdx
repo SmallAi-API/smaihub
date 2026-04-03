@@ -93,98 +93,108 @@ sequenceDiagram
    - 对不同类型的事件（文本、工具调用、推理等）进行处理
    - 通过回调函数将结果传递回客户端
 
-6. **插件调用场景**：
+### 6. 工具调用场景
 
-   当 AI 模型在响应中返回 `tool_calls` 字段时，会触发插件调用流程：
-   - AI 模型返回包含 `tool_calls` 的响应，表明需要调用工具
-   - 前端通过 `internal_callPluginApi` 方法处理工具调用
-   - 调用 `runPluginApi` 方法执行插件功能，包括获取插件设置和清单、创建认证请求头、发送请求到插件网关
-   - 插件执行完成后，结果返回给 AI 模型，模型基于结果生成最终响应
+当 AI 模型在响应中返回 `tool_calls` 字段时，Agent 会发出 `call_tool` 指令。LobeHub 支持三种工具类型：
 
-   **实际应用示例**：
-   - **搜索插件**：当用户需要获取实时信息时，AI 会调用网页搜索插件来获取最新数据
-   - **DALL-E 插件**：用户要求生成图片时，AI 调用 DALL-E 插件创建图像
-   - **Midjourney 插件**：提供更高质量的图像生成能力，通过 API 调用 Midjourney 服务
+**Builtin 工具**：内置在应用中的工具，通过本地执行器直接运行。
 
-7. **预设任务处理**：
+- 前端通过 `invokeBuiltinTool` 方法在客户端直接执行
+- 包括搜索、DALL-E 图像生成等内置功能
 
-   预设任务是指系统预定义的特定功能任务，通常在用户执行特定操作时触发（而非常规聊天流程的一部分）。这些任务使用 `fetchPresetTaskResult` 方法执行，该方法与正常聊天流程类似，但会使用专门设计的提示词（prompt chain）。
+**MCP 工具**：通过 [Model Context Protocol](https://modelcontextprotocol.io/) 连接的外部工具。
 
-   **执行时机**：预设任务主要在以下场景被触发：
-   1. **角色信息自动生成**：当用户创建或编辑角色时触发
-      - 角色头像生成（通过 `autoPickEmoji` 方法）
-      - 角色描述生成（通过 `autocompleteAgentDescription` 方法）
-      - 角色标签生成（通过 `autocompleteAgentTags` 方法）
-      - 角色标题生成（通过 `autocompleteAgentTitle` 方法）
+- 前端通过 `invokeMCPTypePlugin` 方法调用 `MCPService`（`src/services/mcp.ts`）
+- 支持 stdio、HTTP（streamable-http/SSE）和云端（Klavis）三种连接方式
+- MCP 工具的注册和发现通过 MCP 服务器配置管理
 
-   2. **消息翻译**：用户手动点击翻译按钮时触发（通过 `translateMessage` 方法）
+**Plugin 工具**：传统插件体系，通过 API 网关调用。该体系预期将逐步废弃，由 MCP 工具体系替代。
 
-   3. **网页搜索**：当启用搜索但模型不支持工具调用时，通过 `fetchPresetTaskResult` 实现搜索功能
+- 前端通过 `invokeBuiltinTool` 方法调用
+- 获取插件设置和清单、创建认证请求头、发送请求到插件网关
 
-   **实际代码示例**：
+工具执行完成后，结果写入消息并返回给 Agent 循环，Agent 会再次调用 LLM 基于工具结果生成最终响应。工具分发逻辑位于 `src/store/chat/slices/plugin/actions/pluginTypes.ts`。
 
-   角色头像自动生成实现：
+### 7. 预设任务处理
 
-   ```ts
-   // src/features/AgentSetting/store/action.ts
-   autoPickEmoji: async () => {
-     const { config, meta, dispatchMeta } = get();
-     const systemRole = config.systemRole;
+预设任务是系统预定义的特定功能任务，通常在用户执行特定操作时触发（不经过 Agent Runtime 循环，直接调用 LLM）。这些任务使用 `fetchPresetTaskResult` 方法执行，该方法与正常聊天流程类似，但会使用专门设计的提示词（prompt chain）。
 
-     chatService.fetchPresetTaskResult({
-       onFinish: async (emoji) => {
-         dispatchMeta({ type: 'update', value: { avatar: emoji } });
-       },
-       onLoadingChange: (loading) => {
-         get().updateLoadingState('avatar', loading);
-       },
-       params: merge(
-         get().internal_getSystemAgentForMeta(),
-         chainPickEmoji([meta.title, meta.description, systemRole].filter(Boolean).join(',')),
-       ),
-       trace: get().getCurrentTracePayload({ traceName: TraceNameMap.EmojiPicker }),
-     });
-   };
-   ```
+**执行时机**：预设任务主要在以下场景被触发：
 
-   翻译功能实现：
+1. **角色信息自动生成**：当用户创建或编辑角色时触发
+   - 角色头像生成（通过 `autoPickEmoji` 方法）
+   - 角色描述生成（通过 `autocompleteAgentDescription` 方法）
+   - 角色标签生成（通过 `autocompleteAgentTags` 方法）
+   - 角色标题生成（通过 `autocompleteAgentTitle` 方法）
 
-   ```ts
-   // src/store/chat/slices/translate/action.ts
-   translateMessage: async (id, targetLang) => {
-     // ...省略部分代码...
+2. **消息翻译**：用户手动点击翻译按钮时触发（通过 `translateMessage` 方法）
 
-     // 检测语言
-     chatService.fetchPresetTaskResult({
-       onFinish: async (data) => {
-         if (data && supportLocales.includes(data)) from = data;
-         await updateMessageTranslate(id, { content, from, to: targetLang });
-       },
-       params: merge(translationSetting, chainLangDetect(message.content)),
-       trace: get().getCurrentTracePayload({ traceName: TraceNameMap.LanguageDetect }),
-     });
+3. **网页搜索**：当启用搜索但模型不支持工具调用时，通过 `fetchPresetTaskResult` 实现搜索功能
 
-     // 执行翻译
-     chatService.fetchPresetTaskResult({
-       onMessageHandle: (chunk) => {
-         if (chunk.type === 'text') {
-           content = chunk.text;
-           internal_dispatchMessage({
-             id,
-             type: 'updateMessageTranslate',
-             value: { content, from, to: targetLang },
-           });
-         }
-       },
-       onFinish: async () => {
-         await updateMessageTranslate(id, { content, from, to: targetLang });
-         internal_toggleChatLoading(false, id, n('translateMessage(end)', { id }) as string);
-       },
-       params: merge(translationSetting, chainTranslate(message.content, targetLang)),
-       trace: get().getCurrentTracePayload({ traceName: TraceNameMap.Translation }),
-     });
-   };
-   ```
+**实际代码示例**：
+
+角色头像自动生成实现：
+
+```ts
+// src/features/AgentSetting/store/action.ts
+autoPickEmoji: async () => {
+  const { config, meta, dispatchMeta } = get();
+  const systemRole = config.systemRole;
+
+  chatService.fetchPresetTaskResult({
+    onFinish: async (emoji) => {
+      dispatchMeta({ type: 'update', value: { avatar: emoji } });
+    },
+    onLoadingChange: (loading) => {
+      get().updateLoadingState('avatar', loading);
+    },
+    params: merge(
+      get().internal_getSystemAgentForMeta(),
+      chainPickEmoji([meta.title, meta.description, systemRole].filter(Boolean).join(',')),
+    ),
+    trace: get().getCurrentTracePayload({ traceName: TraceNameMap.EmojiPicker }),
+  });
+};
+```
+
+翻译功能实现：
+
+```ts
+// src/store/chat/slices/translate/action.ts
+translateMessage: async (id, targetLang) => {
+  // ...省略部分代码...
+
+  // 检测语言
+  chatService.fetchPresetTaskResult({
+    onFinish: async (data) => {
+      if (data && supportLocales.includes(data)) from = data;
+      await updateMessageTranslate(id, { content, from, to: targetLang });
+    },
+    params: merge(translationSetting, chainLangDetect(message.content)),
+    trace: get().getCurrentTracePayload({ traceName: TraceNameMap.LanguageDetect }),
+  });
+
+  // 执行翻译
+  chatService.fetchPresetTaskResult({
+    onMessageHandle: (chunk) => {
+      if (chunk.type === 'text') {
+        content = chunk.text;
+        internal_dispatchMessage({
+          id,
+          type: 'updateMessageTranslate',
+          value: { content, from, to: targetLang },
+        });
+      }
+    },
+    onFinish: async () => {
+      await updateMessageTranslate(id, { content, from, to: targetLang });
+      internal_toggleChatLoading(false, id, n('translateMessage(end)', { id }) as string);
+    },
+    params: merge(translationSetting, chainTranslate(message.content, targetLang)),
+    trace: get().getCurrentTracePayload({ traceName: TraceNameMap.Translation }),
+  });
+};
+```
 
 8. **完成**：
    - 当流结束时，调用 onFinish 回调，提供完整的响应结果
@@ -232,6 +242,7 @@ AgentRuntime 是 Lobe Chat 中的一个核心抽象层，它封装了与不同 A
    ```
 
    **适配器实现示例**：
+
    1. **OpenRouter 适配器**：OpenRouter 是一个统一 API，可以通过它访问多个模型提供商的 AI 模型。Lobe Chat 通过适配器实现对 OpenRouter 的支持：
 
       ```ts

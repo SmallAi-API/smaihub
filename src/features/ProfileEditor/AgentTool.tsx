@@ -72,6 +72,7 @@ const AgentTool = memo<AgentToolProps>(
     const config = useAgentStore(agentSelectors.getAgentConfigById(effectiveAgentId), isEqual);
 
     // Plugin state management
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const plugins = config?.plugins || [];
 
     const updateAgentConfigById = useAgentStore((s) => s.updateAgentConfigById);
@@ -96,6 +97,7 @@ const AgentTool = memo<AgentToolProps>(
     const isKlavisEnabledInEnv = useServerConfigStore(serverConfigSelectors.enableKlavis);
 
     // LobeHub Skill 相关状态
+    // eslint-disable-next-line unused-imports/no-unused-vars
     const allLobehubSkillServers = useToolStore(lobehubSkillStoreSelectors.getServers, isEqual);
     const isLobehubSkillEnabled = useServerConfigStore(serverConfigSelectors.enableLobehubSkill);
 
@@ -116,19 +118,16 @@ const AgentTool = memo<AgentToolProps>(
 
     // Fetch plugins
     const [
-      useFetchPluginStore,
       useFetchUserKlavisServers,
       useFetchLobehubSkillConnections,
       useFetchUninstalledBuiltinTools,
       useFetchAgentSkills,
     ] = useToolStore((s) => [
-      s.useFetchPluginStore,
       s.useFetchUserKlavisServers,
       s.useFetchLobehubSkillConnections,
       s.useFetchUninstalledBuiltinTools,
       s.useFetchAgentSkills,
     ]);
-    useFetchPluginStore();
     useFetchInstalledPlugins();
     useFetchUninstalledBuiltinTools(true);
     useFetchAgentSkills(true);
@@ -202,6 +201,7 @@ const AgentTool = memo<AgentToolProps>(
     }, [plugins.length]);
 
     // 根据 identifier 获取已连接的服务器
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const getServerByName = (identifier: string) => {
       return allKlavisServers.find((server) => server.identifier === identifier);
     };
@@ -271,7 +271,7 @@ const AgentTool = memo<AgentToolProps>(
               ),
             }))
           : [],
-      [isKlavisEnabledInEnv, allKlavisServers, effectiveAgentId],
+      [isKlavisEnabledInEnv, effectiveAgentId, getServerByName],
     );
 
     // LobeHub Skill Provider 列表项
@@ -296,7 +296,7 @@ const AgentTool = memo<AgentToolProps>(
               ),
             }))
           : [],
-      [isLobehubSkillEnabled, allLobehubSkillServers, effectiveAgentId],
+      [isLobehubSkillEnabled, effectiveAgentId],
     );
 
     // Handle plugin remove via Tag close - use byId actions

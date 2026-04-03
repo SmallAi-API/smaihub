@@ -59,20 +59,17 @@ export const useControls = ({ setUpdating }: { setUpdating: (updating: boolean) 
   const userAgentSkills = useToolStore(agentSkillsSelectors.getUserAgentSkills, isEqual);
 
   const [
-    useFetchPluginStore,
     useFetchUserKlavisServers,
     useFetchLobehubSkillConnections,
     useFetchUninstalledBuiltinTools,
     useFetchAgentSkills,
   ] = useToolStore((s) => [
-    s.useFetchPluginStore,
     s.useFetchUserKlavisServers,
     s.useFetchLobehubSkillConnections,
     s.useFetchUninstalledBuiltinTools,
     s.useFetchAgentSkills,
   ]);
 
-  useFetchPluginStore();
   useFetchInstalledPlugins();
   useFetchUninstalledBuiltinTools(true);
   useFetchAgentSkills(true);
@@ -85,6 +82,7 @@ export const useControls = ({ setUpdating }: { setUpdating: (updating: boolean) 
   useFetchLobehubSkillConnections(isLobehubSkillEnabled);
 
   // 根据 identifier 获取已连接的服务器
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getServerByName = (identifier: string) => {
     return allKlavisServers.find((server) => server.identifier === identifier);
   };
@@ -164,7 +162,7 @@ export const useControls = ({ setUpdating }: { setUpdating: (updating: boolean) 
             ),
           }))
         : [],
-    [isKlavisEnabledInEnv, allKlavisServers, installedKlavisIds, recommendedKlavisIds, agentId],
+    [isKlavisEnabledInEnv, installedKlavisIds, recommendedKlavisIds, agentId, getServerByName],
   );
 
   // LobeHub Skill Provider 列表项 - 只展示已安装或推荐的
@@ -192,13 +190,7 @@ export const useControls = ({ setUpdating }: { setUpdating: (updating: boolean) 
             ),
           }))
         : [],
-    [
-      isLobehubSkillEnabled,
-      allLobehubSkillServers,
-      installedLobehubIds,
-      recommendedLobehubIds,
-      agentId,
-    ],
+    [isLobehubSkillEnabled, installedLobehubIds, recommendedLobehubIds, agentId],
   );
 
   // Builtin 工具列表项（不包含 Klavis 和 LobeHub Skill）
