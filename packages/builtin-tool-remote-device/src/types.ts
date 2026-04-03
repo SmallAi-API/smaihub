@@ -1,4 +1,4 @@
-export const RemoteDeviceIdentifier = 'lobe-remote-device';
+export const RemoteDeviceIdentifier = 'remote-device';
 
 export const RemoteDeviceApiName = {
   activateDevice: 'activateDevice',
