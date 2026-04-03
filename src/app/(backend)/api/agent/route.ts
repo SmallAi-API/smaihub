@@ -65,6 +65,8 @@ export async function POST(request: NextRequest) {
       appContext,
       autoStart = true,
       existingMessageIds,
+      cronJobId,
+      trigger,
     } = body;
 
     // Validate required parameters
@@ -91,9 +93,11 @@ export async function POST(request: NextRequest) {
       agentId,
       appContext,
       autoStart,
+      cronJobId,
       existingMessageIds,
       prompt,
       slug,
+      trigger,
     });
 
     const executionTime = Date.now() - startTime;

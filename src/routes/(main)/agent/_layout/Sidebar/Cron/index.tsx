@@ -11,7 +11,6 @@ import EmptyNavItem from '@/features/NavPanel/components/EmptyNavItem';
 import SkeletonList from '@/features/NavPanel/components/SkeletonList';
 import { useQueryRoute } from '@/hooks/useQueryRoute';
 import { useAgentStore } from '@/store/agent';
-import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 
 import CronTopicGroup from './CronTopicGroup';
 
@@ -27,17 +26,14 @@ const CronTopicList = memo<CronTopicListProps>(({ itemKey }) => {
     s.useFetchCronTopicsWithJobInfo,
   ]);
 
-  const enableBusinessFeatures = useServerConfigStore(serverConfigSelectors.enableBusinessFeatures);
   const { data: cronTopicsGroupsWithJobInfo = [], isLoading } = useFetchCronTopicsWithJobInfo(
     agentId,
-    enableBusinessFeatures,
+    true,
   );
   const handleCreateCronJob = useCallback(() => {
     if (!agentId) return;
     router.push(urlJoin('/agent', agentId, 'cron', 'new'));
   }, [agentId, router]);
-
-  if (!enableBusinessFeatures) return null;
 
   const addAction = (
     <ActionIcon

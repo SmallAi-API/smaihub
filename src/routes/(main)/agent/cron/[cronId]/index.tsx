@@ -24,7 +24,6 @@ import { agentCronJobService } from '@/services/agentCronJob';
 import { topicService } from '@/services/topic';
 import { useAgentStore } from '@/store/agent';
 import { useChatStore } from '@/store/chat';
-import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
 import { labPreferSelectors } from '@/store/user/selectors';
 
@@ -87,8 +86,6 @@ const CronJobDetailPage = memo(() => {
   const router = useQueryRoute();
   const { modal } = App.useApp();
   const enableRichRender = useUserStore(labPreferSelectors.enableInputMarkdown);
-  const enableBusinessFeatures = useServerConfigStore(serverConfigSelectors.enableBusinessFeatures);
-
   const isNewJob = cronId === 'new';
 
   const [draft, setDraft] = useState<CronJobDraft | null>(null);
@@ -118,7 +115,7 @@ const CronJobDetailPage = memo(() => {
   const cronListAgentId = activeAgentId || aid;
 
   const { data: cronJob, isLoading } = useSWR(
-    enableBusinessFeatures && cronId && !isNewJob ? ['cronJob', cronId] : null,
+    cronId && !isNewJob ? ['cronJob', cronId] : null,
     async () => {
       if (!cronId || isNewJob) return null;
       const result = await agentCronJobService.getById(cronId);
@@ -454,10 +451,6 @@ const CronJobDetailPage = memo(() => {
     readyRef.current = true;
     flushPendingSave();
   }, [cronJob, flushPendingSave]);
-
-  if (!enableBusinessFeatures) {
-    return null;
-  }
 
   return (
     <Flexbox flex={1} height={'100%'}>
