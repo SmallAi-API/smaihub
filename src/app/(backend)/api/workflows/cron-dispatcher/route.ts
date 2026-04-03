@@ -3,6 +3,7 @@ import { serve } from '@upstash/workflow/nextjs';
 import debug from 'debug';
 
 import { getServerDB } from '@/database/core/db-adaptor';
+import { appEnv } from '@/envs/app';
 import { executeDispatch } from '@/server/services/cronDispatcher';
 
 const log = debug('api-route:cron-dispatcher');
@@ -16,13 +17,13 @@ const headers = {
 /**
  * Cron Dispatcher Workflow
  *
- * Triggered by QStash Cron Schedule (every minute).
+ * Triggered by QStash Cron Schedule.
  * Scans enabled cron jobs, identifies those due for execution,
  * and dispatches each via QStash → /api/agent.
  *
  * Setup in Upstash Console:
  *   Destination: {APP_URL}/api/workflows/cron-dispatcher
- *   Schedule:    * * * * *
+ *   Schedule:    0 * * * *
  */
 export const { POST } = serve(
   async (context) => {
@@ -45,5 +46,6 @@ export const { POST } = serve(
       headers,
       token: process.env.QSTASH_TOKEN!,
     }),
+    url: `${appEnv.APP_URL}/api/workflows/cron-dispatcher`,
   },
 );
