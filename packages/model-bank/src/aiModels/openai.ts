@@ -1,11 +1,12 @@
-import type { ModelParamsSchema } from '../standard-parameters';
-import type {
-  AIChatModelCard,
-  AIEmbeddingModelCard,
-  AIImageModelCard,
-  AIRealtimeModelCard,
-  AISTTModelCard,
-  AITTSModelCard,
+/* eslint-disable no-restricted-syntax */
+import { type ModelParamsSchema } from '../standard-parameters';
+import {
+  type AIChatModelCard,
+  type AIEmbeddingModelCard,
+  type AIImageModelCard,
+  type AIRealtimeModelCard,
+  type AISTTModelCard,
+  type AITTSModelCard,
 } from '../types/aiModel';
 
 export const gptImage1ParamsSchema: ModelParamsSchema = {

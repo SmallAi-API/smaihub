@@ -26,6 +26,7 @@ import {
   type HandleCreateVideoWebhookPayload,
   type HandleCreateVideoWebhookResult,
   type ILobeAgentRuntimeErrorType,
+  type PollVideoStatusResult,
   type TextToSpeechPayload,
 } from '../../types';
 import { postProcessModelList } from '../../utils/postProcessModelList';
@@ -148,6 +149,10 @@ export interface CreateRouterRuntimeOptions<T extends Record<string, any> = any>
     payload: HandleCreateVideoWebhookPayload,
     options: CreateVideoOptions,
   ) => Promise<HandleCreateVideoWebhookResult>;
+  handlePollVideoStatus?: (
+    inferenceId: string,
+    options: CreateVideoOptions,
+  ) => Promise<PollVideoStatusResult>;
   id: string;
   models?:
     | ((params: { client: OpenAI }) => Promise<ChatModelCard[]>)
@@ -499,6 +504,15 @@ export const createRouterRuntime = ({
       const routerOptions = this.normalizeRouterOptions(matchedRouter);
       const { runtime } = await this.createRuntimeFromOption(matchedRouter, routerOptions[0]);
       return runtime.handleCreateVideoWebhook!(payload);
+    }
+
+    async handlePollVideoStatus(inferenceId: string) {
+      // For polling, we don't have model info, so use the first router (fallback)
+      const resolvedRouters = await this.resolveRouters();
+      const matchedRouter = resolvedRouters.at(-1)!;
+      const routerOptions = this.normalizeRouterOptions(matchedRouter);
+      const { runtime } = await this.createRuntimeFromOption(matchedRouter, routerOptions[0]);
+      return runtime.handlePollVideoStatus!(inferenceId);
     }
 
     async generateObject(payload: GenerateObjectPayload, options?: GenerateObjectOptions) {

@@ -2,9 +2,11 @@ import { LOBE_DEFAULT_MODEL_LIST, ModelProvider } from 'model-bank';
 import urlJoin from 'url-join';
 
 import { responsesAPIModels } from '../../const/models';
+import { createOpenAICompatibleRuntime } from '../../core/openaiCompatibleFactory';
 import { createRouterRuntime } from '../../core/RouterRuntime';
 import { type CreateRouterRuntimeOptions } from '../../core/RouterRuntime/createRuntime';
 import { detectModelProvider, processMultiProviderModelList } from '../../utils/modelParse';
+import { createSMAIVideo, pollSMAIVideoStatus } from './createVideo';
 
 // SmaiAI 默认 API 地址
 const DEFAULT_BASE_URL = 'https://api.smai.ai';
@@ -73,10 +75,31 @@ const fetchPricing = async (pricingUrl: string, apiKey: string): Promise<SMAIPri
       return await parsePricingResponse(pricingResponse);
     }
   } catch (error) {
-    console.debug('Failed to fetch SMAI pricing info:', error);
+    console.info('Failed to fetch SMAI pricing info:', error);
     return null;
   }
 };
+
+/**
+ * SMAI video runtime using OpenAI-compatible factory with custom video endpoints.
+ * Uses /v1/video for creation and /v1/video/{id} for status polling.
+ */
+const SMAIVideoRuntime = createOpenAICompatibleRuntime({
+  baseURL: 'https://api.smai.ai/v1',
+  createVideo: createSMAIVideo,
+  handlePollVideoStatus: async (inferenceId, options) => {
+    return pollSMAIVideoStatus(inferenceId, {
+      apiKey: options.apiKey,
+      baseURL: options.baseURL || 'https://api.smai.ai/v1',
+    });
+  },
+  provider: ModelProvider.SMAI,
+});
+
+// Get video model IDs from the default model list
+const smaiVideoModelIds = LOBE_DEFAULT_MODEL_LIST.filter(
+  (m) => m.providerId === 'smai' && m.type === 'video',
+).map((m) => m.id);
 
 export const params = {
   debug: {
@@ -186,6 +209,15 @@ export const params = {
     const rawBaseURL = options.baseURL?.replace(/\/v\d+[a-z]*\/?$/, '') || undefined;
     const userBaseURL = rawBaseURL || DEFAULT_BASE_URL;
     return [
+      {
+        apiType: 'openai' as const,
+        models: smaiVideoModelIds,
+        options: {
+          ...options,
+          baseURL: urlJoin(userBaseURL, '/v1'),
+        },
+        runtime: SMAIVideoRuntime,
+      },
       {
         apiType: 'anthropic',
         models: LOBE_DEFAULT_MODEL_LIST.map((m) => m.id).filter(

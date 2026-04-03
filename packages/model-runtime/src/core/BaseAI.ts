@@ -21,7 +21,6 @@ import type {
   TextToSpeechPayload,
 } from '../types';
 
-/* eslint-disable sort-keys-fix/sort-keys-fix , typescript-sort-keys/interface */
 export interface LobeRuntimeAI {
   baseURL?: string;
   chat?: (payload: ChatStreamPayload, options?: ChatMethodOptions) => Promise<Response>;
@@ -39,6 +38,14 @@ export interface LobeRuntimeAI {
   handleCreateVideoWebhook?: (
     payload: HandleCreateVideoWebhookPayload,
   ) => Promise<HandleCreateVideoWebhookResult>;
+
+  handlePollVideoStatus?: (
+    inferenceId: string,
+  ) => Promise<
+    | { status: 'success'; videoUrl: string }
+    | { status: 'failed'; error: string }
+    | { status: 'pending' }
+  >;
 
   models?: () => Promise<any>;
 

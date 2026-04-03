@@ -4,6 +4,7 @@ import { type OpenAICompatibleFactoryOptions } from '../../core/openaiCompatible
 import { createOpenAICompatibleRuntime } from '../../core/openaiCompatibleFactory';
 import { processMultiProviderModelList } from '../../utils/modelParse';
 import { createWenxinImage } from './createImage';
+import { createWenxinVideo } from './createVideo';
 
 export interface WenxinModelCard {
   id: string;
@@ -36,6 +37,14 @@ export const params = {
   },
 
   createImage: createWenxinImage,
+  createVideo: createWenxinVideo,
+  handlePollVideoStatus: async (inferenceId, options) => {
+    const { pollWenxinVideoStatus } = await import('./createVideo');
+    return pollWenxinVideoStatus(inferenceId, {
+      apiKey: options.apiKey,
+      baseURL: (options.baseURL || '').replace('/v2', ''),
+    });
+  },
   debug: {
     chatCompletion: () => process.env.DEBUG_WENXIN_CHAT_COMPLETION === '1',
   },

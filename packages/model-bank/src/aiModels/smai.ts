@@ -51,7 +51,7 @@ export const seedance15ProParams: VideoModelParamsSchema = {
   },
   prompt: { default: '' },
   resolution: {
-    default: '720p',
+    default: '480p',
     enum: PRESET_VIDEO_RESOLUTIONS,
   },
   seed: { default: null },
@@ -123,27 +123,24 @@ export const qwenImageParamsSchema: ModelParamsSchema = {
 export const smaiVideoModels: AIVideoModelCard[] = [
   {
     description:
-      'Seedance 1.5 pro 是豆包大模型团队推出的新一代专业级音画同生视频模型。它在继承前代多镜头叙事与高清生成能力的基础上，原生支持音视频一体输出，致力于提供画面、人声、音乐、音效的全链路同步创作体验。同时，模型内置首尾帧功能，创作者只需设定视频的起始与结束画面，即可精准锁定视频的风格、构图与角色，并由此驱动模型生成帧间流畅自然的动态影像。音画同生，结合首尾帧控制，Seedance 1.5 pro显著提升了专业视频创作的效率、可控性与艺术表现力',
-    displayName: 'Seedance 1.5 Pro',
+      '豆包大模型团队推出的新一代专业级多模态创作视频模型 Seedance 2.0，支持图像、视频、音频等多模态作为参考输入生成视频，还具备视频编辑、延长等能力，能高精度还原各类细节并稳定角色特征，具备极致拟真的视听稳定性，深度适配商业广告、影视制作与社交媒体营销等各大核心场景',
+    displayName: 'Seedance 2.0 Pro',
     enabled: true,
-    id: 'doubao-seedance-1-5-pro-251215',
+    id: 'doubao-seedance-2-0-260128',
     organization: 'ByteDance',
     parameters: seedance15ProParams,
-    pricing: {
-      approximatePricePerVideo: 0.25,
-      units: [
-        {
-          lookup: {
-            pricingParams: ['generateAudio'],
-            prices: { false: 1.2, true: 2.4 },
-          },
-          name: 'videoGeneration',
-          strategy: 'lookup',
-          unit: 'millionTokens',
-        },
-      ],
-    },
-    releasedAt: '2026-2-23',
+    releasedAt: '2026-04-03',
+    type: 'video',
+  },
+  {
+    description:
+      'Seedance 2.0 fast是豆包大模型团队推出的新一代多模态视频创作模型，它继承了Seedance 2.0模型的核心功能和优势，生成速度更快',
+    displayName: 'Seedance 2.0 Fast',
+    enabled: true,
+    id: 'doubao-seedance-2-0-fast-260128',
+    organization: 'ByteDance',
+    parameters: seedance15ProParams,
+    releasedAt: '2026-04-03',
     type: 'video',
   },
 ];

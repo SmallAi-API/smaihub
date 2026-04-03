@@ -12,6 +12,7 @@
   "config.resolution.label": "解析度",
   "config.seed.label": "隨機種子",
   "config.seed.random": "隨機",
+  "config.size.label": "尺寸",
   "generation.actions.copyError": "複製錯誤信息",
   "generation.actions.errorCopied": "錯誤信息已複製到剪貼板",
   "generation.actions.errorCopyFailed": "複製錯誤信息失敗",
