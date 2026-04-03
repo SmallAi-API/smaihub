@@ -6,7 +6,7 @@ import { getDesktopEnv } from '@/env';
 const normalizeEnvValue = (value: string | undefined) => {
   if (!value) return undefined;
   const trimmed = value.trim();
-  return trimmed ? trimmed : undefined;
+  return trimmed || undefined;
 };
 
 const runtimeEnv = getDesktopEnv();
@@ -16,14 +16,10 @@ const rawChannel =
   normalizeEnvValue(runtimeEnv.UPDATE_CHANNEL) ||
   normalizeEnvValue(process.env.UPDATE_CHANNEL) ||
   'stable';
-const VALID_CHANNELS = new Set<UpdateChannel>(['stable', 'nightly', 'canary']);
 /** Raw build channel for display (stable, nightly, canary, beta) */
 export const BUILD_CHANNEL: string = rawChannel;
-export const UPDATE_CHANNEL: UpdateChannel = VALID_CHANNELS.has(rawChannel as UpdateChannel)
-  ? (rawChannel as UpdateChannel)
-  : rawChannel === 'beta'
-    ? 'nightly'
-    : 'stable';
+export const UPDATE_CHANNEL: UpdateChannel =
+  rawChannel === 'canary' || rawChannel === 'beta' ? 'canary' : 'stable';
 
 // S3 base URL for all channels
 // e.g., https://releases.lobehub.com
