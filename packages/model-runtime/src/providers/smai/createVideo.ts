@@ -11,6 +11,7 @@ const log = createDebug('lobe-video:smai');
 
 interface SMAIVideoTaskResponse {
   id?: string;
+  task_id?: string;
 }
 
 interface SMAIVideoStatusResponse {
@@ -19,23 +20,23 @@ interface SMAIVideoStatusResponse {
     message?: string;
   };
   id?: string;
-  output?: {
-    video_url?: string;
+  metadata?: {
+    url?: string;
   };
+  progress?: number;
   status?: string;
-  usage?: {
-    duration?: number;
-  };
+  task_id?: string;
 }
 
 /**
  * Query the status of a video generation task
+ * Endpoint: GET /v1/videos/{id}
  */
 export async function querySMAIVideoStatus(
   taskId: string,
   options: { apiKey: string; baseURL: string },
 ): Promise<SMAIVideoStatusResponse> {
-  const statusUrl = `${options.baseURL}/video/${taskId}`;
+  const statusUrl = `${options.baseURL}/videos/${taskId}`;
 
   log('Querying video status for: %s', taskId);
 
@@ -67,10 +68,11 @@ export async function pollSMAIVideoStatus(
 ): Promise<PollVideoStatusResult> {
   const response = await querySMAIVideoStatus(taskId, options);
 
-  if (response.status === 'completed' || response.status === 'succeed') {
-    const videoUrl = response.output?.video_url;
+  if (response.status === 'completed') {
+    // Video URL is in metadata.url (TOS signed URL, no auth needed)
+    const videoUrl = response.metadata?.url;
     if (!videoUrl) {
-      return { error: 'Task succeeded but no video URL found', status: 'failed' };
+      return { error: 'Task completed but no video URL found in metadata', status: 'failed' };
     }
     return { status: 'success', videoUrl };
   }
@@ -82,15 +84,15 @@ export async function pollSMAIVideoStatus(
     };
   }
 
-  // processing, pending, or any other status means still in progress
+  // queued, in_progress, or any other status means still pending
   return { status: 'pending' };
 }
 
 /**
  * SMAI video generation implementation
  *
- * Uses the Volcengine-style content format through SMAI's OpenAI-compatible proxy.
- * Endpoint: POST /v1/video
+ * Uses OpenAI Sora-compatible API format.
+ * Endpoint: POST /v1/videos
  *
  * Creates a video generation task and returns immediately with inferenceId.
  * The backend polls the task status using background polling mechanism.
@@ -100,49 +102,40 @@ export async function createSMAIVideo(
   options: CreateVideoOptions,
 ): Promise<CreateVideoResponse> {
   const { model, params } = payload;
-  const {
-    prompt,
-    imageUrl,
-    endImageUrl,
-    aspectRatio,
-    duration,
-    generateAudio,
-    seed,
-    resolution,
-    cameraFixed,
-  } = params;
+  const { prompt, imageUrl, aspectRatio, duration, generateAudio, seed, resolution, size } = params;
 
   log('Creating video with SMAI API - model: %s, params: %O', model, params);
 
   const baseURL = options.baseURL || 'https://api.smai.ai/v1';
 
-  // Build content array (Volcengine-style format)
-  const content: Record<string, unknown>[] = [{ text: prompt, type: 'text' }];
-
-  if (imageUrl) {
-    content.push({ image_url: { url: imageUrl }, role: 'first_frame', type: 'image_url' });
-  }
-
-  if (endImageUrl) {
-    content.push({ image_url: { url: endImageUrl }, role: 'last_frame', type: 'image_url' });
-  }
-
-  // Build request body
+  // Build request body (OpenAI Sora-compatible format)
   const body: Record<string, unknown> = {
-    content,
     model,
+    prompt,
   };
 
-  if (aspectRatio !== undefined) body.ratio = aspectRatio;
-  if (duration !== undefined) body.duration = duration;
-  if (generateAudio !== undefined) body.generate_audio = generateAudio;
-  if (seed !== undefined && seed !== null) body.seed = seed;
-  if (resolution !== undefined) body.resolution = resolution;
-  if (cameraFixed !== undefined) body.camera_fixed = cameraFixed;
+  // Duration as string "seconds" for Sora compatibility
+  if (duration !== undefined && duration !== null) {
+    body['seconds'] = duration.toString();
+  }
+
+  if (size) {
+    body['size'] = size;
+  }
+
+  if (aspectRatio !== undefined) body['aspect_ratio'] = aspectRatio;
+  if (generateAudio !== undefined) body['generate_audio'] = generateAudio;
+  if (seed !== undefined && seed !== null) body['seed'] = seed;
+  if (resolution !== undefined) body['resolution'] = resolution;
+
+  // Image-to-video support
+  if (imageUrl) {
+    body['input_reference'] = imageUrl;
+  }
 
   log('SMAI video API request body: %O', body);
 
-  const response = await fetch(`${baseURL}/video`, {
+  const response = await fetch(`${baseURL}/videos`, {
     body: JSON.stringify(body),
     headers: {
       'Authorization': `Bearer ${options.apiKey}`,
@@ -167,7 +160,5 @@ export async function createSMAIVideo(
   const inferenceId = data.id;
   log('Video task created with id: %s, returning immediately for background polling', inferenceId);
 
-  // Return immediately with inferenceId only
-  // Backend will poll the task status using the background polling mechanism
   return { inferenceId };
 }

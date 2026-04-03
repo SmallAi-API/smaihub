@@ -509,7 +509,7 @@ export const createRouterRuntime = ({
     async handlePollVideoStatus(inferenceId: string) {
       // For polling, we don't have model info, so use the first router (fallback)
       const resolvedRouters = await this.resolveRouters();
-      const matchedRouter = resolvedRouters.at(-1)!;
+      const matchedRouter = resolvedRouters[0];
       const routerOptions = this.normalizeRouterOptions(matchedRouter);
       const { runtime } = await this.createRuntimeFromOption(matchedRouter, routerOptions[0]);
       return runtime.handlePollVideoStatus!(inferenceId);
