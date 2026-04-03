@@ -229,7 +229,7 @@ describe('GatewayConnectionCtr', () => {
       expect(options).not.toBeNull();
       expect(options.token).toBe('mock-access-token');
       expect(options.deviceId).toBe('stored-device-id');
-      expect(options.gatewayUrl).toBe('https://device-gateway.lobehub.com');
+      expect(options.gatewayUrl).toBe('https://device-gateway.smai.ai');
       expect(options.logger).toBeDefined();
     });
 

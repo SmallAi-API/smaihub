@@ -32,7 +32,7 @@ export const STORE_DEFAULTS: ElectronMainStore = {
   gatewayDeviceId: '',
   gatewayDeviceName: '',
   gatewayEnabled: true,
-  gatewayUrl: 'https://device-gateway.lobehub.com',
+  gatewayUrl: 'https://device-gateway.smai.ai',
   locale: 'auto',
   networkProxy: defaultProxySettings,
   shortcuts: DEFAULT_SHORTCUTS_CONFIG,
