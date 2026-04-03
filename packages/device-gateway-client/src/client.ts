@@ -17,7 +17,7 @@ import type {
 
 // ─── Constants ───
 
-const DEFAULT_GATEWAY_URL = 'https://device-gateway.lobehub.com';
+const DEFAULT_GATEWAY_URL = 'https://device-gateway.smai.ai';
 const HEARTBEAT_INTERVAL = 30_000; // 30s
 const INITIAL_RECONNECT_DELAY = 1000; // 1s
 const MAX_RECONNECT_DELAY = 30_000; // 30s
@@ -294,9 +294,7 @@ export class GatewayClient extends EventEmitter {
     this.heartbeatTimer = setInterval(() => {
       this.missedHeartbeats++;
       if (this.missedHeartbeats > MAX_MISSED_HEARTBEATS) {
-        this.logger.warn(
-          `Missed ${this.missedHeartbeats} heartbeat acks, forcing reconnect`,
-        );
+        this.logger.warn(`Missed ${this.missedHeartbeats} heartbeat acks, forcing reconnect`);
         this.closeWebSocket();
         // handleClose won't fire after removeAllListeners, so trigger reconnect manually
         this.stopHeartbeat();
