@@ -15,43 +15,40 @@ import { MessageModel } from '@/database/models/message';
 import { AiInfraRepos } from '@/database/repositories/aiInfra';
 import { knowledgeBaseFiles } from '@/database/schemas';
 import { authedProcedure, router } from '@/libs/trpc/lambda';
-import { keyVaults, serverDatabase } from '@/libs/trpc/lambda/middleware';
+import { serverDatabase } from '@/libs/trpc/lambda/middleware';
 import { getServerDefaultFilesConfig, getServerGlobalConfig } from '@/server/globalConfig';
 import { initModelRuntimeFromDB } from '@/server/modules/ModelRuntime';
 import { ChunkService } from '@/server/services/chunk';
 import { DocumentService } from '@/server/services/document';
 
-const chunkProcedure = authedProcedure
-  .use(serverDatabase)
-  .use(keyVaults)
-  .use(async (opts) => {
-    const { ctx } = opts;
-    const globalConfig = await getServerGlobalConfig();
+const chunkProcedure = authedProcedure.use(serverDatabase).use(async (opts) => {
+  const { ctx } = opts;
+  const globalConfig = await getServerGlobalConfig();
 
-    // Convert ServerModelProviderConfig to ProviderConfig format
-    const providerConfigs: Record<string, { enabled: boolean }> = {};
-    if (globalConfig.aiProvider) {
-      for (const [key, value] of Object.entries(globalConfig.aiProvider)) {
-        if (value) {
-          providerConfigs[key] = { enabled: value.enabled ?? false };
-        }
+  // Convert ServerModelProviderConfig to ProviderConfig format
+  const providerConfigs: Record<string, { enabled: boolean }> = {};
+  if (globalConfig.aiProvider) {
+    for (const [key, value] of Object.entries(globalConfig.aiProvider)) {
+      if (value) {
+        providerConfigs[key] = { enabled: value.enabled ?? false };
       }
     }
+  }
 
-    return opts.next({
-      ctx: {
-        aiInfraRepos: new AiInfraRepos(ctx.serverDB, ctx.userId, providerConfigs),
-        asyncTaskModel: new AsyncTaskModel(ctx.serverDB, ctx.userId),
-        chunkModel: new ChunkModel(ctx.serverDB, ctx.userId),
-        chunkService: new ChunkService(ctx.serverDB, ctx.userId),
-        documentModel: new DocumentModel(ctx.serverDB, ctx.userId),
-        documentService: new DocumentService(ctx.serverDB, ctx.userId),
-        embeddingModel: new EmbeddingModel(ctx.serverDB, ctx.userId),
-        fileModel: new FileModel(ctx.serverDB, ctx.userId),
-        messageModel: new MessageModel(ctx.serverDB, ctx.userId),
-      },
-    });
+  return opts.next({
+    ctx: {
+      aiInfraRepos: new AiInfraRepos(ctx.serverDB, ctx.userId, providerConfigs),
+      asyncTaskModel: new AsyncTaskModel(ctx.serverDB, ctx.userId),
+      chunkModel: new ChunkModel(ctx.serverDB, ctx.userId),
+      chunkService: new ChunkService(ctx.serverDB, ctx.userId),
+      documentModel: new DocumentModel(ctx.serverDB, ctx.userId),
+      documentService: new DocumentService(ctx.serverDB, ctx.userId),
+      embeddingModel: new EmbeddingModel(ctx.serverDB, ctx.userId),
+      fileModel: new FileModel(ctx.serverDB, ctx.userId),
+      messageModel: new MessageModel(ctx.serverDB, ctx.userId),
+    },
   });
+});
 
 /**
  * Group chunks by file and calculate relevance scores
@@ -271,7 +268,6 @@ export const chunkRouter = router({
         const defaultConfig =
           getServerDefaultFilesConfig().embeddingModel || DEFAULT_FILE_EMBEDDING_MODEL_ITEM;
         const { model } = defaultConfig;
-        let embedding: number[];
 
         // Get user's enabled embedding providers (sorted by user preference)
         const enabledEmbeddingProviders = await ctx.aiInfraRepos.getEnabledEmbeddingProviders();
@@ -297,7 +293,7 @@ export const chunkRouter = router({
           { metadata: { trigger: RequestTrigger.SemanticSearch }, user: ctx.userId },
         );
 
-        embedding = embeddings![0];
+        const embedding = embeddings![0];
 
         let finalFileIds = input.fileIds ?? [];
 
