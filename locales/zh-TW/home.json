@@ -11,7 +11,6 @@
   "starter.developing": "開發中",
   "starter.image": "繪圖",
   "starter.imageGeneration": "圖像生成",
-  "starter.text2video": "影片",
-  "starter.videoGeneration": "視頻生成",
+  "starter.videoGeneration": "Seedance 2.0",
   "starter.write": "寫作"
 }
