@@ -87,7 +87,7 @@ const ResourceExplorer = memo(() => {
     searchQuery,
   });
 
-  const showEmptyStatus = !isLoading && !isValidating && data?.length === 0 && !currentFolderSlug;
+  const showEmptyStatus = !isLoading && !isValidating && data?.length === 0;
 
   return (
     <KnowledgeBaseListProvider>
