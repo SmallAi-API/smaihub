@@ -72,10 +72,8 @@ export class AgentActionImpl {
       },
     });
 
-    // 停止 loading 状态
-    this.#get().internal_toggleMessageLoading(false, assistantId);
-
-    // 清理操作 (this will cancel the operation)
+    // Stop loading state
+    // Clean up operation (this will cancel the operation)
     this.#get().internal_cleanupAgentOperation(assistantId);
   };
 
@@ -131,7 +129,7 @@ export class AgentActionImpl {
 
         // Stop loading state
         log(`Stopping loading for completed agent runtime: ${assistantId}`);
-        this.#get().internal_toggleMessageLoading(false, assistantId);
+
         break;
       }
 
@@ -235,7 +233,6 @@ export class AgentActionImpl {
 
         // 停止 loading 状态
         log(`Stopping loading for ${assistantId}`);
-        this.#get().internal_toggleMessageLoading(false, assistantId);
 
         // 显示桌面通知
         if (isDesktop) {
@@ -290,7 +287,6 @@ export class AgentActionImpl {
 
           // 停止 loading 状态，等待人工干预
           log(`Stopping loading for human approval: ${assistantId}`);
-          this.#get().internal_toggleMessageLoading(false, assistantId);
         } else if (phase === 'tool_execution' && toolCall) {
           log(`Tool execution started for ${assistantId}: ${toolCall.function?.name}`);
         }
@@ -312,7 +308,6 @@ export class AgentActionImpl {
           });
 
           log(`Stopping loading for completed agent: ${assistantId}`);
-          this.#get().internal_toggleMessageLoading(false, assistantId);
         }
         break;
       }
@@ -361,9 +356,6 @@ export class AgentActionImpl {
         data,
         operationId: messageOpId,
       });
-
-      // 重新开始 loading 状态
-      this.#get().internal_toggleMessageLoading(true, assistantId);
 
       // 清除人工干预状态
       this.#get().updateOperationMetadata(messageOpId, {
