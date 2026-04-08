@@ -120,16 +120,46 @@ export const qwenImageParamsSchema: ModelParamsSchema = {
   width: { default: 1328, max: 1536, min: 512, step: 1 },
 };
 
+export const seedance20Params: VideoModelParamsSchema = {
+  aspectRatio: {
+    default: 'adaptive',
+    enum: ['adaptive', ...PRESET_VIDEO_ASPECT_RATIOS],
+  },
+  duration: { default: 5, max: 15, min: 4 },
+  endImageUrl: {
+    aspectRatio: { max: 2.5, min: 0.4 },
+    default: null,
+    height: { max: 6000, min: 300 },
+    maxFileSize: 30 * 1024 * 1024,
+    requiresImageUrl: true,
+    width: { max: 6000, min: 300 },
+  },
+  generateAudio: { default: true },
+  imageUrl: {
+    aspectRatio: { max: 2.5, min: 0.4 },
+    default: null,
+    height: { max: 6000, min: 300 },
+    maxFileSize: 30 * 1024 * 1024,
+    width: { max: 6000, min: 300 },
+  },
+  prompt: { default: '' },
+  resolution: {
+    default: '720p',
+    enum: ['480p', '720p'],
+  },
+  seed: { default: null },
+};
+
 export const smaiVideoModels: AIVideoModelCard[] = [
   {
     description:
       '豆包大模型团队推出的新一代专业级多模态创作视频模型 Seedance 2.0，支持图像、视频、音频等多模态作为参考输入生成视频，还具备视频编辑、延长等能力，能高精度还原各类细节并稳定角色特征，具备极致拟真的视听稳定性，深度适配商业广告、影视制作与社交媒体营销等各大核心场景',
-    displayName: 'Seedance 2.0 Pro',
+    displayName: 'Seedance 2.0',
     enabled: true,
     id: 'doubao-seedance-2-0-260128',
     organization: 'ByteDance',
-    parameters: seedance15ProParams,
-    releasedAt: '2026-04-03',
+    parameters: seedance20Params,
+    releasedAt: '2026-04-08',
     type: 'video',
   },
   {
@@ -139,8 +169,8 @@ export const smaiVideoModels: AIVideoModelCard[] = [
     enabled: true,
     id: 'doubao-seedance-2-0-fast-260128',
     organization: 'ByteDance',
-    parameters: seedance15ProParams,
-    releasedAt: '2026-04-03',
+    parameters: seedance20Params,
+    releasedAt: '2026-04-08',
     type: 'video',
   },
 ];
