@@ -89,6 +89,7 @@ export { default as smai } from './smai';
 export { default as spark } from './spark';
 export { default as stepfun } from './stepfun';
 export { default as straico } from './straico';
+export { default as streamlake } from './streamlake';
 export { default as taichu } from './taichu';
 export { default as tencentcloud } from './tencentcloud';
 export { default as togetherai } from './togetherai';

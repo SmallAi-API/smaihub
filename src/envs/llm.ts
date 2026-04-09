@@ -228,6 +228,9 @@ export const getLLMConfig = () => {
       ENABLED_SMAI: z.boolean(),
       SMAI_API_KEY: z.string().optional(),
       SMAI_PROXY_URL: z.string().optional(),
+
+      ENABLED_STREAMLAKE: z.boolean(),
+      STREAMLAKE_API_KEY: z.string().optional(),
     },
     runtimeEnv: {
       API_KEY_SELECT_MODE: process.env.API_KEY_SELECT_MODE,
@@ -455,6 +458,9 @@ export const getLLMConfig = () => {
       ENABLED_SMAI: process.env.ENABLED_SMAI !== '0',
       SMAI_API_KEY: process.env.SMAI_API_KEY,
       SMAI_PROXY_URL: process.env.SMAIAI_PROXY_URL,
+
+      ENABLED_STREAMLAKE: !!process.env.STREAMLAKE_API_KEY,
+      STREAMLAKE_API_KEY: process.env.STREAMLAKE_API_KEY,
     },
   });
 };
