@@ -229,6 +229,7 @@
   "operation.contextCompression": "內容過長，正在壓縮歷史記錄⋯⋯",
   "operation.execAgentRuntime": "正在準備回應",
   "operation.execClientTask": "執行任務中",
+  "operation.execServerAgentRuntime": "正在運行… 您可以切換任務或關閉頁面 — 任務將繼續進行。",
   "operation.sendMessage": "正在傳送訊息",
   "owner": "群組擁有者",
   "pageCopilot.title": "文稿助手",
