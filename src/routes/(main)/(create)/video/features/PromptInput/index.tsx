@@ -153,7 +153,7 @@ const SeedItem = memo(() => {
 
 interface SwitchItemProps {
   label: string;
-  paramName: 'cameraFixed' | 'generateAudio';
+  paramName: 'cameraFixed' | 'generateAudio' | 'watermark' | 'webSearch';
 }
 
 const SwitchItem = memo<SwitchItemProps>(({ label, paramName }) => {
@@ -167,11 +167,48 @@ const SwitchItem = memo<SwitchItemProps>(({ label, paramName }) => {
   );
 });
 
+const PromptExtendItem = memo(() => {
+  const { t } = useTranslation('video');
+  const { value, setValue, enumValues } = useVideoGenerationConfigParam('promptExtend');
+
+  const options = enumValues?.map((item) => ({ label: item, value: item })) ?? [];
+
+  if (options.length > 0) {
+    return (
+      <Flexbox gap={6}>
+        <Text weight={500}>{t('config.promptExtend.label')}</Text>
+        <Segmented
+          block
+          options={options}
+          style={{ width: '100%' }}
+          value={value as string}
+          variant="filled"
+          onChange={(next) => setValue(String(next) as any)}
+        />
+      </Flexbox>
+    );
+  }
+
+  return (
+    <Flexbox horizontal align="center" justify="space-between" padding={'0 2px'}>
+      <Text weight={500}>{t('config.promptExtend.label')}</Text>
+      <Switch checked={!!value} onChange={(checked) => setValue(checked as any)} />
+    </Flexbox>
+  );
+});
+
 const PromptInput = ({ showTitle = false }: PromptInputProps) => {
   const isDarkMode = useIsDark();
   const { t } = useTranslation('video');
   const { value, setValue } = useVideoGenerationConfigParam('prompt');
   const { value: imageUrl, setValue: setImageUrl } = useVideoGenerationConfigParam('imageUrl');
+  const {
+    value: imageUrls,
+    setValue: setImageUrls,
+    maxCount: imageUrlsMaxCount,
+    maxFileSize: imageUrlsMaxFileSize,
+  } = useVideoGenerationConfigParam('imageUrls');
+  const { maxFileSize: imageUrlMaxFileSize } = useVideoGenerationConfigParam('imageUrl');
   const { value: endImageUrl, setValue: setEndImageUrl } =
     useVideoGenerationConfigParam('endImageUrl');
   const isCreating = useVideoStore(createVideoSelectors.isCreating);
@@ -182,6 +219,7 @@ const PromptInput = ({ showTitle = false }: PromptInputProps) => {
   const enabledVideoModelList = useAiInfraStore(aiProviderSelectors.enabledVideoModelList);
   const isInit = useVideoStore((s) => s.isInit);
   const isSupportImageUrl = useVideoStore(isSupportedParamSelector('imageUrl'));
+  const isSupportImageUrls = useVideoStore(isSupportedParamSelector('imageUrls'));
   const isSupportEndImageUrl = useVideoStore(isSupportedParamSelector('endImageUrl'));
   const isSupportAspectRatio = useVideoStore(isSupportedParamSelector('aspectRatio'));
   const isSupportResolution = useVideoStore(isSupportedParamSelector('resolution'));
@@ -189,7 +227,10 @@ const PromptInput = ({ showTitle = false }: PromptInputProps) => {
   const isSupportDuration = useVideoStore(isSupportedParamSelector('duration'));
   const isSupportSeed = useVideoStore(isSupportedParamSelector('seed'));
   const isSupportGenerateAudio = useVideoStore(isSupportedParamSelector('generateAudio'));
+  const isSupportPromptExtend = useVideoStore(isSupportedParamSelector('promptExtend'));
+  const isSupportWatermark = useVideoStore(isSupportedParamSelector('watermark'));
   const isSupportCameraFixed = useVideoStore(isSupportedParamSelector('cameraFixed'));
+  const isSupportWebSearch = useVideoStore(isSupportedParamSelector('webSearch'));
   const isLogin = useUserStore(authSelectors.isLogin);
   const { value: duration } = useVideoGenerationConfigParam('duration');
   useFetchAiVideoConfig();
@@ -237,26 +278,64 @@ const PromptInput = ({ showTitle = false }: PromptInputProps) => {
 
       setPromptParam(null);
 
-      // eslint-disable-next-line @eslint-react/web-api/no-leaked-timeout
-      setTimeout(async () => {
+      const timeoutId = window.setTimeout(async () => {
         await createVideo();
       }, 100);
+
+      return () => {
+        window.clearTimeout(timeoutId);
+      };
     }
   }, [promptParam, isLogin, setValue, setPromptParam, createVideo]);
 
-  const showInlineFrames = isSupportImageUrl || isSupportEndImageUrl;
-  const hasRefImages = Boolean(imageUrl || endImageUrl);
+  const showInlineFrames = isSupportImageUrl || isSupportImageUrls || isSupportEndImageUrl;
+  const framePreviewUrls = useMemo(
+    () => [imageUrl, ...(imageUrls ?? [])].filter(Boolean) as string[],
+    [imageUrl, imageUrls],
+  );
+  const hasRefImages = framePreviewUrls.length > 0 || Boolean(endImageUrl);
+  const maxCount = useMemo(() => {
+    let count = 0;
+    if (isSupportImageUrl) count += 1;
+    if (isSupportImageUrls) count += imageUrlsMaxCount ?? 4;
+    return count;
+  }, [isSupportImageUrl, isSupportImageUrls, imageUrlsMaxCount]);
 
-  const handleImageChange = useCallback(
-    (data: string | { dimensions?: { height: number; width: number }; url: string } | null) => {
-      if (data === null) {
-        setImageUrl(null as any);
-        return;
-      }
+  const handleAddImage = useCallback(
+    (data: string | { dimensions?: { height: number; width: number }; url: string }) => {
       const url = typeof data === 'string' ? data : data?.url;
-      setImageUrl((url ?? null) as any);
+      if (!url) return;
+      if (framePreviewUrls.length >= maxCount) return;
+
+      if (isSupportImageUrl && !imageUrl) {
+        setImageUrl(url);
+      } else if (isSupportImageUrls) {
+        setImageUrls([...(imageUrls ?? []), url] as any);
+      } else if (isSupportImageUrl) {
+        setImageUrl(url);
+      }
     },
-    [setImageUrl],
+    [
+      isSupportImageUrl,
+      isSupportImageUrls,
+      imageUrl,
+      imageUrls,
+      setImageUrl,
+      setImageUrls,
+      framePreviewUrls.length,
+      maxCount,
+    ],
+  );
+
+  const handleRemoveImage = useCallback(
+    (url: string) => {
+      if (url === imageUrl) {
+        setImageUrl(null);
+      } else {
+        setImageUrls((imageUrls ?? []).filter((item) => item !== url) as any);
+      }
+    },
+    [imageUrl, imageUrls, setImageUrl, setImageUrls],
   );
 
   const handleEndImageChange = useCallback(
@@ -287,9 +366,20 @@ const PromptInput = ({ showTitle = false }: PromptInputProps) => {
               <InlineVideoFrames
                 endImageUrl={endImageUrl}
                 imageUrl={imageUrl}
+                imageUrls={imageUrls}
                 isSupportEndImage={isSupportEndImageUrl}
+                maxCount={maxCount}
+                maxFileSize={imageUrlsMaxFileSize ?? imageUrlMaxFileSize}
                 onEndImageChange={handleEndImageChange}
-                onImageChange={handleImageChange}
+                onImageUrlsChange={handleAddImage}
+                onRemoveImageUrl={handleRemoveImage}
+                onImageChange={(data) => {
+                  if (data === null) {
+                    handleRemoveImage(imageUrl || '');
+                    return;
+                  }
+                  handleAddImage(data);
+                }}
               />
             ) : undefined
           }
@@ -344,9 +434,11 @@ const PromptInput = ({ showTitle = false }: PromptInputProps) => {
                         <SeedItem />
                       </Flexbox>
                     )}
-                    {(isSupportGenerateAudio || isSupportCameraFixed) && (
-                      <Divider style={{ marginBlock: 4 }} />
-                    )}
+                    {(isSupportGenerateAudio ||
+                      isSupportCameraFixed ||
+                      isSupportWatermark ||
+                      isSupportPromptExtend ||
+                      isSupportWebSearch) && <Divider style={{ marginBlock: 4 }} />}
                     {isSupportGenerateAudio && (
                       <SwitchItem
                         label={t('config.generateAudio.label')}
@@ -355,6 +447,13 @@ const PromptInput = ({ showTitle = false }: PromptInputProps) => {
                     )}
                     {isSupportCameraFixed && (
                       <SwitchItem label={t('config.cameraFixed.label')} paramName={'cameraFixed'} />
+                    )}
+                    {isSupportWatermark && (
+                      <SwitchItem label={t('config.watermark.label')} paramName={'watermark'} />
+                    )}
+                    {isSupportPromptExtend && <PromptExtendItem />}
+                    {isSupportWebSearch && (
+                      <SwitchItem label={t('config.webSearch.label')} paramName={'webSearch'} />
                     )}
                   </Flexbox>
                 }

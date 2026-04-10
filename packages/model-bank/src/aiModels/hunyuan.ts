@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import type { AIChatModelCard } from '../types/aiModel';
 
 // https://cloud.tencent.com/document/product/1729/104753
@@ -629,47 +630,10 @@ const hunyuanChatModels: AIChatModelCard[] = [
   {
     contextWindowTokens: 8000,
     description:
-      'Latest code generation model trained with 200B high-quality code and six months of SFT; context expanded to 8K. It ranks top in automated benchmarks for five languages and in human evaluations across ten criteria.',
-    displayName: 'Hunyuan Code',
-    id: 'hunyuan-code',
-    maxOutput: 4000,
-    pricing: {
-      currency: 'CNY',
-      units: [
-        { name: 'textInput', rate: 3.5, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 7, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2024-11-12',
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-    },
-    contextWindowTokens: 32_000,
-    description:
-      'Latest MoE FunctionCall model trained with high-quality function-call data, featuring a 32K context window and leading benchmark results across dimensions.',
-    displayName: 'Hunyuan FunctionCall',
-    id: 'hunyuan-functioncall',
-    maxOutput: 4000,
-    pricing: {
-      currency: 'CNY',
-      units: [
-        { name: 'textInput', rate: 4, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 8, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-04-22',
-    type: 'chat',
-  },
-  {
-    contextWindowTokens: 32_000,
-    description:
-      'Latest roleplay model, officially fine-tuned on roleplay datasets, delivering stronger baseline performance for roleplay scenarios.',
-    displayName: 'Hunyuan Role',
-    id: 'hunyuan-role',
-    maxOutput: 4000,
+      'Powerful original-image feature extraction and detail preservation capabilities, delivering richer visual texture and producing high-accuracy, well-composed, production-grade visuals.',
+    displayName: 'HY-Image-V3.0',
+    enabled: true,
+    id: 'HY-Image-V3.0',
     pricing: {
       currency: 'CNY',
       units: [

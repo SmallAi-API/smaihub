@@ -1824,6 +1824,27 @@ const wenxinImageModels: AIImageModelCard[] = [
           '1152x2048',
         ],
       },
+      promptExtend: { default: false },
+    },
+    pricing: {
+      currency: 'CNY',
+      units: [{ name: 'imageGeneration', rate: 0.05, strategy: 'fixed', unit: 'image' }],
+    },
+    type: 'image',
+  },
+  {
+    description:
+      'ERNIE iRAG is an image retrieval-augmented generation model for image search, image-text retrieval, and content generation.',
+    displayName: 'ERNIE iRAG',
+    enabled: true,
+    id: 'irag-1.0',
+    parameters: {
+      height: { default: 1024, max: 2048, min: 512, step: 1 },
+      prompt: {
+        default: '',
+      },
+      width: { default: 1024, max: 2048, min: 512, step: 1 },
+      watermark: { default: false },
     },
     pricing: {
       currency: 'CNY',
@@ -1843,29 +1864,60 @@ const wenxinImageModels: AIImageModelCard[] = [
       prompt: {
         default: '',
       },
-      size: {
-        default: '1024x1024',
-        enum: [
-          '768x768',
-          '1024x1024',
-          '1536x1536',
-          '2048x2048',
-          '1024x768',
-          '2048x1536',
-          '768x1024',
-          '1536x2048',
-          '1024x576',
-          '2048x1152',
-          '576x1024',
-          '1152x2048',
-        ],
-      },
+      width: { default: 1024, max: 2048, min: 512, step: 1 },
+      watermark: { default: false },
     },
     pricing: {
       currency: 'CNY',
       units: [{ name: 'imageGeneration', rate: 0.14, strategy: 'fixed', unit: 'image' }],
     },
     releasedAt: '2025-04-17',
+    type: 'image',
+  },
+  {
+    description:
+      'Qwen-Image is a general image generation model supporting multiple art styles and strong complex text rendering, especially Chinese and English. It supports multi-line layouts, paragraph-level text, and fine detail for complex text-image layouts.',
+    displayName: 'Qwen Image',
+    enabled: true,
+    id: 'qwen-image',
+    parameters: {
+      height: { default: 1024, max: 2048, min: 512, step: 1 },
+      prompt: {
+        default: '',
+      },
+      seed: { default: null },
+      steps: { default: 25, max: 50, min: 1 },
+      width: { default: 1024, max: 2048, min: 512, step: 1 },
+      promptExtend: { default: false },
+      watermark: { default: false },
+    },
+    pricing: {
+      currency: 'CNY',
+      units: [{ name: 'imageGeneration', rate: 0.25, strategy: 'fixed', unit: 'image' }],
+    },
+    type: 'image',
+  },
+  {
+    description:
+      'Qwen Image Edit is an image-to-image model that edits images based on input images and text prompts, enabling precise adjustments and creative transformations.',
+    displayName: 'Qwen Image Edit',
+    enabled: true,
+    id: 'qwen-image-edit',
+    parameters: {
+      height: { default: 1024, max: 2048, min: 512, step: 1 },
+      imageUrls: { default: [] },
+      prompt: {
+        default: '',
+      },
+      seed: { default: null },
+      width: { default: 1024, max: 2048, min: 512, step: 1 },
+      promptExtend: { default: false },
+      watermark: { default: false },
+    },
+    pricing: {
+      currency: 'CNY',
+      units: [{ name: 'imageGeneration', rate: 0.3, strategy: 'fixed', unit: 'image' }],
+    },
     type: 'image',
   },
   {
@@ -1897,6 +1949,8 @@ const wenxinImageModels: AIImageModelCard[] = [
         ],
       },
       steps: { default: 25, max: 50, min: 1 },
+      width: { default: 1024, max: 2048, min: 512, step: 1 },
+      watermark: { default: false },
     },
     pricing: {
       currency: 'CNY',
@@ -1920,6 +1974,8 @@ const wenxinVideoModels: AIVideoModelCard[] = [
         default: null,
       },
       prompt: { default: '' },
+      promptExtend: { default: false },
+      watermark: { default: false },
     },
     pricing: {
       currency: 'CNY',
@@ -1939,6 +1995,8 @@ const wenxinVideoModels: AIVideoModelCard[] = [
         default: null,
       },
       prompt: { default: '' },
+      promptExtend: { default: false },
+      watermark: { default: false },
     },
     pricing: {
       currency: 'CNY',
@@ -1958,6 +2016,8 @@ const wenxinVideoModels: AIVideoModelCard[] = [
         default: null,
       },
       prompt: { default: '' },
+      promptExtend: { default: false },
+      watermark: { default: false },
     },
     pricing: {
       currency: 'CNY',
@@ -1977,6 +2037,8 @@ const wenxinVideoModels: AIVideoModelCard[] = [
         default: null,
       },
       prompt: { default: '' },
+      promptExtend: { default: false },
+      watermark: { default: false },
     },
     pricing: {
       currency: 'CNY',
@@ -1995,6 +2057,8 @@ const wenxinVideoModels: AIVideoModelCard[] = [
         default: null,
       },
       prompt: { default: '' },
+      promptExtend: { default: false },
+      watermark: { default: false },
     },
     pricing: {
       currency: 'CNY',

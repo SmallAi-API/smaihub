@@ -879,8 +879,9 @@ const googleVideoModels: AIVideoModelCard[] = [
       endImageUrl: {
         default: null,
       },
-      imageUrl: {
-        default: null,
+      imageUrls: {
+        default: [],
+        maxCount: 3,
       },
       prompt: { default: '' },
       resolution: {
@@ -910,8 +911,9 @@ const googleVideoModels: AIVideoModelCard[] = [
       endImageUrl: {
         default: null,
       },
-      imageUrl: {
-        default: null,
+      imageUrls: {
+        default: [],
+        maxCount: 3,
       },
       prompt: { default: '' },
       resolution: {

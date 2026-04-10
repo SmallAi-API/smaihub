@@ -997,7 +997,41 @@ const zhipuChatModels: AIChatModelCard[] = [
 ];
 
 const zhipuImageModels: AIImageModelCard[] = [
-  // https://bigmodel.cn/dev/api/image-model/cogview
+  {
+    description:
+      'GLM-Image is Zhipu’s new flagship image generation model. The model was trained end-to-end on domestically produced chips and adopts an original hybrid architecture that combines autoregressive modeling with a diffusion decoder. This design enables strong global instruction understanding alongside fine-grained local detail rendering, overcoming long-standing challenges in generating knowledge-dense content such as posters, presentations, and educational diagrams. It represents an important exploration toward a new generation of “cognitive generative” technology paradigms, exemplified by Nano Banana Pro.',
+    displayName: 'GLM-Image',
+    enabled: true,
+    id: 'glm-image',
+    parameters: {
+      prompt: {
+        default: '',
+      },
+      resolution: {
+        default: 'hd',
+        enum: ['hd'],
+      },
+      size: {
+        default: '1280x1280',
+        enum: [
+          '1280x1280',
+          '1568x1056',
+          '1056x1568',
+          '1472x1088',
+          '1088x1472',
+          '1728x960',
+          '960x1728',
+        ],
+      },
+      watermark: { default: false },
+    },
+    pricing: {
+      currency: 'CNY',
+      units: [{ name: 'imageGeneration', rate: 0.1, strategy: 'fixed', unit: 'image' }],
+    },
+    releasedAt: '2026-01-14',
+    type: 'image',
+  },
   {
     description:
       'CogView-4 is Zhipu’s first open-source text-to-image model that can generate Chinese characters. It improves semantic understanding, image quality, and Chinese/English text rendering, supports arbitrary-length bilingual prompts, and can generate images at any resolution within specified ranges.',
@@ -1008,16 +1042,47 @@ const zhipuImageModels: AIImageModelCard[] = [
       prompt: {
         default: '',
       },
+      resolution: {
+        default: 'standard',
+        enum: ['hd', 'standard'],
+      },
       size: {
         default: '1024x1024',
         enum: ['1024x1024', '768x1344', '864x1152', '1344x768', '1152x864', '1440x720', '720x1440'],
       },
+      watermark: { default: false },
     },
     pricing: {
       currency: 'CNY',
       units: [{ name: 'imageGeneration', rate: 0.06, strategy: 'fixed', unit: 'image' }],
     },
     releasedAt: '2025-03-04',
+    type: 'image',
+  },
+  {
+    description:
+      'CogView-3-Flash is a free image generation model launched by Zhipu. It generates images that align with user instructions while achieving higher aesthetic quality scores. CogView-3-Flash is primarily used in fields such as artistic creation, design reference, game development, and virtual reality, helping users rapidly convert text descriptions into images.',
+    displayName: 'CogView-3-Flash',
+    enabled: true,
+    id: 'cogview-3-flash',
+    parameters: {
+      prompt: {
+        default: '',
+      },
+      resolution: {
+        default: 'standard',
+        enum: ['hd', 'standard'],
+      },
+      size: {
+        default: '1024x1024',
+        enum: ['1024x1024', '768x1344', '864x1152', '1344x768', '1152x864', '1440x720', '720x1440'],
+      },
+      watermark: { default: false },
+    },
+    pricing: {
+      currency: 'CNY',
+      units: [{ name: 'imageGeneration', rate: 0, strategy: 'fixed', unit: 'image' }],
+    },
     type: 'image',
   },
 ];
@@ -1035,12 +1100,10 @@ const zhipuVideoModels: AIVideoModelCard[] = [
         enum: ['16:9', '9:16', '1:1'],
       },
       duration: { default: 4, enum: [4] },
-      endImageUrl: {
-        default: null,
-      },
       generateAudio: { default: true },
-      imageUrl: {
-        default: null,
+      imageUrls: {
+        default: [],
+        maxCount: 3,
       },
       prompt: { default: '' },
       size: {
@@ -1208,6 +1271,10 @@ const zhipuVideoModels: AIVideoModelCard[] = [
         default: null,
       },
       prompt: { default: '' },
+      resolution: {
+        default: 'speed',
+        enum: ['speed', 'quality'],
+      },
       size: {
         default: '1920x1080',
         enum: [
@@ -1220,6 +1287,7 @@ const zhipuVideoModels: AIVideoModelCard[] = [
           '3840x2160',
         ],
       },
+      watermark: { default: false },
     },
     pricing: {
       currency: 'CNY',
@@ -1239,6 +1307,10 @@ const zhipuVideoModels: AIVideoModelCard[] = [
         default: null,
       },
       prompt: { default: '' },
+      resolution: {
+        default: 'speed',
+        enum: ['speed', 'quality'],
+      },
       size: {
         default: '1920x1080',
         enum: [
@@ -1252,6 +1324,7 @@ const zhipuVideoModels: AIVideoModelCard[] = [
           '3840x2160',
         ],
       },
+      watermark: { default: false },
     },
     pricing: {
       currency: 'CNY',
@@ -1271,6 +1344,10 @@ const zhipuVideoModels: AIVideoModelCard[] = [
         default: null,
       },
       prompt: { default: '' },
+      resolution: {
+        default: 'speed',
+        enum: ['speed', 'quality'],
+      },
       size: {
         default: '1920x1080',
         enum: [
@@ -1284,6 +1361,7 @@ const zhipuVideoModels: AIVideoModelCard[] = [
           '3840x2160',
         ],
       },
+      watermark: { default: false },
     },
     pricing: {
       currency: 'CNY',
