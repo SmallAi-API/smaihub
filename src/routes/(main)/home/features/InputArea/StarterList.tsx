@@ -86,7 +86,6 @@ const StarterList = memo(() => {
         key: 'video',
         titleKey: 'starter.videoGeneration',
       },
-
       {
         disabled: true,
         icon: MicroscopeIcon,
@@ -137,6 +136,7 @@ const StarterList = memo(() => {
             onClick={() => handleClick(item.key)}
           >
             {t(item.titleKey)}
+            {item.hot && ' 🔥'}
           </Button>
         );
 
