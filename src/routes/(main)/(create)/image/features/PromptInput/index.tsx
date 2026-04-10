@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { loginRequired } from '@/components/Error/loginRequiredNotification';
 import Action from '@/features/ChatInput/ActionBar/components/Action';
 import ModelSwitchPanel from '@/features/ModelSwitchPanel';
+import PromptTransformAction from '@/features/PromptTransform/PromptTransformAction';
 import { useFetchAiImageConfig } from '@/hooks/useFetchAiImageConfig';
 import { useIsDark } from '@/hooks/useIsDark';
 import { useQueryState } from '@/hooks/useQueryParam';
@@ -347,6 +348,9 @@ const PromptInput = ({ showTitle = false }: PromptInputProps) => {
         }
         placeholder={
           hasRefImages ? t('config.prompt.placeholderWithRef') : t('config.prompt.placeholder')
+        }
+        rightActions={
+          <PromptTransformAction mode={'image'} prompt={value} onPromptChange={setValue as any} />
         }
         onGenerate={handleGenerate}
         onValueChange={setValue}

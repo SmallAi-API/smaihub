@@ -11,6 +11,7 @@ import VideoFreeQuotaInfo from '@/business/client/features/VideoFreeQuotaInfo';
 import { loginRequired } from '@/components/Error/loginRequiredNotification';
 import Action from '@/features/ChatInput/ActionBar/components/Action';
 import ModelSwitchPanel from '@/features/ModelSwitchPanel';
+import PromptTransformAction from '@/features/PromptTransform/PromptTransformAction';
 import { useFetchAiVideoConfig } from '@/hooks/useFetchAiVideoConfig';
 import { useIsDark } from '@/hooks/useIsDark';
 import { useQueryState } from '@/hooks/useQueryParam';
@@ -476,6 +477,9 @@ const PromptInput = ({ showTitle = false }: PromptInputProps) => {
           }
           placeholder={
             hasRefImages ? t('config.prompt.placeholderWithRef') : t('config.prompt.placeholder')
+          }
+          rightActions={
+            <PromptTransformAction mode={'video'} prompt={value} onPromptChange={setValue as any} />
           }
           onGenerate={handleGenerate}
           onValueChange={setValue}
