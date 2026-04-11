@@ -805,7 +805,6 @@ export const taskRouter = router({
         const taskId = task.id;
         const taskIdentifier = task.identifier;
         const { taskLifecycle } = ctx;
-        const db = ctx.serverDB;
         const userId = ctx.userId;
 
         // Task execution always injects: Task skill (auto-activated) + Notebook tool (for document output)
