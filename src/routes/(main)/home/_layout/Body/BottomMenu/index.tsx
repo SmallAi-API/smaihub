@@ -1,18 +1,39 @@
 import { type MenuProps } from '@lobehub/ui';
-import { ActionIcon, DropdownMenu, Flexbox, Icon } from '@lobehub/ui';
-import { EyeOffIcon, MoreHorizontalIcon, SlidersHorizontalIcon } from 'lucide-react';
-import { memo, useCallback } from 'react';
+import { ActionIcon, DropdownMenu, Flexbox, Icon, Popover } from '@lobehub/ui';
+import { cssVar } from 'antd-style';
+import {
+  EyeOffIcon,
+  MoreHorizontalIcon,
+  SlidersHorizontalIcon,
+  SquareArrowOutUpRight,
+} from 'lucide-react';
+import { Fragment, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { isDesktop } from '@/const/version';
 import NavItem from '@/features/NavPanel/components/NavItem';
 import { useActiveTabKey } from '@/hooks/useActiveTabKey';
 import { useNavLayout } from '@/hooks/useNavLayout';
 import { openCustomizeSidebarModal } from '@/routes/(main)/home/_layout/Body/CustomizeSidebarModal';
+import { electronSystemService } from '@/services/electron/system';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors';
 import { isModifierClick } from '@/utils/navigation';
 import { prefetchRoute } from '@/utils/router';
+
+const handleExternalLink = (url: string) => {
+  if (isDesktop) {
+    void electronSystemService.openExternalLink(url);
+    return;
+  }
+
+  window.open(url, '_blank', 'noopener,noreferrer');
+};
+
+const externalIndicator = (
+  <Icon color={cssVar.colorTextQuaternary} icon={SquareArrowOutUpRight} size={14} />
+);
 
 const BottomMenu = memo(() => {
   const { t } = useTranslation('common');
@@ -63,30 +84,66 @@ const BottomMenu = memo(() => {
         overflow: 'hidden',
       }}
     >
-      {visibleItems.map((item) => (
-        <Link
-          key={item.key}
-          to={item.url!}
-          onMouseEnter={() => prefetchRoute(item.url!)}
-          onClick={(e) => {
-            if (isModifierClick(e)) return;
-            e.preventDefault();
-            navigate(item.url!);
-          }}
-        >
+      {visibleItems.map((item) => {
+        const contextMenuItems = getContextMenuItems(item.key);
+        const isExternal = item.external || item.url?.startsWith('http');
+        const externalUrl = isExternal ? item.url : undefined;
+
+        const navItem = (
           <NavItem
             active={tab === item.key}
-            contextMenuItems={getContextMenuItems(item.key)}
+            contextMenuItems={contextMenuItems}
+            extra={isExternal ? externalIndicator : undefined}
+            href={externalUrl}
             icon={item.icon}
             title={item.title}
             actions={
-              <DropdownMenu items={getContextMenuItems(item.key)} nativeButton={false}>
+              <DropdownMenu items={contextMenuItems} nativeButton={false}>
                 <ActionIcon icon={MoreHorizontalIcon} size={'small'} style={{ flex: 'none' }} />
               </DropdownMenu>
             }
+            onClick={externalUrl ? () => handleExternalLink(externalUrl) : item.onClick}
           />
-        </Link>
-      ))}
+        );
+
+        const content = item.popoverImageSrc ? (
+          <Popover
+            mouseEnterDelay={0.1}
+            placement="right"
+            trigger="hover"
+            content={
+              <img
+                alt={item.title}
+                src={item.popoverImageSrc}
+                style={{ borderRadius: 8, display: 'block', height: 'auto', width: 250 }}
+              />
+            }
+          >
+            {navItem}
+          </Popover>
+        ) : (
+          navItem
+        );
+
+        const internalUrl = item.url;
+
+        if (!internalUrl || isExternal) return <Fragment key={item.key}>{content}</Fragment>;
+
+        return (
+          <Link
+            key={item.key}
+            to={internalUrl}
+            onMouseEnter={() => prefetchRoute(internalUrl)}
+            onClick={(e) => {
+              if (isModifierClick(e)) return;
+              e.preventDefault();
+              navigate(internalUrl);
+            }}
+          >
+            {content}
+          </Link>
+        );
+      })}
     </Flexbox>
   );
 });
