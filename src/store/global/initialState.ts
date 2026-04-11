@@ -111,7 +111,10 @@ export interface SystemStatus {
    * Group Agent Builder panel width
    */
   groupAgentBuilderPanelWidth?: number;
-
+  /**
+   * Hidden sidebar sections
+   */
+  hiddenSidebarSections?: string[];
   hidePWAInstaller?: boolean;
   hideThreadLimitAlert?: boolean;
   hideTopicSharePrivacyWarning?: boolean;
@@ -156,6 +159,10 @@ export interface SystemStatus {
   portalWidth: number;
   readNotificationSlugs?: string[];
   /**
+   * number of recent items to display
+   */
+  recentPageSize?: number;
+  /**
    * Resource Manager column widths
    */
   resourceManagerColumnWidths?: {
@@ -173,6 +180,10 @@ export interface SystemStatus {
   showSystemRole?: boolean;
   showVideoPanel?: boolean;
   showVideoTopicPanel?: boolean;
+  /**
+   * Order of sidebar sections (e.g. ['recents', 'agent'])
+   */
+  sidebarSectionOrder?: string[];
   systemRoleExpandedMap: Record<string, boolean>;
   /**
    * 是否使用短格式显示 token
@@ -222,8 +233,9 @@ export interface GlobalState {
 
 export const INITIAL_STATUS = {
   agentBuilderPanelWidth: 360,
-  agentPageSize: 10,
+  agentPageSize: 5,
   chatInputHeight: 64,
+  recentPageSize: 5,
   disabledModelProvidersSortType: 'default',
   disabledModelsSortType: 'default',
   expandInputActionbar: true,
