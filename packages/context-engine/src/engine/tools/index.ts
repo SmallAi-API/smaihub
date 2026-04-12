@@ -26,6 +26,7 @@ export type {
   PluginEnableChecker,
   ResolvedToolSet,
   StepToolDelta,
+  ToolExecutor,
   ToolNameGenerator,
   ToolsEngineOptions,
   ToolsGenerationContext,
