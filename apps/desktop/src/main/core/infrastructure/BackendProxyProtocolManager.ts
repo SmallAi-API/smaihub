@@ -4,6 +4,7 @@ import { BrowserWindow, type Session } from 'electron';
 import { isDev } from '@/const/env';
 import { appendVercelCookie } from '@/utils/http-headers';
 import { createLogger } from '@/utils/logger';
+import { netFetch } from '@/utils/net-fetch';
 
 interface BackendProxyProtocolManagerOptions {
   getAccessToken: () => Promise<string | undefined | null>;
@@ -136,7 +137,7 @@ export class BackendProxyProtocolManager {
 
         let upstreamResponse: Response;
         try {
-          upstreamResponse = await fetch(rewrittenUrl, requestInit);
+          upstreamResponse = await netFetch(rewrittenUrl, requestInit);
         } catch (error) {
           this.logger.error(`${logPrefix} upstream fetch failed: ${rewrittenUrl}`, error);
 
