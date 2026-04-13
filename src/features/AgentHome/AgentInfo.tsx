@@ -19,7 +19,7 @@ const AgentInfo = memo(() => {
   const fontSize = useUserStore(userGeneralSettingsSelectors.fontSize);
 
   const displayTitle = isInbox
-    ? meta.title || 'Lobe AI'
+    ? meta.title || 'smai'
     : meta.title || t('defaultSession', { ns: 'common' });
 
   const message = useMemo(() => {

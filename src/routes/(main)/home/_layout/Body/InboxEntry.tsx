@@ -18,7 +18,7 @@ const InboxEntry = memo(() => {
   const inboxMeta = useAgentStore(agentSelectors.getAgentMetaById(inboxAgentId!));
   const isLoading = useChatStore(operationSelectors.isAgentRuntimeRunning);
 
-  const title = inboxMeta.title || 'Lobe AI';
+  const title = inboxMeta.title || 'smai';
   const avatar = inboxMeta.avatar || DEFAULT_INBOX_AVATAR;
   const url = SESSION_CHAT_URL(inboxAgentId, false);
 
