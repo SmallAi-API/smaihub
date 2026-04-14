@@ -42,15 +42,8 @@ export class ElectronSettingsActionImpl {
   };
 
   setProxySettings = async (values: Partial<NetworkProxySettings>): Promise<void> => {
-    try {
-      // 更新设置
-      await desktopSettingsService.setSettings(values);
-
-      // Refresh state
-      await this.#get().refreshProxySettings();
-    } catch (error) {
-      console.error('代理设置更新失败:', error);
-    }
+    await desktopSettingsService.setSettings(values);
+    await this.#get().refreshProxySettings();
   };
 
   updateDesktopHotkey = async (id: string, accelerator: string): Promise<ShortcutUpdateResult> => {
