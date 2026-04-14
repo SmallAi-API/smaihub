@@ -102,6 +102,12 @@ export const useNavLayout = (): NavLayout => {
           popoverImageSrc: '/kefu.png',
           title: t('tab.support'),
         },
+        {
+          icon: getRouteById('memory')!.icon,
+          key: SidebarTabKey.Memory,
+          title: t('tab.memory'),
+          url: '/memory',
+        },
       ] as NavItem[],
     [t, showMarket],
   );
