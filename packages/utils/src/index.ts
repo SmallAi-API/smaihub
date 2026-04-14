@@ -3,6 +3,7 @@ export * from './chunkers';
 export * from './client/cookie';
 export * from './dedupeBy';
 export * from './detectChinese';
+export * from './detectTruncatedJSON';
 export * from './env';
 export * from './error';
 export * from './folderStructure';
