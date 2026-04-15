@@ -95,7 +95,7 @@ describe('systemStatusSelectors', () => {
     });
 
     it('should return stored items when set', () => {
-      const custom = ['agent', 'recents', 'pages', 'community', 'resource', 'memory'];
+      const custom = [...DEFAULT_SIDEBAR_ITEMS].reverse();
       const s: GlobalState = merge(initialState, {
         status: { sidebarItems: custom },
       });
@@ -111,8 +111,11 @@ describe('systemStatusSelectors', () => {
       expect(items.slice(0, 2)).toEqual(['agent', 'recents']);
       // every known key is present
       expect(items).toContain('pages');
+      expect(items).toContain('api');
       expect(items).toContain('community');
       expect(items).toContain('resource');
+      expect(items).toContain('docs');
+      expect(items).toContain('support');
       expect(items).toContain('memory');
     });
 
@@ -122,7 +125,17 @@ describe('systemStatusSelectors', () => {
       });
       const items = systemStatusSelectors.sidebarItems(s);
       // accordion slot in the default list now uses the user's legacy order
-      expect(items).toEqual(['pages', 'agent', 'recents', 'community', 'resource', 'memory']);
+      expect(items).toEqual([
+        'pages',
+        'api',
+        'agent',
+        'recents',
+        'community',
+        'resource',
+        'docs',
+        'support',
+        'memory',
+      ]);
     });
 
     it('should fall back to default when legacy `sidebarSectionOrder` is the default order', () => {
@@ -136,7 +149,17 @@ describe('systemStatusSelectors', () => {
     it('should prefer `sidebarItems` over legacy `sidebarSectionOrder` when both are set', () => {
       const s: GlobalState = merge(initialState, {
         status: {
-          sidebarItems: ['pages', 'recents', 'agent', 'community', 'resource', 'memory'],
+          sidebarItems: [
+            'pages',
+            'api',
+            'recents',
+            'agent',
+            'community',
+            'resource',
+            'docs',
+            'support',
+            'memory',
+          ],
           sidebarSectionOrder: ['agent', 'recents'],
         },
       });
@@ -146,78 +169,106 @@ describe('systemStatusSelectors', () => {
   });
 
   describe('reorderSidebarItems', () => {
-    const DEFAULT = ['pages', 'recents', 'agent', 'community', 'resource', 'memory'];
+    const DEFAULT = [
+      'pages',
+      'api',
+      'recents',
+      'agent',
+      'community',
+      'resource',
+      'docs',
+      'support',
+      'memory',
+    ];
 
     it('should move a non-accordion item normally', () => {
-      // move `community` (idx 3) up to idx 0
-      expect(reorderSidebarItems(DEFAULT, 3, 0)).toEqual([
+      // move `community` (idx 4) up to idx 0
+      expect(reorderSidebarItems(DEFAULT, 4, 0)).toEqual([
         'community',
         'pages',
+        'api',
         'recents',
         'agent',
         'resource',
+        'docs',
+        'support',
         'memory',
       ]);
     });
 
     it('should snap a non-accordion item out when dragged between accordion items (drag down)', () => {
-      // `pages` (idx 0) dragged down to idx 2 (between recents & agent)
+      // `api` (idx 1) dragged down to idx 3 (between recents & agent)
       // after drag-down: push past the accordion block
-      expect(reorderSidebarItems(DEFAULT, 0, 2)).toEqual([
+      expect(reorderSidebarItems(DEFAULT, 1, 3)).toEqual([
+        'pages',
         'recents',
         'agent',
-        'pages',
+        'api',
         'community',
         'resource',
+        'docs',
+        'support',
         'memory',
       ]);
     });
 
     it('should snap a non-accordion item out when dragged between accordion items (drag up)', () => {
-      // `community` (idx 3) dragged up to idx 2 (between recents & agent)
+      // `community` (idx 4) dragged up to idx 3 (between recents & agent)
       // after drag-up: place before the accordion block
-      expect(reorderSidebarItems(DEFAULT, 3, 2)).toEqual([
+      expect(reorderSidebarItems(DEFAULT, 4, 3)).toEqual([
         'pages',
+        'api',
         'community',
         'recents',
         'agent',
         'resource',
+        'docs',
+        'support',
         'memory',
       ]);
     });
 
     it('should move the whole accordion block when moving `recents` up past the block boundary', () => {
       // `recents` (idx 1) moveUp → idx 0. Block [recents, agent] slides to top.
-      expect(reorderSidebarItems(DEFAULT, 1, 0)).toEqual([
+      expect(reorderSidebarItems(DEFAULT, 2, 1)).toEqual([
+        'pages',
         'recents',
         'agent',
-        'pages',
+        'api',
         'community',
         'resource',
+        'docs',
+        'support',
         'memory',
       ]);
     });
 
     it('should move the whole accordion block when moving `agent` down past the block boundary', () => {
       // `agent` (idx 2) moveDown → idx 3. Block slides past community.
-      expect(reorderSidebarItems(DEFAULT, 2, 3)).toEqual([
+      expect(reorderSidebarItems(DEFAULT, 3, 4)).toEqual([
         'pages',
+        'api',
         'community',
         'recents',
         'agent',
         'resource',
+        'docs',
+        'support',
         'memory',
       ]);
     });
 
     it('should swap recents and agent within the block', () => {
       // `recents` (idx 1) moveDown → idx 2. Within block, so just swap.
-      expect(reorderSidebarItems(DEFAULT, 1, 2)).toEqual([
+      expect(reorderSidebarItems(DEFAULT, 2, 3)).toEqual([
         'pages',
+        'api',
         'agent',
         'recents',
         'community',
         'resource',
+        'docs',
+        'support',
         'memory',
       ]);
     });

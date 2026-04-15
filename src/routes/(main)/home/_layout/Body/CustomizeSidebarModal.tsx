@@ -23,7 +23,17 @@ import { CSS } from '@dnd-kit/utilities';
 import { ActionIcon, Button, Flexbox, Icon, Text, Tooltip } from '@lobehub/ui';
 import { Modal } from '@lobehub/ui/base-ui';
 import { createStaticStyles, cssVar, cx } from 'antd-style';
-import { Eye, EyeOff, GripVertical, PinIcon, RotateCcw } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import {
+  BookOpenIcon,
+  Eye,
+  EyeOff,
+  GripVertical,
+  KeyRound,
+  MessageCircle,
+  PinIcon,
+  RotateCcw,
+} from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -42,6 +52,7 @@ const ACCORDION_GROUP_ID = 'accordion-group';
 
 interface SidebarItemConfig {
   alwaysVisible?: boolean;
+  icon?: LucideIcon;
   id: string;
   labelKey: string;
   routeId?: string;
@@ -49,10 +60,13 @@ interface SidebarItemConfig {
 
 const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
   { id: 'pages', labelKey: 'tab.pages', routeId: 'page' },
+  { icon: KeyRound, id: 'api', labelKey: 'tab.apiAccess' },
   { id: 'recents', labelKey: 'recents' },
   { alwaysVisible: true, id: 'agent', labelKey: 'navPanel.agent' },
   { id: 'community', labelKey: 'tab.community', routeId: 'community' },
   { id: 'resource', labelKey: 'tab.resource', routeId: 'resource' },
+  { icon: BookOpenIcon, id: 'docs', labelKey: 'tab.docs' },
+  { icon: MessageCircle, id: 'support', labelKey: 'tab.support' },
   { id: 'memory', labelKey: 'tab.memory', routeId: 'memory' },
 ];
 
@@ -133,6 +147,7 @@ const SortableItem = memo<{
   if (!item) return null;
 
   const route = item.routeId ? getRouteById(item.routeId) : undefined;
+  const icon = item.icon || route?.icon;
   const isHidden = !item.alwaysVisible && hiddenSections.includes(id);
 
   return (
@@ -158,7 +173,7 @@ const SortableItem = memo<{
         >
           <Icon icon={GripVertical} size={14} style={{ color: cssVar.colorTextQuaternary }} />
         </Flexbox>
-        {route?.icon && <Icon icon={route.icon} size={18} />}
+        {icon && <Icon icon={icon} size={18} />}
         <Text>{t(item.labelKey as any)}</Text>
       </Flexbox>
       {item.alwaysVisible ? (
@@ -218,11 +233,12 @@ const OverlayItem = memo<{ id: string }>(({ id }) => {
   const item = ITEM_MAP.get(id);
   if (!item) return null;
   const route = item.routeId ? getRouteById(item.routeId) : undefined;
+  const icon = item.icon || route?.icon;
 
   return (
     <Flexbox horizontal align={'center'} className={styles.overlay} gap={8}>
       <Icon icon={GripVertical} size={14} style={{ color: cssVar.colorTextQuaternary }} />
-      {route?.icon && <Icon icon={route.icon} size={18} />}
+      {icon && <Icon icon={icon} size={18} />}
       <Text>{t(item.labelKey as any)}</Text>
     </Flexbox>
   );

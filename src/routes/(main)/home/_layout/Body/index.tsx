@@ -1,15 +1,25 @@
 'use client';
 
-import { Accordion, ActionIcon, DropdownMenu, Flexbox, Icon, type MenuProps } from '@lobehub/ui';
+import {
+  Accordion,
+  ActionIcon,
+  DropdownMenu,
+  Flexbox,
+  Icon,
+  type MenuProps,
+  Popover,
+} from '@lobehub/ui';
 import { EyeOffIcon, MoreHorizontalIcon, SlidersHorizontalIcon } from 'lucide-react';
 import { memo, type ReactElement, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { isDesktop } from '@/const/version';
 import NavItem from '@/features/NavPanel/components/NavItem';
 import { useActiveTabKey } from '@/hooks/useActiveTabKey';
 import { type NavItem as NavItemType, useNavLayout } from '@/hooks/useNavLayout';
 import Recents from '@/routes/(main)/home/features/Recents';
+import { electronSystemService } from '@/services/electron/system';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors';
 import { isModifierClick } from '@/utils/navigation';
@@ -85,14 +95,66 @@ const Body = memo(() => {
 
   const visibleKeys = useMemo(() => sidebarItems.filter(isVisible), [sidebarItems, isVisible]);
 
-  const renderNavLink = useCallback(
+  const handleExternalLink = useCallback((url: string) => {
+    if (isDesktop) {
+      void electronSystemService.openExternalLink(url);
+      return;
+    }
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }, []);
+
+  const renderSidebarItem = useCallback(
     (key: string) => {
       const navItem = navLinkItems.get(key);
       if (!navItem || navItem.hidden) return null;
+      const menuItems = getContextMenuItems(key);
+      const isExternal = navItem.external || navItem.url?.startsWith('http');
+      const itemClick =
+        isExternal && navItem.url ? () => handleExternalLink(navItem.url!) : navItem.onClick;
+
+      const navItemNode = (
+        <NavItem
+          active={tab === key}
+          contextMenuItems={menuItems}
+          icon={navItem.icon}
+          title={navItem.title}
+          actions={
+            <DropdownMenu items={menuItems} nativeButton={false}>
+              <ActionIcon icon={MoreHorizontalIcon} size={'small'} style={{ flex: 'none' }} />
+            </DropdownMenu>
+          }
+          onClick={itemClick}
+        />
+      );
+
+      const content = navItem.popoverImageSrc ? (
+        <Popover
+          mouseEnterDelay={0.1}
+          placement="right"
+          trigger="hover"
+          content={
+            <img
+              alt={navItem.title}
+              src={navItem.popoverImageSrc}
+              style={{ borderRadius: 8, display: 'block', height: 'auto', width: 250 }}
+            />
+          }
+        >
+          {navItemNode}
+        </Popover>
+      ) : (
+        navItemNode
+      );
+
+      if (!navItem.url) return <div key={key}>{content}</div>;
+
+      if (isExternal) return <div key={key}>{content}</div>;
+
       return (
         <Link
           key={key}
-          to={navItem.url!}
+          to={navItem.url}
           onMouseEnter={() => prefetchRoute(navItem.url!)}
           onClick={(e) => {
             if (isModifierClick(e)) return;
@@ -100,21 +162,11 @@ const Body = memo(() => {
             navigate(navItem.url!);
           }}
         >
-          <NavItem
-            active={tab === key}
-            contextMenuItems={getContextMenuItems(key)}
-            icon={navItem.icon}
-            title={navItem.title}
-            actions={
-              <DropdownMenu items={getContextMenuItems(key)} nativeButton={false}>
-                <ActionIcon icon={MoreHorizontalIcon} size={'small'} style={{ flex: 'none' }} />
-              </DropdownMenu>
-            }
-          />
+          {content}
         </Link>
       );
     },
-    [navLinkItems, tab, getContextMenuItems, navigate],
+    [getContextMenuItems, handleExternalLink, navLinkItems, navigate, tab],
   );
 
   // Render the flat list: group consecutive accordion items into an Accordion,
@@ -144,13 +196,13 @@ const Body = memo(() => {
         if (comp) accGroup.push(comp);
       } else {
         flushAccordion();
-        const link = renderNavLink(key);
+        const link = renderSidebarItem(key);
         if (link) elements.push(link);
       }
     }
     flushAccordion();
     return elements;
-  }, [visibleKeys, renderNavLink]);
+  }, [renderSidebarItem, visibleKeys]);
 
   return (
     <Flexbox flex={1} gap={4} paddingInline={4}>
