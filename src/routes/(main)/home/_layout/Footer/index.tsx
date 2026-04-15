@@ -1,6 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
-
 import { useAnalytics } from '@lobehub/analytics/react';
 import { ActionIcon, DropdownMenu, Icon, type MenuProps } from '@lobehub/ui';
 import { Flexbox } from '@lobehub/ui';
@@ -18,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import HighlightNotification from '@/components/HighlightNotification';
+import { isDesktop } from '@/const/version';
 import ThemeButton from '@/features/User/UserPanel/ThemeButton';
 import { useNavLayout } from '@/hooks/useNavLayout';
 import { useGlobalStore } from '@/store/global';
@@ -28,17 +27,16 @@ import { prefetchRoute } from '@/utils/router';
 
 const PRODUCT_HUNT_NOTIFICATION = {
   actionHref: '/download',
-  endTime: new Date('2026-02-15T00:00:00Z'),
+  endTime: new Date('2026-04-30T00:00:00Z'),
   image: 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com/logo/windows.png',
   slug: 'smai.ai-desktop',
-  startTime: new Date('2026-02-01T08:00:00Z'),
+  startTime: new Date('2026-04-15T00:00:00Z'),
 };
 
 const Footer = memo(() => {
   const { t } = useTranslation('common');
   const { analytics } = useAnalytics();
   const { footer } = useNavLayout();
-  const isSettingsPage = location.pathname.startsWith('/settings');
   const [isProductHuntCardOpen, setIsProductHuntCardOpen] = useState(false);
   const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
   const [isNotificationRead, updateSystemStatus] = useGlobalStore((s) => [
@@ -131,16 +129,7 @@ const Footer = memo(() => {
           </a>
         ),
       },
-      ...(isDevMode
-        ? [
-            {
-              icon: <Icon icon={FlaskConical} />,
-              key: 'eval',
-              label: <Link to="/eval">Evaluation Lab</Link>,
-            },
-          ]
-        : []),
-      ...(isWithinTimeWindow
+      ...(!isDesktop && isWithinTimeWindow
         ? [
             {
               icon: <Icon icon={AppWindow} />,
@@ -151,15 +140,7 @@ const Footer = memo(() => {
           ]
         : []),
     ],
-    [
-      footer.showSettingsEntry,
-      footer.layout,
-      footer.showEvalEntry,
-      isDevMode,
-      t,
-      isWithinTimeWindow,
-      handleOpenProductHuntCard,
-    ],
+    [footer.showSettingsEntry, isDevMode, t, isWithinTimeWindow, handleOpenProductHuntCard],
   );
 
   return (
