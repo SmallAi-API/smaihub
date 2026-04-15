@@ -577,6 +577,7 @@
   "skillDetail.tabs.tools": "功能",
   "skillDetail.tools": "工具",
   "skillDetail.trustWarning": "仅使用您信任的开发者提供的连接器。LobeHub 不控制开发者提供的工具，无法验证它们是否按预期工作或是否会发生变化。",
+  "skillInstallBanner.dismiss": "关闭",
   "skillInstallBanner.title": "将技能添加到smai.ai",
   "store.actions.cancel": "取消安装",
   "store.actions.configure": "配置",

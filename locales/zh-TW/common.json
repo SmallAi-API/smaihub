@@ -351,6 +351,7 @@
   "navPanel.moveDown": "向下移動",
   "navPanel.moveUp": "向上移動",
   "navPanel.pinned": "已固定",
+  "navPanel.resetDefault": "重置為預設值",
   "navPanel.searchAgent": "搜尋助手...",
   "navPanel.searchRecent": "搜尋最近...",
   "navPanel.searchResultEmpty": "暫無搜尋結果",
