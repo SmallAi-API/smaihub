@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import HighlightNotification from '@/components/HighlightNotification';
 import ThemeButton from '@/features/User/UserPanel/ThemeButton';
@@ -38,7 +38,6 @@ const Footer = memo(() => {
   const { t } = useTranslation('common');
   const { analytics } = useAnalytics();
   const { footer } = useNavLayout();
-  const location = useLocation();
   const isSettingsPage = location.pathname.startsWith('/settings');
   const [isProductHuntCardOpen, setIsProductHuntCardOpen] = useState(false);
   const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
@@ -127,11 +126,7 @@ const Footer = memo(() => {
         icon: <Icon icon={Book} />,
         key: 'docs',
         label: (
-          <a
-            href="https://docs.smai.ai/zh/docs/apps/smallai"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
+          <a href="https://docs.smai.ai/docs/smai-app" rel="noopener noreferrer" target="_blank">
             {t('tab.docs')}
           </a>
         ),

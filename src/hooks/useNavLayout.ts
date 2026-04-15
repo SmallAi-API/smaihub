@@ -94,7 +94,7 @@ export const useNavLayout = (): NavLayout => {
           icon: BookOpenIcon,
           key: 'docs',
           title: t('tab.docs'),
-          url: 'https://docs.smai.ai/zh/docs/apps/smallai',
+          url: 'https://docs.smai.ai/docs/smai-app',
         },
         {
           icon: MessageCircle,

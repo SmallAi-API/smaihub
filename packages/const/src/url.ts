@@ -12,7 +12,7 @@ export const GITHUB = 'https://www.smallai.asia';
 export const GITHUB_ISSUES = 'https://www.smallai.asia';
 export const CHANGELOG = 'https://www.smallai.asia';
 
-export const DOCUMENTS = 'https://docs.smai.ai/zh/docs/apps/smallai';
+export const DOCUMENTS = 'https://docs.smai.ai/docs/smai-app';
 export const USAGE_DOCUMENTS = 'https://docs.smai.ai';
 export const SELF_HOSTING_DOCUMENTS = 'https://docs.smai.ai';
 export const DATABASE_SELF_HOSTING_URL = 'https://docs.smai.ai';
