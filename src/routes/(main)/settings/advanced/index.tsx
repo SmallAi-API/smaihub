@@ -33,14 +33,19 @@ const Page = memo(() => {
   const [setSettings, isUserStateInit] = useUserStore((s) => [s.setSettings, s.isUserStateInit]);
   const [loading, setLoading] = useState(false);
 
-  const [isPreferenceInit, enableInputMarkdown, enableGatewayMode, updateLab] = useUserStore(
-    (s) => [
-      preferenceSelectors.isPreferenceInit(s),
-      labPreferSelectors.enableInputMarkdown(s),
-      labPreferSelectors.enableGatewayMode(s),
-      s.updateLab,
-    ],
-  );
+  const [
+    isPreferenceInit,
+    enableInputMarkdown,
+    enableGatewayMode,
+    enableAgentWorkingPanel,
+    updateLab,
+  ] = useUserStore((s) => [
+    preferenceSelectors.isPreferenceInit(s),
+    labPreferSelectors.enableInputMarkdown(s),
+    labPreferSelectors.enableGatewayMode(s),
+    labPreferSelectors.enableAgentWorkingPanel(s),
+    s.updateLab,
+  ]);
 
   const hasGatewayUrl = useServerConfigStore((s) => !!s.serverConfig.agentGatewayUrl);
 
@@ -112,6 +117,19 @@ const Page = memo(() => {
         className: styles.labItem,
         desc: tLabs('features.inputMarkdown.desc'),
         label: tLabs('features.inputMarkdown.title'),
+        minWidth: undefined,
+      },
+      {
+        children: (
+          <Switch
+            checked={enableAgentWorkingPanel}
+            loading={!isPreferenceInit}
+            onChange={(checked: boolean) => updateLab({ enableAgentWorkingPanel: checked })}
+          />
+        ),
+        className: styles.labItem,
+        desc: tLabs('features.agentWorkingPanel.desc'),
+        label: tLabs('features.agentWorkingPanel.title'),
         minWidth: undefined,
       },
       ...(hasGatewayUrl

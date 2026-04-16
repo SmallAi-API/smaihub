@@ -1,4 +1,6 @@
 {
+  "features.agentWorkingPanel.desc": "在会话中查看当前助理可访问的资源和任务进度。",
+  "features.agentWorkingPanel.title": "工作面板",
   "features.assistantMessageGroup.desc": "将代理消息及其工具调用结果组合在一起显示",
   "features.assistantMessageGroup.title": "代理消息分组",
   "features.gatewayMode.desc": "通过网关 WebSocket 在服务器上执行代理任务，而不是在本地运行。这可以加快执行速度并减少客户端资源使用。",
