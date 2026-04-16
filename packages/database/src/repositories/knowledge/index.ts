@@ -4,8 +4,8 @@ import { and, eq, sql } from 'drizzle-orm';
 
 import { DocumentModel } from '../../models/document';
 import { FileModel } from '../../models/file';
-import { documents, files, knowledgeBaseFiles } from '../../schemas';
-import { type LobeChatDatabase } from '../../type';
+import { DOCUMENT_FOLDER_TYPE, documents, files, knowledgeBaseFiles } from '../../schemas';
+import type { LobeChatDatabase } from '../../type';
 
 export interface KnowledgeItem {
   chunkTaskId?: string | null;
@@ -313,7 +313,7 @@ export class KnowledgeRepo {
     const document = await this.documentModel.findById(id);
     if (!document) return;
 
-    if (document.fileType === 'custom/folder') {
+    if (document.fileType === DOCUMENT_FOLDER_TYPE) {
       const children = await this.db.query.documents.findMany({
         where: and(eq(documents.parentId, id), eq(documents.userId, this.userId)),
       });
