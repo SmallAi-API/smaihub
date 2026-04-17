@@ -21,7 +21,7 @@ export class FlatListBuilder {
     private branchResolver: BranchResolver,
     private messageCollector: MessageCollector,
     private messageTransformer: MessageTransformer,
-  ) { }
+  ) {}
 
   /**
    * Generate flatList from messages array
@@ -948,7 +948,7 @@ export class FlatListBuilder {
         'inputCitationTokens',
         'inputImageTokens',
         'inputTextTokens',
-         'inputToolTokens',
+        'inputToolTokens',
         'inputWriteCacheTokens',
         'latency',
         'outputAudioTokens',

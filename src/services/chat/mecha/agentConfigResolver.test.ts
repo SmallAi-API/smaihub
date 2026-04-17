@@ -1200,35 +1200,20 @@ describe('resolveAgentConfig', () => {
       );
     });
 
-    it('should use locale instruction as systemRole when agent has no systemRole', () => {
-      vi.spyOn(
-        userSelectors.userGeneralSettingsSelectors,
-        'currentResponseLanguage',
-      ).mockReturnValue('ja-JP');
-      vi.spyOn(agentSelectors.agentSelectors, 'getAgentConfigById').mockReturnValue(
-        () =>
-          ({
-            ...mockAgentConfig,
-            systemRole: '',
-          }) as any,
-      );
+    const result = resolveAgentConfig({ agentId: 'test-agent' });
 
-      const result = resolveAgentConfig({ agentId: 'test-agent' });
+    expect(result.agentConfig.systemRole).toBe(
+      'Preferred reply language: ja-JP. Use this language unless the user explicitly asks to switch.',
+    );
+  });
 
-      expect(result.agentConfig.systemRole).toBe(
-        'Preferred reply language: ja-JP. Use this language unless the user explicitly asks to switch.',
-      );
-    });
+  it('should not modify systemRole when userLocale is falsy', () => {
+    vi.spyOn(userSelectors.userGeneralSettingsSelectors, 'currentResponseLanguage').mockReturnValue(
+      undefined as any,
+    );
 
-    it('should not modify systemRole when userLocale is falsy', () => {
-      vi.spyOn(
-        userSelectors.userGeneralSettingsSelectors,
-        'currentResponseLanguage',
-      ).mockReturnValue(undefined as any);
+    const result = resolveAgentConfig({ agentId: 'test-agent' });
 
-      const result = resolveAgentConfig({ agentId: 'test-agent' });
-
-      expect(result.agentConfig.systemRole).toBe('You are a helpful assistant');
-    });
+    expect(result.agentConfig.systemRole).toBe('You are a helpful assistant');
   });
 });
