@@ -21,6 +21,7 @@
   "claude-opus-4-5-20251101-thinking.description": "Claude Opus 4.5 是 Anthropic 的旗舰模型，结合了卓越的智能与可扩展性能，适合需要最高质量回应和推理能力的复杂任务。",
   "claude-opus-4-5-20251101.description": "Claude Opus 4.5 是 Anthropic 的旗舰模型，结合了卓越的智能与可扩展性能，适合需要最高质量回应和推理能力的复杂任务。",
   "claude-opus-4-6.description": "Claude Opus 4.6 is Anthropic’s most intelligent model for building agents and coding.",
+  "claude-opus-4-7.description": "Claude Opus 4.7 is Anthropic's most capable generally available model for complex reasoning and agentic coding.",
   "claude-sonnet-4-20250514.description": "Claude Sonnet 4 可以产生近乎即时的响应或延长的逐步思考，用户可以清晰地看到这些过程。API 用户还可以对模型思考的时间进行细致的控制",
   "claude-sonnet-4-5-20250929-thinking.description": "Claude Sonnet 4.5 是 Anthropic 迄今为止最智能的模型。",
   "claude-sonnet-4-5-20250929.description": "Claude Sonnet 4.5 是 Anthropic 迄今为止最智能的模型。",

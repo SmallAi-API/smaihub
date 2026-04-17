@@ -1,4 +1,6 @@
 {
+  "features.agentWorkingPanel.desc": "查看代理人進度和可訪問資源的地方。",
+  "features.agentWorkingPanel.title": "工作面板",
   "features.assistantMessageGroup.desc": "將助手訊息及其工具調用結果彙整成群組顯示",
   "features.assistantMessageGroup.title": "助手訊息彙整群組",
   "features.gatewayMode.desc": "透過 Gateway WebSocket 在伺服器上執行代理任務，而不是在本地運行。這樣可以加快執行速度並減少客戶端資源使用。",
