@@ -1,8 +1,9 @@
-import {
-  type InterceptRouteParams,
-  type OpenSettingsWindowOptions,
-  type WindowMinimumSizeParams,
-  type WindowSizeParams,
+import type {
+  FocusTopicPopupParams,
+  InterceptRouteParams,
+  OpenSettingsWindowOptions,
+  WindowMinimumSizeParams,
+  WindowSizeParams,
 } from '@lobechat/electron-client-ipc';
 
 import type { AppBrowsersIdentifiers, WindowTemplateIdentifiers } from '@/appBrowsers';
@@ -78,6 +79,30 @@ export default class BrowserWindowsCtr extends ControllerModule {
     return this.withSenderIdentifier((identifier) => {
       return this.app.browserManager.isWindowMaximized(identifier);
     });
+  }
+
+  @IpcMethod()
+  setWindowAlwaysOnTop(flag: boolean) {
+    this.withSenderIdentifier((identifier) => {
+      this.app.browserManager.setWindowAlwaysOnTop(identifier, flag);
+    });
+  }
+
+  @IpcMethod()
+  isWindowAlwaysOnTop() {
+    return this.withSenderIdentifier((identifier) => {
+      return this.app.browserManager.isWindowAlwaysOnTop(identifier);
+    });
+  }
+
+  @IpcMethod()
+  listTopicPopups() {
+    return this.app.browserManager.listTopicPopups();
+  }
+
+  @IpcMethod()
+  focusTopicPopup(params: FocusTopicPopupParams) {
+    return this.app.browserManager.focusTopicPopup(params.identifier);
   }
 
   @IpcMethod()
