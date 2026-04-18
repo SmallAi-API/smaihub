@@ -2,12 +2,9 @@ import console from 'node:console';
 import path from 'node:path';
 
 import { APP_WINDOW_MIN_SIZE } from '@lobechat/desktop-bridge';
-import {
-  type MainBroadcastEventKey,
-  type MainBroadcastParams,
-} from '@lobechat/electron-client-ipc';
-import { type BrowserWindowConstructorOptions } from 'electron';
-import { BrowserWindow, ipcMain, screen, session as electronSession, shell } from 'electron';
+import type { MainBroadcastEventKey, MainBroadcastParams } from '@lobechat/electron-client-ipc';
+import type { BrowserWindowConstructorOptions } from 'electron';
+import { app, BrowserWindow, ipcMain, screen, session as electronSession, shell } from 'electron';
 
 import { preloadDir, resourcesDir } from '@/const/dir';
 import { isMac } from '@/const/env';
@@ -264,6 +261,13 @@ export default class Browser {
     browserWindow.on('focus', () => {
       logger.debug(`[${this.identifier}] Window 'focus' event fired.`);
       this.broadcast('windowFocused');
+      // Clear any completion badge once the user returns to the app.
+      try {
+        app.setBadgeCount(0);
+        if (process.platform === 'darwin' && app.dock) app.dock.setBadge('');
+      } catch {
+        /* noop — some platforms may not support badge counts */
+      }
     });
   }
 
