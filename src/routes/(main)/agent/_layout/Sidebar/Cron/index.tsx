@@ -11,6 +11,8 @@ import EmptyNavItem from '@/features/NavPanel/components/EmptyNavItem';
 import SkeletonList from '@/features/NavPanel/components/SkeletonList';
 import { useQueryRoute } from '@/hooks/useQueryRoute';
 import { useAgentStore } from '@/store/agent';
+import { agentSelectors } from '@/store/agent/selectors';
+import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 
 import CronTopicGroup from './CronTopicGroup';
 
@@ -25,15 +27,18 @@ const CronTopicList = memo<CronTopicListProps>(({ itemKey }) => {
     s.activeAgentId,
     s.useFetchCronTopicsWithJobInfo,
   ]);
-
+  const isHeterogeneous = useAgentStore(agentSelectors.isCurrentAgentHeterogeneous);
+  const enableBusinessFeatures = useServerConfigStore(serverConfigSelectors.enableBusinessFeatures);
   const { data: cronTopicsGroupsWithJobInfo = [], isLoading } = useFetchCronTopicsWithJobInfo(
     agentId,
-    true,
+    enableBusinessFeatures && !isHeterogeneous,
   );
   const handleCreateCronJob = useCallback(() => {
     if (!agentId) return;
     router.push(urlJoin('/agent', agentId, 'cron', 'new'));
   }, [agentId, router]);
+
+  if (!enableBusinessFeatures || isHeterogeneous) return null;
 
   const addAction = (
     <ActionIcon
