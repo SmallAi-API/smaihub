@@ -88,8 +88,10 @@ const getVerificationKey = async () => {
     // 现在，无论在哪个环境下，`importJWK` 都会将这个对象正确地识别为一个公钥。
     return await importJWK(publicKeyJwk, 'RS256');
   } catch (error) {
-    log('获取 JWKS 公钥失败: %O', error);
-    throw new Error(`JWKS_KEY 公钥获取失败: ${(error as Error).message}`, { cause: error });
+    log('Failed to get JWKS public key: %O', error);
+    throw new Error(`JWKS_KEY public key retrieval failed: ${(error as Error).message}`, {
+      cause: error,
+    });
   }
 };
 
