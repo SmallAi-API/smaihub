@@ -2,7 +2,7 @@
 
 # Changelog
 
-## [Version 2.0.0-next.389](https://github.com/lobehub/lobe-chat/compare/v2.0.0-next.388...v2.0.0-next.389)
+## [Version 2.1.51](https://github.com/lobehub/lobe-chat/compare/v0.0.0-nightly.pr13850.8503...v2.1.51)
 
 <sup>Released on **2026-01-27**</sup>
 
@@ -145,7 +145,7 @@
 
 </div>
 
-## [Version 2.0.0-next.384](https://github.com/lobehub/lobe-chat/compare/v2.0.0-next.383...v2.0.0-next.384)
+## [Version 2.1.50](https://github.com/lobehub/lobe-chat/compare/v2.1.49...v2.1.50)
 
 <sup>Released on **2026-01-26**</sup>
 
