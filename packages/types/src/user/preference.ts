@@ -75,6 +75,10 @@ export interface UserPreference {
    */
   telemetry?: boolean | null;
   topicGroupMode?: TopicGroupMode;
+  /**
+   * whether to include completed topics in the topic list
+   */
+  topicIncludeCompleted?: boolean;
   topicSortBy?: TopicSortBy;
   /**
    * whether to use cmd + enter to send message
@@ -139,6 +143,7 @@ export const UserPreferenceSchema = z
     lab: UserLabSchema.optional(),
     telemetry: z.boolean().nullable(),
     topicGroupMode: z.enum(['byTime', 'byProject', 'flat']).optional(),
+    topicIncludeCompleted: z.boolean().optional(),
     topicSortBy: z.enum(['createdAt', 'updatedAt']).optional(),
     useCmdEnterToSend: z.boolean().optional(),
   })
