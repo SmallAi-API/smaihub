@@ -105,6 +105,7 @@
   "gpt-image-1-mini.description": "成本更低的 GPT Image 1 版本，原生支持文本与图像输入并生成图像输出。",
   "gpt-image-1.5.description": "ChatGPT Image 1.5 原生多模态图片生成模型",
   "gpt-image-1.description": "ChatGPT 原生多模态图片生成模型",
+  "gpt-image-2.description": "OpenAI's next-generation multimodal image model with native reasoning, up to 4K resolution, near-perfect text rendering, and high-fidelity multilingual support.",
   "gpt-oss-120b.description": "GPT-OSS 120B 是一款拥有 1200 亿参数的顶尖语言模型，内置浏览器搜索和代码执行功能，并具备推理能力。",
   "gpt-oss-20b.description": "GPT-OSS 20B 是一款拥有 200 亿参数的顶尖语言模型，内置浏览器搜索和代码执行功能，并具备推理能力。",
   "gpt-realtime-mini.description": "最新实时语音版本，支持音频和文本实时输入输出",

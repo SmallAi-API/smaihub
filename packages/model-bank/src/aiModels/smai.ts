@@ -18,14 +18,34 @@ import {
 // smai Router Provider - 聚合多个 AI 服务
 // 模型通过动态获取，不预定义具体模型
 export const gptImage1ParamsSchema: ModelParamsSchema = {
-  imageUrls: { default: [] },
+  imageUrls: { default: [], maxCount: 1, maxFileSize: 5 * 1024 * 1024 },
   prompt: { default: '' },
   size: {
     default: 'auto',
     enum: ['auto', '1024x1024', '1536x1024', '1024x1536'],
   },
 };
-
+// gpt-image-2 accepts any resolution satisfying: max edge ≤ 3840px, both edges
+// multiples of 16px, aspect ratio ≤ 3:1, pixels between 655,360 and 8,294,400.
+// Until the schema/UI supports free-form W×H input, we expose the official
+// "Popular sizes" list from https://developers.openai.com/docs/guides/image-generation.
+export const gptImage2Schema = {
+  imageUrls: { default: [], maxCount: 1, maxFileSize: 5 * 1024 * 1024 },
+  prompt: { default: '' },
+  size: {
+    default: 'auto',
+    enum: [
+      'auto',
+      '1024x1024',
+      '1536x1024',
+      '1024x1536',
+      '2048x2048',
+      '2048x1152',
+      '3840x2160',
+      '2160x3840',
+    ],
+  },
+};
 export const seedance15ProParams: VideoModelParamsSchema = {
   aspectRatio: {
     default: 'adaptive',
@@ -1707,6 +1727,16 @@ export const smaiImageModels: AIImageModelCard[] = [
     id: 'gemini-3-pro-image-preview:image',
     parameters: nanoBananaProParameters,
     releasedAt: '2025-11-20',
+    type: 'image',
+  },
+  {
+    description:
+      "OpenAI's next-generation multimodal image model with native reasoning, up to 4K resolution, near-perfect text rendering, and high-fidelity multilingual support.",
+    displayName: 'GPT Image 2',
+    enabled: true,
+    id: 'gpt-image-2',
+    parameters: gptImage2Schema,
+    releasedAt: '2026-04-22',
     type: 'image',
   },
   {

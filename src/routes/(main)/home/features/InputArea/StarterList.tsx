@@ -105,7 +105,7 @@ const StarterList = memo(() => {
       }
 
       if (key === 'image') {
-        navigate('/image');
+        navigate('/image?model=gpt-image-2');
         return;
       }
 
