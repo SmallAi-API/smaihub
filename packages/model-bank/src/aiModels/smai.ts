@@ -840,8 +840,8 @@ const smaiChatModels: AIChatModelCard[] = [
     maxOutput: 128_000,
     releasedAt: '2026-04-16',
     settings: {
+      disabledParams: ['temperature', 'top_p'],
       extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
-      searchImpl: 'params',
     },
     type: 'chat',
   },
