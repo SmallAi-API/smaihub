@@ -9,7 +9,7 @@ export default {
   'alert.cloud.title': '{{name}} beta is live',
   'agentOnboardingPromo.actionLabel': 'Try it now',
   'agentOnboardingPromo.description':
-    'Set up your agent teams in a quick chat with Lobe AI. Your existing agents remain unchanged.',
+    'Set up your agent teams in a quick chat with smai.ai. Your existing agents remain unchanged.',
   'agentOnboardingPromo.title': 'Quick Wizard',
   'appLoading.appIdle': 'Ready to start',
   'appLoading.appInitializing': 'Application is starting...',
@@ -33,7 +33,7 @@ export default {
   'blog': 'Product Blog',
   'branching': 'Create Subtopic',
   'branchingDisable':
-    'The "Sub-topic" feature is unavailable in the current mode. To use this feature, please switch to Postgres/Pglite DB mode or use LobeHub Cloud.',
+    'The "Sub-topic" feature is unavailable in the current mode. To use this feature, please switch to Postgres/Pglite DB mode or use smai.ai',
   'branchingRequiresSavedTopic':
     'Current topic is not saved, please save it first to use subtopic feature',
   'cancel': 'Cancel',

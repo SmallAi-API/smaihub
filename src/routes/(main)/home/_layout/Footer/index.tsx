@@ -1,17 +1,14 @@
 'use client';
 
-import { SOCIAL_URL } from '@lobechat/business-const';
 import { isDesktop } from '@lobechat/const';
 import { useAnalytics } from '@lobehub/analytics/react';
 import { type MenuProps } from '@lobehub/ui';
 import { ActionIcon, DropdownMenu, Flexbox, Icon } from '@lobehub/ui';
-import { DiscordIcon, GithubIcon } from '@lobehub/ui/icons';
 import {
   Book,
   CircleHelp,
-  Feather,
-  FileClockIcon,
   FlaskConical,
+  KeyRound,
   MessageCircle,
   Rocket,
   Settings2,
@@ -22,13 +19,10 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
-import ChangelogModal from '@/components/ChangelogModal';
 import HighlightNotification from '@/components/HighlightNotification';
-import { DOCUMENTS_REFER_URL, GITHUB } from '@/const/url';
 import Billboard from '@/features/Billboard';
 import { useBillboardMenuItems } from '@/features/Billboard/MenuItems';
 import ThemeButton from '@/features/User/UserPanel/ThemeButton';
-import { useFeedbackModal } from '@/hooks/useFeedbackModal';
 import { useNavLayout } from '@/hooks/useNavLayout';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors/systemStatus';
@@ -42,11 +36,11 @@ import { resolveFooterPromotionState } from './promotionPipeline';
 const AGENT_ONBOARDING_PROMO_SLUG = 'agent-onboarding-promo-v1';
 
 const PRODUCT_HUNT_NOTIFICATION = {
-  actionHref: 'https://www.producthunt.com/products/lobehub?launch=lobehub',
-  endTime: new Date('2026-02-01T00:00:00Z'),
-  image: 'https://hub-apac-1.lobeobjects.space/og/lobehub-ph.png',
-  slug: 'product-hunt-2026',
-  startTime: new Date('2026-01-27T08:00:00Z'),
+  actionHref: '/download',
+  endTime: new Date('2026-04-30T00:00:00Z'),
+  image: 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com/logo/windows.png',
+  slug: 'smai.ai-desktop',
+  startTime: new Date('2026-04-15T00:00:00Z'),
 } as const;
 
 interface PromotionCard {
@@ -77,9 +71,8 @@ const Footer = memo(() => {
       !!s.onboarding?.finishedAt,
       userGeneralSettingsSelectors.config(s).isDevMode,
     ]);
-  const [shouldLoadChangelog, setShouldLoadChangelog] = useState(false);
+
   const [isAgentOnboardingCardOpen, setIsAgentOnboardingCardOpen] = useState(false);
-  const [isChangelogModalOpen, setIsChangelogModalOpen] = useState(false);
   const [isProductHuntCardOpen, setIsProductHuntCardOpen] = useState(false);
 
   const [isAgentOnboardingPromoRead, isProductHuntNotificationRead, updateSystemStatus] =
@@ -166,21 +159,6 @@ const Footer = memo(() => {
       trigger: 'auto',
     });
   }, [isWithinTimeWindow, shouldAutoShowProductHuntCard, trackPromotionEvent]);
-
-  const { open: openFeedbackModal } = useFeedbackModal();
-
-  const handleOpenChangelogModal = () => {
-    setShouldLoadChangelog(true);
-    setIsChangelogModalOpen(true);
-  };
-
-  const handleCloseChangelogModal = () => {
-    setIsChangelogModalOpen(false);
-  };
-
-  const handleOpenFeedbackModal = useCallback(() => {
-    openFeedbackModal();
-  }, [openFeedbackModal]);
 
   const handleCloseAgentOnboardingCard = useCallback(() => {
     setIsAgentOnboardingCardOpen(false);
@@ -271,51 +249,24 @@ const Footer = memo(() => {
           ]
         : []),
       {
+        icon: <Icon icon={KeyRound} />,
+        key: 'apiKey',
+        label: (
+          <a href="https://api.smai.ai" rel="noopener noreferrer" target="_blank">
+            {t('tab.apiAccess')}
+          </a>
+        ),
+      },
+      {
         icon: <Icon icon={Book} />,
         key: 'docs',
         label: (
-          <a href={DOCUMENTS_REFER_URL} rel="noopener noreferrer" target="_blank">
-            {t('userPanel.docs')}
+          <a href="https://docs.smai.ai/docs/smai-app" rel="noopener noreferrer" target="_blank">
+            {t('tab.docs')}
           </a>
         ),
       },
-      {
-        icon: <Icon icon={Feather} />,
-        key: 'feedback',
-        label: t('userPanel.feedback'),
-        onClick: handleOpenFeedbackModal,
-      },
-      {
-        icon: <Icon icon={DiscordIcon} />,
-        key: 'discord',
-        label: (
-          <a href={SOCIAL_URL.discord} rel="noopener noreferrer" target="_blank">
-            {t('userPanel.discord')}
-          </a>
-        ),
-      },
-      {
-        type: 'divider',
-      },
-      {
-        icon: <Icon icon={FileClockIcon} />,
-        key: 'changelog',
-        label: t('changelog'),
-        onClick: handleOpenChangelogModal,
-      },
-      ...(footer.layout === 'compact' && !footer.hideGitHub
-        ? [
-            {
-              icon: <Icon icon={GithubIcon} />,
-              key: 'github',
-              label: (
-                <a href={GITHUB} rel="noopener noreferrer" target="_blank">
-                  GitHub
-                </a>
-              ),
-            },
-          ]
-        : []),
+
       ...(footer.showEvalEntry && footer.layout === 'compact'
         ? [
             {
@@ -342,9 +293,7 @@ const Footer = memo(() => {
     [
       footer.showSettingsEntry,
       footer.layout,
-      footer.hideGitHub,
       footer.showEvalEntry,
-      handleOpenFeedbackModal,
       handleOpenProductHuntCard,
       isDevMode,
       shouldShowProductHuntMenuEntry,
@@ -366,14 +315,6 @@ const Footer = memo(() => {
                 size={16}
               />
             </DropdownMenu>
-            {!footer.hideGitHub && (
-              <a aria-label={'GitHub'} href={GITHUB} rel="noopener noreferrer" target={'_blank'}>
-                <ActionIcon icon={GithubIcon} size={16} title={'GitHub'} />
-              </a>
-            )}
-            <Link to="/eval">
-              <ActionIcon icon={FlaskConical} size={16} title="Evaluation Lab" />
-            </Link>
           </Flexbox>
           <ThemeButton placement={'topCenter'} size={16} />
         </Flexbox>
@@ -394,11 +335,7 @@ const Footer = memo(() => {
           )}
         </Flexbox>
       )}
-      <ChangelogModal
-        open={isChangelogModalOpen}
-        shouldLoad={shouldLoadChangelog}
-        onClose={handleCloseChangelogModal}
-      />
+
       {activePromotion && (
         <HighlightNotification
           open
