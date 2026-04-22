@@ -4,6 +4,7 @@ import { Book, CircleUserRound, Cloudy, Settings2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
+import useBusinessMeCells from '@/business/client/features/User/useBusinessMeCells';
 import { type CellProps } from '@/components/Cell';
 import { DOCUMENTS } from '@/const/index';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
@@ -15,6 +16,8 @@ export const useCategory = () => {
   const { t } = useTranslation(['common', 'setting', 'auth']);
   const { showCloudPromotion, hideDocs } = useServerConfigStore(featureFlagsSelectors);
   const [isLoginWithAuth] = useUserStore((s) => [authSelectors.isLoginWithAuth(s)]);
+
+  const businessMeCells = useBusinessMeCells();
 
   const profile: CellProps[] = [
     {
@@ -59,7 +62,7 @@ export const useCategory = () => {
     },
     ...(isLoginWithAuth ? profile : []),
     ...(isLoginWithAuth ? settings : []),
-
+    ...(isLoginWithAuth ? businessMeCells : []),
     ...(!hideDocs ? helps : []),
   ].filter(Boolean) as CellProps[];
 
