@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer/';
 import Replicate from 'replicate';
 
 import type { LobeRuntimeAI } from '../../core/BaseAI';
