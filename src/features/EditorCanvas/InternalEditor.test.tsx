@@ -105,7 +105,7 @@ describe('InternalEditor', () => {
 
       // Find the Editor component's container
       const editorContainer = container.querySelector('[data-lexical-editor]')?.closest('div');
-      // The style should include paddingBottom: 64 (default) merged with custom styles
+      // The style should include paddingBottom: 32 (default) merged with custom styles
       expect(editorContainer).toBeTruthy();
     });
   });
@@ -247,7 +247,7 @@ describe('InternalEditor', () => {
       );
     });
 
-     it('should call onContentChange when formatting changes but text stays the same', async () => {
+    it('should call onContentChange when formatting changes but text stays the same', async () => {
       const onContentChange = vi.fn();
       let editorInstance: IEditor | undefined;
 
@@ -288,7 +288,6 @@ describe('InternalEditor', () => {
         { timeout: 2000 },
       );
     });
-
 
     it('should track multiple content changes', async () => {
       const onContentChange = vi.fn();
@@ -337,7 +336,7 @@ describe('InternalEditor', () => {
         { timeout: 2000 },
       );
     });
-     it('should not call onContentChange for programmatic hydration while lock is active', async () => {
+    it('should not call onContentChange for programmatic hydration while lock is active', async () => {
       const onContentChange = vi.fn();
       const contentChangeLockRef = { current: false };
       let editorInstance: IEditor | undefined;

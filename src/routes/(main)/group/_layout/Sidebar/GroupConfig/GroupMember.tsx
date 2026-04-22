@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 import { DEFAULT_AVATAR } from '@/const/meta';
+import AgentProfilePopup from '@/features/AgentProfileCard/AgentProfilePopup';
 import NavItem from '@/features/NavPanel/components/NavItem';
 import UserAvatar from '@/features/User/UserAvatar';
 import { useQueryRoute } from '@/hooks/useQueryRoute';
@@ -19,7 +20,6 @@ import { useUserStore } from '@/store/user';
 import { userProfileSelectors } from '@/store/user/slices/auth/selectors';
 
 import AddGroupMemberModal from '../AddGroupMemberModal';
-import AgentProfilePopup from './AgentProfilePopup';
 import GroupMemberItem from './GroupMemberItem';
 
 const styles = createStaticStyles(({ css, cssVar }) => ({
@@ -114,12 +114,7 @@ const GroupMember = memo<GroupMemberProps>(({ addModalOpen, onAddModalOpenChange
         <NavItem icon={<UserAvatar size={24} />} title={nickname || username || 'User'} />
         {groupId &&
           groupMembers.map((item) => (
-            <AgentProfilePopup
-              agent={item}
-              groupId={groupId}
-              key={item.id}
-              onChat={() => handleMemberClick(item.id)}
-            >
+            <AgentProfilePopup agent={item} agentId={item.id} groupId={groupId} key={item.id}>
               <div
                 className={styles.memberTrigger}
                 data-active={isProfileRoute && activeTab === item.id ? 'true' : undefined}

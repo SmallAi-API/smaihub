@@ -1,4 +1,4 @@
-import type { CheckpointConfig } from '@lobechat/types';
+import type { CheckpointConfig, TaskAutomationMode } from '@lobechat/types';
 
 import { taskService } from '@/services/task';
 import type { StoreSetter } from '@/store/types';
@@ -12,10 +12,11 @@ export const createTaskConfigSlice = (set: Setter, get: () => TaskStore, _api?: 
 
 export class TaskConfigSliceActionImpl {
   readonly #get: () => TaskStore;
+  readonly #set: Setter;
 
   constructor(set: Setter, get: () => TaskStore, _api?: unknown) {
     void _api;
-    void set;
+    this.#set = set;
     this.#get = get;
   }
 
@@ -85,16 +86,27 @@ export class TaskConfigSliceActionImpl {
     id: string,
     modelConfig: { model?: string; provider?: string },
   ): Promise<void> => {
+    // Optimistic update — immediately reflect new model/provider in UI
+    this.#get().internal_dispatchTaskDetail({
+      id,
+      type: 'updateTaskDetail',
+      value: { config: { ...this.#get().taskDetailMap[id]?.config, ...modelConfig } },
+    });
+    this.#set({ taskSaveStatus: 'saving' }, false, 'updateTaskModelConfig/saving');
+
     try {
       await taskService.updateConfig(id, modelConfig);
+      this.#set({ taskSaveStatus: 'saved' }, false, 'updateTaskModelConfig/saved');
       await this.#get().internal_refreshTaskDetail(id);
     } catch (error) {
       console.error('[TaskStore] Failed to update task model config:', error);
+      this.#set({ taskSaveStatus: 'idle' }, false, 'updateTaskModelConfig/error');
+      await this.#get().internal_refreshTaskDetail(id);
     }
   };
 
-  // 配置周期执行间隔（heartbeatInterval 字段，单位：秒，null 或 0 禁用）
-  // 后端周期执行逻辑待 LOBE-6587 就绪后自动生效，前端可先完成 UI 配置
+  // Configure periodic execution interval (heartbeatInterval in seconds).
+  // Whether automation runs is decided by automationMode (controlled separately by setAutomationMode).
   updatePeriodicInterval = async (id: string, interval: number | null): Promise<void> => {
     try {
       await taskService.update(id, { heartbeatInterval: interval ?? 0 });
@@ -104,8 +116,26 @@ export class TaskConfigSliceActionImpl {
     }
   };
 
-  // TODO [LOBE-6587]: 定时任务（cron 模式）
-  // updateSchedule(id, { pattern, timezone }) — 后端 task.update schema 尚未暴露 schedulePattern/scheduleTimezone
+  // Switch between automation modes; null = disable automation.
+  setAutomationMode = async (id: string, mode: TaskAutomationMode | null): Promise<void> => {
+    // Optimistic update so the Segmented reflects the new tab immediately
+    this.#get().internal_dispatchTaskDetail({
+      id,
+      type: 'updateTaskDetail',
+      value: { automationMode: mode },
+    });
+
+    try {
+      await taskService.update(id, { automationMode: mode });
+      await this.#get().internal_refreshTaskDetail(id);
+    } catch (error) {
+      console.error('[TaskStore] Failed to update automation mode:', error);
+      await this.#get().internal_refreshTaskDetail(id);
+    }
+  };
+
+  // TODO [LOBE-6587]: Scheduled tasks (cron mode)
+  // updateSchedule(id, { pattern, timezone }) — backend task.update schema does not yet expose schedulePattern/scheduleTimezone
 }
 
 export type TaskConfigSliceAction = Pick<
