@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
+import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import dotenv from 'dotenv';
 import { defineConfig } from 'electron-vite';
 import { type PluginOption, type ViteDevServer } from 'vite';
@@ -49,6 +50,11 @@ function electronDesktopHtmlPlugin(): PluginOption {
         // Explicit document-entry requests — always rewrite.
         if (pathname === '/' || pathname === '/index.html') {
           req.url = '/apps/desktop/index.html';
+          next();
+          return;
+        }
+        if (pathname === '/overlay' || pathname === '/overlay.html') {
+          req.url = '/apps/desktop/overlay.html';
           next();
           return;
         }
@@ -164,6 +170,7 @@ export default defineConfig({
       rolldownOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
+          overlay: path.resolve(__dirname, 'overlay.html'),
           popup: path.resolve(__dirname, 'popup.html'),
         },
         output: sharedRollupOutput,
@@ -177,6 +184,7 @@ export default defineConfig({
     plugins: [
       forceAbsoluteBasePlugin(),
       electronDesktopHtmlPlugin(),
+      vanillaExtractPlugin(),
       ...(sharedRendererPlugins({ platform: 'desktop' }) as PluginOption[]),
     ],
     resolve: {

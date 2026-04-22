@@ -240,7 +240,7 @@ export default class Browser {
       logger.debug(`[${this.identifier}] Window 'ready-to-show' event fired.`);
       if (this.options.showOnInit) {
         logger.debug(`Showing window ${this.identifier} because showOnInit is true.`);
-        browserWindow.show();
+        this.show();
       } else {
         logger.debug(`Window ${this.identifier} not shown because showOnInit is false.`);
       }
@@ -340,6 +340,7 @@ export default class Browser {
 
   show(): void {
     logger.debug(`Showing window: ${this.identifier}`);
+    this.ensureForegroundAppOnMac();
     if (!this._browserWindow?.isDestroyed()) {
       this.determineWindowPosition();
     }
@@ -372,7 +373,7 @@ export default class Browser {
     if (this._browserWindow?.isVisible() && this._browserWindow.isFocused()) {
       this.hide();
     } else {
-      this._browserWindow?.show();
+      this.show();
       this._browserWindow?.focus();
     }
   }
@@ -429,6 +430,17 @@ export default class Browser {
 
     logger.debug(`[${this.identifier}] Calculated position: x=${newX}, y=${newY}`);
     this._browserWindow!.setPosition(newX, newY, false);
+  }
+
+  private ensureForegroundAppOnMac(): void {
+    if (!isMac || this.identifier !== 'app') return;
+
+    try {
+      app.setActivationPolicy('regular');
+      app.dock?.show();
+    } catch (error) {
+      logger.warn(`[${this.identifier}] Failed to restore regular activation policy:`, error);
+    }
   }
 
   // ==================== Content Loading ====================

@@ -35,7 +35,8 @@ export const nativeModules = [
   // macOS-only native modules
   ...(isDarwin ? ['node-mac-permissions'] : []),
   '@napi-rs/canvas',
-  // Add more native modules here as needed
+  'get-windows',
+  'node-screenshots',
 ];
 
 /**

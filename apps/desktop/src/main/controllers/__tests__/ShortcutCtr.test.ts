@@ -20,7 +20,7 @@ const mockGetShortcutsConfig = vi.fn().mockReturnValue({
   openSettings: 'CommandOrControl+,',
 });
 const mockUpdateShortcutConfig = vi.fn().mockImplementation((_id, _accelerator) => {
-  // 简单模拟更新成功
+  // Simply mock a successful update
   return true;
 });
 

@@ -131,7 +131,7 @@ export default class FileService extends ServiceModule {
       };
     } catch (error) {
       logger.error(`File upload failed:`, error);
-      throw new Error(`File upload failed: ${(error as Error).message}`);
+      throw new Error(`File upload failed: ${(error as Error).message}`, { cause: error });
     }
   }
 
@@ -281,7 +281,7 @@ export default class FileService extends ServiceModule {
         throw new FileNotFoundError(`File not found: ${path}`, path);
       }
 
-      throw new Error(`File retrieval failed: ${(error as Error).message}`);
+      throw new Error(`File retrieval failed: ${(error as Error).message}`, { cause: error });
     }
   }
 
@@ -362,7 +362,7 @@ export default class FileService extends ServiceModule {
       return { success: true };
     } catch (error) {
       logger.error(`File deletion failed:`, error);
-      throw new Error(`File deletion failed: ${(error as Error).message}`);
+      throw new Error(`File deletion failed: ${(error as Error).message}`, { cause: error });
     }
   }
 
