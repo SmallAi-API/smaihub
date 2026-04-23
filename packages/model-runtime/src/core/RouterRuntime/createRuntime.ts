@@ -10,24 +10,26 @@ import { type Stream } from 'openai/streaming';
 
 import { LobeOpenAI } from '../../providers/openai';
 import { LobeVertexAI } from '../../providers/vertexai';
-import {
-  type ChatCompletionErrorPayload,
-  type ChatMethodOptions,
-  type ChatStreamCallbacks,
-  type ChatStreamPayload,
-  type CreateImagePayload,
-  type CreateImageResponse,
-  type CreateVideoPayload,
-  type CreateVideoResponse,
-  type EmbeddingsOptions,
-  type EmbeddingsPayload,
-  type GenerateObjectOptions,
-  type GenerateObjectPayload,
-  type HandleCreateVideoWebhookPayload,
-  type HandleCreateVideoWebhookResult,
-  type ILobeAgentRuntimeErrorType,
-  type PollVideoStatusResult,
-  type TextToSpeechPayload,
+import type {
+  ChatCompletionErrorPayload,
+  ChatMethodOptions,
+  ChatStreamCallbacks,
+  ChatStreamPayload,
+  CreateImageMethodOptions,
+  CreateImagePayload,
+  CreateImageResponse,
+  CreateVideoMethodOptions,
+  CreateVideoPayload,
+  CreateVideoResponse,
+  EmbeddingsOptions,
+  EmbeddingsPayload,
+  GenerateObjectOptions,
+  GenerateObjectPayload,
+  HandleCreateVideoWebhookPayload,
+  HandleCreateVideoWebhookResult,
+  ILobeAgentRuntimeErrorType,
+  PollVideoStatusResult,
+  TextToSpeechPayload,
 } from '../../types';
 import { postProcessModelList } from '../../utils/postProcessModelList';
 import { safeParseJSON } from '../../utils/safeParseJSON';
@@ -487,12 +489,20 @@ export const createRouterRuntime = ({
       }
     }
 
-    async createImage(payload: CreateImagePayload) {
-      return this.runWithFallback(payload.model, (runtime) => runtime.createImage!(payload));
+    async createImage(payload: CreateImagePayload, options?: CreateImageMethodOptions) {
+      return this.runWithFallback(
+        payload.model,
+        (runtime) => runtime.createImage!(payload),
+        options?.metadata,
+      );
     }
 
-    async createVideo(payload: CreateVideoPayload) {
-      return this.runWithFallback(payload.model, (runtime) => runtime.createVideo!(payload));
+    async createVideo(payload: CreateVideoPayload, options?: CreateVideoMethodOptions) {
+      return this.runWithFallback(
+        payload.model,
+        (runtime) => runtime.createVideo!(payload),
+        options?.metadata,
+      );
     }
 
     async handleCreateVideoWebhook(payload: HandleCreateVideoWebhookPayload) {
