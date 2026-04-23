@@ -8,6 +8,7 @@ import { agentRuntimeService } from '@/services/agentRuntime';
 import { getAgentStoreState } from '@/store/agent';
 import { agentSelectors } from '@/store/agent/selectors';
 import { type ChatStore } from '@/store/chat/store';
+import { notifyDesktopHumanApprovalRequired } from '@/store/chat/utils/desktopNotification';
 import { topicMapKey } from '@/store/chat/utils/topicMapKey';
 import { type StoreSetter } from '@/store/types';
 
@@ -285,7 +286,9 @@ export class AgentActionImpl {
             pendingApproval: pendingToolsCalling,
           });
 
-          // 停止 loading 状态，等待人工干预
+          await notifyDesktopHumanApprovalRequired(this.#get, operation.context);
+
+          // Stop loading state, waiting for human intervention
           log(`Stopping loading for human approval: ${assistantId}`);
         } else if (phase === 'tool_execution' && toolCall) {
           log(`Tool execution started for ${assistantId}: ${toolCall.function?.name}`);
