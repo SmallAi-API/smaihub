@@ -1624,6 +1624,42 @@ const smaiChatModels: AIChatModelCard[] = [
       functionCall: true,
       reasoning: true,
     },
+    contextWindowTokens: 1_000_000,
+    description:
+      'DeepSeek V4 Flash is the cost-efficient member of the V4 family with a 1M context window and hybrid thinking. Toggle thinking via the `thinking` parameter; non-thinking mode targets latency-sensitive workflows while thinking mode enables deeper reasoning.',
+    displayName: 'DeepSeek V4 Flash',
+    enabled: true,
+    id: 'deepseek-v4-flash',
+    maxOutput: 384_000,
+    releasedAt: '2026-04-24',
+    settings: {
+      extendParams: ['thinking', 'deepseekV4ReasoningEffort'],
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+    },
+    contextWindowTokens: 1_000_000,
+    description:
+      'DeepSeek V4 Pro is the flagship of the V4 family, purpose-built for high-intensity reasoning, agent workflows, and long-horizon planning with a 1M context window. Thinking mode is on by default and toggleable via the `thinking` parameter.',
+    displayName: 'DeepSeek V4 Pro',
+    enabled: true,
+    id: 'deepseek-v4-pro',
+    maxOutput: 384_000,
+    releasedAt: '2026-04-24',
+    settings: {
+      extendParams: ['thinking', 'deepseekV4ReasoningEffort'],
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+    },
     contextWindowTokens: 131_072,
     description:
       'DeepSeek-V3.2 模型，。作为迈向新一代架构的中间步骤，V3.2 在 V3.1-Terminus 的基础上引入了 DeepSeek Sparse Attention（一种稀疏注意力机制），针对长文本的训练和推理效率进行了探索性的优化和验证。',
