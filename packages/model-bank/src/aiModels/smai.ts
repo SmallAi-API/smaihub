@@ -1622,18 +1622,24 @@ const smaiChatModels: AIChatModelCard[] = [
   {
     abilities: {
       functionCall: true,
-      reasoning: true,
+      structuredOutput: true,
     },
-    contextWindowTokens: 1_000_000,
+    contextWindowTokens: 131_072,
     description:
-      'DeepSeek V4 Flash is the cost-efficient member of the V4 family with a 1M context window and hybrid thinking. Toggle thinking via the `thinking` parameter; non-thinking mode targets latency-sensitive workflows while thinking mode enables deeper reasoning.',
+      'DeepSeek V4 Flash is the cost-efficient member of the V4 family with a 1M context window and hybrid thinking. Thinking mode is on by default and can be toggled via the `thinking` parameter; non-thinking mode is optimized for latency-sensitive workflows.',
     displayName: 'DeepSeek V4 Flash',
     enabled: true,
     id: 'deepseek-v4-flash',
     maxOutput: 384_000,
     releasedAt: '2026-04-24',
     settings: {
-      extendParams: ['thinking', 'deepseekV4ReasoningEffort'],
+      extendParamOptions: {
+        enableReasoning: {
+          defaultValue: true,
+          includeBudget: false,
+        },
+      },
+      extendParams: ['enableReasoning', 'deepseekV4ReasoningEffort'],
     },
     type: 'chat',
   },
@@ -1641,17 +1647,24 @@ const smaiChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      structuredOutput: true,
     },
     contextWindowTokens: 1_000_000,
     description:
-      'DeepSeek V4 Pro is the flagship of the V4 family, purpose-built for high-intensity reasoning, agent workflows, and long-horizon planning with a 1M context window. Thinking mode is on by default and toggleable via the `thinking` parameter.',
+      'DeepSeek V4 Pro is the flagship of the V4 family, optimized for high-intensity reasoning, agentic workflows, and long-horizon planning. Thinking mode is on by default and can be toggled via the `thinking` parameter.',
     displayName: 'DeepSeek V4 Pro',
     enabled: true,
     id: 'deepseek-v4-pro',
     maxOutput: 384_000,
     releasedAt: '2026-04-24',
     settings: {
-      extendParams: ['thinking', 'deepseekV4ReasoningEffort'],
+      extendParamOptions: {
+        enableReasoning: {
+          defaultValue: true,
+          includeBudget: false,
+        },
+      },
+      extendParams: ['enableReasoning', 'deepseekV4ReasoningEffort'],
     },
     type: 'chat',
   },
