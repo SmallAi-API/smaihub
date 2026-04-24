@@ -98,7 +98,7 @@ vi.mock('react-i18next', () => ({
               'Claude Code needs the Claude Code CLI to run locally. Install it first.',
             'claudeCodeInstallGuide.installWithBrew': 'Homebrew',
             'claudeCodeInstallGuide.installWithNpm': 'Recommended install',
-            'claudeCodeInstallGuide.reason': `LobeHub could not start Claude Code: ${options?.message ?? ''}`,
+            'claudeCodeInstallGuide.reason': `could not start Claude Code: ${options?.message ?? ''}`,
             'claudeCodeInstallGuide.title': 'Install Claude Code CLI',
             'codexInstallGuide.actions.openDocs': 'Open Install Guide',
             'codexInstallGuide.actions.openSystemTools': 'Open System Tools',
@@ -108,7 +108,7 @@ vi.mock('react-i18next', () => ({
               'Codex Agent needs the Codex CLI to run locally. Install it first.',
             'codexInstallGuide.installWithBrew': 'Homebrew',
             'codexInstallGuide.installWithNpm': 'Recommended install',
-            'codexInstallGuide.reason': `LobeHub could not start Codex: ${options?.message ?? ''}`,
+            'codexInstallGuide.reason': `could not start Codex: ${options?.message ?? ''}`,
             'codexInstallGuide.title': 'Install Codex CLI',
           } as Record<string, string>
         )[key] || key

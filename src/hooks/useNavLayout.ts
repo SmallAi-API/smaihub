@@ -37,7 +37,7 @@ export interface NavLayout {
 export const useNavLayout = (): NavLayout => {
   const { t } = useTranslation('common');
   const toggleCommandMenu = useGlobalStore((s) => s.toggleCommandMenu);
-  const { showMarket, hideGitHub } = useServerConfigStore(featureFlagsSelectors);
+  const { showMarket, hideGitHub, enableAgentTask } = useServerConfigStore(featureFlagsSelectors);
 
   const topNavItems = useMemo(
     () =>
@@ -55,7 +55,13 @@ export const useNavLayout = (): NavLayout => {
           url: '/',
         },
         {
-          devOnly: true,
+          hidden: !enableAgentTask,
+          icon: getRouteById('tasks')!.icon,
+          key: SidebarTabKey.Tasks,
+          title: t('tab.tasks'),
+          url: '/tasks',
+        },
+        {
           icon: getRouteById('page')!.icon,
           key: SidebarTabKey.Pages,
           title: t('tab.pages'),
@@ -70,7 +76,7 @@ export const useNavLayout = (): NavLayout => {
           url: 'https://api.smai.ai',
         },
       ] as NavItem[],
-    [t, toggleCommandMenu],
+    [t, toggleCommandMenu, enableAgentTask],
   );
 
   const bottomMenuItems = useMemo(

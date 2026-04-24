@@ -95,7 +95,7 @@ describe('systemStatusSelectors', () => {
     });
 
     it('should return stored items when set', () => {
-      const custom = [...DEFAULT_SIDEBAR_ITEMS].reverse();
+      const custom = ['agent', 'recents', 'pages', 'tasks', 'community', 'resource', 'memory'];
       const s: GlobalState = merge(initialState, {
         status: { sidebarItems: custom },
       });
@@ -127,6 +127,7 @@ describe('systemStatusSelectors', () => {
       // accordion slot in the default list now uses the user's legacy order
       expect(items).toEqual([
         'pages',
+        'tasks',
         'api',
         'agent',
         'recents',
