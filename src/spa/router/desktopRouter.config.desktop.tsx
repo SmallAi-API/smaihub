@@ -18,9 +18,16 @@ import DesktopVideoLayout from '@/routes/(main)/(create)/video/_layout';
 // Pages — sync import
 import AgentPage from '@/routes/(main)/agent';
 import DesktopChatLayout from '@/routes/(main)/agent/_layout';
+import DesktopAgentChatLayout from '@/routes/(main)/agent/(chat)/_layout';
+import AgentTopicNotebookRedirectPage from '@/routes/(main)/agent/[topicId]/page';
+import AgentTopicNotebookDocPage from '@/routes/(main)/agent/[topicId]/page/[docId]';
 import AgentChannelPage from '@/routes/(main)/agent/channel';
 import AgentCronDetailPage from '@/routes/(main)/agent/cron/[cronId]';
+import AgentPageRedirectPage from '@/routes/(main)/agent/page';
 import AgentProfilePage from '@/routes/(main)/agent/profile';
+import AgentTasksPage from '@/routes/(main)/agent/tasks';
+import AgentTasksLayout from '@/routes/(main)/agent/tasks/_layout';
+import AgentTaskDetailPage from '@/routes/(main)/agent/tasks/[taskId]';
 import CommunityLayout from '@/routes/(main)/community/_layout';
 import CommunityDetailLayout from '@/routes/(main)/community/(detail)/_layout';
 import CommunityDetailAgentPage from '@/routes/(main)/community/(detail)/agent';
@@ -96,8 +103,39 @@ export const desktopRoutes: RouteObject[] = [
           {
             children: [
               {
-                element: <AgentPage />,
-                index: true,
+                children: [
+                  {
+                    element: <AgentPage />,
+                    index: true,
+                  },
+                  {
+                    children: [
+                      {
+                        element: <AgentPage />,
+                        index: true,
+                      },
+                      {
+                        children: [
+                          {
+                            element: <AgentTopicNotebookRedirectPage />,
+                            index: true,
+                          },
+                          {
+                            element: <AgentTopicNotebookDocPage />,
+                            path: ':docId',
+                          },
+                        ],
+                        path: 'page',
+                      },
+                    ],
+                    path: ':topicId',
+                  },
+                ],
+                element: <DesktopAgentChatLayout />,
+              },
+              {
+                element: <AgentPageRedirectPage />,
+                path: 'page',
               },
               {
                 element: <AgentProfilePage />,
@@ -110,6 +148,20 @@ export const desktopRoutes: RouteObject[] = [
               {
                 element: <AgentChannelPage />,
                 path: 'channel',
+              },
+              {
+                children: [
+                  {
+                    element: <AgentTasksPage />,
+                    index: true,
+                  },
+                  {
+                    element: <AgentTaskDetailPage />,
+                    path: ':taskId',
+                  },
+                ],
+                element: <AgentTasksLayout />,
+                path: 'tasks',
               },
             ],
             element: <DesktopChatLayout />,

@@ -356,6 +356,7 @@ export function defineConfig(config: CustomNextConfig) {
       'oidc-provider',
       'pdfkit',
       '@napi-rs/canvas',
+      '@lobehub/editor',
       'discord.js',
       'ffmpeg-static',
       'pdfjs-dist',

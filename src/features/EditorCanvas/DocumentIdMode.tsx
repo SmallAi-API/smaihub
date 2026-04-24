@@ -53,7 +53,9 @@ const DocumentIdMode = memo<DocumentIdModeProps>(
     documentId,
     autoSave = true,
     sourceType = 'page',
+    topicId,
     onContentChange,
+    onInit,
     unsavedChangesGuard,
     style,
     ...editorProps
@@ -80,8 +82,24 @@ const DocumentIdMode = memo<DocumentIdModeProps>(
 
     useSaveDocumentHotkey(handleManualSave);
 
+    const handleEditorInit = useCallback(
+      (editorInstance: IEditor) => {
+        void onEditorInit(editorInstance).finally(() => {
+          onInit?.(editorInstance);
+        });
+      },
+      [onEditorInit, onInit],
+    );
+
     // Use SWR hook for document fetching (auto-initializes via onSuccess in DocumentStore)
-    const { error } = useFetchDocument(documentId, { autoSave, editor, sourceType });
+    const { data: remoteDocument, error } = useFetchDocument(documentId, {
+      autoSave,
+      editor,
+      sourceType,
+      topicId,
+    });
+    const remoteDocumentUpdatedAt = remoteDocument?.updatedAt;
+    const remoteDocumentVersion = remoteDocumentUpdatedAt?.toISOString();
 
     // Check loading state via selector (document not yet in store)
     const isLoading = useDocumentStore(editorSelectors.isDocumentLoading(documentId));
@@ -119,6 +137,7 @@ const DocumentIdMode = memo<DocumentIdModeProps>(
 
     // 追踪已经为哪个 documentId 调用过 onEditorInit
     const initializedDocIdRef = useRef<string | null>(null);
+    const hydratedVersionRef = useRef<string | undefined>(undefined);
 
     // 关键修复：如果 editor 已经初始化，需要主动调用 onEditorInit
     // 因为 onInit 回调只在 editor 首次初始化时触发
@@ -132,10 +151,13 @@ const DocumentIdMode = memo<DocumentIdModeProps>(
       ) {
         const runId = ++initRunIdRef.current;
         initializedDocIdRef.current = documentId;
+        hydratedVersionRef.current = remoteDocumentVersion;
+
         // Lock content-change callback while hydrating document content into editor.
         contentChangeLockRef.current = true;
 
         void onEditorInit(editor).finally(() => {
+          onInit?.(editor);
           queueMicrotask(() => {
             if (initRunIdRef.current === runId) {
               contentChangeLockRef.current = false;
@@ -143,7 +165,44 @@ const DocumentIdMode = memo<DocumentIdModeProps>(
           });
         });
       }
-    }, [documentId, editor, isEditorInitialized, isLoading, onEditorInit]);
+    }, [
+      documentId,
+      editor,
+      isEditorInitialized,
+      isLoading,
+      onEditorInit,
+      onInit,
+      remoteDocumentVersion,
+    ]);
+
+    useEffect(() => {
+      if (!editor || !isEditorInitialized || isLoading || !remoteDocumentVersion) return;
+      if (initializedDocIdRef.current !== documentId) return;
+      if (hydratedVersionRef.current === remoteDocumentVersion) return;
+      if (isDirty) return;
+
+      const runId = ++initRunIdRef.current;
+      hydratedVersionRef.current = remoteDocumentVersion;
+      contentChangeLockRef.current = true;
+
+      void onEditorInit(editor).finally(() => {
+        onInit?.(editor);
+        queueMicrotask(() => {
+          if (initRunIdRef.current === runId) {
+            contentChangeLockRef.current = false;
+          }
+        });
+      });
+    }, [
+      documentId,
+      editor,
+      isDirty,
+      isEditorInitialized,
+      isLoading,
+      onEditorInit,
+      onInit,
+      remoteDocumentVersion,
+    ]);
 
     // Show loading state
     if (isLoading) {
@@ -167,7 +226,7 @@ const DocumentIdMode = memo<DocumentIdModeProps>(
           placeholder={editorProps.placeholder || t('pageEditor.editorPlaceholder')}
           style={style}
           onContentChange={handleChange}
-          onInit={onEditorInit}
+          onInit={handleEditorInit}
           {...editorProps}
         />
       </>

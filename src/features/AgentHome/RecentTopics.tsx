@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 
+import { SESSION_CHAT_TOPIC_URL } from '@/const/url';
 import { topicService } from '@/services/topic';
 
 import SectionHeader from './SectionHeader';
@@ -37,7 +38,7 @@ const AgentRecentTopics = memo(() => {
           <Link
             key={topic.id}
             style={{ color: 'inherit', flexShrink: 0, textDecoration: 'none' }}
-            to={`/agent/${aid}?topic=${topic.id}`}
+            to={SESSION_CHAT_TOPIC_URL(aid!, topic.id)}
           >
             <Block
               clickable
