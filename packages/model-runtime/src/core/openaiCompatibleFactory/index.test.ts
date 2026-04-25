@@ -1725,7 +1725,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           model: payload.model,
           // @ts-ignore
           text: { format: { strict: true, type: 'json_schema', ...payload.schema } },
-          user: undefined,
+          safety_identifier: undefined,
         },
         { headers: undefined, signal: undefined },
       );
@@ -1764,7 +1764,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           model: payload.model,
           // @ts-ignore
           text: { format: { strict: true, type: 'json_schema', ...payload.schema } },
-          user: options.user,
+          safety_identifier: options.user,
         },
         { headers: options.headers, signal: options.signal },
       );
