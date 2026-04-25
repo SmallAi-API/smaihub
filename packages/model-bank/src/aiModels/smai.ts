@@ -206,12 +206,12 @@ const smaiChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 1_050_000,
     description:
-      'GPT-5.5 is the frontier model for complex professional work with highest reasoning capability.',
+      'GPT-5.5 is the frontier model for the most complex professional work, coding, and agentic tasks.',
     displayName: 'GPT-5.5',
     enabled: true,
     id: 'gpt-5.5',
     maxOutput: 128_000,
-    releasedAt: '2026-04-24',
+    releasedAt: '2026-04-23',
     settings: {
       extendParams: ['gpt5_2ReasoningEffort', 'textVerbosity'],
       searchImpl: 'params',
