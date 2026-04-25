@@ -24,15 +24,24 @@ export const seedance20Params: VideoModelParamsSchema = {
     aspectRatio: { max: 2.5, min: 0.4 },
     default: [],
     height: { max: 6000, min: 300 },
+    maxCount: 9,
     maxFileSize: 30 * 1024 * 1024,
     width: { max: 6000, min: 300 },
   },
   prompt: { default: '' },
   resolution: {
     default: '720p',
-    enum: ['480p', '720p'],
+    enum: PRESET_VIDEO_RESOLUTIONS,
   },
   seed: { default: null },
+};
+
+export const seedance20FastParams: VideoModelParamsSchema = {
+  ...seedance20Params,
+  resolution: {
+    default: '720p',
+    enum: ['480p', '720p'],
+  },
 };
 
 export const seedance15ProParams: VideoModelParamsSchema = {
@@ -59,16 +68,19 @@ export const lobehubVideoModels: AIVideoModelCard[] = [
       'Seedance 2.0 by ByteDance is the most powerful video generation model, supporting multimodal reference video generation, video editing, video extension, text-to-video, and image-to-video with synchronized audio.',
     displayName: 'Seedance 2.0',
     enabled: true,
-    id: 'doubao-seedance-2-0-260128',
+    id: 'dreamina-seedance-2-0-260128',
     organization: 'ByteDance',
     parameters: seedance20Params,
     pricing: {
-      approximatePricePerVideo: 0.75,
+      approximatePricePerVideo: 0.76,
       units: [
         {
+          lookup: {
+            pricingParams: ['resolution'],
+            prices: { '1080p': 7.7, '480p': 7, '720p': 7 },
+          },
           name: 'videoGeneration',
-          rate: 6.9,
-          strategy: 'fixed',
+          strategy: 'lookup',
           unit: 'millionTokens',
         },
       ],
@@ -81,15 +93,15 @@ export const lobehubVideoModels: AIVideoModelCard[] = [
       'Seedance 2.0 Fast by ByteDance offers the same capabilities as Seedance 2.0 with faster generation speeds at a more competitive price.',
     displayName: 'Seedance 2.0 Fast',
     enabled: true,
-    id: 'doubao-seedance-2-0-fast-260128',
+    id: 'dreamina-seedance-2-0-fast-260128',
     organization: 'ByteDance',
-    parameters: seedance20Params,
+    parameters: seedance20FastParams,
     pricing: {
       approximatePricePerVideo: 0.6,
       units: [
         {
           name: 'videoGeneration',
-          rate: 5.55,
+          rate: 5.6,
           strategy: 'fixed',
           unit: 'millionTokens',
         },
