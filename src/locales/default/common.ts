@@ -348,6 +348,8 @@ export default {
   'footer.title': 'Need help? Contact WeChat: SmallAi2024',
   'fullscreen': 'Full Screen Mode',
   'generation.hero.taglinePrefix': 'Start Creating with',
+  'generation.promptModeration.blocked':
+    'The request content may violate content policy. Please modify your prompt and try again.',
   'historyRange': 'History Range',
   'home.suggestQuestions': 'Try these examples',
   'import': 'Import',
