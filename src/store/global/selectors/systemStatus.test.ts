@@ -126,8 +126,8 @@ describe('systemStatusSelectors', () => {
       const items = systemStatusSelectors.sidebarItems(s);
       // accordion slot in the default list now uses the user's legacy order
       expect(items).toEqual([
-        'pages',
         'tasks',
+        'pages',
         'api',
         'agent',
         'recents',

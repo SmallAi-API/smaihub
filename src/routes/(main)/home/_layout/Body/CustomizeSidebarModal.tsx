@@ -59,9 +59,9 @@ interface SidebarItemConfig {
 }
 
 const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
-  { id: 'pages', labelKey: 'tab.pages', routeId: 'page' },
   { id: 'tasks', labelKey: 'tab.tasks', routeId: 'tasks' },
   { icon: KeyRound, id: 'api', labelKey: 'tab.apiAccess' },
+  { id: 'pages', labelKey: 'tab.pages', routeId: 'page' },
   { id: 'recents', labelKey: 'recents' },
   { alwaysVisible: true, id: 'agent', labelKey: 'navPanel.agent' },
   { id: 'community', labelKey: 'tab.community', routeId: 'community' },
