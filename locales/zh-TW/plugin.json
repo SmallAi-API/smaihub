@@ -30,7 +30,7 @@
   "builtins.lobe-agent-documents.apiName.createDocument": "建立文件",
   "builtins.lobe-agent-documents.apiName.editDocument": "編輯文件",
   "builtins.lobe-agent-documents.apiName.listDocuments": "列出文件",
-  "builtins.lobe-agent-documents.apiName.patchDocument": "修補文件",
+  "builtins.lobe-agent-documents.apiName.modifyNodes": "修改文件",
   "builtins.lobe-agent-documents.apiName.readDocument": "讀取文件",
   "builtins.lobe-agent-documents.apiName.readDocumentByFilename": "按檔名讀取文件",
   "builtins.lobe-agent-documents.apiName.removeDocument": "移除文件",

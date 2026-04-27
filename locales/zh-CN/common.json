@@ -268,7 +268,7 @@
   "footer.title": "需要帮助吗？联系微信：SmallAi2024",
   "fullscreen": "全屏模式",
   "generation.hero.taglinePrefix": "即刻创作",
-  "generation.promptModeration.blocked": "内容安全检查未通过，请调整提示词后重试。",
+  "generation.promptModeration.blocked": "内容政策检查失败。请修改您的提示。",
   "getDesktopApp": "获取桌面应用",
   "historyRange": "历史范围",
   "home.suggestQuestions": "试试这些示例",

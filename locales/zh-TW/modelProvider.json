@@ -217,6 +217,7 @@
   "providerModels.item.modelConfig.displayName.title": "模型展示名稱",
   "providerModels.item.modelConfig.extendParams.extra": "選擇模型支援的擴充參數。將滑鼠懸停於選項上可預覽控制項。設定錯誤可能導致請求失敗。",
   "providerModels.item.modelConfig.extendParams.options.codexMaxReasoningEffort.hint": "對於 Codex 模型；控制推理強度。",
+  "providerModels.item.modelConfig.extendParams.options.deepseekV4ReasoningEffort.hint": "針對 DeepSeek V4 思考模式；控制推理強度。`high` 是預設值，`max` 解鎖由複雜代理工作流程使用的最深推理。",
   "providerModels.item.modelConfig.extendParams.options.disableContextCaching.hint": "適用於 Claude 模型；可降低成本並加快回應速度。",
   "providerModels.item.modelConfig.extendParams.options.effort.hint": "適用於 Claude Opus 4.6；控制努力程度（低/中/高/最大）。",
   "providerModels.item.modelConfig.extendParams.options.enableAdaptiveThinking.hint": "適用於 Claude Opus 4.6；開啟或關閉自適應思考。",
