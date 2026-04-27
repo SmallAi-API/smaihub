@@ -115,7 +115,11 @@ const ModelSwitch = memo(() => {
                   </Flexbox>
                 }
               >
-                <ModelDetailPanel model={model} provider={provider} />
+                <ModelDetailPanel
+                  defaultExpandedKeys={['pricing', 'config']}
+                  model={model}
+                  provider={provider}
+                />
               </Suspense>
             ),
             maxWidth: 400,
