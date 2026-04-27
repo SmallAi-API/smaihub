@@ -82,7 +82,7 @@ export const DEFAULT_FEATURE_FLAGS: IFeatureFlags = {
   agent_self_iteration: isDev,
   agent_onboarding: isDev,
   agent_task: isDev,
-  cloud_promotion: false,
+  cloud_promotion: true,
 
   market: true,
   speech_to_text: true,

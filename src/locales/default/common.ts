@@ -2,11 +2,9 @@ export default {
   'about': 'About',
   'advanceSettings': 'Advanced Settings',
   'alert.cloud.action': 'Try now',
-  'alert.cloud.desc':
-    'All registered users get {{credit}} free computing credits per month—no setup needed. Includes global cloud sync and advanced web search.',
-  'alert.cloud.descOnMobile':
-    'All registered users get {{credit}} free computing credits per month—no setup needed.',
-  'alert.cloud.title': '{{name}} beta is live',
+  'alert.cloud.desc': 'Free Subscription Plan · 50 Image Generations Included',
+  'alert.cloud.descOnMobile': 'Free Subscription Plan · 50 Image Generations Included',
+  'alert.cloud.title': 'May Day Special · GPT Image 2 Available Free for a Limited Time',
   'agentOnboardingPromo.actionLabel': 'Try it now',
   'agentOnboardingPromo.description':
     'Set up your agent teams in a quick chat with smai.ai. Your existing agents remain unchanged.',
