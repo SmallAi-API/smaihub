@@ -1,7 +1,7 @@
 export default {
   'about': 'About',
   'advanceSettings': 'Advanced Settings',
-  'alert.cloud.action': 'Try now',
+  'alert.cloud.action': 'Get Started Now',
   'alert.cloud.desc': 'Free Subscription Plan · 50 Image Generations Included',
   'alert.cloud.descOnMobile': 'Free Subscription Plan · 50 Image Generations Included',
   'alert.cloud.title': 'May Day Special · GPT Image 2 Available Free for a Limited Time',
