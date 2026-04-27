@@ -205,8 +205,7 @@ const smaiChatModels: AIChatModelCard[] = [
       vision: true,
     },
     contextWindowTokens: 1_050_000,
-    description:
-      'GPT-5.5 is the frontier model for the most complex professional work, coding, and agentic tasks.',
+    description: 'GPT-5.5 is our newest frontier model for the most complex professional work.',
     displayName: 'GPT-5.5',
     enabled: true,
     id: 'gpt-5.5',
