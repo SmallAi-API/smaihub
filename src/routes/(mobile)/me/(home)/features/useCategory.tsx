@@ -1,6 +1,4 @@
-import { LOBE_CHAT_CLOUD, UTM_SOURCE } from '@lobechat/business-const';
-import { OFFICIAL_URL } from '@lobechat/const';
-import { Book, CircleUserRound, Cloudy, Settings2 } from 'lucide-react';
+import { Book, CircleUserRound, Settings2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +12,7 @@ import { authSelectors } from '@/store/user/selectors';
 export const useCategory = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['common', 'setting', 'auth']);
-  const { showCloudPromotion, hideDocs } = useServerConfigStore(featureFlagsSelectors);
+  const { hideDocs } = useServerConfigStore(featureFlagsSelectors);
   const [isLoginWithAuth] = useUserStore((s) => [authSelectors.isLoginWithAuth(s)]);
 
   const businessMeCells = useBusinessMeCells();
@@ -42,12 +40,6 @@ export const useCategory = () => {
 
   /* ↓ cloud slot ↓ */
   const helps: CellProps[] = [
-    showCloudPromotion && {
-      icon: Cloudy,
-      key: 'cloud',
-      label: t('userPanel.cloud', { name: LOBE_CHAT_CLOUD }),
-      onClick: () => window.open(`${OFFICIAL_URL}?utm_source=${UTM_SOURCE}`, '__blank'),
-    },
     {
       icon: Book,
       key: 'docs',
