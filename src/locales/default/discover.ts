@@ -1146,6 +1146,10 @@ export default {
 
   'user.noAgents': 'This user hasn’t published any Agents yet',
 
+  'user.noAgents.ownerDescription': 'Create your first Agent and share it with the Community.',
+
+  'user.noAgents.title': 'No Agents yet',
+
   'user.noFavoriteAgents': 'No saved Agents yet',
 
   'user.noFavoritePlugins': 'No saved Skills yet',
