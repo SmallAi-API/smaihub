@@ -29,6 +29,8 @@ export default {
   'back': 'Back',
   'batchDelete': 'Batch Delete',
   'blog': 'Product Blog',
+  'botIntegrationBanner.dismiss': 'Dismiss',
+  'botIntegrationBanner.title': 'Add Channels to LobeAI',
   'branching': 'Create Subtopic',
   'branchingDisable':
     'The "Sub-topic" feature is unavailable in the current mode. To use this feature, please switch to Postgres/Pglite DB mode or use smai.ai',
@@ -507,6 +509,7 @@ export default {
   'tab.eval': 'Eval Lab',
   'tab.docs': 'Docs',
   'tab.files': 'Files',
+  'tab.generation': 'Generation',
   'tab.home': 'Home',
   'tab.marketplace': 'Marketplace',
   'tab.me': 'Me',
