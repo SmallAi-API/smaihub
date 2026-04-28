@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-syntax */
-import { type ModelParamsSchema } from '../standard-parameters';
 import {
   type AIChatModelCard,
   type AIEmbeddingModelCard,
@@ -8,16 +7,7 @@ import {
   type AISTTModelCard,
   type AITTSModelCard,
 } from '../types/aiModel';
-import { gptImage2Schema } from './lobehub';
-
-export const gptImage1ParamsSchema: ModelParamsSchema = {
-  imageUrls: { default: [] },
-  prompt: { default: '' },
-  size: {
-    default: 'auto',
-    enum: ['auto', '1024x1024', '1536x1024', '1024x1536'],
-  },
-};
+import { gptImage1Schema, gptImage2Schema } from './lobehub';
 
 export const openaiChatModels: AIChatModelCard[] = [
   {
@@ -1496,7 +1486,7 @@ export const openaiImageModels: AIImageModelCard[] = [
       'An enhanced GPT Image 1 model with 4× faster generation, more precise editing, and improved text rendering.',
     displayName: 'GPT Image 1.5',
     id: 'gpt-image-1.5',
-    parameters: gptImage1ParamsSchema,
+    parameters: gptImage1Schema,
     pricing: {
       approximatePricePerImage: 0.034,
       units: [
@@ -1515,7 +1505,17 @@ export const openaiImageModels: AIImageModelCard[] = [
     description: 'ChatGPT 原生多模态图片生成模型',
     displayName: 'GPT Image 1',
     id: 'gpt-image-1',
-    parameters: gptImage1ParamsSchema,
+    parameters: gptImage1Schema,
+    pricing: {
+      approximatePricePerImage: 0.042,
+      units: [
+        { name: 'textInput', rate: 5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput_cacheRead', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput_cacheRead', rate: 2.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageOutput', rate: 40, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
     type: 'image',
   },
   {
@@ -1523,7 +1523,7 @@ export const openaiImageModels: AIImageModelCard[] = [
       'A lower-cost GPT Image 1 variant with native text and image input and image output.',
     displayName: 'GPT Image 1 Mini',
     id: 'gpt-image-1-mini',
-    parameters: gptImage1ParamsSchema,
+    parameters: gptImage1Schema,
     pricing: {
       approximatePricePerImage: 0.011,
       units: [

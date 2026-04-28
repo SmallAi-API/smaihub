@@ -8,6 +8,105 @@ const bedrockChatModels: AIChatModelCard[] = [
       structuredOutput: true,
       vision: true,
     },
+    contextWindowTokens: 1_000_000,
+    description:
+      "Claude Opus 4.7 is Anthropic's most capable generally available model for complex reasoning and agentic coding.",
+    displayName: 'Claude Opus 4.7',
+    enabled: true,
+    id: 'global.anthropic.claude-opus-4-7',
+    maxOutput: 128_000,
+    pricing: {
+      units: [
+        { name: 'textInput_cacheRead', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput_cacheWrite', rate: 6.25, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    releasedAt: '2026-04-16',
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_000_000,
+    description:
+      "Claude Opus 4.6 is Anthropic's most intelligent model for building agents and coding.",
+    displayName: 'Claude Opus 4.6',
+    id: 'global.anthropic.claude-opus-4-6-v1',
+    maxOutput: 128_000,
+    pricing: {
+      units: [
+        { name: 'textInput_cacheRead', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 25, strategy: 'fixed', unit: 'millionTokens' },
+        {
+          lookup: { prices: { '1h': 10, '5m': 6.25 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    releasedAt: '2026-02-05',
+    settings: {
+      extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'effort'],
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_000_000,
+    description: 'Claude Sonnet 4.6 is Anthropic’s best combination of speed and intelligence.',
+    displayName: 'Claude Sonnet 4.6',
+    enabled: true,
+    id: 'global.anthropic.claude-sonnet-4-6',
+    maxOutput: 64_000,
+    pricing: {
+      units: [
+        { name: 'textInput_cacheRead', rate: 0.3, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 3, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 15, strategy: 'fixed', unit: 'millionTokens' },
+        {
+          lookup: { prices: { '1h': 6, '5m': 3.75 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    releasedAt: '2026-02-17',
+    settings: {
+      extendParams: [
+        'disableContextCaching',
+        'enableAdaptiveThinking',
+        'enableReasoning',
+        'reasoningBudgetToken',
+        'effort',
+      ],
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      structuredOutput: true,
+      vision: true,
+    },
     contextWindowTokens: 200_000,
     description:
       'Claude Opus 4.5 is Anthropic’s flagship model, combining exceptional intelligence and scalable performance for complex tasks requiring the highest-quality responses and reasoning.',
