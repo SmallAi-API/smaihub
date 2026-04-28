@@ -1,6 +1,7 @@
 'use client';
 
 import { EDITOR_DEBOUNCE_TIME } from '@lobechat/const';
+import { buildCronPattern, parseCronPattern, type ScheduleType } from '@lobechat/utils/cron';
 import { ActionIcon, Flexbox } from '@lobehub/ui';
 import { useDebounceFn } from 'ahooks';
 import { App, Empty, message } from 'antd';
@@ -27,8 +28,6 @@ import { useChatStore } from '@/store/chat';
 import { useUserStore } from '@/store/user';
 import { labPreferSelectors } from '@/store/user/selectors';
 
-import { type ScheduleType } from './CronConfig';
-import { buildCronPattern, parseCronPattern } from './CronConfig';
 import CronJobContentEditor from './features/CronJobContentEditor';
 import CronJobHeader from './features/CronJobHeader';
 import CronJobSaveButton from './features/CronJobSaveButton';
