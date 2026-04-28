@@ -12,7 +12,259 @@ const doubaoChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      video: true,
       vision: true,
+      search: true,
+    },
+    config: {
+      deploymentName: 'doubao-seed-2-0-pro-260215',
+    },
+    contextWindowTokens: 256_000,
+    description:
+      "Doubao-Seed-2.0-pro is ByteDance's flagship Agent general model, with all-around leaps in complex task planning and execution capabilities.",
+    displayName: 'Doubao Seed 2.0 Pro',
+    enabled: true,
+    id: 'doubao-seed-2.0-pro',
+    maxOutput: 128_000,
+    pricing: {
+      currency: 'CNY',
+      units: [
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 3.2,
+              '[0.032, 0.128]': 4.8,
+              '[0.128, 0.256]': 9.6,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textInput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 16,
+              '[0.032, 0.128]': 24,
+              '[0.128, 0.256]': 48,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textOutput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        { name: 'textInput_cacheRead', rate: 0.64, strategy: 'fixed', unit: 'millionTokens' },
+        {
+          lookup: { prices: { '1h': 0.017 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    releasedAt: '2026-02-15',
+    settings: {
+      extendParams: ['gpt5ReasoningEffort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      video: true,
+      vision: true,
+      search: true,
+    },
+    config: {
+      deploymentName: 'doubao-seed-2-0-lite-260215',
+    },
+    contextWindowTokens: 256_000,
+    description:
+      'Doubao-Seed-2.0-lite is a new multimodal deep-reasoning model that delivers better value and a strong choice for common tasks, with a context window up to 256k.',
+    displayName: 'Doubao Seed 2.0 Lite',
+    enabled: true,
+    id: 'doubao-seed-2.0-lite',
+    maxOutput: 128_000,
+    pricing: {
+      currency: 'CNY',
+      units: [
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 0.6,
+              '[0.032, 0.128]': 0.9,
+              '[0.128, 0.256]': 1.8,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textInput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 3.6,
+              '[0.032, 0.128]': 5.4,
+              '[0.128, 0.256]': 10.8,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textOutput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        { name: 'textInput_cacheRead', rate: 0.12, strategy: 'fixed', unit: 'millionTokens' },
+        {
+          lookup: { prices: { '1h': 0.017 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    releasedAt: '2026-02-15',
+    settings: {
+      extendParams: ['gpt5ReasoningEffort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      video: true,
+      vision: true,
+      search: true,
+    },
+    config: {
+      deploymentName: 'doubao-seed-2-0-mini-260215',
+    },
+    contextWindowTokens: 256_000,
+    description:
+      'Doubao-Seed-2.0-mini is a lightweight model with fast response and high performance, suitable for small tasks and high-concurrency scenarios.',
+    displayName: 'Doubao Seed 2.0 Mini',
+    id: 'doubao-seed-2.0-mini',
+    maxOutput: 128_000,
+    pricing: {
+      currency: 'CNY',
+      units: [
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 0.2,
+              '[0.032, 0.128]': 0.4,
+              '[0.128, 0.256]': 0.8,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textInput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 2,
+              '[0.032, 0.128]': 4,
+              '[0.128, 0.256]': 8,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textOutput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        { name: 'textInput_cacheRead', rate: 0.04, strategy: 'fixed', unit: 'millionTokens' },
+        {
+          lookup: { prices: { '1h': 0.017 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    releasedAt: '2026-02-15',
+    settings: {
+      extendParams: ['gpt5ReasoningEffort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      video: true,
+      vision: true,
+      search: true,
+    },
+    config: {
+      deploymentName: 'doubao-seed-2-0-code-preview-260215',
+    },
+    contextWindowTokens: 256_000,
+    description:
+      'Doubao-Seed-2.0-code is deeply optimized for agentic coding, supports multimodal inputs and a 256k context window, fitting coding, vision understanding, and agent workflows.',
+    displayName: 'Doubao Seed 2.0 Code',
+    id: 'doubao-seed-2.0-code',
+    maxOutput: 128_000,
+    pricing: {
+      currency: 'CNY',
+      units: [
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 3.2,
+              '[0.032, 0.128]': 4.8,
+              '[0.128, 0.256]': 9.6,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textInput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 16,
+              '[0.032, 0.128]': 24,
+              '[0.128, 0.256]': 48,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textOutput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        { name: 'textInput_cacheRead', rate: 0.64, strategy: 'fixed', unit: 'millionTokens' },
+        {
+          lookup: { prices: { '1h': 0.017 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    releasedAt: '2026-02-15',
+    settings: {
+      extendParams: ['gpt5ReasoningEffort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      video: true,
+      vision: true,
+      search: true,
     },
     config: {
       deploymentName: 'doubao-seed-1-8-251228',
@@ -66,6 +318,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     releasedAt: '2025-12-18',
     settings: {
       extendParams: ['gpt5ReasoningEffort'],
+      searchImpl: 'params',
     },
     type: 'chat',
   },
@@ -74,6 +327,7 @@ const doubaoChatModels: AIChatModelCard[] = [
       functionCall: true,
       reasoning: true,
       vision: true,
+      search: true,
     },
     config: {
       deploymentName: 'doubao-seed-code-preview-251028',
@@ -115,6 +369,76 @@ const doubaoChatModels: AIChatModelCard[] = [
         },
         { name: 'textInput_cacheRead', rate: 0.24, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textInput_cacheWrite', rate: 0.017, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    settings: {
+      extendParams: ['enableReasoning'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+    },
+    config: {
+      deploymentName: 'glm-4-7-251222',
+    },
+    contextWindowTokens: 200_000,
+    description:
+      'GLM-4.7 is the latest flagship model from Zhipu AI. GLM-4.7 enhances coding capabilities, long-term task planning, and tool collaboration for Agentic Coding scenarios, achieving leading performance among open-source models in multiple public benchmarks. General capabilities are improved, with more concise and natural responses, and more immersive writing. In complex agent tasks, instruction following is stronger during tool calls, and the aesthetics of Artifacts and Agentic Coding frontend, as well as long-term task completion efficiency, are further enhanced. • Stronger programming capabilities: Significantly improved multi-language coding and terminal agent performance; GLM-4.7 can now implement "think first, then act" mechanisms in programming frameworks like Claude Code, Kilo Code, TRAE, Cline, and Roo Code, with more stable performance on complex tasks. • Frontend aesthetics improvement: GLM-4.7 shows significant progress in frontend generation quality, capable of generating websites, PPTs, and posters with better visual appeal. • Stronger tool calling capabilities: GLM-4.7 enhances tool calling abilities, scoring 67 in BrowseComp web task evaluation; achieving 84.7 in τ²-Bench interactive tool calling evaluation, surpassing Claude Sonnet 4.5 as the open-source SOTA. • Reasoning capability improvement: Significantly enhanced math and reasoning abilities, scoring 42.8% in the HLE ("Humanity\'s Last Exam") benchmark, a 41% improvement over GLM-4.6, surpassing GPT-5.1. • General capability enhancement: GLM-4.7 conversations are more concise, intelligent, and humane; writing and role-playing are more literary and immersive.',
+    displayName: 'GLM-4.7',
+    id: 'glm-4-7',
+    maxOutput: 128_000,
+    pricing: {
+      currency: 'CNY',
+      units: [
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]_[0, 0.0002]': 2,
+              '[0, 0.032]_[0.0002, infinity]': 3,
+              '[0.032, 0.2]_[0, infinity]': 4,
+            },
+            pricingParams: ['textInputRange', 'textOutputRange'],
+          },
+          name: 'textInput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]_[0, 0.0002]': 8,
+              '[0, 0.032]_[0.0002, infinity]': 14,
+              '[0.032, 0.2]_[0, infinity]': 16,
+            },
+            pricingParams: ['textInputRange', 'textOutputRange'],
+          },
+          name: 'textOutput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]_[0, 0.0002]': 0.4,
+              '[0, 0.032]_[0.0002, infinity]': 0.6,
+              '[0.032, 0.2]_[0, infinity]': 0.8,
+            },
+            pricingParams: ['textInputRange', 'textOutputRange'],
+          },
+          name: 'textInput_cacheRead',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        {
+          lookup: { prices: { '1h': 0.017 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
       ],
     },
     settings: {
@@ -252,6 +576,7 @@ const doubaoChatModels: AIChatModelCard[] = [
       functionCall: true,
       reasoning: true,
       vision: true,
+      search: true,
     },
     config: {
       deploymentName: 'doubao-seed-1-6-vision-250815',
@@ -296,6 +621,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     },
     settings: {
       extendParams: ['enableReasoning'],
+      searchImpl: 'params',
     },
     type: 'chat',
   },
@@ -304,6 +630,7 @@ const doubaoChatModels: AIChatModelCard[] = [
       functionCall: true,
       reasoning: true,
       vision: true,
+      search: true,
     },
     config: {
       deploymentName: 'doubao-seed-1-6-thinking-250715',
@@ -346,6 +673,9 @@ const doubaoChatModels: AIChatModelCard[] = [
         { name: 'textInput_cacheRead', rate: 0.16, strategy: 'fixed', unit: 'millionTokens' },
       ],
     },
+    settings: {
+      searchImpl: 'params',
+    },
     type: 'chat',
   },
   {
@@ -353,6 +683,7 @@ const doubaoChatModels: AIChatModelCard[] = [
       functionCall: true,
       reasoning: true,
       vision: true,
+      search: true,
     },
     config: {
       deploymentName: 'doubao-seed-1-6-251015',
@@ -398,6 +729,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     },
     settings: {
       extendParams: ['gpt5ReasoningEffort'],
+      searchImpl: 'params',
     },
     type: 'chat',
   },
@@ -406,6 +738,7 @@ const doubaoChatModels: AIChatModelCard[] = [
       functionCall: true,
       reasoning: true,
       vision: true,
+      search: true,
     },
     config: {
       deploymentName: 'doubao-seed-1-6-lite-251015',
@@ -451,6 +784,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     },
     settings: {
       extendParams: ['gpt5ReasoningEffort'],
+      searchImpl: 'params',
     },
     type: 'chat',
   },
@@ -459,6 +793,7 @@ const doubaoChatModels: AIChatModelCard[] = [
       functionCall: true,
       reasoning: true,
       vision: true,
+      search: true,
     },
     config: {
       deploymentName: 'doubao-seed-1-6-flash-250828',
@@ -504,6 +839,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     },
     settings: {
       extendParams: ['enableReasoning'],
+      searchImpl: 'params',
     },
     type: 'chat',
   },
