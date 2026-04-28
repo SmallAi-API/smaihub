@@ -37,7 +37,7 @@ const ModelConfigForm = memo<ModelConfigFormProps>(
             'stt',
             'image',
             'video',
-            // 'text2music',
+            'text2music',
             'realtime',
           ] as AiModelType[]
         ).map((value) => {
