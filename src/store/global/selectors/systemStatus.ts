@@ -169,6 +169,8 @@ const mobileShowTopic = (s: GlobalState) => s.status.mobileShowTopic;
 const mobileShowPortal = (s: GlobalState) => s.status.mobileShowPortal;
 const showRightPanel = (s: GlobalState) => !s.status.zenMode && s.status.showRightPanel;
 const showLeftPanel = (s: GlobalState) => !s.status.zenMode && s.status.showLeftPanel;
+const showPageAgentPanel = (s: GlobalState) => !s.status.zenMode && s.status.showPageAgentPanel;
+const showTaskAgentPanel = (s: GlobalState) => !s.status.zenMode && s.status.showTaskAgentPanel;
 const showFilePanel = (s: GlobalState) => s.status.showFilePanel;
 const showImagePanel = (s: GlobalState) => s.status.showImagePanel;
 const showImageTopicPanel = (s: GlobalState) => s.status.showImageTopicPanel;
@@ -270,8 +272,10 @@ export const systemStatusSelectors = {
   showImagePanel,
   showImageTopicPanel,
   showLeftPanel,
+  showPageAgentPanel,
   showRightPanel,
   showSystemRole,
+  showTaskAgentPanel,
   showVideoPanel,
   showVideoTopicPanel,
   systemStatus,
