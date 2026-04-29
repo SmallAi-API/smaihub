@@ -89,6 +89,20 @@ export enum ProfileTabs {
   Usage = 'usage',
 }
 
+export const MODEL_DETAIL_PANEL_EXPANDED_KEYS = [
+  'context',
+  'abilities',
+  'pricing',
+  'config',
+] as const;
+
+export type ModelDetailPanelExpandedKey = (typeof MODEL_DETAIL_PANEL_EXPANDED_KEYS)[number];
+
+export const DEFAULT_MODEL_DETAIL_PANEL_EXPANDED_KEYS = [
+  'pricing',
+  'config',
+] as const satisfies readonly ModelDetailPanelExpandedKey[];
+
 export interface SystemStatus {
   /**
    * Agent Builder panel width
@@ -154,7 +168,13 @@ export interface SystemStatus {
   mobileShowPortal?: boolean;
   mobileShowTopic?: boolean;
   /**
-   * ModelSwitchPanel 的分组模式
+   * Persisted expanded keys of the ModelDetailPanel Accordion
+   * (Pricing / Context / Abilities / Model Config). Single shared preference
+   * across all entries (model picker submenu, ChatInput extend-params popover).
+   */
+  modelDetailPanelExpandedKeys?: ModelDetailPanelExpandedKey[];
+  /**
+   * ModelSwitchPanel grouping mode
    */
   modelSwitchPanelGroupMode?: 'byModel' | 'byProvider';
   /**
@@ -320,6 +340,7 @@ export const INITIAL_STATUS = {
   knowledgeBaseModalViewMode: 'list' as const,
   leftPanelWidth: 320,
   mobileShowTopic: false,
+  modelDetailPanelExpandedKeys: [...DEFAULT_MODEL_DETAIL_PANEL_EXPANDED_KEYS],
   modelSwitchPanelGroupMode: 'byProvider',
   modelSwitchPanelWidth: 460,
   noWideScreen: true,
