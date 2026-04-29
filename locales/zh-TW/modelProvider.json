@@ -226,6 +226,7 @@
   "providerModels.item.modelConfig.extendParams.options.gpt5_1ReasoningEffort.hint": "適用於 GPT-5.1 系列；控制推理強度。",
   "providerModels.item.modelConfig.extendParams.options.gpt5_2ProReasoningEffort.hint": "適用於 GPT-5.2 Pro 系列；控制推理強度。",
   "providerModels.item.modelConfig.extendParams.options.gpt5_2ReasoningEffort.hint": "適用於 GPT-5.2 系列；控制推理強度。",
+  "providerModels.item.modelConfig.extendParams.options.hy3ReasoningEffort.hint": "針對 Hy3 模型；控制推理強度。no_think（超快速回應）、low（快速推理）和 high（深度推理）—以適應不同的延遲和深度需求，從高頻互動到複雜的工程任務。",
   "providerModels.item.modelConfig.extendParams.options.imageAspectRatio.hint": "適用於 Gemini 圖像生成模型；控制生成圖像的長寬比。",
   "providerModels.item.modelConfig.extendParams.options.imageResolution.hint": "適用於 Gemini 3 圖像生成模型；控制生成圖像的解析度。",
   "providerModels.item.modelConfig.extendParams.options.imageResolution2.hint": "適用於 Gemini 3.1 Flash Image 模型；控制生成圖像的解析度（支持 512 像素）。",
