@@ -293,7 +293,7 @@ const PlatformList = memo<PlatformListProps>(
           }}
         >
           <a
-            href="https://lobehub.com/docs/usage/channels/overview"
+            href="https://docs.smai.ai/docs/smai-app/channels"
             rel="noopener noreferrer"
             target="_blank"
             style={{

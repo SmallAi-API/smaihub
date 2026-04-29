@@ -29,7 +29,7 @@
   "batchDelete": "批量删除",
   "blog": "产品博客",
   "botIntegrationBanner.dismiss": "关闭",
-  "botIntegrationBanner.title": "为 LobeAI 添加渠道",
+  "botIntegrationBanner.title": "将即时通讯渠道添加到您的代理",
   "branching": "创建子话题",
   "branchingDisable": "当前模式下不可用“子主题”功能。要使用此功能，请切换到Postgres/Pglite数据库模式或使用smai.ai",
   "branchingRequiresSavedTopic": "当前话题未保存。保存后即可使用子话题",

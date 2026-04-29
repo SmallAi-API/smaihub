@@ -1,4 +1,4 @@
-import { DeepSeek, Jimeng, OpenAI } from '@lobehub/icons';
+import { Jimeng, OpenAI } from '@lobehub/icons';
 import { type ButtonProps } from '@lobehub/ui';
 import { Button, Center, Tag, Tooltip } from '@lobehub/ui';
 import { App } from 'antd';
@@ -13,10 +13,10 @@ import { agentByIdSelectors } from '@/store/agent/selectors';
 
 import { useResolvedHomeAgentId } from '../AgentSelect/useResolvedHomeAgentId';
 
-const DEEPSEEK_V4_PRO_MODEL = 'deepseek-v4-pro';
-const DEEPSEEK_V4_PRO_PROVIDER = 'lobehub';
+const NEW_MODEL = 'gpt-5.5';
+const NEW_MODEL_PROVIDER = 'smai';
 
-type StarterKey = 'image' | 'video' | 'deepseek-v4-pro';
+type StarterKey = 'image' | 'video' | 'gpt-5.5';
 
 const styles = createStaticStyles(({ css, cssVar }) => ({
   button: css`
@@ -36,10 +36,7 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
   `,
 }));
 
-type StarterTitleKey =
-  | 'starter.imageGeneration'
-  | 'starter.videoGeneration'
-  | 'starter.deepseekV4Pro';
+type StarterTitleKey = 'starter.imageGeneration' | 'starter.videoGeneration' | 'starter.gpt-5.5';
 
 interface StarterItem {
   disabled?: boolean;
@@ -59,9 +56,9 @@ const StarterList = memo(() => {
   const items: StarterItem[] = useMemo(
     () => [
       {
-        icon: DeepSeek.Avatar,
-        key: 'deepseek-v4-pro',
-        titleKey: 'starter.deepseekV4Pro',
+        icon: OpenAI.Avatar,
+        key: 'gpt-5.5',
+        titleKey: 'starter.gpt-5.5',
       },
       {
         icon: OpenAI.Avatar,
@@ -89,7 +86,7 @@ const StarterList = memo(() => {
         return;
       }
 
-      if (key === 'deepseek-v4-pro') {
+      if (key === 'gpt-5.5') {
         if (!activeAgentId || switchingKey) return;
         setSwitchingKey(key);
         try {
@@ -105,19 +102,16 @@ const StarterList = memo(() => {
           const currentModel = agentByIdSelectors.getAgentModelById(activeAgentId)(agentState);
           const currentProvider =
             agentByIdSelectors.getAgentModelProviderById(activeAgentId)(agentState);
-          if (
-            currentModel === DEEPSEEK_V4_PRO_MODEL &&
-            currentProvider === DEEPSEEK_V4_PRO_PROVIDER
-          ) {
-            message.info(t('starter.deepseekV4ProAlready'));
+          if (currentModel === NEW_MODEL && currentProvider === NEW_MODEL_PROVIDER) {
+            message.info(t('starter.NewModelAlready'));
             return;
           }
 
           await updateAgentConfigById(activeAgentId, {
-            model: DEEPSEEK_V4_PRO_MODEL,
-            provider: DEEPSEEK_V4_PRO_PROVIDER,
+            model: NEW_MODEL,
+            provider: NEW_MODEL_PROVIDER,
           });
-          message.success(t('starter.deepseekV4ProSwitched'));
+          message.success(t('starter.NewModelSwitched'));
         } finally {
           setSwitchingKey(null);
         }

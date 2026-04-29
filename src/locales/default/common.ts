@@ -30,7 +30,7 @@ export default {
   'batchDelete': 'Batch Delete',
   'blog': 'Product Blog',
   'botIntegrationBanner.dismiss': 'Dismiss',
-  'botIntegrationBanner.title': 'Add Channels to LobeAI',
+  'botIntegrationBanner.title': 'Add IM Channels to Your Agent',
   'branching': 'Create Subtopic',
   'branchingDisable':
     'The "Sub-topic" feature is unavailable in the current mode. To use this feature, please switch to Postgres/Pglite DB mode or use smai.ai',
