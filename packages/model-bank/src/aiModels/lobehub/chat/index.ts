@@ -8,10 +8,10 @@ import { openaiChatModels } from './openai';
 import { xaiChatModels } from './xai';
 
 export const lobehubChatModels: AIChatModelCard[] = [
+  ...deepseekChatModels,
   ...anthropicChatModels,
   ...googleChatModels,
   ...openaiChatModels,
-  ...deepseekChatModels,
   ...xaiChatModels,
   ...minimaxChatModels,
   ...moonshotChatModels,

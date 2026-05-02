@@ -7,17 +7,35 @@ export const deepseekChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 65_536,
     description:
-      'DeepSeek V4 Flash is the cost-efficient member of the V4 family with a 1M context window and hybrid thinking. Toggle thinking via the `thinking` parameter; non-thinking mode targets latency-sensitive workflows while thinking mode enables deeper reasoning.',
-    displayName: 'DeepSeek V4 Flash',
+      'DeepSeek V4 Pro is the flagship of the V4 family, purpose-built for high-intensity reasoning, agent workflows, and long-horizon planning with a 1M context window. Thinking mode is on by default and toggleable via the `thinking` parameter.',
+    displayName: 'DeepSeek V4 Pro',
     enabled: true,
-    id: 'deepseek-v4-flash',
+    id: 'deepseek-v4-pro',
     maxOutput: 384_000,
     pricing: {
       // Official cache-hit input price is permanently reduced to 1/10 of the launch price.
       units: [
-        { name: 'textInput_cacheRead', rate: 0.0028, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textInput', rate: 0.14, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 0.28, strategy: 'fixed', unit: 'millionTokens' },
+        {
+          name: 'textInput_cacheRead',
+          originalRate: 0.0145,
+          rate: 0.0003625,
+          strategy: 'fixed',
+          unit: 'millionTokens',
+        },
+        {
+          name: 'textInput',
+          originalRate: 1.74,
+          rate: 0.0435,
+          strategy: 'fixed',
+          unit: 'millionTokens',
+        },
+        {
+          name: 'textOutput',
+          originalRate: 3.48,
+          rate: 0.087,
+          strategy: 'fixed',
+          unit: 'millionTokens',
+        },
       ],
     },
     releasedAt: '2026-04-24',
@@ -39,18 +57,18 @@ export const deepseekChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 1_000_000,
     description:
-      'DeepSeek V4 Pro is the flagship of the V4 family, purpose-built for high-intensity reasoning, agent workflows, and long-horizon planning with a 1M context window. Thinking mode is on by default and toggleable via the `thinking` parameter.',
-    displayName: 'DeepSeek V4 Pro',
+      'DeepSeek V4 Flash is the cost-efficient member of the V4 family with a 1M context window and hybrid thinking. Toggle thinking via the `thinking` parameter; non-thinking mode targets latency-sensitive workflows while thinking mode enables deeper reasoning.',
+    displayName: 'DeepSeek V4 Flash',
     enabled: true,
-    id: 'deepseek-v4-pro',
+    id: 'deepseek-v4-flash',
     maxOutput: 384_000,
     pricing: {
       // Official cache-hit input price is permanently reduced to 1/10 of the launch price.
       // DeepSeek V4 Pro limited-time 75% off discount is valid until 2026-05-05 15:59 UTC.
       units: [
-        { name: 'textInput_cacheRead', rate: 0.003625, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textInput', rate: 0.435, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 0.87, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput_cacheRead', rate: 0.00028, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 0.014, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 0.028, strategy: 'fixed', unit: 'millionTokens' },
       ],
     },
     releasedAt: '2026-04-24',
