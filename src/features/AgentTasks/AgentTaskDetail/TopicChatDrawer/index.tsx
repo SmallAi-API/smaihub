@@ -1,15 +1,8 @@
 'use client';
 
-import { type ConversationContext } from '@lobechat/types';
-import {
-  ActionIcon,
-  copyToClipboard,
-  Drawer,
-  type DropdownItem,
-  DropdownMenu,
-  Flexbox,
-  Text,
-} from '@lobehub/ui';
+import type { ConversationContext } from '@lobechat/types';
+import type { DropdownItem } from '@lobehub/ui';
+import { ActionIcon, copyToClipboard, Drawer, DropdownMenu, Flexbox, Text } from '@lobehub/ui';
 import { cssVar } from 'antd-style';
 import { Copy, MoreHorizontal, Share2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -21,23 +14,33 @@ import { TaskCardScopeProvider } from '@/features/Conversation/Markdown/plugins/
 import { useShareModal } from '@/features/ShareModal';
 import { useGatewayReconnect } from '@/hooks/useGatewayReconnect';
 import { useOperationState } from '@/hooks/useOperationState';
+import { useAgentStore } from '@/store/agent';
 import { useChatStore } from '@/store/chat';
 import { messageMapKey } from '@/store/chat/utils/messageMapKey';
 import { useServerConfigStore } from '@/store/serverConfig';
 import { serverConfigSelectors } from '@/store/serverConfig/selectors';
 import { useTaskStore } from '@/store/task';
 import { taskActivitySelectors, taskDetailSelectors } from '@/store/task/selectors';
+import { useUserStore } from '@/store/user';
+import { authSelectors } from '@/store/user/selectors';
 
 import TopicStatusIcon from '../TopicStatusIcon';
+import FeedbackInput from './FeedbackInput';
 
 const SharePopover = dynamic(() => import('@/features/SharePopover'));
 
 interface TopicChatDrawerBodyProps {
   agentId: string;
+  taskId: string;
   topicId: string;
 }
 
-const TopicChatDrawerBody = memo<TopicChatDrawerBodyProps>(({ agentId, topicId }) => {
+const TopicChatDrawerBody = memo<TopicChatDrawerBodyProps>(({ agentId, taskId, topicId }) => {
+  const isLogin = useUserStore(authSelectors.isLogin);
+  const useHydrateAgentConfig = useAgentStore((s) => s.useHydrateAgentConfig);
+
+  useHydrateAgentConfig(isLogin, agentId);
+
   const context = useMemo<ConversationContext>(
     () => ({
       agentId,
@@ -82,8 +85,13 @@ const TopicChatDrawerBody = memo<TopicChatDrawerBodyProps>(({ agentId, topicId }
       }}
     >
       <TaskCardScopeProvider value={true}>
-        <Flexbox flex={1} height={'100%'} style={{ overflow: 'hidden' }}>
-          <ChatList disableActionsBar itemContent={itemContent} />
+        <Flexbox height={'100%'} style={{ overflow: 'hidden' }}>
+          <Flexbox flex={1} style={{ minHeight: 0, overflow: 'hidden' }}>
+            <ChatList disableActionsBar itemContent={itemContent} />
+          </Flexbox>
+          <Flexbox padding={12} style={{ flexShrink: 0 }}>
+            <FeedbackInput taskId={taskId} topicId={topicId} />
+          </Flexbox>
         </Flexbox>
       </TaskCardScopeProvider>
     </ConversationProvider>
@@ -207,7 +215,9 @@ const TopicChatDrawer = memo(() => {
       }}
       onClose={closeTopicDrawer}
     >
-      {open && <TopicChatDrawerBody agentId={agentId!} topicId={topicId!} />}
+      {open && activeTaskId && (
+        <TopicChatDrawerBody agentId={agentId!} taskId={activeTaskId} topicId={topicId!} />
+      )}
     </Drawer>
   );
 });
