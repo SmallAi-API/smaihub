@@ -1,8 +1,162 @@
+/* eslint-disable no-restricted-syntax */
 import type { AIChatModelCard, AIImageModelCard } from '../types/aiModel';
 import { imagenGenParameters, nanoBananaParameters } from './google';
 
 // ref: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models
 const vertexaiChatModels: AIChatModelCard[] = [
+  {
+    abilities: {
+      imageOutput: true,
+      reasoning: true,
+      search: true,
+      vision: true,
+    },
+    contextWindowTokens: 131_072 + 32_768,
+    description:
+      "Gemini 3.1 Flash Image (Nano Banana 2) is Google's fastest native image generation model with thinking support, conversational image generation and editing.",
+    displayName: 'Nano Banana 2',
+    enabled: true,
+    id: 'gemini-3.1-flash-image-preview',
+    maxOutput: 32_768,
+    pricing: {
+      approximatePricePerImage: 0.067,
+      units: [
+        { name: 'imageOutput', rate: 60, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 3, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    releasedAt: '2026-02-26',
+    settings: {
+      extendParams: ['imageAspectRatio2', 'imageResolution2', 'thinkingLevel4'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_048_576 + 65_536,
+    description:
+      'Gemini 3.1 Pro Preview improves on Gemini 3 Pro with enhanced reasoning capabilities and adds medium thinking level support.',
+    displayName: 'Gemini 3.1 Pro Preview',
+    enabled: true,
+    id: 'gemini-3.1-pro-preview',
+    maxOutput: 65_536,
+    pricing: {
+      units: [
+        {
+          name: 'textInput_cacheRead',
+          strategy: 'tiered',
+          tiers: [
+            { rate: 0.2, upTo: 200_000 },
+            { rate: 0.4, upTo: 'infinity' },
+          ],
+          unit: 'millionTokens',
+        },
+        {
+          name: 'textInput',
+          strategy: 'tiered',
+          tiers: [
+            { rate: 2, upTo: 200_000 },
+            { rate: 4, upTo: 'infinity' },
+          ],
+          unit: 'millionTokens',
+        },
+        {
+          name: 'imageInput',
+          strategy: 'tiered',
+          tiers: [
+            { rate: 2, upTo: 200_000 },
+            { rate: 4, upTo: 'infinity' },
+          ],
+          unit: 'millionTokens',
+        },
+        {
+          name: 'videoInput',
+          strategy: 'tiered',
+          tiers: [
+            { rate: 2, upTo: 200_000 },
+            { rate: 4, upTo: 'infinity' },
+          ],
+          unit: 'millionTokens',
+        },
+        {
+          name: 'audioInput',
+          strategy: 'tiered',
+          tiers: [
+            { rate: 2, upTo: 200_000 },
+            { rate: 4, upTo: 'infinity' },
+          ],
+          unit: 'millionTokens',
+        },
+        {
+          name: 'textOutput',
+          strategy: 'tiered',
+          tiers: [
+            { rate: 12, upTo: 200_000 },
+            { rate: 18, upTo: 'infinity' },
+          ],
+          unit: 'millionTokens',
+        },
+        {
+          lookup: { prices: { '1h': 4.5 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    releasedAt: '2026-02-19',
+    settings: {
+      extendParams: ['thinkingLevel3', 'urlContext'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_048_576 + 65_536,
+    description:
+      "Gemini 3.1 Flash-Lite Preview is Google's most cost-efficient multimodal model, optimized for high-volume agentic tasks, translation, and data processing.",
+    displayName: 'Gemini 3.1 Flash-Lite Preview',
+    enabled: true,
+    id: 'gemini-3.1-flash-lite-preview',
+    maxOutput: 65_536,
+    pricing: {
+      units: [
+        { name: 'textInput_cacheRead', rate: 0.025, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 0.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 0.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'videoInput', rate: 0.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'audioInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 1.5, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    releasedAt: '2026-03-04',
+    settings: {
+      extendParams: ['thinkingLevel5', 'urlContext'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
   {
     abilities: {
       functionCall: true,
@@ -82,6 +236,9 @@ const vertexaiChatModels: AIChatModelCard[] = [
       units: [
         { name: 'textInput_cacheRead', rate: 0.05, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'videoInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'audioInput', rate: 1, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textOutput', rate: 3, strategy: 'fixed', unit: 'millionTokens' },
         {
           lookup: { prices: { '1h': 1 }, pricingParams: ['ttl'] },
@@ -118,6 +275,7 @@ const vertexaiChatModels: AIChatModelCard[] = [
       units: [
         { name: 'imageOutput', rate: 120, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textOutput', rate: 12, strategy: 'fixed', unit: 'millionTokens' },
       ],
     },
@@ -145,6 +303,9 @@ const vertexaiChatModels: AIChatModelCard[] = [
       units: [
         { name: 'textInput_cacheRead', rate: 0.31, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textInput', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'videoInput', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'audioInput', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textOutput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
       ],
     },
@@ -214,6 +375,9 @@ const vertexaiChatModels: AIChatModelCard[] = [
       units: [
         { name: 'textInput_cacheRead', rate: 0.075, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textInput', rate: 0.3, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 0.3, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'videoInput', rate: 0.3, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'audioInput', rate: 1, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textOutput', rate: 2.5, strategy: 'fixed', unit: 'millionTokens' },
       ],
     },
@@ -405,7 +569,6 @@ const vertexaiChatModels: AIChatModelCard[] = [
   },
 ];
 
-/* eslint-disable sort-keys-fix/sort-keys-fix */
 const vertexaiImageModels: AIImageModelCard[] = [
   {
     displayName: 'Nano Banana',

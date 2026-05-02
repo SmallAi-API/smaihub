@@ -37,6 +37,33 @@ export const googleChatModels: AIChatModelCard[] = [
           unit: 'millionTokens',
         },
         {
+          name: 'imageInput',
+          strategy: 'tiered',
+          tiers: [
+            { rate: 2, upTo: 200_000 },
+            { rate: 4, upTo: 'infinity' },
+          ],
+          unit: 'millionTokens',
+        },
+        {
+          name: 'videoInput',
+          strategy: 'tiered',
+          tiers: [
+            { rate: 2, upTo: 200_000 },
+            { rate: 4, upTo: 'infinity' },
+          ],
+          unit: 'millionTokens',
+        },
+        {
+          name: 'audioInput',
+          strategy: 'tiered',
+          tiers: [
+            { rate: 2, upTo: 200_000 },
+            { rate: 4, upTo: 'infinity' },
+          ],
+          unit: 'millionTokens',
+        },
+        {
           name: 'textOutput',
           strategy: 'tiered',
           tiers: [
@@ -84,6 +111,9 @@ export const googleChatModels: AIChatModelCard[] = [
           strategy: 'fixed',
           unit: 'millionTokens',
         },
+        { name: 'imageInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'videoInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'audioInput', rate: 1, strategy: 'fixed', unit: 'millionTokens' },
         {
           name: 'textInput_cacheRead',
           rate: 0.05,
@@ -96,6 +126,40 @@ export const googleChatModels: AIChatModelCard[] = [
     releasedAt: '2025-12-17',
     settings: {
       extendParams: ['thinkingLevel', 'urlContext'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_048_576 + 65_536,
+    description:
+      "Gemini 3.1 Flash-Lite Preview is Google's most cost-efficient multimodal model, optimized for high-volume agentic tasks, translation, and data processing.",
+    displayName: 'Gemini 3.1 Flash-Lite Preview',
+    enabled: true,
+    id: 'gemini-3.1-flash-lite-preview',
+    maxOutput: 65_536,
+    pricing: {
+      units: [
+        { name: 'textInput_cacheRead', rate: 0.025, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 0.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 0.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'videoInput', rate: 0.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'audioInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 1.5, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    releasedAt: '2026-03-04',
+    settings: {
+      extendParams: ['thinkingLevel5', 'urlContext'],
       searchImpl: 'params',
       searchProvider: 'google',
     },
@@ -129,6 +193,33 @@ export const googleChatModels: AIChatModelCard[] = [
         },
         {
           name: 'textInput',
+          strategy: 'tiered',
+          tiers: [
+            { rate: 1.25, upTo: 200_000 },
+            { rate: 2.5, upTo: 'infinity' },
+          ],
+          unit: 'millionTokens',
+        },
+        {
+          name: 'imageInput',
+          strategy: 'tiered',
+          tiers: [
+            { rate: 1.25, upTo: 200_000 },
+            { rate: 2.5, upTo: 'infinity' },
+          ],
+          unit: 'millionTokens',
+        },
+        {
+          name: 'videoInput',
+          strategy: 'tiered',
+          tiers: [
+            { rate: 1.25, upTo: 200_000 },
+            { rate: 2.5, upTo: 'infinity' },
+          ],
+          unit: 'millionTokens',
+        },
+        {
+          name: 'audioInput',
           strategy: 'tiered',
           tiers: [
             { rate: 1.25, upTo: 200_000 },
@@ -181,12 +272,45 @@ export const googleChatModels: AIChatModelCard[] = [
           strategy: 'fixed',
           unit: 'millionTokens',
         },
+        { name: 'imageInput', rate: 0.3, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'videoInput', rate: 0.3, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'audioInput', rate: 1, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textOutput', rate: 2.5, strategy: 'fixed', unit: 'millionTokens' },
       ],
     },
     releasedAt: '2025-06-17',
     settings: {
       extendParams: ['enableReasoning', 'reasoningBudgetToken'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      imageOutput: true,
+      reasoning: true,
+      search: true,
+      vision: true,
+    },
+    contextWindowTokens: 131_072 + 32_768,
+    description:
+      'Gemini 3.1 Flash Image (Nano Banana 2) delivers Pro-level image quality at Flash speed with multimodal chat support.',
+    displayName: 'Nano Banana 2',
+    enabled: true,
+    id: 'gemini-3.1-flash-image-preview',
+    maxOutput: 32_768,
+    pricing: {
+      approximatePricePerImage: 0.067,
+      units: [
+        { name: 'imageOutput', rate: 60, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 3, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    releasedAt: '2026-02-26',
+    settings: {
       searchImpl: 'params',
       searchProvider: 'google',
     },
@@ -211,6 +335,7 @@ export const googleChatModels: AIChatModelCard[] = [
       units: [
         { name: 'imageOutput', rate: 120, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textOutput', rate: 12, strategy: 'fixed', unit: 'millionTokens' },
       ],
     },
