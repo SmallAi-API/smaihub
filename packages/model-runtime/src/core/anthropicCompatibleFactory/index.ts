@@ -5,13 +5,14 @@ import { type ChatModelCard } from '@lobechat/types';
 import debug from 'debug';
 import type { Pricing } from 'model-bank';
 
-import {
-  type ChatCompletionErrorPayload,
-  type ChatMethodOptions,
-  type ChatStreamCallbacks,
-  type ChatStreamPayload,
-  type GenerateObjectOptions,
-  type GenerateObjectPayload,
+import { shouldDropUnsupportedClaudeAssistantPrefill } from '../../const/models';
+import type {
+  ChatCompletionErrorPayload,
+  ChatMethodOptions,
+  ChatStreamCallbacks,
+  ChatStreamPayload,
+  GenerateObjectOptions,
+  GenerateObjectPayload,
 } from '../../types';
 import { type ILobeAgentRuntimeErrorType } from '../../types/error';
 import { AgentRuntimeErrorType } from '../../types/error';
@@ -159,8 +160,10 @@ export const buildDefaultAnthropicPayload = async (
 
   const postMessages = await buildAnthropicMessages(userMessages, { enabledContextCaching });
 
-  // Claude 4.6 models do not support assistant turn prefill
-  if (model.includes('-4-6') && postMessages.at(-1)?.role === 'assistant') {
+  if (
+    shouldDropUnsupportedClaudeAssistantPrefill(model) &&
+    postMessages.at(-1)?.role === 'assistant'
+  ) {
     postMessages.pop();
   }
 
