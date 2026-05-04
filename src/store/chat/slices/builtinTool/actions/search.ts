@@ -1,6 +1,5 @@
 import { WebBrowsingApiName, WebBrowsingManifest } from '@lobechat/builtin-tool-web-browsing';
-import { type ChatToolPayload, type CreateMessageParams, type SearchQuery } from '@lobechat/types';
-import { nanoid } from '@lobechat/utils';
+import { type ChatToolPayload, type SearchQuery } from '@lobechat/types';
 
 import { dbMessageSelectors } from '@/store/chat/selectors';
 import { type ChatStore } from '@/store/chat/store';
@@ -19,57 +18,6 @@ export class SearchActionImpl {
     this.#set = set;
     this.#get = get;
   }
-
-  saveSearchResult = async (id: string): Promise<void> => {
-    const message = dbMessageSelectors.getDbMessageById(id)(this.#get());
-    if (!message || !message.plugin) return;
-
-    const { optimisticAddToolToAssistantMessage, optimisticCreateMessage, openToolUI } =
-      this.#get();
-
-    // Get operationId from messageOperationMap
-    const operationId = this.#get().messageOperationMap[id];
-    const context = operationId ? { operationId } : undefined;
-
-    // 1. 创建一个新的 tool call message
-    const newToolCallId = `tool_call_${nanoid()}`;
-
-    const toolMessage: CreateMessageParams = {
-      agentId: message.agentId ?? this.#get().activeAgentId,
-      content: message.content,
-      id: undefined,
-      parentId: message.parentId,
-      plugin: message.plugin,
-      pluginState: message.pluginState,
-      role: 'tool',
-      tool_call_id: newToolCallId,
-      topicId: message.topicId !== undefined ? message.topicId : this.#get().activeTopicId,
-    };
-
-    const addToolItem = async () => {
-      if (!message.parentId || !message.plugin) return;
-
-      await optimisticAddToolToAssistantMessage(
-        message.parentId,
-        {
-          id: newToolCallId,
-          ...message.plugin,
-        },
-        context,
-      );
-    };
-
-    const [result] = await Promise.all([
-      // 1. 添加 tool message
-      optimisticCreateMessage(toolMessage, context),
-      // 2. 将这条 tool call message 插入到 ai 消息的 tools 中
-      addToolItem(),
-    ]);
-    if (!result) return;
-
-    // 将新创建的 tool message 激活
-    openToolUI(result.id, message.plugin.identifier);
-  };
 
   togglePageContent = (url: string): void => {
     this.#set({ activePageContentUrl: url });

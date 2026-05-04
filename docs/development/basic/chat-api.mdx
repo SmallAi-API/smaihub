@@ -73,12 +73,64 @@ sequenceDiagram
 
 ## Main Process Steps
 
-1. **Client Initiates Request**: The client calls the createAssistantMessage method of the frontend ChatService.
+### 1. Client Initiates Request
 
-2. **Frontend Processes Request**:
-   - `src/services/chat.ts` preprocesses messages, tools, and parameters
-   - Calls getChatCompletion to prepare request parameters
-   - Uses `src/utils/fetch/fetchSSE.ts` to send request to backend API
+After the user sends a message, `sendMessage()`
+(`src/store/chat/slices/aiChat/actions/conversationLifecycle.ts`)
+creates the user message and assistant message placeholder,
+then calls `executeClientAgent()`.
+
+### 2. Agent Runtime Drives the Loop
+
+Agent Runtime is the **core execution engine**
+of the entire chat flow. Every chat interaction
+(from simple Q\&A to complex multi-step tool calling)
+is driven by the `AgentRuntime.step()` loop.
+
+**Initialization**
+(`src/store/chat/slices/aiChat/actions/streamingExecutor.ts`):
+
+1. Resolve agent config (model, provider, plugin list, etc.)
+2. Create the tool registry via `createAgentToolsEngine()`
+3. Create `GeneralChatAgent` (the "brain" that decides
+   what to do next) and `AgentRuntime` (the "engine"
+   that executes instructions)
+4. Inject custom executors via `createAgentExecutors()`
+
+**Execution Loop**:
+
+```ts
+while (state.status !== 'done' && state.status !== 'error') {
+  result = await runtime.step(state, nextContext);
+  // GeneralChatAgent decides: call_llm → call_tool → call_llm → finish
+}
+```
+
+At each step, `GeneralChatAgent` returns an
+`AgentInstruction` based on current state,
+and `AgentRuntime` executes it via the corresponding
+executor:
+
+- `call_llm`: Call the LLM (see steps 3-5 below)
+- `call_tool`: Execute tool calls (see step 6 below)
+- `finish`: End the loop
+- `compress_context`: Context compression
+- `request_human_approve` / `request_human_prompt` /
+  `request_human_select`: Request user intervention
+
+### 3. Frontend Processes LLM Request
+
+When the Agent issues a `call_llm` instruction,
+the executor calls ChatService:
+
+- `src/services/chat/index.ts` preprocesses messages,
+  tools, and parameters
+- Modules under `src/services/chat/mecha/` perform
+  context engineering, including agent config resolution,
+  model parameter resolution, MCP context injection, etc.
+- Calls `getChatCompletion` to prepare request parameters
+- Uses `fetchSSE` from the `@lobechat/fetch-sse` package
+  to send the request to the backend API
 
 3. **Backend Processes Request**:
    - `src/app/(backend)/webapi/chat/[provider]/route.ts` receives the request
@@ -223,156 +275,172 @@ translateMessage: async (id, targetLang) => {
 };
 ```
 
-8. **Completion**:
-   - When the stream ends, the onFinish callback is called, providing the complete response result
+### 8. Completion
 
-## AgentRuntime Overview
+When the Agent issues a `finish` instruction,
+the loop ends, and the `onFinish` callback is called
+with the complete response result.
 
-AgentRuntime is a core abstraction layer in Lobe Chat that encapsulates a unified interface for interacting with different AI model providers. Its main responsibilities and features include:
+## Client-Side vs Server-Side Execution
 
-1. **Unified Abstraction Layer**: AgentRuntime provides a unified interface that hides the implementation details and differences between various AI provider APIs (such as OpenAI, Anthropic, Bedrock, etc.).
+The Agent Runtime loop execution location
+depends on the scenario:
 
-2. **Model Initialization**: Through the static `initializeWithProvider` method, it initializes the corresponding runtime instance based on the specified provider and configuration parameters.
+- **Client-side loop** (browser): Regular 1:1 chat,
+  continue generation, group orchestration decisions.
+  The loop runs in the browser, entry point is
+  `executeClientAgent()`
+  (`src/store/chat/slices/aiChat/actions/streamingExecutor.ts`)
+- **Server-side loop** (queue/local):
+  Group chat supervisor agent, sub-agent tasks,
+  API/Cron triggers. The loop runs on the server,
+  streaming events to the client via SSE, entry point is
+  `AgentRuntimeService.executeStep()`
+  (`src/server/services/agentRuntime/AgentRuntimeService.ts`),
+  tRPC route at `src/server/routers/lambda/aiAgent.ts`
 
-3. **Capability Encapsulation**:
-   - `chat` method: Handles chat streaming requests
-   - `models` method: Retrieves model lists
-   - Supports text embedding, text-to-image, text-to-speech, and other functionalities (if supported by the model provider)
+## Model Runtime
 
-4. **Plugin Architecture**: Through the `src/libs/agent-runtime/runtimeMap.ts` mapping table, it implements an extensible plugin architecture, making it easy to add new model providers. Currently, it supports over 40 different model providers:
+Model Runtime (`packages/model-runtime/`) is the core
+abstraction layer in LobeHub for interacting with
+LLM model providers, adapting different provider APIs
+into a unified interface.
+
+**Core Responsibilities**:
+
+- **Unified Abstraction Layer**: Hides differences
+  between AI provider APIs through the `LobeRuntimeAI`
+  interface
+  (`packages/model-runtime/src/core/BaseAI.ts`)
+- **Model Initialization**: Initializes the corresponding
+  runtime instance through the provider mapping table
+  (`packages/model-runtime/src/runtimeMap.ts`)
+- **Capability Encapsulation**: `chat` (streaming chat),
+  `models` (model listing), `embeddings` (text embeddings),
+  `createImage` (image generation),
+  `textToSpeech` (speech synthesis),
+  `generateObject` (structured output)
+
+**Core Interface**:
+
+```ts
+export interface LobeRuntimeAI {
+  baseURL?: string;
+  chat(payload: ChatStreamPayload, options?: ChatCompetitionOptions): Promise<Response>;
+  embeddings?(payload: EmbeddingsPayload, options?: EmbeddingsOptions): Promise<Embeddings[]>;
+  models?(): Promise<any>;
+  textToSpeech?: (
+    payload: TextToSpeechPayload,
+    options?: TextToSpeechOptions,
+  ) => Promise<ArrayBuffer>;
+}
+```
+
+**Adapter Implementation Examples**:
+
+1. **OpenRouter Adapter**: OpenRouter is a unified API that allows access to AI models from multiple providers. Lobe Chat implements support for OpenRouter through an adapter:
 
    ```ts
-   export const providerRuntimeMap = {
-     openai: LobeOpenAI,
-     anthropic: LobeAnthropicAI,
-     google: LobeGoogleAI,
-     azure: LobeAzureOpenAI,
-     bedrock: LobeBedrockAI,
-     ollama: LobeOllamaAI,
-     // ...over 40 other model providers
-   };
-   ```
+   // OpenRouter adapter implementation
+   class LobeOpenRouterAI implements LobeRuntimeAI {
+     client: OpenAI;
+     baseURL: string;
 
-5. **Adapter Pattern**: Internally, it uses the adapter pattern to adapt different provider APIs to the unified `src/libs/agent-runtime/BaseAI.ts` interface:
+     constructor(options: OpenAICompatibleOptions) {
+       // Initialize OpenRouter client using OpenAI-compatible API
+       this.client = new OpenAI({
+         apiKey: options.apiKey,
+         baseURL: OPENROUTER_BASE_URL,
+         defaultHeaders: {
+           'HTTP-Referer': 'https://github.com/lobehub/lobe-chat',
+           'X-Title': 'LobeHub',
+         },
+       });
+       this.baseURL = OPENROUTER_BASE_URL;
+     }
 
-   ```ts
-   export interface LobeRuntimeAI {
-     baseURL?: string;
-     chat(payload: ChatStreamPayload, options?: ChatCompetitionOptions): Promise<Response>;
-     embeddings?(payload: EmbeddingsPayload, options?: EmbeddingsOptions): Promise<Embeddings[]>;
-     models?(): Promise<any>;
-     textToSpeech?: (
-       payload: TextToSpeechPayload,
-       options?: TextToSpeechOptions,
-     ) => Promise<ArrayBuffer>;
+     // Implement chat functionality
+     async chat(payload: ChatCompletionCreateParamsBase, options?: RequestOptions) {
+       // Convert Lobe Chat request format to OpenRouter format
+       // Handle model mapping, message format, etc.
+       return this.client.chat.completions.create(
+         {
+           ...payload,
+           model: payload.model || 'openai/gpt-4-turbo', // Default model
+         },
+         options,
+       );
+     }
+
+     // Implement other LobeRuntimeAI interface methods
    }
    ```
 
-   **Adapter Implementation Examples**:
+2. **Google Gemini Adapter**: Gemini is Google's large language model. Lobe Chat supports Gemini series models through a dedicated adapter:
 
-   1. **OpenRouter Adapter**: OpenRouter is a unified API that allows access to AI models from multiple providers. Lobe Chat implements support for OpenRouter through an adapter:
+   ```ts
+   import { GoogleGenerativeAI } from '@google/generative-ai';
 
-      ```ts
-      // OpenRouter adapter implementation
-      class LobeOpenRouterAI implements LobeRuntimeAI {
-        client: OpenAI;
-        baseURL: string;
+   // Gemini adapter implementation
+   class LobeGoogleAI implements LobeRuntimeAI {
+     client: GoogleGenerativeAI;
+     baseURL: string;
+     apiKey: string;
 
-        constructor(options: OpenAICompatibleOptions) {
-          // Initialize OpenRouter client using OpenAI-compatible API
-          this.client = new OpenAI({
-            apiKey: options.apiKey,
-            baseURL: OPENROUTER_BASE_URL,
-            defaultHeaders: {
-              'HTTP-Referer': 'https://github.com/lobehub/lobe-chat',
-              'X-Title': 'LobeHub',
-            },
-          });
-          this.baseURL = OPENROUTER_BASE_URL;
-        }
+     constructor(options: GoogleAIOptions) {
+       // Initialize Google Generative AI client
+       this.client = new GoogleGenerativeAI(options.apiKey);
+       this.apiKey = options.apiKey;
+       this.baseURL = options.baseURL || GOOGLE_AI_BASE_URL;
+     }
 
-        // Implement chat functionality
-        async chat(payload: ChatCompletionCreateParamsBase, options?: RequestOptions) {
-          // Convert Lobe Chat request format to OpenRouter format
-          // Handle model mapping, message format, etc.
-          return this.client.chat.completions.create(
-            {
-              ...payload,
-              model: payload.model || 'openai/gpt-4-turbo', // Default model
-            },
-            options,
-          );
-        }
+     // Implement chat functionality
+     async chat(payload: ChatCompletionCreateParamsBase, options?: RequestOptions) {
+       // Select appropriate model (supports Gemini Pro, Gemini Flash, etc.)
+       const modelName = payload.model || 'gemini-pro';
+       const model = this.client.getGenerativeModel({ model: modelName });
 
-        // Implement other LobeRuntimeAI interface methods
-      }
-      ```
+       // Process multimodal inputs (e.g., images)
+       const contents = this.processMessages(payload.messages);
 
-   2. **Google Gemini Adapter**: Gemini is Google's large language model. Lobe Chat supports Gemini series models through a dedicated adapter:
+       // Set generation parameters
+       const generationConfig = {
+         temperature: payload.temperature,
+         topK: payload.top_k,
+         topP: payload.top_p,
+         maxOutputTokens: payload.max_tokens,
+       };
 
-      ```ts
-      import { GoogleGenerativeAI } from '@google/generative-ai';
+       // Create chat session and get response
+       const chat = model.startChat({
+         generationConfig,
+         history: contents.slice(0, -1),
+         safetySettings: this.getSafetySettings(payload),
+       });
 
-      // Gemini adapter implementation
-      class LobeGoogleAI implements LobeRuntimeAI {
-        client: GoogleGenerativeAI;
-        baseURL: string;
-        apiKey: string;
+       // Handle streaming response
+       return this.handleStreamResponse(chat, contents, options?.signal);
+     }
 
-        constructor(options: GoogleAIOptions) {
-          // Initialize Google Generative AI client
-          this.client = new GoogleGenerativeAI(options.apiKey);
-          this.apiKey = options.apiKey;
-          this.baseURL = options.baseURL || GOOGLE_AI_BASE_URL;
-        }
+     // Implement other processing methods
+     private processMessages(messages) {
+       /* ... */
+     }
+     private getSafetySettings(payload) {
+       /* ... */
+     }
+     private handleStreamResponse(chat, contents, signal) {
+       /* ... */
+     }
+   }
+   ```
 
-        // Implement chat functionality
-        async chat(payload: ChatCompletionCreateParamsBase, options?: RequestOptions) {
-          // Select appropriate model (supports Gemini Pro, Gemini Flash, etc.)
-          const modelName = payload.model || 'gemini-pro';
-          const model = this.client.getGenerativeModel({ model: modelName });
+**Different Model Implementations**:
 
-          // Process multimodal inputs (e.g., images)
-          const contents = this.processMessages(payload.messages);
-
-          // Set generation parameters
-          const generationConfig = {
-            temperature: payload.temperature,
-            topK: payload.top_k,
-            topP: payload.top_p,
-            maxOutputTokens: payload.max_tokens,
-          };
-
-          // Create chat session and get response
-          const chat = model.startChat({
-            generationConfig,
-            history: contents.slice(0, -1),
-            safetySettings: this.getSafetySettings(payload),
-          });
-
-          // Handle streaming response
-          return this.handleStreamResponse(chat, contents, options?.signal);
-        }
-
-        // Implement other processing methods
-        private processMessages(messages) {
-          /* ... */
-        }
-        private getSafetySettings(payload) {
-          /* ... */
-        }
-        private handleStreamResponse(chat, contents, signal) {
-          /* ... */
-        }
-      }
-      ```
-
-   **Different Model Implementations**:
-
-   - `src/libs/agent-runtime/openai/index.ts` - OpenAI implementation
-   - `src/libs/agent-runtime/anthropic/index.ts` - Anthropic implementation
-   - `src/libs/agent-runtime/google/index.ts` - Google implementation
-   - `src/libs/agent-runtime/openrouter/index.ts` - OpenRouter implementation
+- `src/libs/agent-runtime/openai/index.ts` - OpenAI implementation
+- `src/libs/agent-runtime/anthropic/index.ts` - Anthropic implementation
+- `src/libs/agent-runtime/google/index.ts` - Google implementation
+- `src/libs/agent-runtime/openrouter/index.ts` - OpenRouter implementation
 
 For detailed implementation, see:
 
