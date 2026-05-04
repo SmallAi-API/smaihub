@@ -453,7 +453,7 @@ export const fileRouter = router({
     }),
 
   recentFiles: fileProcedure
-    .input(z.object({ limit: z.number().optional() }).optional())
+    .input(z.object({ limit: z.number().max(50).optional() }).optional())
     .query(async ({ ctx, input }) => {
       const limit = input?.limit ?? 12;
       // Query recent items and filter for files only (exclude documents/pages)
@@ -513,7 +513,7 @@ export const fileRouter = router({
     }),
 
   recentPages: fileProcedure
-    .input(z.object({ limit: z.number().optional() }).optional())
+    .input(z.object({ limit: z.number().max(50).optional() }).optional())
     .query(async ({ ctx, input }) => {
       const limit = input?.limit ?? 12;
       // Query recent items and filter for pages (documents) only, exclude folders
