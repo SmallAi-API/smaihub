@@ -1,23 +1,18 @@
 'use client';
 
-import {
-  Accordion,
-  ActionIcon,
-  DropdownMenu,
-  Flexbox,
-  Icon,
-  type MenuProps,
-  Popover,
-} from '@lobehub/ui';
+import type { MenuProps } from '@lobehub/ui';
+import { Accordion, ActionIcon, DropdownMenu, Flexbox, Icon, Popover } from '@lobehub/ui';
 import { EyeOffIcon, MoreHorizontalIcon, SlidersHorizontalIcon } from 'lucide-react';
-import { memo, type ReactElement, useCallback, useMemo } from 'react';
+import type { Key, ReactElement } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { isDesktop } from '@/const/version';
 import NavItem from '@/features/NavPanel/components/NavItem';
 import { useActiveTabKey } from '@/hooks/useActiveTabKey';
-import { type NavItem as NavItemType, useNavLayout } from '@/hooks/useNavLayout';
+import type { NavItem as NavItemType } from '@/hooks/useNavLayout';
+import { useNavLayout } from '@/hooks/useNavLayout';
 import Recents from '@/routes/(main)/home/features/Recents';
 import { electronSystemService } from '@/services/electron/system';
 import { useGlobalStore } from '@/store/global';
@@ -48,12 +43,29 @@ const accordionComponents: Record<string, (key: string) => ReactElement> = {
   [GroupKey.Recents]: (key) => <Recents itemKey={key} key={key} />,
 };
 
+const mergeSidebarExpandedKeys = (
+  currentKeys: string[],
+  accordionKeys: string[],
+  expandedKeys: Key[],
+): string[] => {
+  const nextExpandedKeys = new Set(expandedKeys.map(String));
+  const accordionKeySet = new Set(accordionKeys);
+  const nextKeys = currentKeys.filter((key) => !accordionKeySet.has(key));
+
+  for (const key of accordionKeys) {
+    if (nextExpandedKeys.has(key)) nextKeys.push(key);
+  }
+
+  return nextKeys;
+};
+
 const Body = memo(() => {
   const { t } = useTranslation('common');
   const tab = useActiveTabKey();
   const navigate = useNavigate();
   const { topNavItems, bottomMenuItems } = useNavLayout();
   const sidebarItems = useGlobalStore(systemStatusSelectors.sidebarItems);
+  const sidebarExpandedKeys = useGlobalStore(systemStatusSelectors.sidebarExpandedKeys);
   const hiddenSections = useGlobalStore(systemStatusSelectors.hiddenSidebarSections);
   const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
 
@@ -173,24 +185,40 @@ const Body = memo(() => {
         </Link>
       );
     },
-    [getContextMenuItems, handleExternalLink, navLinkItems, navigate, tab],
+    [navLinkItems, getContextMenuItems, tab, handleExternalLink, navigate],
+  );
+
+  const handleAccordionExpandedChange = useCallback(
+    (accordionKeys: string[], expandedKeys: Key[]) => {
+      updateSystemStatus({
+        sidebarExpandedKeys: mergeSidebarExpandedKeys(
+          sidebarExpandedKeys,
+          accordionKeys,
+          expandedKeys,
+        ),
+      });
+    },
+    [sidebarExpandedKeys, updateSystemStatus],
   );
 
   // Render the flat list: group consecutive accordion items into an Accordion,
   // interleave non-accordion keys as nav links.
   const content = useMemo(() => {
     const elements: ReactElement[] = [];
-    let accGroup: ReactElement[] = [];
+    let accGroup: { element: ReactElement; key: string }[] = [];
 
     const flushAccordion = () => {
       if (accGroup.length > 0) {
+        const accordionKeys = accGroup.map((item) => item.key);
+
         elements.push(
           <Accordion
-            defaultExpandedKeys={[GroupKey.Recents, GroupKey.Project, GroupKey.Agent]}
+            expandedKeys={sidebarExpandedKeys}
             gap={8}
             key={`acc-${elements.length}`}
+            onExpandedChange={(keys) => handleAccordionExpandedChange(accordionKeys, keys)}
           >
-            {accGroup}
+            {accGroup.map((item) => item.element)}
           </Accordion>,
         );
         accGroup = [];
@@ -200,7 +228,7 @@ const Body = memo(() => {
     for (const key of visibleKeys) {
       if (ACCORDION_KEYS.has(key)) {
         const comp = accordionComponents[key]?.(key);
-        if (comp) accGroup.push(comp);
+        if (comp) accGroup.push({ element: comp, key });
       } else {
         flushAccordion();
         const link = renderSidebarItem(key);
@@ -209,7 +237,7 @@ const Body = memo(() => {
     }
     flushAccordion();
     return elements;
-  }, [renderSidebarItem, visibleKeys]);
+  }, [sidebarExpandedKeys, handleAccordionExpandedChange, visibleKeys, renderSidebarItem]);
 
   return (
     <Flexbox flex={1} gap={4} paddingInline={4}>
