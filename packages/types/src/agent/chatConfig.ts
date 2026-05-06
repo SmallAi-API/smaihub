@@ -18,7 +18,13 @@ export interface AgentMemoryChatConfig {
   };
 }
 
-export interface LobeAgentChatConfig extends AgentMemoryChatConfig {
+export interface AgentSelfIterationChatConfig {
+  selfIteration?: {
+    enabled?: boolean;
+  };
+}
+
+export interface LobeAgentChatConfig extends AgentMemoryChatConfig, AgentSelfIterationChatConfig {
   autoCreateTopicThreshold: number;
   codexMaxReasoningEffort?: 'low' | 'medium' | 'high' | 'xhigh';
   /**
@@ -179,6 +185,14 @@ export const MemoryChatConfigSchema = z.object({
     .optional(),
 });
 
+export const SelfIterationChatConfigSchema = z.object({
+  selfIteration: z
+    .object({
+      enabled: z.boolean().optional(),
+    })
+    .optional(),
+});
+
 export const AgentChatConfigSchema = z
   .object({
     autoCreateTopicThreshold: z.number().default(2),
@@ -235,4 +249,5 @@ export const AgentChatConfigSchema = z
     urlContext: z.boolean().optional(),
     useModelBuiltinSearch: z.boolean().optional(),
   })
-  .merge(MemoryChatConfigSchema);
+  .merge(MemoryChatConfigSchema)
+  .merge(SelfIterationChatConfigSchema);
