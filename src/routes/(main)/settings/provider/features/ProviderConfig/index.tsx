@@ -1,9 +1,19 @@
 'use client';
 
-import { ENABLE_BUSINESS_FEATURES } from '@lobechat/business-const';
-import { AES_GCM_URL, FORM_STYLE } from '@lobechat/const';
-import { Avatar, Form, type FormGroupItemType, type FormItemProps, Icon } from '@lobehub/ui';
-import { Flexbox, Skeleton } from '@lobehub/ui';
+import { BRANDING_PROVIDER } from '@lobechat/business-const';
+import { AES_GCM_URL, BASE_PROVIDER_DOC_URL, FORM_STYLE } from '@lobechat/const';
+import { ProviderCombine } from '@lobehub/icons';
+import { type FormGroupItemType, type FormItemProps } from '@lobehub/ui';
+import {
+  Avatar,
+  Center,
+  Flexbox,
+  Form,
+  Icon,
+  Skeleton,
+  stopPropagation,
+  Tooltip,
+} from '@lobehub/ui';
 import { useDebounceFn } from 'ahooks';
 import { Form as AntdForm, Switch } from 'antd';
 import { createStaticStyles, cssVar, cx, responsive } from 'antd-style';
@@ -11,18 +21,16 @@ import { Loader2Icon, LockIcon } from 'lucide-react';
 import { type ReactNode } from 'react';
 import { memo, useCallback, useLayoutEffect, useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import urlJoin from 'url-join';
 import { z } from 'zod';
 
 import { FormInput, FormPassword } from '@/components/FormInput';
 import { SkeletonInput, SkeletonSwitch } from '@/components/Skeleton';
 import { lambdaQuery } from '@/libs/trpc/client';
 import { aiProviderSelectors, useAiInfraStore } from '@/store/aiInfra';
-import {
-  type AiProviderDetailItem,
-  AiProviderSourceEnum,
-  type AiProviderSourceType,
-} from '@/types/aiProvider';
-import { getProviderLogoUrl } from '@/utils/providerLogo';
+import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
+import { type AiProviderDetailItem, type AiProviderSourceType } from '@/types/aiProvider';
+import { AiProviderSourceEnum } from '@/types/aiProvider';
 
 import { KeyVaultsConfigKey, LLMProviderApiTokenKey, LLMProviderBaseUrlKey } from '../../const';
 import { isResponsesApiSupportedSdkType } from '../providerSettings';
@@ -98,8 +106,6 @@ export interface ProviderConfigProps extends Omit<AiProviderDetailItem, 'enabled
   className?: string;
   enabled?: boolean;
   extra?: ReactNode;
-  headerExtra?: ReactNode;
-  headerTitle?: ReactNode;
   hideSwitch?: boolean;
   modelList?: {
     azureDeployName?: boolean;
@@ -118,17 +124,16 @@ const ProviderConfig = memo<ProviderConfigProps>(
     id,
     settings,
     checkModel,
-
+    logo,
     className,
     checkErrorRender,
     canDeactivate = true,
-    headerExtra,
-    headerTitle,
     name,
     showAceGcm = true,
     extra,
     source = AiProviderSourceEnum.Builtin,
     apiKeyUrl,
+    title,
   }) => {
     const {
       authType,
@@ -166,6 +171,9 @@ const ProviderConfig = memo<ProviderConfigProps>(
       aiProviderSelectors.isProviderConfigUpdating(id)(s),
       aiProviderSelectors.providerConfigById(id)(s),
     ]);
+    const enableBusinessFeatures = useServerConfigStore(
+      serverConfigSelectors.enableBusinessFeatures,
+    );
 
     // Watch form values in real-time to show/hide switches immediately
     // Watch nested form values for endpoints
@@ -224,15 +232,15 @@ const ProviderConfig = memo<ProviderConfigProps>(
       lastInitializedIdRef.current = id;
     }, [isLoading, id, data, providerRuntimeConfig, form]);
 
-    // 标记是否正在进行连接测试
+    // Flag to indicate if a connection test is in progress
     const isCheckingConnection = useRef(false);
 
     const handleValueChange = useCallback(
       (...params: Parameters<typeof updateAiProviderConfig>) => {
-        // 虽然 debouncedHandleValueChange 早于 onBeforeCheck 执行，
-        // 但是由于 debouncedHandleValueChange 因为 debounce 的原因，本来就会晚 500ms 执行
-        // 所以 isCheckingConnection.current 这时候已经更新了
-        // 测试链接时已经出发一次了 updateAiProviderConfig ， 不应该重复更新
+        // Although debouncedHandleValueChange executes before onBeforeCheck,
+        // due to the debounce, debouncedHandleValueChange will actually execute 500ms later
+        // so isCheckingConnection.current has already been updated at this point
+        // updateAiProviderConfig has already been triggered once during the connection test, so it should not be updated again
         if (isCheckingConnection.current) return;
 
         updateAiProviderConfig(...params);
@@ -401,13 +409,13 @@ const ProviderConfig = memo<ProviderConfigProps>(
                 model={data?.checkModel || checkModel!}
                 provider={id}
                 onAfterCheck={async () => {
-                  // 重置连接测试状态，允许后续的 onValuesChange 更新
+                  // Reset connection test state to allow subsequent onValuesChange updates
                   isCheckingConnection.current = false;
                 }}
                 onBeforeCheck={async () => {
-                  // 设置连接测试状态，阻止 onValuesChange 的重复请求
+                  // Set connection test state to prevent duplicate requests from onValuesChange
                   isCheckingConnection.current = true;
-                  // 主动保存表单最新值，确保 fetchAiProviderRuntimeState 获取最新数据
+                  // Proactively save the latest form values to ensure fetchAiProviderRuntimeState retrieves up-to-date data
                   await updateAiProviderConfig(id, form.getFieldsValue());
                 }}
               />
@@ -419,38 +427,64 @@ const ProviderConfig = memo<ProviderConfigProps>(
       showAceGcm && aceGcmItem,
     ].filter(Boolean) as FormItemProps[];
 
+    const logoUrl = data?.logo ?? logo;
+
+    // Header components - shared between OAuth card and Form
+    const headerTitle = (
+      <Flexbox
+        horizontal
+        align={'center'}
+        gap={4}
+        style={{
+          height: 24,
+          maxHeight: 24,
+          ...(enabled ? {} : { filter: 'grayscale(100%)', maxHeight: 24, opacity: 0.66 }),
+        }}
+      >
+        {isCustom ? (
+          <Flexbox horizontal align={'center'} gap={8}>
+            {logoUrl ? (
+              <Avatar avatar={logoUrl} shape={'circle'} size={32} title={name || id} />
+            ) : (
+              <ProviderCombine provider={'not-exist-provider'} size={24} />
+            )}
+            {name}
+          </Flexbox>
+        ) : (
+          <>
+            {title ?? <ProviderCombine provider={id} size={24} />}
+            <Tooltip title={t('providerModels.config.helpDoc')}>
+              <a
+                href={urlJoin(BASE_PROVIDER_DOC_URL, id)}
+                rel="noreferrer"
+                target="_blank"
+                onClick={stopPropagation}
+              >
+                <Center className={styles.help} height={20} width={20}>
+                  ?
+                </Center>
+              </a>
+            </Tooltip>
+          </>
+        )}
+      </Flexbox>
+    );
+
+    const headerExtra = (
+      <Flexbox horizontal align={'center'} gap={8}>
+        {extra}
+        {isCustom && <UpdateProviderInfo />}
+        {canDeactivate && !(enableBusinessFeatures && id === BRANDING_PROVIDER) && (
+          <EnableSwitch id={id} key={id} />
+        )}
+      </Flexbox>
+    );
+
     const model: FormGroupItemType = {
       children: configItems,
       defaultActive: true,
-
-      extra: (
-        <Flexbox horizontal align={'center'} gap={8}>
-          {extra}
-
-          {isCustom && <UpdateProviderInfo />}
-          {canDeactivate && !(ENABLE_BUSINESS_FEATURES && id === 'lobehub') && (
-            <EnableSwitch id={id} key={id} />
-          )}
-        </Flexbox>
-      ),
-      title: (
-        <Flexbox
-          horizontal
-          align={'center'}
-          gap={4}
-          style={{
-            height: 24,
-            maxHeight: 24,
-            ...(enabled ? {} : { filter: 'grayscale(100%)', maxHeight: 24, opacity: 0.66 }),
-          }}
-        >
-          <Flexbox horizontal align={'center'} gap={8}>
-            <Avatar alt={name || id} avatar={getProviderLogoUrl(id, name)} size={28} />
-
-            {name}
-          </Flexbox>
-        </Flexbox>
-      ),
+      extra: isOAuthProvider ? undefined : headerExtra,
+      title: isOAuthProvider ? '' : headerTitle,
     };
 
     // For OAuth providers, only show Form when authenticated
