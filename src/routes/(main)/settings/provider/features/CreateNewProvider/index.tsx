@@ -12,6 +12,7 @@ import { type CreateAiProviderParams } from '@/types/aiProvider';
 
 import { KeyVaultsConfigKey, LLMProviderApiTokenKey, LLMProviderBaseUrlKey } from '../../const';
 import { CUSTOM_PROVIDER_SDK_OPTIONS } from '../customProviderSdkOptions';
+import { normalizeProviderSettings } from '../providerSettings';
 
 interface CreateNewProviderProps {
   onClose?: () => void;
@@ -32,16 +33,10 @@ const CreateNewProvider = memo<CreateNewProviderProps>(({ onClose, open }) => {
       const finalValues = {
         ...values,
         name: values.name || values.id,
+        settings: normalizeProviderSettings({
+          nextSettings: values.settings,
+        }) as CreateAiProviderParams['settings'],
       };
-
-      // 只为 openai 和 router (newapi) 类型的自定义 provider 添加 supportResponsesApi: true
-      const sdkType = values.settings?.sdkType;
-      if (sdkType === 'openai' || sdkType === 'router') {
-        finalValues.settings = {
-          ...finalValues.settings,
-          supportResponsesApi: true,
-        };
-      }
 
       await createNewAiProvider(finalValues);
       setLoading(false);
