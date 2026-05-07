@@ -126,7 +126,7 @@ describe('mapFeatureFlagsEnvToState', () => {
       speech_to_text: true,
       changelog: false,
       api_key_manage: false,
-      cloud_promotion: true,
+      cloud_promotion: false,
       commercial_hide_github: false,
       commercial_hide_docs: true,
     };
@@ -151,7 +151,7 @@ describe('mapFeatureFlagsEnvToState', () => {
       enableAuthCaptcha: true,
       showMarket: true,
       enableSTT: true,
-      showCloudPromotion: true,
+      showCloudPromotion: false,
       hideGitHub: false,
       hideDocs: true,
     });
