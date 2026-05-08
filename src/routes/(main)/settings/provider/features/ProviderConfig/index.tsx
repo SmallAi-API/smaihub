@@ -1,19 +1,9 @@
 'use client';
 
 import { BRANDING_PROVIDER } from '@lobechat/business-const';
-import { AES_GCM_URL, BASE_PROVIDER_DOC_URL, FORM_STYLE } from '@lobechat/const';
-import { ProviderCombine } from '@lobehub/icons';
+import { AES_GCM_URL, FORM_STYLE } from '@lobechat/const';
 import { type FormGroupItemType, type FormItemProps } from '@lobehub/ui';
-import {
-  Avatar,
-  Center,
-  Flexbox,
-  Form,
-  Icon,
-  Skeleton,
-  stopPropagation,
-  Tooltip,
-} from '@lobehub/ui';
+import { Avatar, Flexbox, Form, Icon, Skeleton } from '@lobehub/ui';
 import { useDebounceFn } from 'ahooks';
 import { Form as AntdForm, Switch } from 'antd';
 import { createStaticStyles, cssVar, cx, responsive } from 'antd-style';
@@ -21,7 +11,6 @@ import { Loader2Icon, LockIcon } from 'lucide-react';
 import { type ReactNode } from 'react';
 import { memo, useCallback, useLayoutEffect, useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import urlJoin from 'url-join';
 import { z } from 'zod';
 
 import { FormInput, FormPassword } from '@/components/FormInput';
@@ -31,6 +20,7 @@ import { aiProviderSelectors, useAiInfraStore } from '@/store/aiInfra';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { type AiProviderDetailItem, type AiProviderSourceType } from '@/types/aiProvider';
 import { AiProviderSourceEnum } from '@/types/aiProvider';
+import { getProviderLogoUrl } from '@/utils/providerLogo';
 
 import { KeyVaultsConfigKey, LLMProviderApiTokenKey, LLMProviderBaseUrlKey } from '../../const';
 import { isResponsesApiSupportedSdkType } from '../providerSettings';
@@ -124,7 +114,7 @@ const ProviderConfig = memo<ProviderConfigProps>(
     id,
     settings,
     checkModel,
-    logo,
+
     className,
     checkErrorRender,
     canDeactivate = true,
@@ -133,7 +123,6 @@ const ProviderConfig = memo<ProviderConfigProps>(
     extra,
     source = AiProviderSourceEnum.Builtin,
     apiKeyUrl,
-    title,
   }) => {
     const {
       authType,
@@ -427,8 +416,6 @@ const ProviderConfig = memo<ProviderConfigProps>(
       showAceGcm && aceGcmItem,
     ].filter(Boolean) as FormItemProps[];
 
-    const logoUrl = data?.logo ?? logo;
-
     // Header components - shared between OAuth card and Form
     const headerTitle = (
       <Flexbox
@@ -441,32 +428,8 @@ const ProviderConfig = memo<ProviderConfigProps>(
           ...(enabled ? {} : { filter: 'grayscale(100%)', maxHeight: 24, opacity: 0.66 }),
         }}
       >
-        {isCustom ? (
-          <Flexbox horizontal align={'center'} gap={8}>
-            {logoUrl ? (
-              <Avatar avatar={logoUrl} shape={'circle'} size={32} title={name || id} />
-            ) : (
-              <ProviderCombine provider={'not-exist-provider'} size={24} />
-            )}
-            {name}
-          </Flexbox>
-        ) : (
-          <>
-            {title ?? <ProviderCombine provider={id} size={24} />}
-            <Tooltip title={t('providerModels.config.helpDoc')}>
-              <a
-                href={urlJoin(BASE_PROVIDER_DOC_URL, id)}
-                rel="noreferrer"
-                target="_blank"
-                onClick={stopPropagation}
-              >
-                <Center className={styles.help} height={20} width={20}>
-                  ?
-                </Center>
-              </a>
-            </Tooltip>
-          </>
-        )}
+        <Avatar alt={name || id} avatar={getProviderLogoUrl(id, name)} size={28} />
+        {name}
       </Flexbox>
     );
 
