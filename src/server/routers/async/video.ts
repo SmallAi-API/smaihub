@@ -1,4 +1,3 @@
-import { ASYNC_TASK_TIMEOUT } from '@lobechat/business-config/server';
 import { ENABLE_BUSINESS_FEATURES } from '@lobechat/business-const';
 import {
   buildMappedBusinessModelFields,
@@ -19,6 +18,7 @@ import { FileSource } from '@/types/files';
 import { sanitizeFileName } from '@/utils/sanitizeFileName';
 
 const log = debug('lobe-video:async');
+const VIDEO_ASYNC_TASK_TIMEOUT = 15 * 60 * 1000;
 
 const videoProcedure = asyncAuthedProcedure.use(async (opts) => {
   const { ctx } = opts;
@@ -242,7 +242,7 @@ export const videoRouter = router({
       timeoutId = setTimeout(() => {
         log('Video generation timeout, aborting operation: %s', asyncTaskId);
         abortController.abort();
-      }, ASYNC_TASK_TIMEOUT);
+      }, VIDEO_ASYNC_TASK_TIMEOUT);
 
       const result = await pollingPromise(abortController.signal);
 

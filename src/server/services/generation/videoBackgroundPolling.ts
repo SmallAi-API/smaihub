@@ -13,6 +13,8 @@ import type { VideoGenerationAsset } from '@/types/generation';
 import { sanitizeFileName } from '@/utils/sanitizeFileName';
 
 const log = debug('lobe-video:background-polling');
+const VIDEO_POLLING_MAX_RETRIES = 180;
+const VIDEO_POLLING_INTERVAL_MS = 5000;
 
 interface BackgroundPollingParams {
   asyncTaskCreatedAt: Date;
@@ -143,8 +145,8 @@ async function pollUntilCompletion(
   modelRuntime: any,
   inferenceId: string,
 ): Promise<{ headers?: Record<string, string>; videoUrl: string } | null> {
-  const maxRetries = 120;
-  const pollingInterval = 5000;
+  const maxRetries = VIDEO_POLLING_MAX_RETRIES;
+  const pollingInterval = VIDEO_POLLING_INTERVAL_MS;
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
