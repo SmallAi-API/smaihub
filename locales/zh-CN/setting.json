@@ -857,6 +857,7 @@
   "tab.manualFill": "手动填写",
   "tab.manualFill.desc": "手动配置自定义 MCP 技能",
   "tab.memory": "记忆设置",
+  "tab.messenger": "消息",
   "tab.notification": "通知",
   "tab.profile": "我的账号",
   "tab.provider": "API管理",
