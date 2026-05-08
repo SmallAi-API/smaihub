@@ -139,6 +139,8 @@
   "ModelSwitchPanel.detail.pricing.unit.textInput_cacheRead": "輸入（快取）",
   "ModelSwitchPanel.detail.pricing.unit.textInput_cacheWrite": "輸入（快取寫入）",
   "ModelSwitchPanel.detail.pricing.unit.textOutput": "輸出",
+  "ModelSwitchPanel.detail.pricing.unit.videoGeneration": "視頻生成",
+  "ModelSwitchPanel.detail.pricing.unit.videoInput": "視頻輸入",
   "ModelSwitchPanel.detail.releasedAt": "於 {{date}} 發佈",
   "ModelSwitchPanel.emptyModel": "沒有啟用的模型，請前往設定開啟",
   "ModelSwitchPanel.emptyProvider": "沒有啟用的服務商，請前往設定開啟",
