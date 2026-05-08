@@ -17,7 +17,6 @@ const SMAI: ModelProviderCard = {
     disableBrowserRequest: false,
     sdkType: 'router',
     showModelFetcher: true,
-    supportResponsesApi: true,
   },
   url: 'https://api.smai.ai',
 };
