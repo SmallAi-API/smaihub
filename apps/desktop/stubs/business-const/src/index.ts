@@ -1,9 +1,10 @@
 export const BRANDING_LOGO_URL = '/logo.png';
 export const BRANDING_NAME = 'smai.ai';
-export const DEFAULT_EMBEDDING_PROVIDER = 'openai';
+export const DEFAULT_EMBEDDING_PROVIDER = 'smai';
 export const DEFAULT_MINI_MODEL = 'gpt-5.4-mini';
-export const DEFAULT_MINI_PROVIDER = 'openai';
-export const DEFAULT_MODEL = 'claude-sonnet-4-6';
-export const DEFAULT_ONBOARDING_MODEL = 'gemini-3-flash-preview';
-export const DEFAULT_PROVIDER = 'openai';
+export const DEFAULT_MINI_PROVIDER = 'smai';
+export const DEFAULT_MODEL = 'gpt-5.5';
+export const DEFAULT_ONBOARDING_MODEL = 'gpt-5.5';
+export const DEFAULT_ONBOARDING_PROVIDER = 'smai';
+export const DEFAULT_PROVIDER = 'smai';
 export const ORG_NAME = 'smai.ai';

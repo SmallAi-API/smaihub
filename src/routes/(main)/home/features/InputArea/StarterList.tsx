@@ -12,9 +12,7 @@ import { useAgentStore } from '@/store/agent';
 import { agentByIdSelectors } from '@/store/agent/selectors';
 
 import { useResolvedHomeAgentId } from '../AgentSelect/useResolvedHomeAgentId';
-
-const NEW_MODEL = 'gpt-5.5';
-const NEW_MODEL_PROVIDER = 'smai';
+import { GPT_5_5_MODEL, GPT_5_5_PROVIDER } from './starterModels';
 
 type StarterKey = 'image' | 'video' | 'gpt-5.5';
 
@@ -102,14 +100,14 @@ const StarterList = memo(() => {
           const currentModel = agentByIdSelectors.getAgentModelById(activeAgentId)(agentState);
           const currentProvider =
             agentByIdSelectors.getAgentModelProviderById(activeAgentId)(agentState);
-          if (currentModel === NEW_MODEL && currentProvider === NEW_MODEL_PROVIDER) {
+          if (currentModel === GPT_5_5_MODEL && currentProvider === GPT_5_5_PROVIDER) {
             message.info(t('starter.NewModelAlready'));
             return;
           }
 
           await updateAgentConfigById(activeAgentId, {
-            model: NEW_MODEL,
-            provider: NEW_MODEL_PROVIDER,
+            model: GPT_5_5_MODEL,
+            provider: GPT_5_5_PROVIDER,
           });
           message.success(t('starter.NewModelSwitched'));
         } finally {
