@@ -32,50 +32,22 @@ export interface SMAIPricing {
 }
 
 /**
- * Detect if running in browser environment
- */
-const isBrowser = () => typeof window !== 'undefined' && typeof document !== 'undefined';
-
-/**
- * Parse a pricing API HTTP response into a `SMAIPricing[] | null`.
- */
-const parsePricingResponse = async (res: Response): Promise<SMAIPricing[] | null> => {
-  if (!res.ok) {
-    return null;
-  }
-
-  try {
-    const body = await res.json();
-    return body?.success && body?.data ? (body.data as SMAIPricing[]) : null;
-  } catch {
-    return null;
-  }
-};
-
-/**
  * Fetch pricing information with CORS bypass for client-side requests
  */
 const fetchPricing = async (pricingUrl: string, apiKey: string): Promise<SMAIPricing[] | null> => {
   try {
-    if (isBrowser()) {
-      const proxyResponse = await fetch('/webapi/proxy', {
-        body: pricingUrl,
-        method: 'POST',
-      });
+    const res = await fetch(pricingUrl, {
+      headers: {
+        Accept: 'application/json; charset=utf-8',
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
 
-      return await parsePricingResponse(proxyResponse);
-    } else {
-      const pricingResponse = await fetch(pricingUrl, {
-        headers: {
-          Accept: 'application/json; charset=utf-8',
-          Authorization: `Bearer ${apiKey}`,
-        },
-      });
+    if (!res.ok) return null;
 
-      return await parsePricingResponse(pricingResponse);
-    }
-  } catch (error) {
-    console.info('Failed to fetch SMAI pricing info:', error);
+    const body = await res.json();
+    return body?.success && body?.data ? (body.data as SMAIPricing[]) : null;
+  } catch {
     return null;
   }
 };
