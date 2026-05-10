@@ -23,7 +23,6 @@ import DesktopAgentChatLayout from '@/routes/(main)/agent/(chat)/_layout';
 import AgentTopicNotebookRedirectPage from '@/routes/(main)/agent/[topicId]/page';
 import AgentTopicNotebookDocPage from '@/routes/(main)/agent/[topicId]/page/[docId]';
 import AgentChannelPage from '@/routes/(main)/agent/channel';
-import AgentCronDetailPage from '@/routes/(main)/agent/cron/[cronId]';
 import AgentPageRedirectPage from '@/routes/(main)/agent/page';
 import AgentProfilePage from '@/routes/(main)/agent/profile';
 import CommunityLayout from '@/routes/(main)/community/_layout';
@@ -138,10 +137,6 @@ export const desktopRoutes: RouteObject[] = [
               {
                 element: <AgentProfilePage />,
                 path: 'profile',
-              },
-              {
-                element: <AgentCronDetailPage />,
-                path: 'cron/:cronId',
               },
               {
                 element: <AgentChannelPage />,
