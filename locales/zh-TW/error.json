@@ -114,6 +114,7 @@
   "response.ProviderBizError": "請求 {{provider}} 服務出錯，請根據以下資訊排查或重試",
   "response.ProviderContentModeration": "內容政策檢查失敗。請修改您的提示並重試。",
   "response.ProviderContentModerationWarning": "檢測到重複的政策違規行為。進一步的濫用可能會限制您的帳戶。",
+  "response.ProviderImageContentModerationWarning": "檢測到重複的圖像安全拒絕。類似的提示可能會暫時暫停圖像生成。",
   "response.QuotaLimitReached": "很抱歉，目前的 Token 使用量或請求次數已達該金鑰的配額上限，請提升該金鑰的配額或稍後再試",
   "response.QuotaLimitReachedCloud": "模型服務目前負載過重。請稍後再試。",
   "response.ServerAgentRuntimeError": "很抱歉，目前的 Agent 服務暫時無法使用，請稍後再試，或透過電子郵件聯絡我們以獲得支援",
