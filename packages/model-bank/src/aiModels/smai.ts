@@ -1632,13 +1632,7 @@ const smaiChatModels: AIChatModelCard[] = [
     maxOutput: 384_000,
     releasedAt: '2026-04-24',
     settings: {
-      extendParamOptions: {
-        enableReasoning: {
-          defaultValue: true,
-          includeBudget: false,
-        },
-      },
-      extendParams: ['enableReasoning', 'deepseekV4ReasoningEffort'],
+      extendParams: ['enableReasoning', 'reasoningBudgetToken32k'],
     },
     type: 'chat',
   },
@@ -1657,13 +1651,7 @@ const smaiChatModels: AIChatModelCard[] = [
     maxOutput: 384_000,
     releasedAt: '2026-04-24',
     settings: {
-      extendParamOptions: {
-        enableReasoning: {
-          defaultValue: true,
-          includeBudget: false,
-        },
-      },
-      extendParams: ['enableReasoning', 'deepseekV4ReasoningEffort'],
+      extendParams: ['enableReasoning', 'reasoningBudgetToken32k'],
     },
     type: 'chat',
   },
