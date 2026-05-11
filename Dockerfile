@@ -94,7 +94,7 @@ RUN set -e && \
     pnpm i && \
     mkdir -p /deps && \
     cd /deps && \
-    printf '{"private":true,"type":"module","packageManager":"%s"}\n' "${PACKAGE_MANAGER}" > package.json && \
+    echo '{"name":"deps","private":true}' > package.json && \
     pnpm add pg drizzle-orm
 
 COPY . .
