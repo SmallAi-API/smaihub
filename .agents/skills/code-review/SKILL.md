@@ -1,6 +1,12 @@
 ---
+<<<<<<< HEAD:.agents/skills/code-review/SKILL.md
 name: code-review
 description: 'Code review checklist for LobeHub. Use when reviewing PRs, diffs, or code changes. Covers correctness, security, quality, and project-specific patterns.'
+=======
+name: review-checklist
+description: 'Common recurring mistakes in LobeHub code review — console leftovers, missing return await, hardcoded secrets, hardcoded i18n strings, desktop router pair drift, antd vs @lobehub/ui, non-idempotent migrations, cloud impact red flags. Use as a quick checklist when reviewing PRs, diffs, or branch changes.'
+user-invocable: false
+>>>>>>> 83b2a00314 (📝 docs(skills): frontmatter cleanup + argument-hint (#14683)):.agents/skills/review-checklist/SKILL.md
 ---
 
 # Code Review Guide

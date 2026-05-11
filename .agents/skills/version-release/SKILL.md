@@ -1,9 +1,17 @@
 ---
 name: version-release
 description: "Version release workflow. Use when the user mentions 'release', 'hotfix', 'version upgrade', 'weekly release', or '发版'/'发布'/'小班车'. This skill is for release process and GitHub Release notes (not docs/changelog page writing)."
+disable-model-invocation: true
+argument-hint: '[minor|patch] [version?]'
 ---
 
 # Version Release Workflow
+
+# <<<<<<< HEAD
+
+This skill is a router. The detailed steps live in `references/`.
+
+> > > > > > > 83b2a00314 (📝 docs(skills): frontmatter cleanup + argument-hint (#14683))
 
 ## Scope Boundary (Important)
 
@@ -27,6 +35,8 @@ For every `/version-release` execution, you MUST load and apply:
 The primary development branch is **canary**. All day-to-day development happens on canary. When releasing, canary is merged into main. After merge, `auto-tag-release.yml` automatically handles tagging, version bumping, creating a GitHub Release, and syncing back to the canary branch.
 
 Only two release types are used in practice (major releases are extremely rare and can be ignored):
+
+<<<<<<< HEAD
 
 | Type  | Use Case                                       | Frequency             | Source Branch  | PR Title Format                      | Version       |
 | ----- | ---------------------------------------------- | --------------------- | -------------- | ------------------------------------ | ------------- |
@@ -91,6 +101,17 @@ All scenarios auto-bump patch +1. Patch PR titles do not need a version number. 
 bun run hotfix:branch # Hotfix scenario
 ```
 
+\=======
+
+| Type  | Use Case                                       | Frequency             | Source Branch  | PR Title Format                      | Version       | Reference                               |
+| ----- | ---------------------------------------------- | --------------------- | -------------- | ------------------------------------ | ------------- | --------------------------------------- |
+| Minor | Feature iteration release                      | \~Every 4 weeks       | canary         | `🚀 release: v{x.y.0}`               | Manually set  | `references/minor-release.md`           |
+| Patch | Weekly release / hotfix / model / DB migration | \~Weekly or as needed | canary or main | Custom (e.g. `🚀 release: 20260222`) | Auto patch +1 | `references/patch-release-scenarios.md` |
+
+For writing the release-note body (any release type), see `references/release-notes-style.md`.
+
+> > > > > > > 83b2a00314 (📝 docs(skills): frontmatter cleanup + argument-hint (#14683))
+
 ## Auto-Release Trigger Rules (`auto-tag-release.yml`)
 
 After a PR is merged into main, CI determines whether to release based on the following priority:
@@ -142,9 +163,21 @@ Before creating the release branch, verify the source branch:
 3. Push and create PR — **title must be `🚀 release: v{version}`**
 4. Inform the user that merge will auto-trigger release
 
+<<<<<<< HEAD
+
 ### Patch Release
 
+\=======
+
+- **Minor release** → `references/minor-release.md`
+- **Patch release** (weekly / hotfix / model launch / DB migration) → `references/patch-release-scenarios.md`
+- **Writing the PR body / release notes** (any release type) → `references/release-notes-style.md`
+
+> > > > > > > 83b2a00314 (📝 docs(skills): frontmatter cleanup + argument-hint (#14683))
+
 Choose workflow by scenario (see `reference/patch-release-scenarios.md`):
+
+<<<<<<< HEAD
 
 - **Weekly Release**: create `release/weekly-{YYYYMMDD}` from canary; use `git log main..canary` for release note inputs; title like `🚀 release: 20260222`
 - **Bug Hotfix**: create `hotfix/` from main; use gitmoji prefix title (e.g. `🐛 fix: ...`)
@@ -316,3 +349,11 @@ Use `---` separators between major blocks for long releases.
 - [ ] Security and reliability updates are explicitly surfaced (when present)
 - [ ] Contributor credits and compare range are included
 - [ ] All numbers and claims are verifiable
+      \=======
+- **Do NOT** manually modify `package.json` version — CI handles it.
+- **Do NOT** manually create tags — CI handles them.
+- Minor PR title format is strict (`🚀 release: v{x.y.z}`).
+- Patch PRs do not need an explicit version number.
+- Keep release facts accurate; do not invent metrics or availability statements. Release-note inputs (compare base, PR refs, contributor list) **must be derived from `git`** per `references/release-notes-style.md` § Computing Inputs — never from memory or descriptions.
+
+> > > > > > > 83b2a00314 (📝 docs(skills): frontmatter cleanup + argument-hint (#14683))
