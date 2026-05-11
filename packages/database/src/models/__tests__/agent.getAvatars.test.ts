@@ -88,7 +88,7 @@ describe('AgentModel.getAgentAvatarsByIds', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
-      avatar: '/avatars/lobe-ai.png',
+      avatar: '/logo.png',
       backgroundColor: null,
       id: 'agent-inbox',
       title: 'smai.ai',
