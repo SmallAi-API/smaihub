@@ -79,10 +79,7 @@ export const POST = async (req: Request) => {
     const executor = await MemoryExtractionExecutor.create();
     const layers = normalizeLayers(parsed.layers);
 
-    const results: SessionExtractionResult[] = [];
-    const totalInsertedParts = 0;
-
-    await Promise.all(
+    const results: SessionExtractionResult[] = await Promise.all(
       parsed.sessions.map(async (session) => {
         const sessionSourceId = `${baseSourceId}_${session.sessionId}`;
 
@@ -169,6 +166,7 @@ export const POST = async (req: Request) => {
         }
       }),
     );
+    const totalInsertedParts = results.reduce((total, result) => total + result.insertedParts, 0);
 
     return NextResponse.json(
       {
