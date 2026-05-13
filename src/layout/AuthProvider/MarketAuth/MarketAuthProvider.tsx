@@ -179,7 +179,7 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
         baseUrl,
         clientId: isDesktop ? 'lobehub-desktop' : 'lobechat-com',
         redirectUri,
-        scope: 'openid profile email',
+        scope: 'openid profile email offline_access',
       };
       setOidcClient(new MarketOIDC(oidcConfig));
     }
@@ -342,12 +342,13 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
       // 获取用户信息
       const userInfo = await fetchUserInfo(tokenResponse.accessToken);
 
-      // 创建会话对象
-      const expiresAt = Date.now() + tokenResponse.expiresIn * 1000;
+      // Create session object
+      const expiresIn = tokenResponse.expiresIn ?? 3600;
+      const expiresAt = Date.now() + expiresIn * 1000;
       const newSession: MarketAuthSession = {
         accessToken: tokenResponse.accessToken,
         expiresAt,
-        expiresIn: tokenResponse.expiresIn,
+        expiresIn,
         scope: tokenResponse.scope,
         tokenType: tokenResponse.tokenType as 'Bearer',
         userInfo: userInfo || undefined,
