@@ -229,7 +229,6 @@
   "providerModels.item.modelConfig.extendParams.options.grok4_20ReasoningEffort.hint": "适用于 Grok 4.20 系列；控制推理强度。低/中档使用 4 个代理，高/超高使用 16 个代理。",
   "providerModels.item.modelConfig.extendParams.options.grok4_3ReasoningEffort.hint": "适用于 Grok 4.3 系列；控制推理强度。",
   "providerModels.item.modelConfig.extendParams.options.hy3ReasoningEffort.hint": "适用于 Hy3 模型；控制推理强度。no_think（超快响应）、low（快速推理）和 high（深度推理）三档，以适应从高频交互到复杂工程任务的不同延迟和深度需求。",
-  "providerModels.item.modelConfig.extendParams.options.imageAspectRatio.hint": "适用于 Gemini 图像生成模型；控制生成图像的宽高比。",
   "providerModels.item.modelConfig.extendParams.options.imageResolution.hint": "适用于 Gemini 3 图像生成模型；控制生成图像的分辨率。",
   "providerModels.item.modelConfig.extendParams.options.imageResolution2.hint": "适用于 Gemini 3.1 Flash Image 模型；控制生成图像的分辨率（支持 512 像素）。",
   "providerModels.item.modelConfig.extendParams.options.opus47Effort.hint": "适用于Claude Opus 4.7；控制努力级别（低/中/高/极高/最大）。",
