@@ -17,6 +17,7 @@ import McpInstallCtr from './McpInstallCtr';
 import MenuController from './MenuCtr';
 import NetworkProxyCtr from './NetworkProxyCtr';
 import NotificationCtr from './NotificationCtr';
+import OpenInAppCtr from './OpenInAppCtr';
 import RemoteServerConfigCtr from './RemoteServerConfigCtr';
 import RemoteServerSyncCtr from './RemoteServerSyncCtr';
 import ScreenCaptureCtr from './ScreenCaptureCtr';
@@ -41,6 +42,7 @@ export const controllerIpcConstructors = [
   MenuController,
   NetworkProxyCtr,
   NotificationCtr,
+  OpenInAppCtr,
   RemoteServerConfigCtr,
   RemoteServerSyncCtr,
   ScreenCaptureCtr,
