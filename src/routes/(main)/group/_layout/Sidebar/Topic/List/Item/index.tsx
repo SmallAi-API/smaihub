@@ -154,6 +154,7 @@ const TopicItem = memo<TopicItemProps>(({ id, title, fav, active, threadId, stat
   });
 
   const isCompleted = status === 'completed';
+  const isRunning = status === 'running';
 
   const hasUnread = id && isUnreadCompleted;
   const infoColor = cssVar.colorInfo;
@@ -238,7 +239,7 @@ const TopicItem = memo<TopicItemProps>(({ id, title, fav, active, threadId, stat
         href={!editing ? href : undefined}
         title={title === '...' ? <DotsLoading gap={3} size={4} /> : title}
         icon={(() => {
-          if (isLoading) {
+          if (isLoading || isRunning) {
             return (
               <Icon spin icon={Loader2Icon} size={'small'} style={{ color: cssVar.colorWarning }} />
             );

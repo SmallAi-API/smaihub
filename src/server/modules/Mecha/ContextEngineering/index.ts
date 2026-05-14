@@ -53,6 +53,7 @@ export const serverMessagesEngine = async ({
   provider,
   systemRole,
   inputTemplate,
+  enableAgentMode,
   enableHistoryCount,
   forceFinish,
   historyCount,
@@ -86,6 +87,7 @@ export const serverMessagesEngine = async ({
     },
 
     // Agent configuration
+    enableAgentMode,
     enableHistoryCount,
 
     // File context refs must stay stable; media URLs are sent through structured parts.
