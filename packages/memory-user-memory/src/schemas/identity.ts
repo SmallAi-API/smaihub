@@ -63,6 +63,10 @@ export const AddIdentityActionSchema = z
             'Role explicitly mentioned for this identity entry (e.g., "platform engineer", "caregiver"); keep neutral and only use when evidence exists',
           ),
         scoreConfidence: z.number(),
+        sourceIds: z
+          .array(z.string())
+          .nullable()
+          .describe('Stable source message ids that support this identity'),
         sourceEvidence: z.union([z.string(), z.null()]),
         type: IdentityTypeEnum,
       })
@@ -117,6 +121,10 @@ export const UpdateIdentityActionSchema = z
             )
             .nullable(),
           scoreConfidence: z.number().nullable(),
+          sourceIds: z
+            .array(z.string())
+            .nullable()
+            .describe('Stable source message ids that support this identity update'),
           sourceEvidence: z.string().nullable(),
           // TODO: OpenAI requires `required` fields to be always present, while enum fields cannot be null
           type: z
