@@ -35,6 +35,7 @@ export const STORE_DEFAULTS: ElectronMainStore = {
   gatewayEnabled: true,
   gatewayUrl: 'https://device-gateway.smai.ai',
   locale: 'auto',
+  localFileWorkspaceRoots: [],
   networkProxy: defaultProxySettings,
   shortcuts: DEFAULT_ELECTRON_DESKTOP_SHORTCUTS,
   storagePath: appStorageDir,
