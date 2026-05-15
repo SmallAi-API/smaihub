@@ -123,31 +123,7 @@ export const fileRouter = router({
     .use(checkFileStorageUsage)
     .input(z.object({ hash: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const result = await ctx.fileModel.checkHash(input.hash);
-
-      // If hash exists in DB, verify the S3 object still exists
-      // This handles the case where MinIO lifecycle policies delete old files
-      // but the globalFiles DB record persists
-      if (result?.isExist && result.url) {
-        try {
-          await ctx.fileService.getFileMetadata(result.url);
-        } catch (e: any) {
-          if (FileService.isS3NotFound(e)) {
-            // Don't delete globalFiles — other files/messages may reference it.
-            // Just invalidate the URL so the client re-uploads.
-            await ctx.fileModel.invalidateGlobalFile(input.hash);
-            return { isExist: false };
-          }
-        }
-      }
-
-      // If hash exists but URL is invalidated (empty), treat as non-existent
-      // so the client re-uploads the file to S3
-      if (result?.isExist && !result.url) {
-        return { isExist: false };
-      }
-
-      return result;
+      return ctx.fileModel.checkHash(input.hash);
     }),
 
   createFile: fileProcedure
@@ -180,38 +156,43 @@ export const fileRouter = router({
         // If metadata fetch fails, use original size from input
       }
 
-      await businessFileUploadCheck({
-        actualSize,
-        clientIp: ctx.clientIp ?? undefined,
-        inputSize: input.size,
-        url: input.url,
-        userId: ctx.userId,
-      });
-
       if (actualSize < 0) {
+        await businessFileUploadCheck({
+          actualSize,
+          clientIp: ctx.clientIp ?? undefined,
+          inputSize: input.size,
+          url: input.url,
+          userId: ctx.userId,
+        });
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'File size cannot be negative' });
       }
 
-      const { id } = await ctx.fileModel.create(
-        {
-          fileHash: input.hash,
-          fileType: input.fileType,
-          knowledgeBaseId: input.knowledgeBaseId,
-          metadata: input.metadata,
-          name: input.name,
-          parentId: resolvedParentId,
-          size: actualSize,
+      const { id } = await ctx.serverDB.transaction(async (trx) => {
+        await businessFileUploadCheck({
+          actualSize,
+          clientIp: ctx.clientIp ?? undefined,
+          inputSize: input.size,
+          transaction: trx,
           url: input.url,
-        },
-        // if the file is not exist in global file, create a new one
-        !isExist,
-      );
+          userId: ctx.userId,
+        });
 
-      // If globalFiles record already existed, update its URL to the newly uploaded path
-      // This handles re-upload after MinIO lifecycle cleanup
-      if (isExist) {
-        await ctx.fileModel.updateGlobalFileUrl(input.hash!, input.url);
-      }
+        return ctx.fileModel.create(
+          {
+            fileHash: input.hash,
+            fileType: input.fileType,
+            knowledgeBaseId: input.knowledgeBaseId,
+            metadata: input.metadata,
+            name: input.name,
+            parentId: resolvedParentId,
+            size: actualSize,
+            url: input.url,
+          },
+          // if the file is not exist in global file, create a new one
+          !isExist,
+          trx,
+        );
+      });
 
       return { id, url: getFileProxyUrl(id) };
     }),

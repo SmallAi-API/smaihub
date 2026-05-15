@@ -185,16 +185,9 @@ export class FileModel {
     return this.db.delete(globalFiles).where(eq(globalFiles.hashId, hashId));
   };
 
-  /**
-   * Update the URL of a global file record.
-   * Used when re-uploading a file whose S3 object was deleted by lifecycle policy.
-   */
-  updateGlobalFileUrl = async (hashId: string, url: string) => {
-    return this.db.update(globalFiles).set({ url }).where(eq(globalFiles.hashId, hashId));
-  };
-
-  countUsage = async () => {
-    const result = await this.db
+  countUsage = async (trx?: Transaction) => {
+    const db = trx ?? this.db;
+    const result = await db
       .select({
         totalSize: sum(files.size),
       })
