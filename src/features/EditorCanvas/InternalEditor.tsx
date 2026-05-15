@@ -255,7 +255,6 @@ const InternalEditor = memo<InternalEditorProps>(
         <Editor
           content={''}
           editor={editor}
-          lineEmptyPlaceholder={finalPlaceholder}
           placeholder={finalPlaceholder}
           plugins={plugins}
           slashOption={slashItems ? { items: slashItems } : undefined}
