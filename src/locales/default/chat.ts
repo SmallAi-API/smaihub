@@ -374,7 +374,7 @@ export default {
   'chatMode.agent': 'Agent',
   'plus.search.appSearch': 'Smart Search',
   'plus.search.appSearchDesc':
-    'LobeHub optimized search service, delivering best retrieval results.',
+    'smai.ai optimized search service, delivering best retrieval results.',
   'plus.search.modelSearch': 'Provider Search',
   'plus.search.modelSearchDesc': 'May cause unexpected behavior when enabled, not recommended.',
   'plus.search.off': 'Off',
