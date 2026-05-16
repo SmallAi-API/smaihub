@@ -513,7 +513,11 @@ export default {
   'sharePage.error.unauthorized.subtitle': 'Please sign in to view this shared topic.',
   'sharePage.error.unauthorized.title': 'Sign In Required',
   'sharePageDisclaimer':
-    'This content is shared by a user and does not represent the views of smai.ai., is not responsible for any consequences arising from this shared content.',
+    'This content is shared by a user and does not represent the views of smai.ai, smai.ai is not responsible for any consequences arising from this shared content.',
+  'signalCallbacks.collapse': 'Hide details',
+  'signalCallbacks.empty': 'No callback messages',
+  'signalCallbacks.expand': 'Show details',
+  'signalCallbacks.title': '{{tool}} · {{count}} callback updates',
   'stt.action': 'Voice Input',
   'stt.loading': 'Recognizing...',
   'stt.prettifying': 'Polishing...',
