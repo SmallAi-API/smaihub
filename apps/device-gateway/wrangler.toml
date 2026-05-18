@@ -2,10 +2,6 @@ name = "device-gateway"
 main = "src/index.ts"
 compatibility_date = "2025-01-01"
 
-routes = [
-  { pattern = "device-gateway.smai.ai", custom_domain = true }
-]
-
 [durable_objects]
 bindings = [
   { name = "DEVICE_GATEWAY", class_name = "DeviceGatewayDO" }
@@ -13,13 +9,8 @@ bindings = [
 
 [[migrations]]
 tag = "v1"
-new_sqlite_classes = ["DeviceGatewayDO"]
+new_classes = ["DeviceGatewayDO"]
 
 # Secrets (injected via `wrangler secret put`):
+# - JWKS_PUBLIC_KEY: RS256 public key JSON (extracted from JWKS_KEY)
 # - SERVICE_TOKEN: Vercel → CF service-to-service auth secret
-# - JWKS_PUBLIC_KEY: (optional) static fallback if OIDC_ISSUER is not set
-
-[vars]
-OIDC_ISSUER = "https://www.smallai.asia/oidc"
-JWKS_PUBLIC_KEY = '{"keys":[{"kty":"RSA","n":"xfIVh_IBF0NQXSyb7M8HBtNeP_yH6fj1C2q2DLSRY9-VYYH6Q_EAGCn1A-rBVSzT2ydwftd5vEByFkCeykNj1UvpbJ2HZG_NwwY1Y9BVYnHyAE4bF43A-d2XsOywPHDRChS1r5Y0y1RqFMpU99efQA3xJkIglSkyzDuVA1LNu8KWyJ7pSRWwJAQc3JxitnMAzmi8rtL0qM1DPDSXrjcjnDhJ8gJB8XYmsOF_0Jz0cbKC29q8tnvIV4uaJWliz8_B-Rch1mgcULYLHXU2mRAITSRL1uE1xDexp1af-qraIaAqbSGodVFE_0jDqF6nFIBFMlxoglZ7aLNVPyRK0rx2zQ","e":"AQAB","alg":"RS256","kid":"1b41c51a75c49287","use":"sig"}]}'
-SERVICE_TOKEN = "f12d9a86ed772b66dc343cd67950dcd255a880b324df61d93e12b24b4ad268c2"

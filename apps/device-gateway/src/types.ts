@@ -1,8 +1,6 @@
 export interface Env {
   DEVICE_GATEWAY: DurableObjectNamespace;
   JWKS_PUBLIC_KEY: string;
-  /** OIDC issuer URL for dynamic JWKS fetching (e.g. https://example.com/oidc) */
-  OIDC_ISSUER?: string;
   SERVICE_TOKEN: string;
 }
 
