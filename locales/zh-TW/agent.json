@@ -119,7 +119,7 @@
   "channel.line.fetchBotInfoSuccess": "已獲取目標用戶 ID",
   "channel.line.webhookManualSetup": "LINE 不允許程式化的 webhook 註冊。將此 URL 複製到 LINE 開發者控制台（訊息 API → Webhook URL），點擊「驗證」，並啟用「使用 webhook」。",
   "channel.messengerPromo.action": "嘗試 Messenger",
-  "channel.messengerPromo.desc": "無需設置機器人。可在 Slack、Discord、Telegram 與 LobeHub 聊天。",
+  "channel.messengerPromo.desc": "尚未設置機器人。可以在 Slack、Discord、Telegram 與 smai.ai 聊天。",
   "channel.messengerPromo.dismiss": "關閉",
   "channel.messengerPromo.title": "跳過設置",
   "channel.openPlatform": "開放平台",

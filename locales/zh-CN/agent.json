@@ -119,7 +119,7 @@
   "channel.line.fetchBotInfoSuccess": "已获取 Destination User ID",
   "channel.line.webhookManualSetup": "LINE 不支持自动注册 Webhook，请将此 URL 粘贴到 LINE Developers Console 的 Messaging API → Webhook URL，点击 \"Verify\" 并启用 \"Use webhook\"。",
   "channel.messengerPromo.action": "尝试 Messenger",
-  "channel.messengerPromo.desc": "无需设置机器人。在 Slack、Discord、Telegram 上与 LobeHub 聊天。",
+  "channel.messengerPromo.desc": "未设置机器人。在 Slack、Discord、Telegram 上与 smai.ai 聊天。",
   "channel.messengerPromo.dismiss": "关闭",
   "channel.messengerPromo.title": "跳过设置",
   "channel.openPlatform": "开放平台",
