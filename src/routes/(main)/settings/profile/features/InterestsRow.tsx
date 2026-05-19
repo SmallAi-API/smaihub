@@ -24,13 +24,11 @@ const InterestsRow = () => {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [customInput, setCustomInput] = useState('');
   const [showCustomInput, setShowCustomInput] = useState(false);
-  const [saving, setSaving] = useState(false);
   const normalizedInterests = useMemo(() => normalizeInterestsForStorage(interests), [interests]);
 
   const saveInterests = useCallback(
     async (updated: string[]) => {
       try {
-        setSaving(true);
         await updateInterests(updated);
       } catch (error) {
         console.error('Failed to update interests:', error);
@@ -38,8 +36,6 @@ const InterestsRow = () => {
           errorMessage: error instanceof Error ? error.message : String(error),
           status: 500,
         });
-      } finally {
-        setSaving(false);
       }
     },
     [updateInterests],
@@ -103,11 +99,10 @@ const InterestsRow = () => {
                     ? {
                         background: cssVar.colorFillSecondary,
                         borderColor: cssVar.colorFillSecondary,
-                        opacity: saving ? 0.6 : 1,
                       }
-                    : { opacity: saving ? 0.6 : 1 }
+                    : undefined
                 }
-                onClick={() => !saving && toggleInterest(item.key)}
+                onClick={() => toggleInterest(item.key)}
               >
                 <Icon color={cssVar.colorTextSecondary} icon={item.icon} size={14} />
                 <Text fontSize={13} weight={500}>
@@ -127,9 +122,8 @@ const InterestsRow = () => {
                 style={{
                   background: cssVar.colorFillSecondary,
                   borderColor: cssVar.colorFillSecondary,
-                  opacity: saving ? 0.6 : 1,
                 }}
-                onClick={() => !saving && removeCustomInterest(interest)}
+                onClick={() => removeCustomInterest(interest)}
               >
                 <Text fontSize={13} weight={500}>
                   {interest}
