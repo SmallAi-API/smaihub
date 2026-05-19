@@ -1,5 +1,5 @@
 import type { IconType } from '@icons-pack/react-simple-icons';
-import { SiCaldotcom } from '@icons-pack/react-simple-icons';
+import { SiCaldotcom, SiGithub } from '@icons-pack/react-simple-icons';
 import { Klavis } from 'klavis';
 
 export interface KlavisServerType {
@@ -270,6 +270,53 @@ export const KLAVIS_SERVER_TYPES: KlavisServerType[] = [
       'Connect to Cal.com to manage your scheduling and appointments. View availability, book meetings, manage event types, and automate your calendar through natural conversation.',
     label: 'Cal.com',
     serverName: Klavis.McpServerName.CalCom,
+  },
+  {
+    author: 'Klavis',
+    authorUrl: 'https://klavis.io',
+    description:
+      'GitHub is a platform for version control and collaboration, enabling developers to host, review, and manage code repositories.',
+    icon: SiGithub, // 顶部 import { SiGithub, SiNotion } from '@icons-pack/react-simple-icons'
+    identifier: 'github',
+    label: 'GitHub',
+    readme:
+      'Connect to GitHub via Klavis to access repositories, manage issues, review pull requests, and collaborate on code through natural conversation.',
+    serverName: Klavis.McpServerName.Github,
+  },
+  {
+    author: 'Klavis',
+    authorUrl: 'https://klavis.io',
+    description: 'Notion is a collaborative productivity and note-taking application.',
+    icon: 'https://hub-apac-1.lobeobjects.space/assets/logos/notion.svg',
+    identifier: 'notion',
+    label: 'Notion',
+    readme:
+      'Connect to Notion via Klavis to access and manage your workspace—create pages, search content, update databases, and organize your knowledge base.',
+    serverName: Klavis.McpServerName.Notion,
+  },
+  {
+    author: 'Klavis',
+    authorUrl: 'https://klavis.io',
+    description:
+      'Shopify is a commerce platform for online stores and retail point-of-sale systems.',
+    icon: 'https://hub-apac-1.lobeobjects.space/assets/logos/shopify.svg',
+    identifier: 'shopify',
+    label: 'Shopify',
+    readme:
+      'Connect to Shopify via Klavis to manage your store—query products, manage orders, update inventory, and automate commerce workflows.',
+    serverName: Klavis.McpServerName.Shopify,
+  },
+  {
+    author: 'Klavis',
+    authorUrl: 'https://klavis.io',
+    description:
+      'WordPress is an open-source content management system that powers websites, blogs, and online stores with extensive customization through themes and plugins.',
+    icon: 'https://hub-apac-1.lobeobjects.space/assets/logos/wordpress.svg',
+    identifier: 'wordpress',
+    label: 'WordPress',
+    readme:
+      'Connect to WordPress via Klavis to manage your site—create and edit posts, manage pages, moderate comments, update site settings, and automate your publishing workflow through natural conversation.',
+    serverName: Klavis.McpServerName.Wordpress,
   },
 ];
 
