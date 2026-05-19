@@ -199,15 +199,16 @@ const googleChatModels: AIChatModelCard[] = [
       functionCall: true,
       reasoning: true,
       search: true,
+      structuredOutput: true,
       video: true,
       vision: true,
     },
     contextWindowTokens: 1_048_576 + 65_536,
     description:
-      'Gemini 3 Pro is Google’s most powerful agent and vibe-coding model, delivering richer visuals and deeper interaction on top of state-of-the-art reasoning.',
-    displayName: 'Gemini 3 Pro Preview',
+      'Gemini 3.1 Pro Preview improves on Gemini 3 Pro with enhanced reasoning capabilities and adds medium thinking level support.',
+    displayName: 'Gemini 3.1 Pro Preview',
     enabled: true,
-    id: 'gemini-3-pro-preview',
+    id: 'gemini-3.1-pro-preview',
     maxOutput: 65_536,
     pricing: {
       units: [
@@ -273,7 +274,7 @@ const googleChatModels: AIChatModelCard[] = [
         },
       ],
     },
-    releasedAt: '2025-11-18',
+    releasedAt: '2026-02-19',
     settings: {
       extendParams: ['thinkingLevel3', 'urlContext'],
       searchImpl: 'params',
@@ -538,34 +539,6 @@ const googleChatModels: AIChatModelCard[] = [
   },
   {
     abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    contextWindowTokens: 1_048_576 + 65_536,
-    description: 'Preview release (Septempber 25th, 2025) of Gemini 2.5 Flash',
-    displayName: 'Gemini 2.5 Flash Preview Sep 2025',
-    id: 'gemini-2.5-flash-preview-09-2025',
-    maxOutput: 65_536,
-    pricing: {
-      units: [
-        { name: 'textInput_cacheRead', rate: 0.075, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textInput', rate: 0.3, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 2.5, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-09-25',
-    settings: {
-      extendParams: ['thinkingBudget', 'urlContext'],
-      searchImpl: 'params',
-      searchProvider: 'google',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
       imageOutput: true,
       vision: true,
     },
@@ -734,6 +707,8 @@ const NANO_BANANA_ASPECT_RATIOS = [
   '21:9', // 1584x672 / 3168x1344 / 6336x2688
 ];
 
+const NANO_BANANA_2_ASPECT_RATIOS = [...NANO_BANANA_ASPECT_RATIOS, '1:4', '4:1', '1:8', '8:1'];
+
 export const nanoBananaParameters: ModelParamsSchema = {
   aspectRatio: {
     default: 'auto',
@@ -755,12 +730,47 @@ export const nanoBananaProParameters: ModelParamsSchema = {
   },
   prompt: { default: '' },
   resolution: {
-    default: 'auto',
+    default: '1K',
     enum: ['1K', '2K', '4K'],
   },
 };
 
+export const nanoBanana2Parameters: ModelParamsSchema = {
+  aspectRatio: {
+    default: 'auto',
+    enum: NANO_BANANA_2_ASPECT_RATIOS,
+  },
+  imageUrls: {
+    default: [],
+  },
+  prompt: { default: '' },
+  resolution: {
+    default: '1K',
+    // Gemini image generation API accepts `"512" | "1K" | "2K" | "4K"`.
+    // See https://ai.google.dev/gemini-api/docs/image-generation
+    enum: ['512', '1K', '2K', '4K'],
+  },
+};
+
 const googleImageModels: AIImageModelCard[] = [
+  {
+    displayName: 'Nano Banana 2',
+    id: 'gemini-3.1-flash-image-preview:image',
+    type: 'image',
+    enabled: true,
+    description:
+      "Gemini 3.1 Flash Image (Nano Banana 2) is Google's fastest native image generation model with thinking support, conversational image generation and editing.",
+    releasedAt: '2026-02-26',
+    parameters: nanoBanana2Parameters,
+    pricing: {
+      approximatePricePerImage: 0.067,
+      units: [
+        { name: 'imageOutput', rate: 60, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 0.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 1.5, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+  },
   {
     displayName: 'Nano Banana Pro',
     id: 'gemini-3-pro-image-preview:image',
@@ -782,7 +792,6 @@ const googleImageModels: AIImageModelCard[] = [
   {
     displayName: 'Nano Banana',
     id: 'gemini-2.5-flash-image:image',
-    enabled: true,
     type: 'image',
     description:
       'Nano Banana is Google’s newest, fastest, and most efficient native multimodal model, enabling conversational image generation and editing.',
@@ -834,30 +843,6 @@ const googleImageModels: AIImageModelCard[] = [
     parameters: imagenGenParameters,
     pricing: {
       units: [{ name: 'imageGeneration', rate: 0.02, strategy: 'fixed', unit: 'image' }],
-    },
-  },
-  {
-    displayName: 'Imagen 4 Preview 06-06',
-    id: 'imagen-4.0-generate-preview-06-06',
-    type: 'image',
-    description: 'Imagen fourth-generation text-to-image model family.',
-    organization: 'Deepmind',
-    releasedAt: '2025-06-06',
-    parameters: imagenGenParameters,
-    pricing: {
-      units: [{ name: 'imageGeneration', rate: 0.04, strategy: 'fixed', unit: 'image' }],
-    },
-  },
-  {
-    displayName: 'Imagen 4 Ultra Preview 06-06',
-    id: 'imagen-4.0-ultra-generate-preview-06-06',
-    type: 'image',
-    description: 'Imagen fourth-generation text-to-image Ultra variant.',
-    organization: 'Deepmind',
-    releasedAt: '2025-06-11',
-    parameters: imagenGenParameters,
-    pricing: {
-      units: [{ name: 'imageGeneration', rate: 0.06, strategy: 'fixed', unit: 'image' }],
     },
   },
 ];
