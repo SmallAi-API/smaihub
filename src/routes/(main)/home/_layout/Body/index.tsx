@@ -21,7 +21,7 @@ import { isModifierClick } from '@/utils/navigation';
 import { prefetchRoute } from '@/utils/router';
 
 import Agent from './Agent';
-import { CustomizeSidebarModal, openCustomizeSidebarModal } from './CustomizeSidebarModal';
+import { openCustomizeSidebarModal } from './CustomizeSidebarModal';
 
 export enum GroupKey {
   Agent = 'agent',
@@ -102,6 +102,11 @@ const Body = memo(() => {
     for (const item of bottomMenuItems) map.set(item.key, item);
     return map;
   }, [topNavItems, bottomMenuItems]);
+
+  const bottomNavKeys = useMemo(
+    () => new Set(bottomMenuItems.map((item) => item.key)),
+    [bottomMenuItems],
+  );
 
   // Items that must always be visible regardless of hiddenSections
   const isVisible = useCallback(
@@ -204,45 +209,71 @@ const Body = memo(() => {
   // Render the flat list: group consecutive accordion items into an Accordion,
   // interleave non-accordion keys as nav links.
   const content = useMemo(() => {
-    const elements: ReactElement[] = [];
-    let accGroup: { element: ReactElement; key: string }[] = [];
+    const renderSection = (keys: string[], section: 'bottom' | 'top') => {
+      const elements: ReactElement[] = [];
+      let accGroup: { element: ReactElement; key: string }[] = [];
 
-    const flushAccordion = () => {
-      if (accGroup.length > 0) {
-        const accordionKeys = accGroup.map((item) => item.key);
+      const flushAccordion = () => {
+        if (accGroup.length > 0) {
+          const accordionKeys = accGroup.map((item) => item.key);
 
-        elements.push(
-          <Accordion
-            expandedKeys={sidebarExpandedKeys}
-            gap={8}
-            key={`acc-${elements.length}`}
-            onExpandedChange={(keys) => handleAccordionExpandedChange(accordionKeys, keys)}
-          >
-            {accGroup.map((item) => item.element)}
-          </Accordion>,
-        );
-        accGroup = [];
+          elements.push(
+            <Accordion
+              expandedKeys={sidebarExpandedKeys}
+              gap={8}
+              key={`${section}-acc-${elements.length}`}
+              onExpandedChange={(keys) => handleAccordionExpandedChange(accordionKeys, keys)}
+            >
+              {accGroup.map((item) => item.element)}
+            </Accordion>,
+          );
+          accGroup = [];
+        }
+      };
+
+      for (const key of keys) {
+        if (ACCORDION_KEYS.has(key)) {
+          const comp = accordionComponents[key]?.(key);
+          if (comp) accGroup.push({ element: comp, key });
+        } else {
+          flushAccordion();
+          const item = renderSidebarItem(key);
+          if (item) elements.push(item);
+        }
       }
+      flushAccordion();
+
+      return elements;
     };
 
-    for (const key of visibleKeys) {
-      if (ACCORDION_KEYS.has(key)) {
-        const comp = accordionComponents[key]?.(key);
-        if (comp) accGroup.push({ element: comp, key });
-      } else {
-        flushAccordion();
-        const link = renderSidebarItem(key);
-        if (link) elements.push(link);
-      }
-    }
-    flushAccordion();
-    return elements;
-  }, [sidebarExpandedKeys, handleAccordionExpandedChange, visibleKeys, renderSidebarItem]);
+    const topKeys = visibleKeys.filter((key) => !bottomNavKeys.has(key));
+    const bottomKeys = visibleKeys.filter((key) => bottomNavKeys.has(key));
+    const topElements = renderSection(topKeys, 'top');
+    const bottomElements = renderSection(bottomKeys, 'bottom');
+
+    if (bottomElements.length === 0) return topElements;
+
+    return [
+      ...topElements,
+      <div
+        aria-hidden
+        data-sidebar-bottom-spacer
+        key={'bottom-nav-spacer'}
+        style={{ flex: '1 1 0', minHeight: 0 }}
+      />,
+      ...bottomElements,
+    ];
+  }, [
+    visibleKeys,
+    bottomNavKeys,
+    renderSidebarItem,
+    sidebarExpandedKeys,
+    handleAccordionExpandedChange,
+  ]);
 
   return (
-    <Flexbox flex={1} gap={1} paddingInline={4}>
+    <Flexbox flex={1} gap={1} paddingInline={4} style={{ minHeight: '100%' }}>
       {content}
-      <CustomizeSidebarModal />
     </Flexbox>
   );
 });
