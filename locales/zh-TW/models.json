@@ -56,6 +56,7 @@
   "gemini-3.1-flash-image-preview.description": "Gemini 3.1 快閃影像（Nano Banana 2）以快閃速度提供專業級影像品質，並支援多模態聊天。",
   "gemini-3.1-flash-image-preview:image.description": "Gemini 3.1 快閃影像（Nano Banana Pro 2）是 Google 在2026年2月份推出的影像生成模型。",
   "gemini-3.1-pro-preview.description": "Gemini 3.1 Pro 預覽提供更好的思考能力、改進的令牌效率，以及針對軟體工程行為優化的可靠體驗。",
+  "gemini-3.5-flash.description": "Gemini 最智能的模型，專為速度而設計，結合前沿智能與卓越的搜索和基礎能力。",
   "glm-4.5-air.description": "GLM-4.5 的輕量版，兼顧性能與性價比，可靈活切換混合思考模型。",
   "glm-4.5-flash.description": "GLM-4.5 的免費版，推理、代碼、智能體等任務表現出色。",
   "glm-4.5.description": "智譜最新旗艦模型，支持思考模式切換，綜合能力達到開源模型的 SOTA 水平，上下文長度可達 128K。",

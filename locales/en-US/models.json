@@ -56,6 +56,7 @@
   "gemini-3.1-flash-image-preview.description": "Gemini 3.1 Flash Image (Nano Banana 2) delivers Pro-level image quality at Flash speed with multimodal chat support.",
   "gemini-3.1-flash-image-preview:image.description": "Gemini 3.1 Flash Image（Nano Banana Pro 2）是 Google 在2026年2月份推出的图像生成模型。",
   "gemini-3.1-pro-preview.description": "Gemini 3.1 Pro Preview provides better thinking, improved token efficiency, and a reliable experience optimized for software engineering behavior.",
+  "gemini-3.5-flash.description": "Gemini's most intelligent model built for speed, combining frontier intelligence with superior search and grounding.",
   "glm-4.5-air.description": "GLM-4.5 的轻量版，兼顾性能与性价比，可灵活切换混合思考模型。",
   "glm-4.5-flash.description": "GLM-4.5 的免费版，推理、代码、智能体等任务表现出色。",
   "glm-4.5.description": "智谱最新旗舰模型，支持思考模式切换，综合能力达到开源模型的 SOTA 水平，上下文长度可达128K。",
