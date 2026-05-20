@@ -1,4 +1,4 @@
-import { Jimeng, OpenAI } from '@lobehub/icons';
+import { Gemini, Jimeng, OpenAI } from '@lobehub/icons';
 import { type ButtonProps } from '@lobehub/ui';
 import { Button, Center, Tag, Tooltip } from '@lobehub/ui';
 import { App } from 'antd';
@@ -12,9 +12,9 @@ import { useAgentStore } from '@/store/agent';
 import { agentByIdSelectors } from '@/store/agent/selectors';
 
 import { useResolvedHomeAgentId } from '../AgentSelect/useResolvedHomeAgentId';
-import { GPT_5_5_MODEL, GPT_5_5_PROVIDER } from './starterModels';
+import { GEMINI_3_5_MODEL, GEMINI_3_5_PROVIDER } from './starterModels';
 
-type StarterKey = 'image' | 'video' | 'gpt-5.5';
+type StarterKey = 'image' | 'video' | 'gemini-3.5-flash';
 
 const styles = createStaticStyles(({ css, cssVar }) => ({
   button: css`
@@ -34,7 +34,10 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
   `,
 }));
 
-type StarterTitleKey = 'starter.imageGeneration' | 'starter.videoGeneration' | 'starter.gpt-5.5';
+type StarterTitleKey =
+  | 'starter.imageGeneration'
+  | 'starter.videoGeneration'
+  | 'starter.gemini-3.5-flash';
 
 interface StarterItem {
   disabled?: boolean;
@@ -54,9 +57,9 @@ const StarterList = memo(() => {
   const items: StarterItem[] = useMemo(
     () => [
       {
-        icon: OpenAI.Avatar,
-        key: 'gpt-5.5',
-        titleKey: 'starter.gpt-5.5',
+        icon: Gemini.Avatar,
+        key: 'gemini-3.5-flash',
+        titleKey: 'starter.gemini-3.5-flash',
       },
       {
         icon: OpenAI.Avatar,
@@ -84,7 +87,7 @@ const StarterList = memo(() => {
         return;
       }
 
-      if (key === 'gpt-5.5') {
+      if (key === 'gemini-3.5-flash') {
         if (!activeAgentId || switchingKey) return;
         setSwitchingKey(key);
         try {
@@ -100,14 +103,14 @@ const StarterList = memo(() => {
           const currentModel = agentByIdSelectors.getAgentModelById(activeAgentId)(agentState);
           const currentProvider =
             agentByIdSelectors.getAgentModelProviderById(activeAgentId)(agentState);
-          if (currentModel === GPT_5_5_MODEL && currentProvider === GPT_5_5_PROVIDER) {
+          if (currentModel === GEMINI_3_5_MODEL && currentProvider === GEMINI_3_5_PROVIDER) {
             message.info(t('starter.NewModelAlready'));
             return;
           }
 
           await updateAgentConfigById(activeAgentId, {
-            model: GPT_5_5_MODEL,
-            provider: GPT_5_5_PROVIDER,
+            model: GEMINI_3_5_MODEL,
+            provider: GEMINI_3_5_PROVIDER,
           });
           message.success(t('starter.NewModelSwitched'));
         } finally {
