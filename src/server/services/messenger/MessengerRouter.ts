@@ -1110,7 +1110,7 @@ export class MessengerRouter {
       ":wave: Hi, I'm *smai.ai* — your AI agent on Slack.",
       '',
       '• Mention me with `@smai.ai <your question>` to chat in this channel.',
-      '• First time? Send me a *direct message* to link your LobeHub account.',
+      '• First time? Send me a *direct message* to link your smai.ai account.',
       '• Use `/agents` in DM to switch the active agent.',
     ].join('\n');
 
