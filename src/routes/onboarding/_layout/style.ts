@@ -30,7 +30,13 @@ export const styles = createStaticStyles(({ css, cssVar }) => ({
     background: ${cssVar.colorBgContainer};
   `,
 
-  // 外层容器
+  innerContainerMobile: css`
+    position: relative;
+    overflow: hidden auto;
+    background: ${cssVar.colorBgContainer};
+  `,
+
+  // Outer container
   outerContainer: css`
     position: relative;
   `,
