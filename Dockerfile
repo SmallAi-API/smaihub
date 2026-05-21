@@ -16,7 +16,7 @@ RUN set -e && \
         sed -i "s/deb.debian.org/mirrors.ustc.edu.cn/g" "/etc/apt/sources.list.d/debian.sources"; \
     fi && \
     apt update && \
-    apt install ca-certificates proxychains-ng libfontconfig1 -qy && \
+    apt install ca-certificates git proxychains-ng libfontconfig1 -qy && \
     mkdir -p /distroless/bin /distroless/etc /distroless/etc/ssl/certs /distroless/lib && \
     cp /usr/lib/$(arch)-linux-gnu/libproxychains.so.4 /distroless/lib/libproxychains.so.4 && \
     cp /usr/lib/$(arch)-linux-gnu/libdl.so.2 /distroless/lib/libdl.so.2 && \
