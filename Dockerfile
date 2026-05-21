@@ -91,6 +91,7 @@ RUN set -e && \
     corepack enable && \
     PACKAGE_MANAGER=$(sed -n 's/.*"packageManager": "\(.*\)".*/\1/p' package.json) && \
     corepack use "${PACKAGE_MANAGER}" && \
+    git init -q && \
     pnpm i && \
     mkdir -p /deps && \
     cd /deps && \
