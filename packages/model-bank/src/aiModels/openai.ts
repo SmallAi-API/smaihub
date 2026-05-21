@@ -1,13 +1,13 @@
 /* eslint-disable no-restricted-syntax */
-import {
-  type AIChatModelCard,
-  type AIEmbeddingModelCard,
-  type AIImageModelCard,
-  type AIRealtimeModelCard,
-  type AISTTModelCard,
-  type AITTSModelCard,
+import { gptImage1Schema, gptImage2Schema } from '../const/imageParameters';
+import type {
+  AIChatModelCard,
+  AIEmbeddingModelCard,
+  AIImageModelCard,
+  AIRealtimeModelCard,
+  AISTTModelCard,
+  AITTSModelCard,
 } from '../types/aiModel';
-import { gptImage1Schema, gptImage2Schema } from './lobehub';
 
 export const openaiChatModels: AIChatModelCard[] = [
   {

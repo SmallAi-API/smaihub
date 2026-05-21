@@ -1,6 +1,6 @@
-/* eslint-disable no-restricted-syntax */
+import { nanoBananaParameters } from '../const/imageParameters';
 import type { AIChatModelCard, AIImageModelCard } from '../types/aiModel';
-import { imagenGenParameters, nanoBananaParameters } from './google';
+import { imagenGenParameters } from './google';
 
 // ref: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models
 const vertexaiChatModels: AIChatModelCard[] = [
@@ -321,35 +321,6 @@ const vertexaiChatModels: AIChatModelCard[] = [
     releasedAt: '2025-12-17',
     settings: {
       extendParams: ['thinkingLevel', 'urlContext'],
-      searchImpl: 'params',
-      searchProvider: 'google',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      imageOutput: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    contextWindowTokens: 131_072 + 32_768,
-    description:
-      'Gemini 3 Pro Image（Nano Banana Pro）是 Google 的图像生成模型，同时支持多模态对话。',
-    displayName: 'Nano Banana Pro',
-    id: 'gemini-3-pro-image-preview',
-    maxOutput: 32_768,
-    pricing: {
-      approximatePricePerImage: 0.134,
-      units: [
-        { name: 'imageOutput', rate: 120, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'imageInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 12, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-11-20',
-    settings: {
       searchImpl: 'params',
       searchProvider: 'google',
     },

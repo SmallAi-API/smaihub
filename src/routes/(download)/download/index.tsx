@@ -7,7 +7,7 @@ import { motion } from 'motion/react';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import PageTitle from '@/components/PageTitle';
+import PanelTitle from '@/components/PanelTitle';
 import { useIsDark } from '@/hooks/useIsDark';
 
 import { styles } from './_layout/style';
@@ -38,7 +38,7 @@ const DownloadPage = memo(() => {
 
   return (
     <>
-      <PageTitle title={t('title')} />
+      <PanelTitle title={t('title')} />
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         initial={{ opacity: 0, y: 20 }}

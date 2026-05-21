@@ -1,9 +1,15 @@
+import type { ModelProvider } from '../const/modelProvider';
 import { type AiFullModelCard, type LobeDefaultAiModelListItem } from '../types/aiModel';
 import { default as newapi } from './newapi';
 import { default as openai } from './openai';
 import { default as smai } from './smai';
 
+type ModelProviderLoader = () => Promise<AiFullModelCard[]>;
 type ModelsMap = Record<string, AiFullModelCard[]>;
+
+export interface LoadModelsOptions {
+  providerLoaders?: Partial<Record<ModelProvider, ModelProviderLoader | undefined>>;
+}
 
 const buildDefaultModelList = (map: ModelsMap): LobeDefaultAiModelListItem[] => {
   let models: LobeDefaultAiModelListItem[] = [];
@@ -22,12 +28,41 @@ const buildDefaultModelList = (map: ModelsMap): LobeDefaultAiModelListItem[] => 
   return models;
 };
 
-export const LOBE_DEFAULT_MODEL_LIST = buildDefaultModelList({
+const staticModelMap: ModelsMap = {
   newapi,
   openai,
   smai,
-});
+};
 
+export const LOBE_DEFAULT_MODEL_LIST = buildDefaultModelList(staticModelMap);
+export const loadModels = async (
+  options?: LoadModelsOptions,
+): Promise<LobeDefaultAiModelListItem[]> => {
+  const providerLoaders = options?.providerLoaders;
+  if (!providerLoaders || Object.keys(providerLoaders).length === 0) {
+    return LOBE_DEFAULT_MODEL_LIST;
+  }
+
+  const validProviderLoaders = Object.entries(providerLoaders).flatMap(([provider, loader]) =>
+    typeof loader === 'function' ? ([[provider as ModelProvider, loader]] as const) : [],
+  );
+
+  if (validProviderLoaders.length === 0) {
+    return LOBE_DEFAULT_MODEL_LIST;
+  }
+
+  const modelMap = { ...staticModelMap };
+  const entries = await Promise.all(
+    validProviderLoaders.map(async ([provider, loader]) => [provider, await loader()] as const),
+  );
+
+  for (const [provider, models] of entries) {
+    modelMap[provider] = models;
+  }
+
+  return buildDefaultModelList(modelMap);
+};
+export { gptImage1Schema, gptImage2Schema } from '../const/imageParameters';
 export { default as ai21 } from './ai21';
 export { default as ai302 } from './ai302';
 export { default as ai360 } from './ai360';
@@ -62,7 +97,6 @@ export { default as internlm } from './internlm';
 export { default as jina } from './jina';
 export { default as kimicodingplan } from './kimiCodingPlan';
 export { default as lmstudio } from './lmstudio';
-export { gptImage1Schema, default as lobehub } from './lobehub/index';
 export { default as minimax } from './minimax';
 export { default as minimaxcodingplan } from './minimaxCodingPlan';
 export { default as mistral } from './mistral';
