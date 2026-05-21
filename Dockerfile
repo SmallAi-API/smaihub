@@ -90,8 +90,8 @@ RUN set -e && \
     npm i -g corepack@latest && \
     corepack enable && \
     PACKAGE_MANAGER=$(sed -n 's/.*"packageManager": "\(.*\)".*/\1/p' package.json) && \
-    corepack use "${PACKAGE_MANAGER}" && \
     git init -q && \
+    corepack use "${PACKAGE_MANAGER}" && \
     pnpm i && \
     mkdir -p /deps && \
     cd /deps && \
