@@ -42,11 +42,7 @@ const Welcome = memo(() => {
           avatarSize={72}
           fontSize={32}
           gap={16}
-          sentences={[
-            t('agent.welcome.sentence.1'),
-            t('agent.welcome.sentence.2'),
-            t('agent.welcome.sentence.3'),
-          ]}
+          sentences={[t('agent.welcome.sentence.1'), t('agent.welcome.sentence.2')]}
         />
         <Divider dashed style={{ margin: 0 }} />
         <Markdown fontSize={16} variant={'chat'}>
