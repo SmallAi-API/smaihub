@@ -37,17 +37,52 @@ CRAWLER_IMPLS="naive,search1api"
 
 Supported crawler types are listed below:
 
-| Value | Description | Environment Variable |
-| --- | --- | --- |
-| `browserless` | Headless browser crawler based on [Browserless](https://www.browserless.io/), suitable for rendering complex pages. | `BROWSERLESS_TOKEN` |
-| `exa` | Crawler capabilities provided by [Exa](https://exa.ai/), API required. | `EXA_API_KEY` |
-| `firecrawl` | [Firecrawl](https://firecrawl.dev/) headless browser API, ideal for modern websites. | `FIRECRAWL_API_KEY` |
-| `jina` | Crawler service from [Jina AI](https://jina.ai/), supports fast content summarization. | `JINA_READER_API_KEY` |
-| `naive` | Built-in general-purpose crawler for standard web structures. |  |
-| `search1api` | Page crawling capabilities from [Search1API](https://www.search1api.com), great for structured content extraction. | `SEARCH1API_API_KEY` `SEARCH1API_CRAWL_API_KEY` `SEARCH1API_SEARCH_API_KEY` |
-| `tavily` | Web scraping and summarization API from [Tavily](https://www.tavily.com/). | `TAVILY_API_KEY` |
+| Value         | Description                                                                                                         | Environment Variable                                                        |
+| ------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `browserless` | Headless browser crawler based on [Browserless](https://www.browserless.io/), suitable for rendering complex pages. | `BROWSERLESS_TOKEN`                                                         |
+| `exa`         | Crawler capabilities provided by [Exa](https://exa.ai/), API required.                                              | `EXA_API_KEY`                                                               |
+| `firecrawl`   | [Firecrawl](https://firecrawl.dev/) headless browser API, ideal for modern websites.                                | `FIRECRAWL_API_KEY`                                                         |
+| `jina`        | Crawler service from [Jina AI](https://jina.ai/), supports fast content summarization.                              | `JINA_READER_API_KEY`                                                       |
+| `naive`       | Built-in general-purpose crawler for standard web structures.                                                       |                                                                             |
+| `search1api`  | Page crawling capabilities from [Search1API](https://www.search1api.com), great for structured content extraction.  | `SEARCH1API_API_KEY` `SEARCH1API_CRAWL_API_KEY` `SEARCH1API_SEARCH_API_KEY` |
+| `tavily`      | Web scraping and summarization API from [Tavily](https://www.tavily.com/).                                          | `TAVILY_API_KEY`                                                            |
 
 > 💡 Setting multiple crawlers increases success rate; the system will try different ones based on priority.
+
+---
+
+## `JINA_USE_CN_DOMAINS`
+
+Switch Jina Reader/Search to the mainland China fallback domains.
+
+```env
+JINA_USE_CN_DOMAINS=true
+```
+
+When enabled, LobeHub replaces the Jina endpoints as follows:
+
+- `https://r.jina.ai` → `https://r.jinaai.cn`
+- `https://s.jina.ai` → `https://s.jinaai.cn`
+
+> 📌 Useful when `jina.ai` is unreachable from mainland China. Authentication and API behavior stay the same.
+
+---
+
+## `CRAWL_CONCURRENCY`
+
+Controls crawler concurrency per crawl task. The default is `3`. On low-resource servers, use `1` to reduce CPU spikes.
+
+```env
+CRAWL_CONCURRENCY=3
+```
+
+## `CRAWLER_RETRY`
+
+Controls retry attempts per URL on crawl failures. The default is `1` (up to 2 attempts total).
+
+```env
+CRAWLER_RETRY=1
+```
 
 ---
 
@@ -61,19 +96,19 @@ SEARCH_PROVIDERS="searxng"
 
 Supported search engines include:
 
-| Value | Description | Environment Variable |
-| --- | --- | --- |
-| `anspire` | Search service provided by [Anspire](https://anspire.ai/). | `ANSPIRE_API_KEY` |
-| `bocha` | Search service from [Bocha](https://open.bochaai.com/). | `BOCHA_API_KEY` |
-| `brave` | [Brave](https://search.brave.com/help/api), a privacy-friendly search source. | `BRAVE_API_KEY` |
-| `exa` | [Exa](https://exa.ai/), a search API designed for AI. | `EXA_API_KEY` |
-| `firecrawl` | Search capabilities via [Firecrawl](https://firecrawl.dev/). | `FIRECRAWL_API_KEY` |
-| `google` | Uses [Google Programmable Search Engine](https://programmablesearchengine.google.com/). | `GOOGLE_PSE_API_KEY` `GOOGLE_PSE_ENGINE_ID` |
-| `jina` | Semantic search provided by [Jina AI](https://jina.ai/). | `JINA_READER_API_KEY` |
-| `kagi` | Premium search API by [Kagi](https://kagi.com/), requires a subscription key. | `KAGI_API_KEY` |
-| `search1api` | Aggregated search capabilities from [Search1API](https://www.search1api.com). | `SEARCH1API_API_KEY` `SEARCH1API_CRAWL_API_KEY` `SEARCH1API_SEARCH_API_KEY` |
-| `searxng` | Use a self-hosted or public [SearXNG](https://searx.space/) instance. | `SEARXNG_URL` |
-| `tavily` | [Tavily](https://www.tavily.com/), offers fast web summaries and answers. | `TAVILY_API_KEY` |
+| Value        | Description                                                                             | Environment Variable                                                        |
+| ------------ | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `anspire`    | Search service provided by [Anspire](https://anspire.ai/).                              | `ANSPIRE_API_KEY`                                                           |
+| `bocha`      | Search service from [Bocha](https://open.bochaai.com/).                                 | `BOCHA_API_KEY`                                                             |
+| `brave`      | [Brave](https://search.brave.com/help/api), a privacy-friendly search source.           | `BRAVE_API_KEY`                                                             |
+| `exa`        | [Exa](https://exa.ai/), a search API designed for AI.                                   | `EXA_API_KEY`                                                               |
+| `firecrawl`  | Search capabilities via [Firecrawl](https://firecrawl.dev/).                            | `FIRECRAWL_API_KEY`                                                         |
+| `google`     | Uses [Google Programmable Search Engine](https://programmablesearchengine.google.com/). | `GOOGLE_PSE_API_KEY` `GOOGLE_PSE_ENGINE_ID`                                 |
+| `jina`       | Semantic search provided by [Jina AI](https://jina.ai/).                                | `JINA_READER_API_KEY`                                                       |
+| `kagi`       | Premium search API by [Kagi](https://kagi.com/), requires a subscription key.           | `KAGI_API_KEY`                                                              |
+| `search1api` | Aggregated search capabilities from [Search1API](https://www.search1api.com).           | `SEARCH1API_API_KEY` `SEARCH1API_CRAWL_API_KEY` `SEARCH1API_SEARCH_API_KEY` |
+| `searxng`    | Use a self-hosted or public [SearXNG](https://searx.space/) instance.                   | `SEARXNG_URL`                                                               |
+| `tavily`     | [Tavily](https://www.tavily.com/), offers fast web summaries and answers.               | `TAVILY_API_KEY`                                                            |
 
 > ⚠️ Some search providers require you to apply for an API Key and configure it in your `.env` file.
 
