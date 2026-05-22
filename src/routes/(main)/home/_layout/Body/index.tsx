@@ -18,7 +18,6 @@ import { electronSystemService } from '@/services/electron/system';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors';
 import { isModifierClick } from '@/utils/navigation';
-import { prefetchRoute } from '@/utils/router';
 
 import Agent from './Agent';
 import { openCustomizeSidebarModal } from './CustomizeSidebarModal';
@@ -178,8 +177,7 @@ const Body = memo(() => {
       return (
         <Link
           key={key}
-          to={navItem.url}
-          onMouseEnter={() => prefetchRoute(navItem.url!)}
+          to={navItem.url!}
           onClick={(e) => {
             if (isModifierClick(e)) return;
             e.preventDefault();
