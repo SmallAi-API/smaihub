@@ -176,7 +176,7 @@ describe('CompressionRepository', () => {
     });
   });
 
-   describe('updateMetadata', () => {
+  describe('updateMetadata', () => {
     it('should update metadata jsonb column on a compression group', async () => {
       const groupId = await compressionRepo.createCompressionGroup({
         content: 'Summary',
@@ -257,7 +257,7 @@ describe('CompressionRepository', () => {
       expect(groups[0].content).toBe('New content');
     });
   });
-  
+
   describe('toggleMessagePin', () => {
     it('should pin a message', async () => {
       await serverDB.insert(messages).values({
@@ -389,7 +389,7 @@ describe('CompressionRepository', () => {
   });
 
   /**
-   * Tests for LOBE-2066: MessageGroup aggregation in queryMessage
+   * Tests for MessageGroup aggregation in queryMessage
    *
    * These tests verify the expected behavior for querying messages with compression groups,
    * specifically focusing on:
