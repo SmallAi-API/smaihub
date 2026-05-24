@@ -80,7 +80,8 @@ COPY patches ./patches
 # bring in desktop workspace manifest so pnpm can resolve it
 COPY apps/desktop/src/main/package.json ./apps/desktop/src/main/package.json
 
-RUN set -e && \
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
+    set -e && \
     if [ "${USE_CN_MIRROR:-false}" = "true" ]; then \
         export SENTRYCLI_CDNURL="https://npmmirror.com/mirrors/sentry-cli"; \
         npm config set registry "https://registry.npmmirror.com/"; \
@@ -92,7 +93,10 @@ RUN set -e && \
     PACKAGE_MANAGER=$(sed -n 's/.*"packageManager": "\(.*\)".*/\1/p' package.json) && \
     git init -q && \
     corepack use "${PACKAGE_MANAGER}" && \
-    pnpm i && \
+    pnpm config set store-dir /root/.local/share/pnpm/store && \
+    pnpm config set network-concurrency 4 && \
+    pnpm config set child-concurrency 1 && \
+    pnpm install --frozen-lockfile=false && \
     mkdir -p /deps && \
     cd /deps && \
     echo '{"name":"deps","private":true}' > package.json && \
