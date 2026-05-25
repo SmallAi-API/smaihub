@@ -183,6 +183,59 @@ describe('routeChunkPreload', () => {
     ]);
   });
 
+  it('warms additional desktop secondary route families during idle time', () => {
+    const bundle = {
+      'assets/group-CJm8x.js': createChunk({
+        facadeModuleId: '/repo/src/routes/(main)/group/index.desktop.tsx',
+        fileName: 'assets/group-CJm8x.js',
+        moduleIds: ['/repo/src/routes/(main)/group/index.desktop.tsx'],
+      }),
+      'assets/group-profile-D8p.js': createChunk({
+        facadeModuleId: '/repo/src/routes/(main)/group/profile/index.tsx',
+        fileName: 'assets/group-profile-D8p.js',
+        moduleIds: ['/repo/src/routes/(main)/group/profile/index.tsx'],
+      }),
+      'assets/community-detail-model-B2.js': createChunk({
+        facadeModuleId: '/repo/src/routes/(main)/community/(detail)/model/index.tsx',
+        fileName: 'assets/community-detail-model-B2.js',
+        moduleIds: ['/repo/src/routes/(main)/community/(detail)/model/index.tsx'],
+      }),
+      'assets/memory-contexts-B9.js': createChunk({
+        facadeModuleId: '/repo/src/routes/(main)/memory/contexts/index.tsx',
+        fileName: 'assets/memory-contexts-B9.js',
+        moduleIds: ['/repo/src/routes/(main)/memory/contexts/index.tsx'],
+      }),
+      'assets/image-B3.js': createChunk({
+        facadeModuleId: '/repo/src/routes/(main)/(create)/image/index.tsx',
+        fileName: 'assets/image-B3.js',
+        moduleIds: ['/repo/src/routes/(main)/(create)/image/index.tsx'],
+      }),
+      'assets/eval-run-C8.js': createChunk({
+        facadeModuleId: '/repo/src/routes/(main)/eval/bench/[benchmarkId]/runs/[runId]/index.tsx',
+        fileName: 'assets/eval-run-C8.js',
+        moduleIds: ['/repo/src/routes/(main)/eval/bench/[benchmarkId]/runs/[runId]/index.tsx'],
+      }),
+    } satisfies TestOutputBundle;
+
+    const manifest = __testing.createRoutePreloadManifest(
+      bundle,
+      '/repo',
+      __testing.defaultIdleRoutePreloadGroups,
+    );
+    const preloadByGroup = new Map(manifest.map((entry) => [entry.id, entry.preload]));
+
+    expect(preloadByGroup.get('desktop-group-chat')).toEqual([
+      'assets/group-CJm8x.js',
+      'assets/group-profile-D8p.js',
+    ]);
+    expect(preloadByGroup.get('desktop-community')).toEqual([
+      'assets/community-detail-model-B2.js',
+    ]);
+    expect(preloadByGroup.get('desktop-memory')).toEqual(['assets/memory-contexts-B9.js']);
+    expect(preloadByGroup.get('desktop-create')).toEqual(['assets/image-B3.js']);
+    expect(preloadByGroup.get('desktop-eval')).toEqual(['assets/eval-run-C8.js']);
+  });
+
   it('keeps low-probability routes out of the default preload manifest', () => {
     const bundle = {
       'assets/settings-CJm8x.js': createChunk({

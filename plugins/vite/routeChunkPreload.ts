@@ -78,6 +78,17 @@ const defaultRoutePreloadGroups = [
 
 const defaultIdleRoutePreloadGroups = [
   {
+    id: 'desktop-group-chat',
+    includeDynamicImports: true,
+    includeStaticImports: true,
+    modules: [
+      'src/routes/(main)/group/_layout',
+      'src/routes/(main)/group',
+      'src/routes/(main)/group/profile',
+    ],
+    patterns: ['^/group(/|$)'],
+  },
+  {
     id: 'desktop-agent-profile',
     includeDynamicImports: true,
     includeStaticImports: true,
@@ -111,6 +122,22 @@ const defaultIdleRoutePreloadGroups = [
       'src/routes/(main)/community/(list)/_layout',
       'src/routes/(main)/community/(detail)/_layout',
       'src/routes/(main)/community/(list)/(home)',
+      'src/routes/(main)/community/(list)/agent',
+      'src/routes/(main)/community/(list)/agent/_layout',
+      'src/routes/(main)/community/(list)/mcp',
+      'src/routes/(main)/community/(list)/mcp/_layout',
+      'src/routes/(main)/community/(list)/model',
+      'src/routes/(main)/community/(list)/model/_layout',
+      'src/routes/(main)/community/(list)/provider',
+      'src/routes/(main)/community/(list)/skill',
+      'src/routes/(main)/community/(list)/skill/_layout',
+      'src/routes/(main)/community/(detail)/agent',
+      'src/routes/(main)/community/(detail)/group_agent',
+      'src/routes/(main)/community/(detail)/mcp',
+      'src/routes/(main)/community/(detail)/model',
+      'src/routes/(main)/community/(detail)/provider',
+      'src/routes/(main)/community/(detail)/skill',
+      'src/routes/(main)/community/(detail)/user',
     ],
     patterns: ['^/community(/|$)'],
   },
@@ -141,6 +168,49 @@ const defaultIdleRoutePreloadGroups = [
     includeStaticImports: true,
     modules: ['src/routes/(main)/settings/provider'],
     patterns: ['^/settings/provider(/|$)'],
+  },
+  {
+    id: 'desktop-memory',
+    includeDynamicImports: true,
+    includeStaticImports: true,
+    modules: [
+      'src/routes/(main)/memory/_layout',
+      'src/routes/(main)/memory/(home)',
+      'src/routes/(main)/memory/activities',
+      'src/routes/(main)/memory/contexts',
+      'src/routes/(main)/memory/experiences',
+      'src/routes/(main)/memory/identities',
+      'src/routes/(main)/memory/preferences',
+    ],
+    patterns: ['^/memory(/|$)'],
+  },
+  {
+    id: 'desktop-create',
+    includeDynamicImports: true,
+    includeStaticImports: true,
+    modules: [
+      'src/routes/(main)/(create)/image/_layout',
+      'src/routes/(main)/(create)/image',
+      'src/routes/(main)/(create)/video/_layout',
+      'src/routes/(main)/(create)/video',
+    ],
+    patterns: ['^/(image|video)(/|$)'],
+  },
+  {
+    id: 'desktop-eval',
+    includeDynamicImports: true,
+    includeStaticImports: true,
+    modules: [
+      'src/routes/(main)/eval/_layout',
+      'src/routes/(main)/eval/(home)/_layout',
+      'src/routes/(main)/eval',
+      'src/routes/(main)/eval/bench/[benchmarkId]/_layout',
+      'src/routes/(main)/eval/bench/[benchmarkId]',
+      'src/routes/(main)/eval/bench/[benchmarkId]/datasets/[datasetId]',
+      'src/routes/(main)/eval/bench/[benchmarkId]/runs/[runId]',
+      'src/routes/(main)/eval/bench/[benchmarkId]/runs/[runId]/cases/[caseId]',
+    ],
+    patterns: ['^/eval(/|$)'],
   },
   {
     id: 'desktop-tasks',
@@ -352,7 +422,7 @@ function normalizeHtmlAssetHref(href: string, base: string) {
 
   return basePrefix && cleanHref.startsWith(basePrefix)
     ? cleanHref.slice(basePrefix.length)
-    : cleanHref.replace(/^\//, '');
+    : cleanHref.replaceAll(/^\//g, '');
 }
 
 function removeSmallModulepreloadsFromHtml(
