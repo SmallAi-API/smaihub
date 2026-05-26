@@ -305,14 +305,6 @@ export const taskTemplates: TaskTemplate[] = [
     interests: ['marketing'],
     requiresSkills: [{ provider: 'airtable', source: 'klavis' }],
   },
-  {
-    id: 'hubspot-funnel-daily',
-    category: 'marketing',
-    cronPattern: '0 9 * * *',
-    interests: ['marketing', 'sales'],
-    requiresSkills: [{ provider: 'hubspot', source: 'klavis' }],
-  },
-
   // product
   {
     id: 'user-feedback-daily',
@@ -362,27 +354,6 @@ export const taskTemplates: TaskTemplate[] = [
   },
 
   // sales-customer
-  {
-    id: 'daily-followup-list',
-    category: 'sales-customer',
-    cronPattern: '0 9 * * *',
-    interests: ['sales'],
-    requiresSkills: [{ provider: 'hubspot', source: 'klavis' }],
-  },
-  {
-    id: 'renewal-risk-weekly',
-    category: 'sales-customer',
-    cronPattern: '0 9 * * 1',
-    interests: ['sales'],
-    requiresSkills: [{ provider: 'hubspot', source: 'klavis' }],
-  },
-  {
-    id: 'deal-pipeline-weekly',
-    category: 'sales-customer',
-    cronPattern: '0 16 * * 5',
-    interests: ['sales'],
-    requiresSkills: [{ provider: 'hubspot', source: 'klavis' }],
-  },
   {
     id: 'key-account-radar',
     category: 'sales-customer',
