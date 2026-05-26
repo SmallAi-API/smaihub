@@ -9,7 +9,6 @@ import {
   EllipsisIcon,
   Gift,
   Info,
-  KeyIcon,
   KeyRound,
   Map,
   PaletteIcon,
@@ -112,14 +111,14 @@ export const useCategory = (): CategoryGroup[] => {
       makeItem({ icon: SkillsIcon, key: SettingsTabs.Skill, label: t('setting:tab.skill') }),
       makeItem({ icon: BrainCircuit, key: SettingsTabs.Memory, label: t('setting:tab.memory') }),
       makeItem({ icon: KeyRound, key: SettingsTabs.Creds, label: t('setting:tab.creds') }),
-      showApiKeyManage &&
-        makeItem({ icon: KeyIcon, key: SettingsTabs.APIKey, label: t('auth:tab.apikey') }),
+      // showApiKeyManage &&
+      //   makeItem({ icon: KeyIcon, key: SettingsTabs.APIKey, label: t('auth:tab.apikey') }),
     ].filter((item): item is CategoryItem => Boolean(item));
 
     const system: CategoryItem[] = [
       makeItem({ icon: Database, key: SettingsTabs.Storage, label: t('setting:tab.storage') }),
-      isDevMode &&
-        makeItem({ icon: KeyIcon, key: SettingsTabs.APIKey, label: t('auth:tab.apikey') }),
+      // isDevMode &&
+      //   makeItem({ icon: KeyIcon, key: SettingsTabs.APIKey, label: t('auth:tab.apikey') }),
       makeItem({
         icon: EllipsisIcon,
         key: SettingsTabs.Advanced,

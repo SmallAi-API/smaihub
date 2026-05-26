@@ -14,10 +14,8 @@ import {
   Gift,
   Info,
   KeyboardIcon,
-  KeyIcon,
   KeyRound,
   Map,
-  MessageCircleIcon,
   PaletteIcon,
   Sparkles,
   TerminalSquare,
@@ -160,16 +158,16 @@ export const useCategory = () => {
         key: SettingsTabs.Creds,
         label: t('tab.creds'),
       },
-      showApiKeyManage && {
-        icon: KeyIcon,
-        key: SettingsTabs.APIKey,
-        label: tAuth('tab.apikey'),
-      },
-      {
-        icon: MessageCircleIcon,
-        key: SettingsTabs.Messenger,
-        label: t('tab.messenger'),
-      },
+      // showApiKeyManage && {
+      //   icon: KeyIcon,
+      //   key: SettingsTabs.APIKey,
+      //   label: tAuth('tab.apikey'),
+      // },
+      // {
+      //   icon: MessageCircleIcon,
+      //   key: SettingsTabs.Messenger,
+      //   label: t('tab.messenger'),
+      // },
     ].filter(Boolean) as CategoryItem[];
 
     groups.push({
@@ -196,11 +194,11 @@ export const useCategory = () => {
         key: SettingsTabs.Storage,
         label: t('tab.storage'),
       },
-      isDevMode && {
-        icon: KeyIcon,
-        key: SettingsTabs.APIKey,
-        label: tAuth('tab.apikey'),
-      },
+      // isDevMode && {
+      //   icon: KeyIcon,
+      //   key: SettingsTabs.APIKey,
+      //   label: tAuth('tab.apikey'),
+      // },
       {
         icon: EllipsisIcon,
         key: SettingsTabs.Advanced,

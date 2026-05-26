@@ -3,11 +3,15 @@
   "features.agentSelfIteration.title": "代理自我迭代",
   "features.assistantMessageGroup.desc": "將助手訊息及其工具調用結果彙整成群組顯示",
   "features.assistantMessageGroup.title": "助手訊息彙整群組",
+  "features.executionDeviceSwitcher.desc": "在異質代理工具欄中顯示執行設備切換器，以便您可以將運行路由到此設備、雲沙盒或綁定的遠程設備。",
+  "features.executionDeviceSwitcher.title": "執行設備切換器",
   "features.gatewayMode.desc": "透過 Gateway WebSocket 在伺服器上執行代理任務，而不是在本地運行。這樣可以加快執行速度並減少客戶端資源使用。",
   "features.gatewayMode.title": "伺服器端代理執行（Gateway)",
   "features.groupChat.desc": "啟用多智能體群組聊天編排功能。",
   "features.groupChat.title": "群組聊天（多智能體）",
   "features.inputMarkdown.desc": "在輸入區即時渲染 Markdown（粗體、程式碼區塊、表格等）。",
   "features.inputMarkdown.title": "輸入框 Markdown 渲染",
+  "features.platformAgent.desc": "在創建菜單中顯示「添加平台代理」條目。平台代理（例如 OpenClaw、Hermes）在連接的設備上運行，並通過 lh connect 進行通信。",
+  "features.platformAgent.title": "平台代理創建",
   "title": "實驗室"
 }
