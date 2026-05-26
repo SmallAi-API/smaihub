@@ -8,7 +8,6 @@ import { Loader2, MoreHorizontalIcon, SquareArrowOutUpRight, Unplug } from 'luci
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import SkillSourceTag from '@/components/SkillSourceTag';
 import { createKlavisSkillDetailModal } from '@/features/SkillStore/SkillDetail';
 import { useToolStore } from '@/store/tool';
 import { type KlavisServer } from '@/store/tool/slices/klavisStore';
@@ -300,7 +299,6 @@ const KlavisSkillItem = memo<KlavisSkillItemProps>(({ serverType, server }) => {
               <span className={`${styles.title} ${!isConnected ? styles.disconnectedTitle : ''}`}>
                 {serverType.label}
               </span>
-              <SkillSourceTag source="builtin" />
             </Flexbox>
             {!isConnected && renderStatus()}
           </Flexbox>

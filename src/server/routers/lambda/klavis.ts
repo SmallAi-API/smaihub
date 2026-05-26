@@ -2,15 +2,17 @@ import { type ToolManifest } from '@lobechat/types';
 import { z } from 'zod';
 
 import { PluginModel } from '@/database/models/plugin';
-import { getKlavisClient } from '@/libs/klavis';
+import { getKlavisClientForUser } from '@/libs/klavis';
 import { authedProcedure, router } from '@/libs/trpc/lambda';
 import { serverDatabase } from '@/libs/trpc/lambda/middleware';
 
 /**
- * Klavis procedure with API key validation and database access
+ * Klavis procedure with per-user API key resolution and database access.
+ *
+ * Key resolution order: user keyVaults.klavis.apiKey → env KLAVIS_API_KEY → throw KLAVIS_KEY_REQUIRED.
  */
 const klavisProcedure = authedProcedure.use(serverDatabase).use(async (opts) => {
-  const client = getKlavisClient();
+  const client = await getKlavisClientForUser(opts.ctx.userId, opts.ctx.serverDB);
   const pluginModel = new PluginModel(opts.ctx.serverDB, opts.ctx.userId);
 
   return opts.next({

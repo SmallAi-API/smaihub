@@ -5,6 +5,7 @@ import { cssVar } from 'antd-style';
 import { memo } from 'react';
 
 import { type KlavisServerType } from '@/const/index';
+import { useToolStore } from '@/store/tool';
 import { type KlavisServer } from '@/store/tool/slices/klavisStore';
 import { KlavisServerStatus } from '@/store/tool/slices/klavisStore';
 
@@ -34,6 +35,8 @@ const KlavisServerItem = memo<KlavisServerItemProps>(
       serverName,
     });
 
+    const refreshKlavisServerTools = useToolStore((s) => s.refreshKlavisServerTools);
+
     const isConnected = server?.status === KlavisServerStatus.CONNECTED;
     const isPendingAuth = server?.status === KlavisServerStatus.PENDING_AUTH;
     const isClickable = !isConnected;
@@ -45,6 +48,10 @@ const KlavisServerItem = memo<KlavisServerItemProps>(
         handleConnect();
       } else if (isPendingAuth && server.oauthUrl) {
         openOAuthWindow(server.oauthUrl, server.identifier);
+      } else if (isPendingAuth) {
+        // No oauthUrl cached locally — refresh from server (which will surface
+        // either a new oauthUrl or flip status to CONNECTED if already authed).
+        void refreshKlavisServerTools(server.identifier);
       }
     };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Icon } from '@lobehub/ui';
+import { Button, Flexbox, Icon } from '@lobehub/ui';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ import SettingHeader from '@/routes/(main)/settings/features/SettingHeader';
 
 import CreateCredModal from './features/CreateCredModal';
 import CredsList from './features/CredsList';
+import KlavisKeyCard from './features/KlavisKeyCard';
 
 const Page = () => {
   const { t } = useTranslation('setting');
@@ -30,7 +31,10 @@ const Page = () => {
           </Button>
         }
       />
-      <CredsList key={refreshKey} />
+      <Flexbox gap={16} paddingBlock={16}>
+        <KlavisKeyCard />
+        <CredsList key={refreshKey} />
+      </Flexbox>
       <CreateCredModal
         open={createModalOpen}
         onCancel={() => setCreateModalOpen(false)}

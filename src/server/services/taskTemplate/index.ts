@@ -5,12 +5,11 @@ import {
   taskTemplates,
 } from '@lobechat/const';
 
-import { klavisEnv } from '@/config/klavis';
 import { appEnv } from '@/envs/app';
 
 export const ENABLED_SKILL_SOURCES: ReadonlySet<TaskTemplateSkillSource> = (() => {
-  const sources = new Set<TaskTemplateSkillSource>();
-  if (klavisEnv.KLAVIS_API_KEY) sources.add('klavis');
+  const sources = new Set<TaskTemplateSkillSource>(['klavis']);
+  // Klavis is always enabled with BYOK — env key is just an optional fallback.
   if (appEnv.MARKET_TRUSTED_CLIENT_ID && appEnv.MARKET_TRUSTED_CLIENT_SECRET) {
     sources.add('lobehub');
   }

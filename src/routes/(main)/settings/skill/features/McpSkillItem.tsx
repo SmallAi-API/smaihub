@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 
 import MCPTag from '@/components/Plugins/MCPTag';
 import PluginTag from '@/components/Plugins/PluginTag';
-import SkillSourceTag from '@/components/SkillSourceTag';
 import McpDetail from '@/features/MCP/MCPDetail';
 import McpDetailLoading from '@/features/MCP/MCPDetail/Loading';
 import PluginDetailModal from '@/features/PluginDetailModal';
@@ -63,7 +62,6 @@ const McpSkillItem = memo<McpSkillItemProps>(
               ) : (
                 <PluginTag author={author} isMCP={isMCP} type={type} />
               )}
-              <SkillSourceTag source={isCustomPlugin ? 'user' : 'market'} />
             </Flexbox>
           </Flexbox>
           <Actions identifier={identifier} isMCP={isMCP} type={type} />

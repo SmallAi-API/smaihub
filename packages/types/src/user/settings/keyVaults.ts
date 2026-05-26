@@ -69,6 +69,11 @@ export interface SearchEngineKeyVaults {
   };
 }
 
+export interface KlavisKeyVault {
+  apiKey?: string;
+}
+
 export interface UserKeyVaults extends SearchEngineKeyVaults {
+  klavis?: KlavisKeyVault;
   search1api?: OpenAICompatibleKeyVault;
 }

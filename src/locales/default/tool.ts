@@ -68,6 +68,13 @@ export default {
   'dalle.generating': 'Generating...',
   'dalle.images': 'Images:',
   'dalle.prompt': 'Prompt',
+  'klavis.errors.apiKeyRequired':
+    'Klavis API key is required. Please set your personal key in Settings → Klavis API Key.',
+  'klavis.errors.apiKeyRequiredCTA': 'Open Klavis settings',
+  'klavis.errors.invalidApiKey':
+    'The Klavis API key you entered was rejected. Double-check the key and try again.',
+  'klavis.errors.quotaReached':
+    'Your Klavis account has reached its server instance quota. Visit klavis.ai to manage instances or use a different account.',
   'lobe-agent.actions.add': 'Add',
   'lobe-agent.actions.clearCompleted': 'Clear Completed',
   'lobe-agent.actions.placeholder': 'Enter a to-do item...',

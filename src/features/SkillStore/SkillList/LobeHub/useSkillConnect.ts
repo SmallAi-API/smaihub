@@ -194,7 +194,26 @@ export const useSkillConnect = ({ identifier, serverName, type }: UseSkillConnec
   // Handle connect for Klavis
   const handleKlavisConnect = useCallback(async () => {
     if (!userId || !serverName) return;
-    if (klavisServer) return;
+
+    // Server already created — recover from PENDING_AUTH instead of silently
+    // bailing. SkillCard has no "pending auth" affordance, so the user can
+    // only retry through the same `+` button.
+    if (klavisServer) {
+      if (klavisServer.status === KlavisServerStatus.CONNECTED) return;
+      if (klavisServer.oauthUrl) {
+        openOAuthWindow(klavisServer.oauthUrl, klavisServer.identifier);
+      } else {
+        // No oauthUrl cached — refresh from server to either flip to CONNECTED
+        // or surface a fresh oauthUrl on the next click.
+        setIsConnecting(true);
+        try {
+          await refreshKlavisServerTools(klavisServer.identifier);
+        } finally {
+          setIsConnecting(false);
+        }
+      }
+      return;
+    }
 
     setIsConnecting(true);
     try {

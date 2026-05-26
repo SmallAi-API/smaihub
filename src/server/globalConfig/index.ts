@@ -87,7 +87,7 @@ export const getServerGlobalConfig = async () => {
     disableEmailPassword: authEnv.AUTH_DISABLE_EMAIL_PASSWORD,
     enableBusinessFeatures: ENABLE_BUSINESS_FEATURES,
     enableEmailVerification: authEnv.AUTH_EMAIL_VERIFICATION,
-    enableKlavis: !!klavisEnv.KLAVIS_API_KEY,
+    enableKlavis: true,
     enableLobehubSkill: !!(appEnv.MARKET_TRUSTED_CLIENT_SECRET && appEnv.MARKET_TRUSTED_CLIENT_ID),
     enableMagicLink: authEnv.AUTH_ENABLE_MAGIC_LINK,
     enableMarketTrustedClient: !!(
@@ -97,6 +97,7 @@ export const getServerGlobalConfig = async () => {
     enableVisualUnderstanding: !!(
       toolsEnv.VISUAL_UNDERSTANDING_PROVIDER && toolsEnv.VISUAL_UNDERSTANDING_MODEL
     ),
+    klavisRequiresUserKey: !klavisEnv.KLAVIS_API_KEY,
     ...(toolsEnv.VISUAL_UNDERSTANDING_PROVIDER && toolsEnv.VISUAL_UNDERSTANDING_MODEL
       ? {
           visualUnderstanding: {

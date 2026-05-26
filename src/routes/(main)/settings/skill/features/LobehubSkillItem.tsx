@@ -8,7 +8,6 @@ import { Loader2, MoreHorizontalIcon, SquareArrowOutUpRight, Unplug } from 'luci
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import SkillSourceTag from '@/components/SkillSourceTag';
 import { createLobehubSkillDetailModal } from '@/features/SkillStore/SkillDetail';
 import { useToolStore } from '@/store/tool';
 import { type LobehubSkillServer } from '@/store/tool/slices/lobehubSkillStore/types';
@@ -282,7 +281,6 @@ const LobehubSkillItem = memo<LobehubSkillItemProps>(({ provider, server }) => {
               <span className={`${styles.title} ${!isConnected ? styles.disconnectedTitle : ''}`}>
                 {provider.label}
               </span>
-              <SkillSourceTag source="builtin" />
             </Flexbox>
             {!isConnected && renderStatus()}
           </Flexbox>

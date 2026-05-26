@@ -1,14 +1,17 @@
 import { z } from 'zod';
 
-import { getKlavisClient } from '@/libs/klavis';
-import { authedProcedure, publicProcedure, router } from '@/libs/trpc/lambda';
+import { getKlavisClientForUser } from '@/libs/klavis';
+import { authedProcedure, router } from '@/libs/trpc/lambda';
+import { serverDatabase } from '@/libs/trpc/lambda/middleware';
 import { MCPService } from '@/server/services/mcp';
 
 /**
- * Klavis procedure with client initialized in context
+ * Klavis procedure with per-user API key resolution.
+ *
+ * Key resolution order: user keyVaults.klavis.apiKey → env KLAVIS_API_KEY → throw KLAVIS_KEY_REQUIRED.
  */
-const klavisProcedure = authedProcedure.use(async (opts) => {
-  const klavisClient = getKlavisClient();
+const klavisProcedure = authedProcedure.use(serverDatabase).use(async (opts) => {
+  const klavisClient = await getKlavisClientForUser(opts.ctx.userId, opts.ctx.serverDB);
 
   return opts.next({
     ctx: { ...opts.ctx, klavisClient },
@@ -60,17 +63,17 @@ export const klavisRouter = router({
     }),
 
   /**
-   * Get tools by server name (public endpoint, no auth required)
+   * Get tools by server name. Authenticated so the per-user Klavis key is used
+   * (BYOK) instead of leaking the env-only fallback to anonymous callers.
    */
-  getTools: publicProcedure
+  getTools: klavisProcedure
     .input(
       z.object({
         serverName: z.string(),
       }),
     )
-    .query(async ({ input }) => {
-      const klavisClient = getKlavisClient();
-      const response = await klavisClient.mcpServer.getTools(input.serverName as any);
+    .query(async ({ ctx, input }) => {
+      const response = await ctx.klavisClient.mcpServer.getTools(input.serverName as any);
 
       return {
         tools: response.tools,

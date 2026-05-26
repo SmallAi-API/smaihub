@@ -33,7 +33,6 @@ import {
 } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
 import { userProfileSelectors } from '@/store/user/slices/auth/selectors';
-import { userGeneralSettingsSelectors } from '@/store/user/slices/settings/selectors';
 
 export enum SettingsGroupKey {
   Agent = 'agent',
@@ -59,13 +58,12 @@ export const useCategory = () => {
   const { t: tAuth } = useTranslation('auth');
   const { t: tSubscription } = useTranslation('subscription');
   const mobile = useServerConfigStore((s) => s.isMobile);
-  const { hideDocs, showApiKeyManage, showProvider } = useServerConfigStore(featureFlagsSelectors);
+  const { hideDocs, showProvider } = useServerConfigStore(featureFlagsSelectors);
   const [avatar, username] = useUserStore((s) => [
     userProfileSelectors.userAvatar(s),
     userProfileSelectors.nickName(s),
   ]);
   const remoteServerUrl = useElectronStore(electronSyncSelectors.remoteServerUrl);
-  const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
 
   const avatarUrl = useMemo(() => {
     if (!avatar) return undefined;
@@ -225,9 +223,7 @@ export const useCategory = () => {
     enableBusinessFeatures,
     hideDocs,
     mobile,
-    showApiKeyManage,
     showProvider,
-    isDevMode,
     avatarUrl,
     username,
   ]);

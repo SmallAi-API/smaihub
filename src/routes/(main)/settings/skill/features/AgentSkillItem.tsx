@@ -17,7 +17,6 @@ import { DownloadIcon, MoreHorizontalIcon, Plus, Trash2 } from 'lucide-react';
 import { lazy, memo, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import SkillSourceTag from '@/components/SkillSourceTag';
 import { createBuiltinAgentSkillDetailModal } from '@/features/SkillStore/SkillDetail';
 import { agentSkillService } from '@/services/skill';
 import { useToolStore } from '@/store/tool';
@@ -229,7 +228,6 @@ const AgentSkillItem = memo<AgentSkillItemProps>(({ skill }) => {
                   {title}
                 </span>
                 {!isBuiltin && <Tag icon={<Icon icon={SkillsIcon} />} size={'small'} />}
-                <SkillSourceTag source={skill.source} />
               </Flexbox>
               {showDisconnected && renderStatus()}
             </Flexbox>
