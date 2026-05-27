@@ -114,37 +114,6 @@ const Body = memo(() => {
     [sidebarItems, isVisible],
   );
 
-  const renderNavLink = useCallback(
-    (key: string) => {
-      const navItem = navLinkItems.get(key);
-      if (!navItem || navItem.hidden) return null;
-      return (
-        <Link
-          key={key}
-          to={navItem.url!}
-          onClick={(e) => {
-            if (isModifierClick(e)) return;
-            e.preventDefault();
-            navigate(navItem.url!);
-          }}
-        >
-          <NavItem
-            active={tab === key}
-            contextMenuItems={getContextMenuItems(key)}
-            icon={navItem.icon}
-            title={navItem.title}
-            actions={
-              <DropdownMenu items={getContextMenuItems(key)} nativeButton={false}>
-                <ActionIcon icon={MoreHorizontalIcon} size={'small'} style={{ flex: 'none' }} />
-              </DropdownMenu>
-            }
-          />
-        </Link>
-      );
-    },
-    [navLinkItems, tab, getContextMenuItems, navigate],
-  );
-
   const handleExternalLink = useCallback((url: string) => {
     if (isDesktop) {
       void electronSystemService.openExternalLink(url);
@@ -272,14 +241,14 @@ const Body = memo(() => {
         if (comp) accGroup.push({ element: comp, key });
       } else {
         flushAccordion();
-        const link = renderNavLink(key);
+        const link = renderSidebarItem(key);
         if (link) elements.push(link);
       }
     }
     flushAccordion();
 
     return elements;
-  }, [visibleKeys, renderNavLink, sidebarExpandedKeys, handleAccordionExpandedChange]);
+  }, [visibleKeys, renderSidebarItem, sidebarExpandedKeys, handleAccordionExpandedChange]);
 
   return (
     <Flexbox flex={1} gap={1} paddingInline={4} style={{ minHeight: '100%' }}>

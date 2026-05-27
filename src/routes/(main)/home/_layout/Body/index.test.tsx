@@ -12,13 +12,24 @@ interface MockGlobalState {
   updateSystemStatus: (patch: Partial<MockGlobalState['status']>) => void;
 }
 
+interface MockNavItem {
+  external?: boolean;
+  key: string;
+  popoverImageSrc?: string;
+  title: string;
+  url?: string;
+}
+
 const mocks = vi.hoisted(() => ({
+  electronOpenExternalLink: vi.fn(),
   globalState: undefined as unknown as MockGlobalState,
+  isDesktop: false,
   navLayout: {
-    bottomMenuItems: [] as { key: string; title: string; url: string }[],
-    topNavItems: [] as { key: string; title: string; url: string }[],
+    bottomMenuItems: [] as MockNavItem[],
+    topNavItems: [] as MockNavItem[],
   },
   updateSystemStatus: vi.fn(),
+  windowOpen: vi.fn(),
 }));
 
 vi.mock('@lobehub/ui', () => ({
@@ -42,6 +53,12 @@ vi.mock('@lobehub/ui', () => ({
     <div data-testid="sidebar-body">{children}</div>
   ),
   Icon: () => <span />,
+  Popover: ({ children, content }: { children: React.ReactNode; content: React.ReactNode }) => (
+    <div data-testid="popover-wrapper">
+      <div data-testid="popover-content">{content}</div>
+      {children}
+    </div>
+  ),
 }));
 
 vi.mock('react-i18next', () => ({
@@ -56,7 +73,21 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('@/features/NavPanel/components/NavItem', () => ({
-  default: ({ title }: { title: string }) => <div>{title}</div>,
+  default: ({ title, onClick }: { onClick?: (e: React.MouseEvent) => void; title: string }) => (
+    <div onClick={onClick}>{title}</div>
+  ),
+}));
+
+vi.mock('@/const/version', () => ({
+  get isDesktop() {
+    return mocks.isDesktop;
+  },
+}));
+
+vi.mock('@/services/electron/system', () => ({
+  electronSystemService: {
+    openExternalLink: (...args: unknown[]) => mocks.electronOpenExternalLink(...args),
+  },
 }));
 
 vi.mock('@/hooks/useActiveTabKey', () => ({
@@ -89,6 +120,9 @@ vi.mock('@/store/global', () => ({
 
 beforeEach(() => {
   mocks.updateSystemStatus.mockReset();
+  mocks.electronOpenExternalLink.mockReset();
+  mocks.windowOpen.mockReset();
+  mocks.isDesktop = false;
   mocks.navLayout = {
     bottomMenuItems: [],
     topNavItems: [],
@@ -101,6 +135,7 @@ beforeEach(() => {
     },
     updateSystemStatus: mocks.updateSystemStatus,
   };
+  vi.stubGlobal('open', mocks.windowOpen);
 });
 
 afterEach(() => {
@@ -179,5 +214,82 @@ describe('Home sidebar body', () => {
     expect(children[1]).toHaveAttribute('data-sidebar-bottom-spacer');
     expect(children[2]).toHaveTextContent('Image');
     expect(children[3]).toHaveTextContent('Tasks');
+  });
+
+  it('opens external links via window.open in web mode (regression: docs link must not use SPA Link)', () => {
+    mocks.navLayout = {
+      bottomMenuItems: [
+        {
+          external: true,
+          key: 'docs',
+          title: 'Docs',
+          url: 'https://docs.smai.ai/docs/smai-app',
+        },
+      ],
+      topNavItems: [],
+    };
+    mocks.globalState.status.sidebarItems = ['docs'];
+
+    render(<Body />);
+
+    const docsItem = screen.getByText('Docs');
+    // Must NOT be wrapped in a react-router <Link> (which renders <a href>) for external URLs.
+    expect(docsItem.closest('a')).toBeNull();
+
+    fireEvent.click(docsItem);
+
+    expect(mocks.windowOpen).toHaveBeenCalledWith(
+      'https://docs.smai.ai/docs/smai-app',
+      '_blank',
+      'noopener,noreferrer',
+    );
+    expect(mocks.electronOpenExternalLink).not.toHaveBeenCalled();
+  });
+
+  it('opens external links via Electron in desktop mode', () => {
+    mocks.isDesktop = true;
+    mocks.navLayout = {
+      bottomMenuItems: [
+        {
+          external: true,
+          key: 'docs',
+          title: 'Docs',
+          url: 'https://docs.smai.ai/docs/smai-app',
+        },
+      ],
+      topNavItems: [],
+    };
+    mocks.globalState.status.sidebarItems = ['docs'];
+
+    render(<Body />);
+
+    fireEvent.click(screen.getByText('Docs'));
+
+    expect(mocks.electronOpenExternalLink).toHaveBeenCalledWith(
+      'https://docs.smai.ai/docs/smai-app',
+    );
+    expect(mocks.windowOpen).not.toHaveBeenCalled();
+  });
+
+  it('renders popover image for items with popoverImageSrc (regression: support kefu image)', () => {
+    mocks.navLayout = {
+      bottomMenuItems: [
+        {
+          key: 'support',
+          popoverImageSrc: '/kefu.png',
+          title: 'Support',
+        },
+      ],
+      topNavItems: [],
+    };
+    mocks.globalState.status.sidebarItems = ['support'];
+
+    render(<Body />);
+
+    const popoverContent = screen.getByTestId('popover-content');
+    const img = popoverContent.querySelector('img');
+    expect(img).not.toBeNull();
+    expect(img?.getAttribute('src')).toBe('/kefu.png');
+    expect(img?.getAttribute('alt')).toBe('Support');
   });
 });
