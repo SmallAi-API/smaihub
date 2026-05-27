@@ -1,24 +1,24 @@
 'use client';
 
-import { Button, Flexbox, Icon } from '@lobehub/ui';
+import { Button, Icon } from '@lobehub/ui';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import SettingHeader from '@/routes/(main)/settings/features/SettingHeader';
 
-import CreateCredModal from './features/CreateCredModal';
+import { createCreateCredModal } from './features/CreateCredModal';
 import CredsList from './features/CredsList';
 import KlavisKeyCard from './features/KlavisKeyCard';
 
 const Page = () => {
   const { t } = useTranslation('setting');
-  const [createModalOpen, setCreateModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleCreateSuccess = () => {
-    setCreateModalOpen(false);
-    setRefreshKey((k) => k + 1);
+  const handleCreate = () => {
+    createCreateCredModal({
+      onSuccess: () => setRefreshKey((k) => k + 1),
+    });
   };
 
   return (
@@ -26,20 +26,13 @@ const Page = () => {
       <SettingHeader
         title={t('tab.creds')}
         extra={
-          <Button icon={<Icon icon={Plus} />} size="large" onClick={() => setCreateModalOpen(true)}>
+          <Button icon={<Icon icon={Plus} />} size={'large'} onClick={handleCreate}>
             {t('creds.create')}
           </Button>
         }
       />
-      <Flexbox gap={16} paddingBlock={16}>
-        <KlavisKeyCard />
-        <CredsList key={refreshKey} />
-      </Flexbox>
-      <CreateCredModal
-        open={createModalOpen}
-        onCancel={() => setCreateModalOpen(false)}
-        onSuccess={handleCreateSuccess}
-      />
+      <KlavisKeyCard />
+      <CredsList key={refreshKey} />
     </>
   );
 };

@@ -1,6 +1,6 @@
 import { type MenuProps } from '@lobehub/ui';
 import { Icon } from '@lobehub/ui';
-import { App } from 'antd';
+import { confirmModal } from '@lobehub/ui/base-ui';
 import { FileText, PencilLine, Trash } from 'lucide-react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,15 +22,13 @@ export const useDropdownMenu = ({
   toggleEditing,
 }: ActionProps): (() => MenuProps['items']) => {
   const { t } = useTranslation(['file', 'common']);
-  const { modal } = App.useApp();
   const removeKnowledgeBase = useKnowledgeBaseStore((s) => s.removeKnowledgeBase);
   const { open } = useCreateNewModal();
 
   const handleDelete = () => {
     if (!id) return;
 
-    modal.confirm({
-      centered: true,
+    confirmModal({
       okButtonProps: { danger: true },
       onOk: async () => {
         await removeKnowledgeBase(id);
@@ -81,7 +79,6 @@ export const useDropdownMenu = ({
       id,
       name,
       description,
-      modal,
       removeKnowledgeBase,
       toggleEditing,
       handleDelete,
