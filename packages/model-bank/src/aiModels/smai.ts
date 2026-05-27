@@ -1534,7 +1534,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       '我们最新最强大的旗舰模型，在自然语言处理、数学计算和推理方面表现卓越 —— 是一款完美的全能型选手。',
     displayName: 'Grok 4',
-
     id: 'grok-4-0709',
     releasedAt: '2025-07-09',
     settings: {
@@ -1563,46 +1562,44 @@ const smaiChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      search: true,
+      structuredOutput: true,
     },
-    contextWindowTokens: 1_048_576,
+    contextWindowTokens: 1_000_000,
     description:
-      'Xiaomi MiMo-V2-Pro 专为 Agent 场景深度优化。它拥有超过 1T 的总参数量（42B 激活参数），采用创新的混合注意力架构，并支持 1M 超长上下文长度。在强大的模型基座上，我们在更为广泛的 Agent 场景中持续 Scaling 算力，进一步拓展了智能的动作空间，实现了从 Coding 到 Claw 的重要泛化。',
-    displayName: 'MiMo-V2-Pro',
+      "MiMo-V2.5-Pro is Xiaomi's most capable flagship model to date, delivering significant improvements in general agentic capabilities, complex software engineering, and long-horizon tasks. It retains the 1T total / 42B active hybrid-attention architecture with a 1M context window, and can sustain complex long-horizon tasks spanning more than a thousand tool calls. Performance on demanding agentic benchmarks (ClawEval, GDPVal, SWE-bench Pro) is comparable to Claude Opus 4.6.",
+    displayName: 'MiMo-V2.5 Pro',
     enabled: true,
-    id: 'mimo-v2-pro',
-    maxOutput: 128_000,
-    releasedAt: '2026-03-19',
+    id: 'mimo-v2.5-pro',
+    maxOutput: 131_072,
+    releasedAt: '2026-05-27',
+    settings: {
+      extendParams: ['enableReasoning'],
+      searchImpl: 'params',
+    },
     type: 'chat',
   },
   {
     abilities: {
       functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
       vision: true,
-      reasoning: true,
     },
-    contextWindowTokens: 256_000,
+    contextWindowTokens: 1_000_000,
     description:
-      'MiMo-V2-Omni 专为现实世界中复杂的多模态交互与执行场景而生。我们从底层构建了融合文本、视觉、语音的全模态基座，并以统一架构将“感知”与“行动”深度绑定。这不仅打破了传统模型“重理解、轻执行”的局限，更让模型原生具备了多模态感知、工具调用、函数执行及 GUI 操作能力。MiMo-V2-Omni 可无缝接入各大智能体框架，实现了从理解到操控的跨越，大幅降低了全模态 Agent 的落地门槛。',
-    displayName: 'MiMo-V2-Omni',
+      'MiMo-V2.5 is a native omni-modal Agent foundation model that understands images, video, audio, and text in a unified architecture, with a 1M context window. It delivers Pro-level agentic performance at roughly half the inference cost of MiMo-V2.5-Pro, with improved multimodal perception over MiMo-V2-Omni. Its built-in agentic capabilities (browsing, understanding, reasoning, execution) and faster inference make it well-suited to latency-sensitive and multi-step agent frameworks such as OpenClaw.',
+    displayName: 'MiMo-V2.5',
     enabled: true,
-    id: 'mimo-v2-omni',
-    maxOutput: 64_000,
-    releasedAt: '2026-03-19',
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
+    id: 'mimo-v2.5',
+    maxOutput: 131_072,
+    releasedAt: '2026-05-27',
+    settings: {
+      extendParams: ['enableReasoning'],
+      searchImpl: 'params',
     },
-    contextWindowTokens: 128_000,
-    description:
-      'Mimo V2 Flash模型采用 1:5 的 Global Attention 与 Sliding Window Attention (SWA) 混合结构，128 窗口大小',
-    displayName: 'Mimo V2 Flash',
-    enabled: true,
-    id: 'mimo-v2-flash',
-    maxOutput: 64_000,
-    releasedAt: '2026-03-19',
     type: 'chat',
   },
   {
@@ -1767,10 +1764,10 @@ export const smaiTTSModels: AITTSModelCard[] = [
   {
     description:
       'Xiaomi MiMo-V2-TTS 是小米自主研发的语音合成大模型。它基于自研 Audio Tokenizer 和多码本语音-文本联合建模架构，经过上亿小时语音数据的大规模预训练与多维度强化学习，实现了高度可控的多粒度语音风格控制。MiMo-V2-TTS 支持从整体风格定调到局部情绪表达的精准调节，能在同一句话内完成语气转折和情感递变；真实还原人类说话的自然韵律；在唱歌时，也能准确表达音高和节奏，自然且富有表现力。',
-    displayName: 'MiMo-V2-TTS',
+    displayName: 'MiMo-V2.5-TTS',
     enabled: true,
-    id: 'mimo-v2-tts',
-    releasedAt: '2026-3-19',
+    id: 'mimo-v2.5-tts',
+    releasedAt: '2026-5-27',
     type: 'tts',
   },
 ];
