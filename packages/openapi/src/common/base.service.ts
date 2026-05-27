@@ -99,7 +99,7 @@ export abstract class BaseService implements IBaseService {
    * @param fallbackMessage 默认错误消息
    */
   protected handleServiceError(error: unknown, operation: string): never {
-    this.log('error', `${operation}失败`, { error });
+    this.log('error', `${operation} failed`, { error });
 
     // 如果是已知的业务错误，直接抛出
     if (
@@ -115,7 +115,7 @@ export abstract class BaseService implements IBaseService {
       throw error;
     }
 
-    const errorMessage = `${operation}失败: ${error instanceof Error ? error.message : '未知错误'}`;
+    const errorMessage = `${operation} failed: ${error instanceof Error ? error.message : 'unknown error'}`;
 
     // 其他错误统一包装为业务错误
     throw this.createBusinessError(errorMessage);
@@ -293,7 +293,7 @@ export abstract class BaseService implements IBaseService {
         }
       }
     } catch (error) {
-      this.log('error', '获取目标用户ID失败', { error, target });
+      this.log('error', 'Failed to get target user ID', { error, target });
       return;
     }
   }
@@ -333,13 +333,17 @@ export abstract class BaseService implements IBaseService {
       userId: this.userId,
     };
 
-    this.log('info', '权限检查', logContext);
+    this.log('info', 'Permission check', logContext);
 
     /**
      * 当用户拥有 ALL 权限时，直接通过校验
      */
     if (hasGlobalAccess) {
-      this.log('info', `权限通过：当前user拥有 ${permissionKey} 的最高权限`, logContext);
+      this.log(
+        'info',
+        `Permission granted: current user has highest ${permissionKey} permission`,
+        logContext,
+      );
       return {
         condition: resourceBelongTo ? { userId: resourceBelongTo } : undefined,
         isPermitted: true,
@@ -352,7 +356,11 @@ export abstract class BaseService implements IBaseService {
      * 2. 查询的是指定用户的数据，但目标资源不属于当前用户
      */
     if (!resourceBelongTo || resourceBelongTo !== this.userId) {
-      this.log('warn', '权限拒绝：当前user没有ALL权限，或目标资源不属于当前用户', logContext);
+      this.log(
+        'warn',
+        'Permission denied: current user has no ALL permission, or target resource does not belong to current user',
+        logContext,
+      );
       return {
         isPermitted: false,
         message: `no permission,current user has no ALL permission,and resource not belong to current user`,
@@ -368,22 +376,26 @@ export abstract class BaseService implements IBaseService {
       const hasOwnerAccess = await this.hasOwnerPermission(permissionKey);
 
       if (hasOwnerAccess) {
-        this.log('info', '权限通过：当前user拥有owner权限', logContext);
+        this.log('info', 'Permission granted: current user has owner permission', logContext);
         return {
           condition: { userId: resourceBelongTo },
           isPermitted: true,
         };
       }
 
-      this.log('warn', '权限拒绝：目标资源属于当前用户，但用户没有对应操作的owner权限', logContext);
+      this.log(
+        'warn',
+        'Permission denied: target resource belongs to current user, but user has no owner permission for this operation',
+        logContext,
+      );
       return {
         isPermitted: false,
         message: `no permission,resource belong to current user,but current user has no any ${permissionKey} permission`,
       };
     }
 
-    // 如果走到这里，走兜底逻辑
-    this.log('info', `兜底: no permission`, logContext);
+    // If we reach here, apply fallback logic
+    this.log('info', `Fallback: no permission`, logContext);
     return {
       isPermitted: false,
       message: `permission validation error for: ${permissionKey}`,
@@ -414,7 +426,10 @@ export abstract class BaseService implements IBaseService {
 
     // 如果有全局权限，直接允许批量操作
     if (hasGlobalAccess) {
-      this.log('info', `权限通过：批量操作，当前user拥有 ${permissionKey} ALL权限`);
+      this.log(
+        'info',
+        `Permission granted: batch operation, current user has ${permissionKey} ALL permission`,
+      );
       return { isPermitted: true };
     }
 
@@ -497,25 +512,25 @@ export abstract class BaseService implements IBaseService {
         default: {
           return {
             isPermitted: false,
-            message: '未提供有效的资源 ID',
+            message: 'No valid resource ID provided',
           };
         }
       }
     } catch (error) {
-      this.log('error', '获取目标用户ID失败', { error, targetInfoIds });
+      this.log('error', 'Failed to get target user IDs', { error, targetInfoIds });
       return {
         isPermitted: false,
-        message: '获取资源信息失败',
+        message: 'Failed to get resource info',
       };
     }
 
     // 如果找不到任何资源
     if (userIds.length === 0) {
-      this.log('warn', '未找到任何目标资源', { permissionKey, targetInfoIds });
+      this.log('warn', 'No target resources found', { permissionKey, targetInfoIds });
       return {
         condition: { userIds },
         isPermitted: false,
-        message: '未找到任何目标资源',
+        message: 'No target resources found',
       };
     }
 
@@ -528,29 +543,37 @@ export abstract class BaseService implements IBaseService {
       if (hasOwnerAccess) {
         this.log(
           'info',
-          `权限通过：批量操作，所有资源属于当前用户，且拥有 ${permissionKey} owner 权限`,
+          `Permission granted: batch operation, all resources belong to current user and user has ${permissionKey} owner permission`,
         );
         return { condition: { userIds }, isPermitted: true };
       }
 
-      // 如果所有资源都属于当前用户，但用户没有 owner 权限，则不允许操作
-      this.log('warn', '权限拒绝：批量操作需要 ${permissionKey} ALL/owner 权限', {
-        permissionKey,
-        targetInfoIds,
-        userIds,
-      });
+      // If all resources belong to the current user but the user has no owner permission, deny the operation
+      this.log(
+        'warn',
+        'Permission denied: batch operation requires ${permissionKey} ALL/owner permission',
+        {
+          permissionKey,
+          targetInfoIds,
+          userIds,
+        },
+      );
       return {
         isPermitted: false,
         message: `no permission for batch operation, current user has no ${permissionKey} ALL/owner permission`,
       };
     }
 
-    // 操作的资源中有不属于当前用户的资源，直接拒绝
-    this.log('warn', `权限拒绝：批量操作需要 ${permissionKey} ALL/owner 权限`, {
-      permissionKey,
-      targetInfoIds,
-      userIds,
-    });
+    // Some resources in the operation do not belong to the current user; deny directly
+    this.log(
+      'warn',
+      `Permission denied: batch operation requires ${permissionKey} ALL/owner permission`,
+      {
+        permissionKey,
+        targetInfoIds,
+        userIds,
+      },
+    );
 
     return {
       isPermitted: false,
@@ -607,7 +630,7 @@ export abstract class BaseService implements IBaseService {
 
     const isPermitted = missingPermissions.length === 0;
 
-    this.log('info', '聊天权限检查', {
+    this.log('info', 'Chat permission check', {
       isPermitted,
       missingPermissions,
       userId: this.userId,
@@ -616,7 +639,7 @@ export abstract class BaseService implements IBaseService {
     if (!isPermitted) {
       return {
         isPermitted: false,
-        message: `缺少必要权限：${missingPermissions.join(', ')}`,
+        message: `Missing required permissions: ${missingPermissions.join(', ')}`,
         missingPermissions,
       };
     }
