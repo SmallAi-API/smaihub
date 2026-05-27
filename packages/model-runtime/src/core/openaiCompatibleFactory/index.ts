@@ -9,6 +9,7 @@ import OpenAI from 'openai';
 import type { Stream } from 'openai/streaming';
 
 import { isGPT5ProResponsesModel, responsesAPIModels } from '../../const/models';
+import { ErrorClassifier } from '../../errors';
 import type {
   ChatCompletionErrorPayload,
   ChatCompletionTool,
@@ -39,10 +40,6 @@ import { desensitizeUrl } from '../../utils/desensitizeUrl';
 import { getModelPropertyWithFallback } from '../../utils/getFallbackModelProperty';
 import { getModelPricing } from '../../utils/getModelPricing';
 import { handleOpenAIError } from '../../utils/handleOpenAIError';
-import { isAccountDeactivatedError } from '../../utils/isAccountDeactivatedError';
-import { isExceededContextWindowError } from '../../utils/isExceededContextWindowError';
-import { isInsufficientQuotaError } from '../../utils/isInsufficientQuotaError';
-import { isQuotaLimitError } from '../../utils/isQuotaLimitError';
 import { postProcessModelList } from '../../utils/postProcessModelList';
 import {
   assertContextWithinWindow,
@@ -1146,7 +1143,7 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
 
       const errorMsg = errorResult.error?.message || errorResult.message;
 
-      if (isAccountDeactivatedError(errorMsg)) {
+      if (ErrorClassifier.isAccountDeactivated(errorMsg)) {
         log('account deactivated error detected from message');
         return AgentRuntimeError.chat({
           endpoint: desensitizedEndpoint,
@@ -1157,7 +1154,7 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
         });
       }
 
-      if (isInsufficientQuotaError(errorMsg)) {
+      if (ErrorClassifier.isInsufficientQuota(errorMsg)) {
         log('insufficient quota error detected from message');
         return AgentRuntimeError.chat({
           endpoint: desensitizedEndpoint,
@@ -1168,7 +1165,7 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
         });
       }
 
-      if (isExceededContextWindowError(errorMsg)) {
+      if (ErrorClassifier.isExceededContextWindow(errorMsg)) {
         log('context length exceeded detected from message');
         return AgentRuntimeError.chat({
           endpoint: desensitizedEndpoint,
@@ -1179,7 +1176,7 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
         });
       }
 
-      if (isQuotaLimitError(errorMsg)) {
+      if (ErrorClassifier.isRateLimitExceeded(errorMsg)) {
         log('quota limit reached detected from message');
         return AgentRuntimeError.chat({
           endpoint: desensitizedEndpoint,
