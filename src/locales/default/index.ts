@@ -26,6 +26,7 @@ import messenger from './messenger';
 import metadata from './metadata';
 import migration from './migration';
 import modelProvider from './modelProvider';
+import modelRuntime from './modelRuntime';
 import models from './models';
 import notification from './notification';
 import oauth from './oauth';
@@ -76,6 +77,7 @@ const resources = {
   metadata,
   migration,
   modelProvider,
+  modelRuntime,
   models,
   notification,
   oauth,
