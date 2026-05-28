@@ -91,26 +91,8 @@ export const GET = async (_req: Request, segmentData: { params: Params }) => {
     // Create file service with file owner's userId
     const fileService = new FileService(db, file.userId);
 
-    // Verify the S3 object still exists before generating presigned URL
-    try {
-      await fileService.getFileMetadata(file.url);
-    } catch (e) {
-      if (FileService.isS3NotFound(e)) {
-        log('S3 object not found, cleaning up file record: %s', id);
-        const fileModel = new FileModel(db, file.userId);
-        await fileModel.delete(id, serverDBEnv.REMOVE_GLOBAL_FILE);
-
-        // Clear Redis cache if exists
-        if (redisClient) {
-          await redisClient.del(cacheKey);
-        }
-
-        return new Response('File not found', { status: 404 });
-      }
-    }
-
-    // Web: Generate S3 presigned URL (5 minutes expiry)
-    const redirectUrl = await fileService.createPreSignedUrlForPreview(file.url, 300);
+    // Web: Generate S3 presigned URL (5 minutes expiry), normalizing legacy full S3 URLs.
+    const redirectUrl = await fileService.getFullFileUrl(file.url, 300);
     log('Web S3 presigned URL generated (expires in 5 min)');
 
     // Cache the presigned URL in Redis
