@@ -562,4 +562,5 @@ export default {
   'userPanel.setting': 'Settings',
   'userPanel.usages': 'Usage',
   'version': 'Version',
+  'zoom': 'Zoom',
 };
