@@ -11,6 +11,7 @@ import DevtoolsCtr from './DevtoolsCtr';
 import GatewayConnectionCtr from './GatewayConnectionCtr';
 import GitCtr from './GitCtr';
 import HeterogeneousAgentCtr from './HeterogeneousAgentCtr';
+import ImessageBridgeCtr from './ImessageBridgeCtr';
 import LocalFileCtr from './LocalFileCtr';
 import McpCtr from './McpCtr';
 import McpInstallCtr from './McpInstallCtr';
@@ -37,6 +38,7 @@ export const controllerIpcConstructors = [
   GatewayConnectionCtr,
   GitCtr,
   LocalFileCtr,
+  ImessageBridgeCtr,
   McpCtr,
   McpInstallCtr,
   MenuController,
