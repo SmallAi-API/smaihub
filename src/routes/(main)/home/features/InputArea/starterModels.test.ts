@@ -1,11 +1,11 @@
 import { ENABLE_BUSINESS_FEATURES } from '@lobechat/business-const';
 import { describe, expect, it } from 'vitest';
 
-import { GEMINI_3_5_MODEL, GEMINI_3_5_PROVIDER } from './starterModels';
+import { CLAUDE_OPUS_4_8_MODEL, CLAUDE_OPUS_4_8_PROVIDER } from './starterModels';
 
 describe('starter models', () => {
   it('uses the DeepSeek provider in OSS and the smai.ai provider in business builds', () => {
-    expect(GEMINI_3_5_MODEL).toBe('deepseek-v4-pro');
-    expect(GEMINI_3_5_PROVIDER).toBe(ENABLE_BUSINESS_FEATURES ? 'smai' : 'smai');
+    expect(CLAUDE_OPUS_4_8_MODEL).toBe('claude-opus-4-8');
+    expect(CLAUDE_OPUS_4_8_PROVIDER).toBe(ENABLE_BUSINESS_FEATURES ? 'smai' : 'smai');
   });
 });

@@ -1,4 +1,4 @@
-import { Gemini, Jimeng, OpenAI } from '@lobehub/icons';
+import { Claude, Jimeng, OpenAI } from '@lobehub/icons';
 import { type ButtonProps } from '@lobehub/ui';
 import { Button, Center, Tag, Tooltip } from '@lobehub/ui';
 import { App } from 'antd';
@@ -12,9 +12,9 @@ import { useAgentStore } from '@/store/agent';
 import { agentByIdSelectors } from '@/store/agent/selectors';
 
 import { useResolvedHomeAgentId } from '../AgentSelect/useResolvedHomeAgentId';
-import { GEMINI_3_5_MODEL, GEMINI_3_5_PROVIDER } from './starterModels';
+import { CLAUDE_OPUS_4_8_MODEL, CLAUDE_OPUS_4_8_PROVIDER } from './starterModels';
 
-type StarterKey = 'image' | 'video' | 'gemini-3.5-flash';
+type StarterKey = 'claude-opus-4-8' | 'image' | 'video';
 
 const styles = createStaticStyles(({ css, cssVar }) => ({
   button: css`
@@ -35,9 +35,10 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
 }));
 
 type StarterTitleKey =
+  | 'starter.claudeOpus48'
   | 'starter.imageGeneration'
   | 'starter.videoGeneration'
-  | 'starter.gemini-3.5-flash';
+  | 'starter.claudeOpus48';
 
 interface StarterItem {
   disabled?: boolean;
@@ -57,9 +58,9 @@ const StarterList = memo(() => {
   const items: StarterItem[] = useMemo(
     () => [
       {
-        icon: Gemini.Avatar,
-        key: 'gemini-3.5-flash',
-        titleKey: 'starter.gemini-3.5-flash',
+        icon: Claude.Avatar,
+        key: 'claude-opus-4-8',
+        titleKey: 'starter.claudeOpus48',
       },
       {
         icon: OpenAI.Avatar,
@@ -87,7 +88,7 @@ const StarterList = memo(() => {
         return;
       }
 
-      if (key === 'gemini-3.5-flash') {
+      if (key === 'claude-opus-4-8') {
         if (!activeAgentId || switchingKey) return;
         setSwitchingKey(key);
         try {
@@ -103,14 +104,17 @@ const StarterList = memo(() => {
           const currentModel = agentByIdSelectors.getAgentModelById(activeAgentId)(agentState);
           const currentProvider =
             agentByIdSelectors.getAgentModelProviderById(activeAgentId)(agentState);
-          if (currentModel === GEMINI_3_5_MODEL && currentProvider === GEMINI_3_5_PROVIDER) {
+          if (
+            currentModel === CLAUDE_OPUS_4_8_MODEL &&
+            currentProvider === CLAUDE_OPUS_4_8_PROVIDER
+          ) {
             message.info(t('starter.NewModelAlready'));
             return;
           }
 
           await updateAgentConfigById(activeAgentId, {
-            model: GEMINI_3_5_MODEL,
-            provider: GEMINI_3_5_PROVIDER,
+            model: CLAUDE_OPUS_4_8_MODEL,
+            provider: CLAUDE_OPUS_4_8_PROVIDER,
           });
           message.success(t('starter.NewModelSwitched'));
         } finally {
