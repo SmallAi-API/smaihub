@@ -10,6 +10,7 @@ import About from '../about';
 import Advanced from '../advanced';
 import APIKey from '../apikey';
 import Creds from '../creds';
+import Devices from '../devices';
 import Hotkey from '../hotkey';
 import Memory from '../memory';
 import Messenger from '../messenger';
@@ -36,7 +37,7 @@ export const componentMap = {
   [SettingsTabs.Proxy]: Proxy,
   [SettingsTabs.SystemTools]: SystemTools,
   [SettingsTabs.Storage]: Storage,
-
+  [SettingsTabs.Devices]: Devices,
   // Profile related tabs
   [SettingsTabs.Profile]: Profile,
   [SettingsTabs.Stats]: Stats,

@@ -16,6 +16,7 @@ import {
   KeyboardIcon,
   KeyRound,
   Map,
+  MonitorSmartphoneIcon,
   PaletteIcon,
   Sparkles,
   TerminalSquare,
@@ -32,6 +33,7 @@ import {
   useServerConfigStore,
 } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
+import { labPreferSelectors } from '@/store/user/selectors';
 import { userProfileSelectors } from '@/store/user/slices/auth/selectors';
 
 export enum SettingsGroupKey {
@@ -65,6 +67,10 @@ export const useCategory = () => {
   ]);
   const remoteServerUrl = useElectronStore(electronSyncSelectors.remoteServerUrl);
 
+  const enableExecutionDeviceSwitcher = useUserStore(
+    labPreferSelectors.enableExecutionDeviceSwitcher,
+  );
+
   const avatarUrl = useMemo(() => {
     if (!avatar) return undefined;
     if (isDesktop && avatar.startsWith('/') && remoteServerUrl) {
@@ -92,6 +98,11 @@ export const useCategory = () => {
         icon: PaletteIcon,
         key: SettingsTabs.Appearance,
         label: t('tab.appearance'),
+      },
+      enableExecutionDeviceSwitcher && {
+        icon: MonitorSmartphoneIcon,
+        key: SettingsTabs.Devices,
+        label: t('tab.devices'),
       },
       !mobile && {
         icon: KeyboardIcon,
@@ -221,6 +232,7 @@ export const useCategory = () => {
     tAuth,
     tSubscription,
     enableBusinessFeatures,
+    enableExecutionDeviceSwitcher,
     hideDocs,
     mobile,
     showProvider,
