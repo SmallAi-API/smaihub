@@ -1,27 +1,12 @@
 import debug from 'debug';
 
-import { serverDBEnv } from '@/config/db';
 import { FileModel } from '@/database/models/file';
 import { getServerDB } from '@/database/server';
-import { getRedisConfig } from '@/envs/redis';
-import { initializeRedis, isRedisEnabled } from '@/libs/redis';
 import { FileService } from '@/server/services/file';
 
 const log = debug('lobe-file:proxy');
 
 type Params = Promise<{ id: string }>;
-
-const FILE_PROXY_KEY_PREFIX = 'file-proxy:';
-// Cache presigned URL for 4 minutes (URL expires in 5 minutes)
-const PRESIGNED_URL_CACHE_TTL = 240;
-
-const buildCacheKey = (id: string) => `${FILE_PROXY_KEY_PREFIX}${id}`;
-
-interface CachedFileData {
-  redirectUrl: string;
-  s3Key: string;
-  userId: string;
-}
 
 /**
  * File proxy service
@@ -29,8 +14,7 @@ interface CachedFileData {
  *
  * Features:
  * - Query database to get file record (without userId filter for public access)
- * - Generate access URL based on platform (desktop → local file, web → S3 presigned URL)
- * - Cache presigned URL in Redis to reduce S3 API calls
+ * - Generate a temporary S3 presigned preview URL
  * - Return 302 redirect
  */
 export const GET = async (_req: Request, segmentData: { params: Params }) => {
@@ -39,41 +23,6 @@ export const GET = async (_req: Request, segmentData: { params: Params }) => {
     const { id } = params;
 
     log('File proxy request: %s', id);
-
-    // Try to get cached presigned URL from Redis
-    const redisConfig = getRedisConfig();
-    const redisClient = isRedisEnabled(redisConfig) ? await initializeRedis(redisConfig) : null;
-
-    const cacheKey = buildCacheKey(id);
-    if (redisClient) {
-      const cachedStr = await redisClient.get(cacheKey);
-      const cached = cachedStr ? (JSON.parse(cachedStr) as CachedFileData) : null;
-      if (cached?.redirectUrl) {
-        // Validate S3 object still exists before redirecting cached URL
-        if (cached.s3Key && cached.userId) {
-          const db = await getServerDB();
-          const cachedFileService = new FileService(db, cached.userId);
-          try {
-            await cachedFileService.getFileMetadata(cached.s3Key);
-            log('Cache hit for file: %s', id);
-            return Response.redirect(cached.redirectUrl, 302);
-          } catch (e) {
-            if (FileService.isS3NotFound(e)) {
-              log('Cached S3 object gone, cleaning up: %s', id);
-              const fileModel = new FileModel(db, cached.userId);
-              await fileModel.delete(id, serverDBEnv.REMOVE_GLOBAL_FILE);
-              await redisClient.del(cacheKey);
-              return new Response('File not found', { status: 404 });
-            }
-          }
-        } else {
-          // Legacy cache entry without s3Key, use it but it will refresh on next miss
-          log('Cache hit (legacy) for file: %s', id);
-          return Response.redirect(cached.redirectUrl, 302);
-        }
-      }
-      log('Cache miss for file: %s', id);
-    }
 
     // Get database connection
     const db = await getServerDB();
@@ -91,21 +40,9 @@ export const GET = async (_req: Request, segmentData: { params: Params }) => {
     // Create file service with file owner's userId
     const fileService = new FileService(db, file.userId);
 
-    // Web: Generate S3 presigned URL (5 minutes expiry)
-    const redirectUrl = await fileService.createPreSignedUrlForPreview(file.url, 300);
-    log('Web S3 presigned URL generated (expires in 5 min)');
-
-    // Cache the presigned URL in Redis
-    if (redisClient) {
-      await redisClient.set(
-        cacheKey,
-        JSON.stringify({ redirectUrl, s3Key: file.url, userId: file.userId }),
-        {
-          ex: PRESIGNED_URL_CACHE_TTL,
-        },
-      );
-      log('Cached presigned URL for file: %s (TTL: %ds)', id, PRESIGNED_URL_CACHE_TTL);
-    }
+    // Web: Generate a cached S3 presigned URL, normalizing legacy full S3 URLs.
+    const redirectUrl = await fileService.createCachedPreSignedUrlForPreview(file.url);
+    log('Web S3 presigned URL generated');
 
     // Return 302 redirect
     return Response.redirect(redirectUrl, 302);
