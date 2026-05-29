@@ -32,6 +32,7 @@ import notification from './notification';
 import oauth from './oauth';
 import onboarding from './onboarding';
 import openInApp from './openInApp';
+import pageShare from './pageShare';
 import plugin from './plugin';
 import portal from './portal';
 import providers from './providers';
@@ -83,6 +84,7 @@ const resources = {
   oauth,
   onboarding,
   openInApp,
+  pageShare,
   plugin,
   portal,
   providers,
