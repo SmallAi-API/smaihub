@@ -353,6 +353,7 @@
   "messengerBanner.title": "在您最喜欢的消息应用上与 Smai.ai 交谈。",
   "more": "更多",
   "navPanel.agent": "助理",
+  "navPanel.bottomDivider": "项目锚定到底部",
   "navPanel.customizeSidebar": "自定义侧边栏",
   "navPanel.displayItems": "显示条目",
   "navPanel.hidden": "已隐藏",
@@ -482,5 +483,6 @@
   "userPanel.profile": "账户管理",
   "userPanel.setting": "应用设置",
   "userPanel.usages": "使用情况",
-  "version": "版本"
+  "version": "版本",
+  "zoom": "缩放"
 }

@@ -57,8 +57,8 @@ export default {
   'starter.NewModelSwitched': 'Switched to Claude Opus 4.8',
   'starter.developing': 'Coming soon',
   'starter.image': 'Image',
-  'starter.imageGeneration': 'GPT Image 2',
+  'starter.modelInUse': 'Already using {{name}}',
+  'starter.modelSwitched': 'Switched to {{name}}',
   'starter.newLabel': 'New',
-  'starter.videoGeneration': 'Seedance 2.0',
   'starter.write': 'Write',
 };
