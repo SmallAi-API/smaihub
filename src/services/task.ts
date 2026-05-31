@@ -52,6 +52,7 @@ class TaskService {
     automationMode?: TaskAutomationMode;
     createdByAgentId?: string;
     description?: string;
+    editorData?: unknown;
     identifierPrefix?: string;
     instruction: string;
     name?: string;
@@ -71,7 +72,8 @@ class TaskService {
       config?: Record<string, unknown>;
       context?: Record<string, unknown>;
       description?: string;
-      // heartbeatInterval: 周期执行间隔（秒），控制每隔多久自动执行一次 task
+      editorData?: unknown;
+      // heartbeatInterval: periodic execution interval (seconds), controls how often the task auto-executes
       heartbeatInterval?: number;
       // heartbeatTimeout: watchdog 超时阈值（秒），用于检测 running task 是否卡死
       heartbeatTimeout?: number | null;
@@ -103,14 +105,19 @@ class TaskService {
   addComment = async (
     id: string,
     content: string,
-    opts?: { authorAgentId?: string; briefId?: string; topicId?: string },
+    opts?: {
+      authorAgentId?: string;
+      briefId?: string;
+      editorData?: unknown;
+      topicId?: string;
+    },
   ) => lambdaClient.task.addComment.mutate({ content, id, ...opts });
 
   deleteComment = async (commentId: string) =>
     lambdaClient.task.deleteComment.mutate({ commentId });
 
-  updateComment = async (commentId: string, content: string) =>
-    lambdaClient.task.updateComment.mutate({ commentId, content });
+  updateComment = async (commentId: string, content: string, opts?: { editorData?: unknown }) =>
+    lambdaClient.task.updateComment.mutate({ commentId, content, ...opts });
 
   addDependency = async (
     taskId: string,

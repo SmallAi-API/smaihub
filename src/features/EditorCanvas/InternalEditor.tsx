@@ -10,6 +10,7 @@ import {
   ReactToolbarPlugin,
 } from '@lobehub/editor';
 import { Editor, useEditorState } from '@lobehub/editor/react';
+import { createStaticStyles } from 'antd-style';
 import isEqual from 'fast-deep-equal';
 import { memo, type RefObject, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,11 +19,25 @@ import { createChatInputRichPlugins } from '@/features/ChatInput/InputEditor/plu
 
 import { type EditorCanvasProps } from './EditorCanvas';
 import InlineToolbar from './InlineToolbar';
-import { useImageUpload } from './useImageUpload';
+import LinearFilePlugin from './LinearFilePlugin';
+import { registerAttachmentClickOpen } from './registerAttachmentClickOpen';
+import { useFileUpload, useImageUpload } from './useImageUpload';
 
 const IMAGE_FILTERS = [
   { extensions: ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'avif'], name: 'Images' },
 ];
+
+// Force the Lexical FileNode's outer `<span>` to render as its own block-
+// level row inside the paragraph. The inner card visuals (icon + name + size
+// + download button) live in `LinearFilePlugin`.
+const fileNodeStyles = createStaticStyles(({ css }) => ({
+  fileWrapper: css`
+    display: block !important;
+    width: 100% !important;
+    margin-block: 8px !important;
+  `,
+}));
+
 /**
  * Base plugins for the editor (without image and toolbar, which need dynamic config)
  */
@@ -82,11 +97,13 @@ export interface InternalEditorProps extends EditorCanvasProps {
 const InternalEditor = memo<InternalEditorProps>(
   ({
     contentChangeLockRef,
+    editable = true,
     editor,
     extraPlugins,
     floatingToolbar = true,
     onContentChange,
     onInit,
+    onPressEnter,
     placeholder,
     plugins: customPlugins,
     slashItems,
@@ -96,6 +113,7 @@ const InternalEditor = memo<InternalEditorProps>(
     const { t } = useTranslation('file');
     const editorState = useEditorState(editor);
     const handleImageUpload = useImageUpload();
+    const handleFileUpload = useFileUpload();
 
     const handlePickFile = useCallback(async (): Promise<File | null> => {
       if (!isDesktop) return null;
@@ -119,10 +137,16 @@ const InternalEditor = memo<InternalEditorProps>(
         handleUpload: handleImageUpload,
         onPickFile: isDesktop ? handlePickFile : undefined,
       });
+
+      const filePlugin = Editor.withProps(LinearFilePlugin, {
+        handleUpload: handleFileUpload,
+        theme: { file: fileNodeStyles.fileWrapper as unknown as string },
+      });
+
       // Build base plugins with optional extra plugins prepended
       const basePlugins = extraPlugins
-        ? [...extraPlugins, ...STATIC_PLUGINS, imagePlugin]
-        : [...STATIC_PLUGINS, imagePlugin];
+        ? [...extraPlugins, ...STATIC_PLUGINS, imagePlugin, filePlugin]
+        : [...STATIC_PLUGINS, imagePlugin, filePlugin];
 
       // Add toolbar if enabled
       if (floatingToolbar) {
@@ -148,6 +172,7 @@ const InternalEditor = memo<InternalEditorProps>(
       editorState,
       extraPlugins,
       floatingToolbar,
+      handleFileUpload,
       handleImageUpload,
       handlePickFile,
       toolbarExtraItems,
@@ -160,6 +185,15 @@ const InternalEditor = memo<InternalEditorProps>(
       return () => {
         window.__editor = undefined;
       };
+    }, [editor]);
+
+    // Open file attachments in a new tab on click (PDFs preview natively).
+    // Workaround for @lobehub/editor's ReactFile decorator not exposing a
+    // download / preview affordance.
+    useEffect(() => {
+      if (!editor) return;
+      const unregister = registerAttachmentClickOpen(editor);
+      return () => unregister?.();
     }, [editor]);
 
     const onInitRef = useRef(onInit);
@@ -254,6 +288,7 @@ const InternalEditor = memo<InternalEditorProps>(
       >
         <Editor
           content={''}
+          editable={editable}
           editor={editor}
           placeholder={finalPlaceholder}
           plugins={plugins}
@@ -263,6 +298,7 @@ const InternalEditor = memo<InternalEditorProps>(
             paddingBottom: 32,
             ...style,
           }}
+          {...(onPressEnter ? { onPressEnter } : {})}
         />
       </div>
     );
