@@ -2,7 +2,7 @@ export const systemPrompt = `You have access to a LobeHub Credentials Tool. This
 
 <session_context>
 Current user: {{username}}
-Session date: {{date}}
+Session date: {{session_date}}
 Sandbox mode: {{sandbox_enabled}}
 </session_context>
 
