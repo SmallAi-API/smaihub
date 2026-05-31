@@ -1,7 +1,10 @@
+import path from 'node:path';
+
 import type { MenuItemConstructorOptions } from 'electron';
 import { app, BrowserWindow, clipboard, Menu, shell } from 'electron';
 
 import { isDev } from '@/const/env';
+import { HETERO_AGENT_DIR } from '@/const/heteroAgent';
 
 import { type ContextMenuData, type IMenuPlatform, type MenuOptions } from '../types';
 import { BaseMenuPlatform } from './BaseMenuPlatform';
@@ -193,6 +196,36 @@ export class WindowsMenu extends BaseMenuPlatform implements IMenuPlatform {
               }
             },
             label: t('window.close'),
+          },
+        ],
+      },
+      {
+        label: t('help.title'),
+        submenu: [
+          {
+            click: async () => {
+              await shell.openExternal('https://api.smai.ai');
+            },
+            label: t('help.visitWebsite'),
+          },
+          { type: 'separator' },
+          {
+            click: () => {
+              const heteroAgentPath = path.join(this.app.appStoragePath, HETERO_AGENT_DIR);
+              console.info(`[Menu] Opening HeteroAgent directory: ${heteroAgentPath}`);
+              shell.openPath(heteroAgentPath).catch((err) => {
+                console.error(`[Menu] Error opening path ${heteroAgentPath}:`, err);
+              });
+            },
+            label: t('help.openHeteroAgentDir'),
+          },
+          {
+            checked: this.app.storeManager.get('heteroTracingEnabled', false),
+            click: (item) => {
+              this.app.storeManager.set('heteroTracingEnabled', item.checked);
+            },
+            label: t('help.toggleHeteroTracing'),
+            type: 'checkbox',
           },
         ],
       },
