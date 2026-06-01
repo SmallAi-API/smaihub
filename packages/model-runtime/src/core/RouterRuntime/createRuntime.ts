@@ -700,6 +700,22 @@ export const createRouterRuntime = ({
       );
     }
 
+    async handlePollVideoStatus(inferenceId: string) {
+      const resolvedRouters = await this.resolveRouters();
+      const matchedRouter = this._options.baseURL
+        ? (resolvedRouters.find((router) => router.baseURLPattern?.test(this._options.baseURL!)) ??
+          resolvedRouters.at(-1)!)
+        : resolvedRouters.at(-1)!;
+      const routerOptions = this.normalizeRouterOptions(matchedRouter);
+      const { runtime } = await this.createRuntimeFromOption(matchedRouter, routerOptions[0]);
+
+      if (!runtime.handlePollVideoStatus) {
+        throw new Error('Video polling is not supported by the matched runtime');
+      }
+
+      return runtime.handlePollVideoStatus(inferenceId);
+    }
+
     async handleCreateVideoWebhook(payload: HandleCreateVideoWebhookPayload) {
       const model = (payload.body as any)?.model;
       const matchedRouter =
@@ -709,15 +725,6 @@ export const createRouterRuntime = ({
       const routerOptions = this.normalizeRouterOptions(matchedRouter);
       const { runtime } = await this.createRuntimeFromOption(matchedRouter, routerOptions[0]);
       return runtime.handleCreateVideoWebhook!(payload);
-    }
-
-    async handlePollVideoStatus(inferenceId: string) {
-      // For polling, we don't have model info, so use the first router (fallback)
-      const resolvedRouters = await this.resolveRouters();
-      const matchedRouter = resolvedRouters[0];
-      const routerOptions = this.normalizeRouterOptions(matchedRouter);
-      const { runtime } = await this.createRuntimeFromOption(matchedRouter, routerOptions[0]);
-      return runtime.handlePollVideoStatus!(inferenceId);
     }
 
     async generateObject(payload: GenerateObjectPayload, options?: GenerateObjectOptions) {
