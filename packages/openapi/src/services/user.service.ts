@@ -33,8 +33,8 @@ export class UserService extends BaseService {
    * @param userId 用户ID
    * @returns 用户信息和角色信息
    */
-  private async getUserWithRoles(userId: string): Promise<UserWithRoles> {
-    // 使用子查询的方式避免复杂的GROUP BY
+  private async getUserWithRoles(userId: string, includeCount = true): Promise<UserWithRoles> {
+    // Use subquery approach to avoid complex GROUP BY
     const user = await this.db.query.users.findFirst({
       where: eq(users.id, userId),
     });
@@ -43,7 +43,20 @@ export class UserService extends BaseService {
       throw this.createNotFoundError('用户不存在');
     }
 
-    // 并行获取角色和消息数量，提高效率
+    if (!includeCount) {
+      const userRoleResults = await this.db
+        .select({ roles })
+        .from(userRoles)
+        .innerJoin(roles, eq(userRoles.roleId, roles.id))
+        .where(eq(userRoles.userId, userId));
+
+      return {
+        ...user,
+        roles: userRoleResults.map((r) => r.roles),
+      };
+    }
+
+    // Fetch roles and message count in parallel for better efficiency
     const [userRoleResults, messageCountResult] = await Promise.all([
       this.db
         .select({ roles })
@@ -65,11 +78,11 @@ export class UserService extends BaseService {
    * 获取当前登录用户信息
    * @returns 用户信息
    */
-  async getCurrentUser(): ServiceResult<UserWithRoles> {
+  async getCurrentUser(includeCount = true): ServiceResult<UserWithRoles> {
     this.log('info', '获取当前登录用户信息及角色信息');
 
-    // 查询用户基本信息
-    return this.getUserWithRoles(this.userId!);
+    // Query basic user info
+    return this.getUserWithRoles(this.userId!, includeCount);
   }
 
   /**
