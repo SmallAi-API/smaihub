@@ -5,7 +5,7 @@ import type { HomeNewModelItem } from '@/business/client/hooks/useHomeNewModels'
 // Chat
 
 export const NEW_CHAT_MODEL = 'claude-opus-4-8';
-export const NEW_CHAT_PROVIDER = ENABLE_BUSINESS_FEATURES ? 'lobehub' : 'anthropic';
+export const NEW_CHAT_PROVIDER = 'smai';
 export const NEW_CHAT_MODEL_NAME = 'Claude Opus 4.8';
 
 // Image
