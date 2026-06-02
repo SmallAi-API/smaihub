@@ -62,6 +62,109 @@ Select multiple files and open the menu in the top-right corner to perform batch
 
 ### Cross-Feature Collaboration
 
-- Chat + Resource Library: Reference resources during conversations so the assistant can provide answers based on your knowledge.
-- Drafts + Resource Library: Use materials from the Resource Library while writing to enhance content creation efficiency.
-- Drawing + Resource Library: Save generated images to the Resource Library for centralized management of all visual assets.
+**Supported formats:**
+
+- Documents: PDF, Word (.docx), PowerPoint (.pptx), Excel (.xlsx), Markdown, plain text (.txt)
+- Code: Most programming languages
+- Data: CSV, JSON, XML, HTML
+- Images: JPEG, PNG, GIF, WebP, SVG
+- Audio: MP3, WAV, M4A, FLAC
+- Video: MP4, MOV, WebM
+
+File size limit is typically 50 MB per file. For very large documents, consider splitting them before uploading for better search performance.
+
+### File Organization
+
+- Use clear, descriptive filenames
+- Organize by topic or category
+- Keep files updated and remove outdated ones
+- Use version numbers for evolving docs
+- Break large documents into focused files
+
+## Advanced Features
+
+### Relevance Scoring
+
+Search results include relevance scores (0–1). Scores above 0.85 indicate a strong match, 0.7–0.85 indicate moderate relevance worth reviewing, and below 0.7 may not be useful.
+
+### Excerpt Preview
+
+Search results include brief excerpts from matched chunks. Review these before reading full files — often the excerpt contains enough information.
+
+### Citation & Attribution
+
+When Agents use your knowledge base, best practices include:
+
+- Reference specific files by name
+- Include section/page numbers when available
+- Quote directly for critical information
+- Indicate when synthesizing across multiple sources
+
+### System Prompt Integration
+
+Guide knowledge base usage in your Agent's system prompt:
+
+```
+You are a customer support agent with access to our product documentation.
+
+When answering product questions:
+1. Always search the knowledge base first
+2. Cite specific documents in your responses
+3. If unsure, read the full document for context
+4. If you can't find info, let the user know
+```
+
+## Cross-Feature Collaboration
+
+- **Chat + Resource Library** — Reference resources during conversations so the Agent answers from your knowledge
+- **Pages + Resource Library** — Use materials from the Resource Library while writing to enhance content creation
+- **Drawing + Resource Library** — Save generated images to the Resource Library for centralized management of visual assets
+
+## Use Cases
+
+- **Technical documentation** — Upload API docs, guides, or specs and ask questions in natural language
+- **Company knowledge** — Centralize onboarding materials, policies, and wikis for Agent-assisted retrieval
+- **Customer support** — Upload FAQs and product documentation to power accurate support responses
+- **Research** — Collect papers and articles and let the Agent synthesize findings across sources
+- **Code documentation** — Store architecture docs and code guides to help developers understand codebases
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="No Search Results">
+    **Solutions**:
+
+    - Verify documents are uploaded and processed (chunked)
+    - Rephrase query with different terminology
+    - Use broader, more general search terms
+    - Check if topic is covered in uploaded docs
+    - Resolve pronouns to concrete entity names
+  </Accordion>
+
+  <Accordion title="Poor Relevance">
+    **Solutions**:
+
+    - Reformulate query with more context
+    - Try multiple related queries
+    - Verify document quality and format
+    - Check if chunking is appropriate
+    - Use full entity names instead of pronouns
+  </Accordion>
+
+  <Accordion title="Slow Performance">
+    **Solutions**:
+
+    - Break large documents into focused files
+    - Remove outdated or irrelevant files
+    - Use specific queries to reduce search scope
+    - Read only the most relevant files instead of all results
+  </Accordion>
+</AccordionGroup>
+
+<Cards>
+  <Card href={'/docs/usage/getting-started/agent'} title={'Agent'} />
+
+  <Card href={'/docs/usage/getting-started/page'} title={'Pages'} />
+
+  <Card href={'/docs/usage/getting-started/generation'} title={'Image & Video Generation'} />
+</Cards>
