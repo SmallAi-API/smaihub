@@ -82,19 +82,14 @@ cd packages/[package-name] && bunx vitest run --silent='passed-only' '[file-path
 
 ### i18n
 
-- **Keys**: Add to `src/locales/default/namespace.ts`
-- **Dev**: Translate `locales/zh-CN/namespace.json` locale file only for preview
-- DON'T run `pnpm i18n`, let CI auto handle it
+- Add keys to a namespace file under `src/locales/default/` (e.g. `agent.ts`, `auth.ts`)
+- For dev preview: translate `locales/zh-CN/` and `locales/en-US/`
+- `pnpm i18n` is slow; run it manually when locale keys need updating (e.g. before opening a PR).
 
-## SPA Routes and Features
+### Code Style
 
-- **`src/routes/`** holds only page segments (`_layout/index.tsx`, `index.tsx`, `[id]/index.tsx`). Keep route files **thin** — import from `@/features/*` and compose, no business logic.
-- **`src/features/`** holds business components by **domain** (e.g. `Pages`, `PageEditor`, `Home`). Layout pieces, hooks, and domain UI go here.
-- **Desktop router parity:** When changing the main SPA route tree, update **both** `src/spa/router/desktopRouter.config.tsx` (dynamic imports) and `src/spa/router/desktopRouter.config.desktop.tsx` (sync imports) so paths and nesting match. Changing only one can leave routes unregistered and cause **blank screens**.
-- See the **spa-routes** skill (`.agents/skills/spa-routes/SKILL.md`) for the full convention and file-division rules.
+- When a single file grows beyond \~800 lines, consider splitting it into multiple files (extract sub-components, hooks, helpers, or types). Smaller, focused files are friendly to humans and agents.
 
-## Skills (Auto-loaded)
+### Code Review
 
-All AI development skills are available in `.agents/skills/` directory and auto-loaded by Claude Code when relevant.
-
-**IMPORTANT**: When reviewing PRs or code diffs, ALWAYS read `.agents/skills/code-review/SKILL.md` first.
+Before reviewing a PR / diff / branch change, read the **review-checklist** skill (`.agents/skills/review-checklist/SKILL.md`) — it lists the recurring mistakes specific to this codebase.
