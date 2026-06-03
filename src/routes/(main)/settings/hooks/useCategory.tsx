@@ -2,7 +2,6 @@ import { isDesktop } from '@lobechat/const';
 import { Avatar } from '@lobehub/ui';
 import { SkillsIcon } from '@lobehub/ui/icons';
 import {
-  BellIcon,
   Brain,
   BrainCircuit,
   ChartColumnBigIcon,
@@ -108,11 +107,6 @@ export const useCategory = () => {
         icon: KeyboardIcon,
         key: SettingsTabs.Hotkey,
         label: t('tab.hotkey'),
-      },
-      {
-        icon: BellIcon,
-        key: SettingsTabs.Notification,
-        label: t('tab.notification'),
       },
     ].filter(Boolean) as CategoryItem[];
 

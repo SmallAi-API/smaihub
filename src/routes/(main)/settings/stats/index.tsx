@@ -1,6 +1,7 @@
 'use client';
 
 import { FormGroup, Grid } from '@lobehub/ui';
+import { Divider } from 'antd';
 import dayjs from 'dayjs';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +18,8 @@ import {
   TotalWords,
   Welcome,
 } from './features/overview';
+import { AssistantsRank, ModelsRank, TopicsRank } from './features/rankings';
+import { AiHeatmaps } from './features/visualization';
 
 const StatsSetting = memo<{ mobile?: boolean }>(({ mobile }) => {
   const { t, i18n } = useTranslation('auth');
@@ -32,7 +35,7 @@ const StatsSetting = memo<{ mobile?: boolean }>(({ mobile }) => {
     if (dateStrings) {
       mutate();
     }
-  }, [dateStrings]);
+  }, [dateStrings, mutate]);
 
   return (
     <>
@@ -50,6 +53,14 @@ const StatsSetting = memo<{ mobile?: boolean }>(({ mobile }) => {
           <TotalTopics mobile={mobile} />
           <TotalMessages mobile={mobile} />
           <TotalWords />
+        </Grid>
+        <Divider dashed />
+        <AiHeatmaps mobile={mobile} />
+        <Divider dashed />
+        <Grid gap={16} rows={3} style={{ paddingBottom: 12 }}>
+          <ModelsRank />
+          <AssistantsRank mobile={mobile} />
+          <TopicsRank mobile={mobile} />
         </Grid>
       </FormGroup>
     </>
