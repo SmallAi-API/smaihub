@@ -29,11 +29,14 @@ export const useDropdownMenu = ({
     if (!id) return;
 
     confirmModal({
+      cancelText: t('cancel', { ns: 'common' }),
+      content: t('library.list.confirmRemoveLibrary'),
       okButtonProps: { danger: true },
+      okText: t('delete', { ns: 'common' }),
       onOk: async () => {
         await removeKnowledgeBase(id);
       },
-      title: t('library.list.confirmRemoveLibrary'),
+      title: t('header.actions.deleteLibrary'),
     });
   };
 
