@@ -1,5 +1,5 @@
-import { isNotNull } from 'drizzle-orm';
-import { type AnyPgColumn } from 'drizzle-orm/pg-core';
+import { isNotNull, sql } from 'drizzle-orm';
+import type { AnyPgColumn } from 'drizzle-orm/pg-core';
 import {
   boolean,
   index,
@@ -138,7 +138,7 @@ export const documents = pgTable(
     uniqueIndex('documents_client_id_user_id_unique').on(table.clientId, table.userId),
     uniqueIndex('documents_slug_user_id_unique')
       .on(table.slug, table.userId)
-      .where(isNotNull(table.slug)),
+      .where(sql`${table.workspaceId} IS NULL AND ${table.slug} IS NOT NULL`),
     index('documents_workspace_id_idx').on(table.workspaceId),
     uniqueIndex('documents_slug_workspace_id_unique')
       .on(table.workspaceId, table.slug)
