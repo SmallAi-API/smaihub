@@ -1,16 +1,19 @@
+import type { CustomPluginParams, ToolManifest } from '@lobechat/types';
 import {
   boolean,
   index,
   jsonb,
   pgTable,
+  primaryKey,
   text,
   uniqueIndex,
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
 
-import { timestamps, timestamptz } from './_helpers';
+import { timestamps, timestamptz, varchar255 } from './_helpers';
 import { users } from './user';
+import { workspaces } from './workspace';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // user_connectors — types & consts
@@ -109,7 +112,7 @@ export const userConnectors = pgTable(
     userId: text('user_id')
       .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
-    workspaceId: text('workspace_id'),
+    workspaceId: text('workspace_id').references(() => workspaces.id, { onDelete: 'cascade' }),
 
     // ── Connector identity ────────────────────────────────────────────────
     /** Fixed slug for built-ins (e.g. "linear"); nanoid for custom ones */
@@ -209,7 +212,7 @@ export const userConnectorTools = pgTable(
     userId: text('user_id')
       .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
-    workspaceId: text('workspace_id'),
+    workspaceId: text('workspace_id').references(() => workspaces.id, { onDelete: 'cascade' }),
 
     // ── Tool definition (synced from MCP manifest) ────────────────────────
     toolName: varchar('tool_name', { length: 255 }).notNull(),
@@ -277,3 +280,27 @@ export const userConnectorTools = pgTable(
 
 export type NewUserConnectorTool = typeof userConnectorTools.$inferInsert;
 export type UserConnectorToolItem = typeof userConnectorTools.$inferSelect;
+
+export const userInstalledPlugins = pgTable(
+  'user_installed_plugins',
+  {
+    userId: text('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    workspaceId: text('workspace_id').references(() => workspaces.id, { onDelete: 'cascade' }),
+
+    identifier: text('identifier').notNull(),
+    type: text('type', { enum: ['plugin', 'customPlugin'] }).notNull(),
+    manifest: jsonb('manifest').$type<ToolManifest>(),
+    settings: jsonb('settings'),
+    customParams: jsonb('custom_params').$type<CustomPluginParams>(),
+    source: varchar255('source'),
+    ...timestamps,
+  },
+  (self) => ({
+    id: primaryKey({ columns: [self.userId, self.identifier] }),
+  }),
+);
+
+export type NewInstalledPlugin = typeof userInstalledPlugins.$inferInsert;
+export type InstalledPluginItem = typeof userInstalledPlugins.$inferSelect;
