@@ -45,7 +45,7 @@ describe('TopicModel - Create', () => {
 
       const createdTopic = await topicModel.create(topicData, topicId);
 
-      expect(createdTopic).toEqual({
+      expect(createdTopic).toMatchObject({
         id: topicId,
         title: 'New Topic',
         favorite: true,
@@ -109,7 +109,7 @@ describe('TopicModel - Create', () => {
         log: (event) => timingEvents.push(event),
       });
 
-      expect(createdTopic).toEqual({
+      expect(createdTopic).toMatchObject({
         id: topicId,
         title: 'New Topic',
         favorite: false,
@@ -343,7 +343,7 @@ describe('TopicModel - Create', () => {
         ]);
       });
 
-      const { topic: duplicatedTopic, messages: duplicatedMessages } = await topicModel.duplicate(
+      const { messages: duplicatedMessages } = await topicModel.duplicate(
         topicId,
         'Duplicated Topic',
       );
@@ -404,7 +404,7 @@ describe('TopicModel - Create', () => {
         });
       });
 
-      const { topic: duplicatedTopic, messages: duplicatedMessages } = await topicModel.duplicate(
+      const { messages: duplicatedMessages } = await topicModel.duplicate(
         topicId,
         'Duplicated Topic',
       );

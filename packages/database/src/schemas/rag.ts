@@ -1,4 +1,3 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix  */
 import {
   index,
   integer,
@@ -28,6 +27,7 @@ export const chunks = pgTable(
 
     clientId: text('client_id'),
     userId: text('user_id').references(() => users.id, { onDelete: 'cascade' }),
+    workspaceId: text('workspace_id'),
 
     ...timestamps,
   },
@@ -54,6 +54,7 @@ export const unstructuredChunks = pgTable(
     compositeId: uuid('composite_id').references(() => chunks.id, { onDelete: 'cascade' }),
     clientId: text('client_id'),
     userId: text('user_id').references(() => users.id, { onDelete: 'cascade' }),
+    workspaceId: text('workspace_id'),
     fileId: varchar('file_id').references(() => files.id, { onDelete: 'cascade' }),
   },
   (t) => ({
@@ -80,6 +81,7 @@ export const embeddings = pgTable(
     model: text('model'),
     clientId: text('client_id'),
     userId: text('user_id').references(() => users.id, { onDelete: 'cascade' }),
+    workspaceId: text('workspace_id'),
   },
   (t) => [
     uniqueIndex('embeddings_client_id_user_id_unique').on(t.clientId, t.userId),
@@ -112,6 +114,7 @@ export const documentChunks = pgTable(
     userId: text('user_id')
       .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
+    workspaceId: text('workspace_id'),
 
     createdAt: createdAt(),
   },

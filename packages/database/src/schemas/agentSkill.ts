@@ -1,5 +1,4 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix  */
-import { SkillManifest, SkillResourceMeta } from '@lobechat/types';
+import type { SkillManifest, SkillResourceMeta } from '@lobechat/types';
 import { relations } from 'drizzle-orm';
 import { index, jsonb, pgTable, text, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 
@@ -45,6 +44,7 @@ export const agentSkills = pgTable(
     userId: text('user_id')
       .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
+    workspaceId: text('workspace_id'),
 
     ...timestamps,
   },

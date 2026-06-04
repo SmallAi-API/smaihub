@@ -60,6 +60,7 @@ describe('generationBatchRouter', () => {
     const mockDeletedBatch: GenerationBatchItem = {
       id: mockBatchId,
       userId: 'test-user',
+      workspaceId: null,
       generationTopicId: 'topic-1',
       provider: 'test-provider',
       model: 'test-model',
@@ -107,6 +108,7 @@ describe('generationBatchRouter', () => {
     const mockDeletedBatch: GenerationBatchItem = {
       id: mockBatchId,
       userId: 'test-user',
+      workspaceId: null,
       generationTopicId: 'topic-1',
       provider: 'test-provider',
       model: 'test-model',
@@ -154,6 +156,7 @@ describe('generationBatchRouter', () => {
     const mockDeletedBatch: GenerationBatchItem = {
       id: mockBatchId,
       userId: 'test-user',
+      workspaceId: null,
       generationTopicId: 'topic-1',
       provider: 'test-provider',
       model: 'test-model',
@@ -326,6 +329,7 @@ describe('generationBatchRouter', () => {
     const mockDeletedBatch: GenerationBatchItem = {
       id: mockBatchId,
       userId: 'test-user',
+      workspaceId: null,
       generationTopicId: 'topic-1',
       provider: 'test-provider',
       model: 'test-model',
@@ -408,6 +412,7 @@ describe('generationBatchRouter', () => {
     const mockDeletedBatch: GenerationBatchItem = {
       id: mockBatchId,
       userId: 'test-user',
+      workspaceId: null,
       generationTopicId: 'topic-1',
       provider: 'test-provider',
       model: 'test-model',

@@ -17,7 +17,7 @@ import { users } from './user';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface OIDCConfig {
-  scheme: 'pre_registration' | 'dcr' | 'client_id_metadata_document';
+  authorizationEndpoint?: string;
 
   /**
    * Client identifier.
@@ -29,16 +29,16 @@ export interface OIDCConfig {
 
   /** OIDC discovery issuer URL — preferred over manual endpoint overrides */
   issuer?: string;
-  authorizationEndpoint?: string;
-  tokenEndpoint?: string;
-
-  scopes?: string[];
   redirectUri?: string;
-  /** Recommended for public clients */
-  usePKCE?: boolean;
-
   /** DCR only (RFC 7591) — dynamic client registration endpoint */
   registrationEndpoint?: string;
+
+  scheme: 'pre_registration' | 'dcr' | 'client_id_metadata_document';
+  scopes?: string[];
+  tokenEndpoint?: string;
+
+  /** Recommended for public clients */
+  usePKCE?: boolean;
 }
 
 /**
@@ -109,6 +109,7 @@ export const userConnectors = pgTable(
     userId: text('user_id')
       .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
+    workspaceId: text('workspace_id'),
 
     // ── Connector identity ────────────────────────────────────────────────
     /** Fixed slug for built-ins (e.g. "linear"); nanoid for custom ones */
@@ -208,6 +209,7 @@ export const userConnectorTools = pgTable(
     userId: text('user_id')
       .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
+    workspaceId: text('workspace_id'),
 
     // ── Tool definition (synced from MCP manifest) ────────────────────────
     toolName: varchar('tool_name', { length: 255 }).notNull(),
@@ -267,10 +269,7 @@ export const userConnectorTools = pgTable(
   },
   (t) => [
     /** One permission row per (connector, tool) */
-    uniqueIndex('user_connector_tools_connector_tool_unique').on(
-      t.userConnectorId,
-      t.toolName,
-    ),
+    uniqueIndex('user_connector_tools_connector_tool_unique').on(t.userConnectorId, t.toolName),
     index('user_connector_tools_user_id_idx').on(t.userId),
     index('user_connector_tools_connector_id_idx').on(t.userConnectorId),
   ],

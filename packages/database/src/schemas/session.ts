@@ -1,4 +1,3 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix  */
 import { boolean, index, integer, pgTable, text, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 
@@ -22,6 +21,7 @@ export const sessionGroups = pgTable(
       .notNull(),
 
     clientId: text('client_id'),
+    workspaceId: text('workspace_id'),
     ...timestamps,
   },
   (table) => ({
@@ -62,6 +62,7 @@ export const sessions = pgTable(
     groupId: text('group_id').references(() => sessionGroups.id, { onDelete: 'set null' }),
     clientId: text('client_id'),
     pinned: boolean('pinned').default(false),
+    workspaceId: text('workspace_id'),
 
     ...timestamps,
   },
