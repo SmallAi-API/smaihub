@@ -412,6 +412,7 @@
   "platformAgent.deviceGuard.platformUnavailable.desc": "{{name}} is not installed on the connected device.",
   "platformAgent.deviceGuard.platformUnavailable.title": "{{name}} not available",
   "platformAgent.deviceGuard.refresh": "Refresh",
+  "plus.addAttachments": "Attachments",
   "plus.addSkills": "Add Skills...",
   "plus.search.appSearch": "Smart Search",
   "plus.search.appSearchDesc": "smai.ai optimized search service, delivering best retrieval results.",
