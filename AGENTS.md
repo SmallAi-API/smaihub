@@ -71,14 +71,13 @@ bunx vitest run --silent='passed-only' '[file-path-pattern]'
 cd packages/[package-name] && bunx vitest run --silent='passed-only' '[file-path-pattern]'
 ```
 
-**Important Notes**:
-
-- Wrap file paths in single quotes to avoid shell expansion
-- Never run `bun run test` - this runs all tests and takes \~10 minutes
+- Prefer `vi.spyOn` over `vi.mock`
 
 ### Type Checking
 
-- Use `bun run type-check` to check for type errors
+```bash
+bun run type-check
+```
 
 ### i18n
 
