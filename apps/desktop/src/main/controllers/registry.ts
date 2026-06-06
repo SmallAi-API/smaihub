@@ -28,6 +28,7 @@ import SystemController from './SystemCtr';
 import ToolDetectorCtr from './ToolDetectorCtr';
 import TrayMenuCtr from './TrayMenuCtr';
 import UpdaterCtr from './UpdaterCtr';
+import WorkspaceCtr from './WorkspaceCtr';
 
 export const controllerIpcConstructors = [
   HeterogeneousAgentCtr,
@@ -54,6 +55,7 @@ export const controllerIpcConstructors = [
   ToolDetectorCtr,
   TrayMenuCtr,
   UpdaterCtr,
+  WorkspaceCtr,
 ] as const satisfies readonly IpcServiceConstructor[];
 
 type DesktopControllerIpcConstructors = typeof controllerIpcConstructors;
