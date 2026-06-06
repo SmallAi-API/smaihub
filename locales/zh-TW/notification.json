@@ -13,6 +13,8 @@
   "inbox.filterUnread": "僅顯示未讀",
   "inbox.markAllRead": "全部標記為已讀",
   "inbox.title": "通知",
+  "storage_overage_cap_reached": "您的按需付費存儲月度上限 ${{monthlyCap}} 已達到。本周期的預估費用為 ${{estimatedCycleCharge}}。在下個計費周期之前，或在您提高上限之前，超出您包含的存儲的新上傳將被阻止。",
+  "storage_overage_cap_reached_title": "按需付費存儲上限已達到",
   "video_generation_completed": "您的影片 \"{{prompt}}\" 已準備好。",
   "video_generation_completed_title": "影片生成完成"
 }

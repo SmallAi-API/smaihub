@@ -22,6 +22,7 @@
   "InvalidRequestFormat": "抱歉，上游提供者拒絕了請求，因為格式不正確。請檢查輸入或嘗試不同的模型。",
   "InvalidVertexCredentials": "Vertex 認證失敗。請檢查您的憑證並重試。",
   "LocationNotSupportError": "抱歉，您當前的位置不支持此模型服務。這可能是由於區域限制或服務不可用。請確認當前位置是否支持使用此服務，或嘗試使用不同的位置。",
+  "ModelEmptyCompletion": "模型返回了空的回應。這通常在重試後會解決；如果問題持續，請嘗試簡化請求或切換模型。",
   "ModelNotFound": "抱歉，找不到請求的模型。它可能不存在，或者您可能沒有必要的訪問權限。請在更改 API 密鑰或調整訪問權限後重試。",
   "NoAvailableChannel": "抱歉，代理或路由器沒有可用的通道來請求的模型。請切換通道/密鑰配置或稍後重試。",
   "OllamaBizError": "請求 Ollama 服務時發生錯誤，請根據以下信息進行故障排除或重試。",

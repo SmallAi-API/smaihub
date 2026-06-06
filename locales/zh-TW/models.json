@@ -7,6 +7,7 @@
   "MiniMax-M2.1-Lightning.description": "強大的多語言編程能力，提供更快且更高效的推理。",
   "MiniMax-M2.7-highspeed.description": "與 M2.7 相同的性能，但推理速度顯著更快（約 100 tps）。",
   "MiniMax-M2.7.description": "首個自我演化模型，具備頂尖的編碼和代理性能（約 60 tps）。",
+  "MiniMax-M3.description": "前沿的多模態編碼和自主模型，擁有 1M 的上下文窗口，原生的圖像/視頻理解能力，以及可控的思考方式。",
   "Qwen/Qwen3-Coder-30B-A3B-Instruct.description": "Qwen3-Coder-30B-A3B-Instruct 是一個擁有 305 億總參數和 33 億激活參數的混合專家（MoE）模型。該模型在多個方面進行了關鍵增強，包括顯著提升了指令遵循、邏輯推理、文本理解、數學、科學、編碼和工具使用等通用能力。同時，它在多語言的長尾知識覆蓋範圍上取得了實質性進展，並能更好地與用戶在主觀和開放式任務中的偏好對齊，從而能夠生成更有幫助的回覆和更高質量的文本。此外，該模型的長文本理解能力也增強到了 256K。此模型僅支持非思考模式，其輸出中不會生成 `<think></think>` 標籤。",
   "Qwen/Qwen3-Coder-480B-A35B-Instruct-Turbo.description": "Qwen3-Coder-480B-A35B-Instruct-Turbo 版本是基於 Qwen3 的代碼生成模型，具有強大的 Coding Agent 能力，擅長工具調用和環境交互，能夠實現自主編程，代碼能力卓越的同時兼具通用能力。",
   "Qwen/Qwen3-Coder-480B-A35B-Instruct.description": "通義千問代碼模型開源版。最新的 Qwen3-Coder-480B-A35B-Instruct 是基於 Qwen3 的代碼生成模型，具有強大的 Coding Agent 能力，擅長工具調用和環境交互，能夠實現自主編程，代碼能力卓越的同時兼具通用能力。",
