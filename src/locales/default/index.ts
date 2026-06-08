@@ -8,6 +8,7 @@ import color from './color';
 import common from './common';
 import components from './components';
 import desktopOnboarding from './desktop-onboarding';
+import device from './device';
 import discover from './discover';
 import download from './download';
 import editor from './editor';
@@ -61,6 +62,7 @@ const resources = {
   common,
   components,
   'desktop-onboarding': desktopOnboarding,
+  device,
   discover,
   download,
   editor,

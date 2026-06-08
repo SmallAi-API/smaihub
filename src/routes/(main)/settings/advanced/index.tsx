@@ -39,7 +39,6 @@ const Page = memo(() => {
     enableInputMarkdown,
     enableGatewayMode,
     enablePlatformAgent,
-    enableExecutionDeviceSwitcher,
     enableImessage,
     updateLab,
   ] = useUserStore((s) => [
@@ -48,7 +47,6 @@ const Page = memo(() => {
     labPreferSelectors.enableInputMarkdown(s),
     labPreferSelectors.enableGatewayMode(s),
     labPreferSelectors.enablePlatformAgent(s),
-    labPreferSelectors.enableExecutionDeviceSwitcher(s),
     labPreferSelectors.enableImessage(s),
     s.updateLab,
   ]);
@@ -129,19 +127,6 @@ const Page = memo(() => {
       className: styles.labItem,
       desc: tLabs('features.inputMarkdown.desc'),
       label: tLabs('features.inputMarkdown.title'),
-      minWidth: undefined,
-    },
-    {
-      children: (
-        <Switch
-          checked={enableExecutionDeviceSwitcher}
-          loading={!isPreferenceInit}
-          onChange={(checked) => updateLab({ enableExecutionDeviceSwitcher: checked })}
-        />
-      ),
-      className: styles.labItem,
-      desc: tLabs('features.executionDeviceSwitcher.desc'),
-      label: tLabs('features.executionDeviceSwitcher.title'),
       minWidth: undefined,
     },
     ...(isDesktop
