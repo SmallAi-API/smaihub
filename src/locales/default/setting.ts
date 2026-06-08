@@ -1188,6 +1188,7 @@ When I am ___, I need ___
   'tab.uploadZip.desc': 'Upload a local .zip or .skill file',
   'tab.usage': 'Usage',
   'tools.add': 'Add Skill',
+  'tools.addSkillOrConnector': 'Add Skills / Connector',
   'tools.builtins.groupName': 'Built-ins',
   'tools.builtins.install': 'Install',
   'tools.builtins.installed': 'Installed',
