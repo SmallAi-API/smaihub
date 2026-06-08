@@ -1,11 +1,9 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix */
 import type { BuiltinToolManifest } from '@lobechat/types';
 
 import { systemPrompt } from './systemRole';
 import { DocumentApiName, PageAgentIdentifier } from './types';
 
 export const PageAgentManifest: BuiltinToolManifest = {
-  executors: ['client'],
   api: [
     // ============ Initialize ============
     {
