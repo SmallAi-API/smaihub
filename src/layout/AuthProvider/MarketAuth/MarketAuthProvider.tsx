@@ -393,7 +393,7 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
    */
   const signIn = useCallback(async (): Promise<number | null> => {
     if (!useUserStore.getState().isSignedIn) {
-      throw new Error('LobeChat session required');
+      throw new Error('session required');
     }
     return new Promise<number | null>((resolve, reject) => {
       setPendingSignInResolve(() => resolve);
