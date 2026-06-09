@@ -208,6 +208,7 @@ const TopicItem = memo<TopicItemProps>(({ id, title, fav, active, threadId, stat
     return (
       <NavItem
         active={active}
+        titleColor={cssVar.colorText}
         icon={
           isLoading ? (
             <Icon spin color={cssVar.colorWarning} icon={Loader2Icon} size={'small'} />
@@ -243,6 +244,7 @@ const TopicItem = memo<TopicItemProps>(({ id, title, fav, active, threadId, stat
         disabled={editing}
         href={!editing ? href : undefined}
         title={title === '...' ? <DotsLoading gap={3} size={4} /> : title}
+        titleColor={cssVar.colorText}
         icon={(() => {
           if (isWaitingForHuman) {
             return <Icon icon={Hand} size={'small'} style={{ color: cssVar.colorInfo }} />;
