@@ -17,6 +17,12 @@ const mockBuiltinModels = vi.hoisted(() => [
     providerId: 'openai',
   },
   {
+    abilities: { functionCall: true, video: true, vision: true },
+    id: 'qwen3.6-plus',
+    providerId: 'qwen',
+    settings: { extendParams: ['preserveThinking'] },
+  },
+  {
     abilities: { functionCall: false, video: false, vision: false },
     id: 'no-tools-model',
     providerId: 'test-provider',
@@ -25,6 +31,7 @@ const mockBuiltinModels = vi.hoisted(() => [
     abilities: { functionCall: true, video: true, vision: true },
     id: 'gemini-3.1-flash-lite-preview',
     providerId: 'google',
+    settings: { extendParams: ['preserveThinking'] },
   },
 ]);
 
@@ -51,6 +58,9 @@ vi.mock('@/server/services/message', () => ({
 // @lobechat/model-runtime resolves to @cloud/business-model-runtime which has
 // cloud-specific dependencies that are unavailable in the test environment
 vi.mock('@lobechat/model-runtime', () => ({
+  // The executor resolves extend params via this helper; an empty result keeps
+  // the runtime payload unchanged, matching this suite's pre-existing behavior.
+  applyModelExtendParams: vi.fn(() => ({})),
   consumeStreamUntilDone: vi.fn().mockResolvedValue(undefined),
   // `llmErrorClassification.ts` reads these at module-load time; an empty
   // spec map is fine here because this suite never exercises the runtime
@@ -100,12 +110,21 @@ describe('RuntimeExecutors', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(initModelRuntimeFromDB).mockReset();
+    mockCreateCompressionGroup.mockReset();
+    mockFinalizeCompression.mockReset();
     mockCreateCompressionGroup.mockResolvedValue({
       messageGroupId: 'group-123',
       messagesToSummarize: [],
       success: true,
     });
     mockFinalizeCompression.mockResolvedValue({ success: true });
+    vi.mocked(initModelRuntimeFromDB).mockResolvedValue({
+      chat: vi.fn().mockImplementation(async (_payload: any, options: any) => {
+        await options?.callback?.onText?.('done');
+        return new Response('done');
+      }),
+    } as any);
 
     mockMessageModel = {
       create: vi.fn().mockResolvedValue({ id: 'msg-123' }),
@@ -419,14 +438,28 @@ describe('RuntimeExecutors', () => {
         });
         vi.mocked(initModelRuntimeFromDB).mockResolvedValueOnce({ chat: mockChat } as any);
 
-        const executors = createRuntimeExecutors(ctx);
-        const state = createMockState();
+        const ctxWithConfig: RuntimeExecutorContext = {
+          ...ctx,
+          agentConfig: {
+            chatConfig: { preserveThinking: true },
+            plugins: [],
+            systemRole: 'test',
+          },
+        };
+
+        const executors = createRuntimeExecutors(ctxWithConfig);
+        const state = createMockState({
+          modelRuntimeConfig: {
+            model: 'qwen3.6-plus',
+            provider: 'qwen',
+          },
+        });
 
         const instruction = {
           payload: {
             messages: [{ content: 'Hello', role: 'user' }],
-            model: 'gpt-4',
-            provider: 'openai',
+            model: 'qwen3.6-plus',
+            provider: 'qwen',
             tools: [],
           },
           type: 'call_llm' as const,
@@ -4383,7 +4416,7 @@ describe('RuntimeExecutors', () => {
 
         await vi.runOnlyPendingTimersAsync();
 
-        const result = await resultPromise;
+        await resultPromise;
 
         expect(mockChat).toHaveBeenCalledTimes(2);
         expect(mockMessageModel.create).toHaveBeenCalledTimes(1);

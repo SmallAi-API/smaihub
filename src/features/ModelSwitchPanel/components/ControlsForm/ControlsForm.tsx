@@ -149,6 +149,18 @@ const ControlsForm = memo<ControlsFormProps>(
         name: 'enableReasoning',
       },
       {
+        children: <Switch size={'small'} />,
+        desc: isNarrow ? (
+          <span style={descNarrow}>{t('extendParams.preserveThinking.desc')}</span>
+        ) : (
+          t('extendParams.preserveThinking.desc')
+        ),
+        label: t('extendParams.preserveThinking.title'),
+        layout: isNarrow ? 'vertical' : 'horizontal',
+        minWidth: undefined,
+        name: 'preserveThinking',
+      },
+      {
         children: <Switch disabled={disabled} size={'small'} />,
         desc: isNarrow ? (
           <span style={descNarrow}>{t('extendParams.enableAdaptiveThinking.desc')}</span>
