@@ -2356,6 +2356,7 @@ export const createRuntimeExecutors = (
                 execSubAgent: ctx.execSubAgent,
                 executionTimeoutMs: timeoutMs,
                 groupId: state.metadata?.groupId,
+                isSubAgent: state.metadata?.isSubAgent === true,
                 memoryToolPermission: agentConfig?.chatConfig?.memory?.toolPermission,
                 messageId: state.metadata?.sourceMessageId,
                 operationId,
@@ -2936,6 +2937,7 @@ export const createRuntimeExecutors = (
                     execSubAgent: ctx.execSubAgent,
                     executionTimeoutMs: timeoutMs,
                     groupId: state.metadata?.groupId,
+                    isSubAgent: state.metadata?.isSubAgent === true,
                     memoryToolPermission: batchAgentConfig?.chatConfig?.memory?.toolPermission,
                     messageId: state.metadata?.sourceMessageId,
                     operationId,
@@ -3317,6 +3319,32 @@ export const createRuntimeExecutors = (
     // targetAgentId is a cloud extension injected by agentManagement.callAgent
     const targetAgentId = (task as any).targetAgentId ?? agentId;
 
+    if (state.metadata?.isSubAgent === true) {
+      log('[%s] Nested sub-agent dispatch blocked', taskLogId);
+      return {
+        events,
+        newState: state,
+        nextContext: {
+          payload: {
+            parentMessageId,
+            result: {
+              error: 'Sub-agent calls cannot be triggered from within another sub-agent.',
+              success: false,
+              taskMessageId: parentMessageId,
+              threadId: '',
+            },
+          },
+          phase: 'sub_agent_result',
+          session: {
+            messageCount: state.messages.length,
+            sessionId: operationId,
+            status: 'running',
+            stepCount: state.stepCount + 1,
+          },
+        } as unknown as AgentRuntimeContext,
+      };
+    }
+
     let taskMessageId: string | undefined;
     try {
       const taskMessage = await ctx.messageModel.create({
@@ -3411,6 +3439,33 @@ export const createRuntimeExecutors = (
     const agentId = state.metadata?.agentId;
 
     log('[%s] Starting batch of %d tasks', taskLogId, tasks.length);
+
+    if (state.metadata?.isSubAgent === true) {
+      log('[%s] Nested sub-agent batch dispatch blocked', taskLogId);
+      return {
+        events,
+        newState: state,
+        nextContext: {
+          payload: {
+            parentMessageId,
+            results: tasks.map((task) => ({
+              description: task.description,
+              error: 'Sub-agent calls cannot be triggered from within another sub-agent.',
+              success: false,
+              taskMessageId: parentMessageId,
+              threadId: '',
+            })),
+          },
+          phase: 'sub_agents_batch_result',
+          session: {
+            messageCount: state.messages.length,
+            sessionId: operationId,
+            status: 'running',
+            stepCount: state.stepCount + 1,
+          },
+        } as unknown as AgentRuntimeContext,
+      };
+    }
 
     let lastTaskMessageId: string | undefined;
     const taskResults: Array<{ success: boolean; taskMessageId: string; threadId: string }> = [];
