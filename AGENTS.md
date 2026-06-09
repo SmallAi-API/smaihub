@@ -20,7 +20,10 @@ You are developing an open-source, modern-design AI Agent Workspace: LobeHub (pr
 
 ```plaintext
 lobehub/
-├── apps/desktop/           # Electron desktop app
+├── apps/
+│   ├── desktop/            # Electron desktop app
+│   ├── cli/                # LobeHub CLI
+│   └── server/             # Server service
 ├── packages/               # Shared packages (@lobechat/*)
 │   ├── database/           # Database schemas, models, repositories
 │   ├── agent-runtime/      # Agent runtime
