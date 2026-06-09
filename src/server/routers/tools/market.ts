@@ -228,6 +228,7 @@ const execInSandboxHandler = async ({
     const sandboxService = createSandboxService({
       fileService: ctx.fileService,
       marketService: ctx.marketService,
+      serverDB: ctx.serverDB,
       topicId,
       userId,
     });
