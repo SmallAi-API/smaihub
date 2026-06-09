@@ -454,7 +454,7 @@ const HeteroDeviceSwitcher = memo<HeteroDeviceSwitcherProps>(({ agentId }) => {
       {showWebDownloadCard ? (
         <a
           className={styles.downloadCard}
-          href="https://lobehub.com/downloads"
+          href="https://www.smallai.asia/downloads"
           rel="noreferrer"
           target="_blank"
         >
