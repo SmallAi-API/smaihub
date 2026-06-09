@@ -374,6 +374,24 @@ export const sanitizeGeminiSchema = (schema: any): any => {
       { type: sanitized.type, enumLength: sanitized.enum?.length },
     );
     delete sanitized.enum;
+  } else if (Array.isArray(sanitized.enum)) {
+    // Gemini proto: enum values must be non-empty strings. A `null` (or any
+    // non-string) entry — common in nullable schemas like `enum: [...VALUES, null]`
+    // — serializes to an empty string and triggers "enum[N]: cannot be empty".
+    // Drop those values; nullability is still expressed through the `type` array.
+    const stringEnum = sanitized.enum.filter(
+      (value: unknown): value is string => typeof value === 'string' && value.length > 0,
+    );
+    if (stringEnum.length !== sanitized.enum.length) {
+      console.warn('[google] sanitizeGeminiSchema removed non-string enum values', {
+        removed: sanitized.enum.length - stringEnum.length,
+      });
+    }
+    if (stringEnum.length === 0) {
+      delete sanitized.enum;
+    } else {
+      sanitized.enum = stringEnum;
+    }
   }
 
   // Strip required from non-OBJECT types and empty required arrays

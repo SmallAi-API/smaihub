@@ -1434,7 +1434,7 @@ describe('google contextBuilders', () => {
       expect(result.parametersJsonSchema).toEqual(tool.function.parameters);
     });
 
-    it('should pass through nullable types without sanitization', () => {
+    it('should keep nullable type but drop null enum value (Gemini rejects empty enum entries)', () => {
       const tool: ChatCompletionTool = {
         function: {
           description: 'A tool with nullable enum',
@@ -1454,8 +1454,52 @@ describe('google contextBuilders', () => {
 
       const result = buildGoogleTool(tool);
 
-      // nullable types and null enum values should be passed through as-is
-      expect(result.parametersJsonSchema).toEqual(tool.function.parameters);
+      // The null enum value would serialize to an empty string and trigger
+      // "enum[N]: cannot be empty"; it must be dropped while the nullable
+      // `type` array is preserved to keep the field optional.
+      expect(result.parametersJsonSchema).toEqual({
+        properties: {
+          status: {
+            enum: ['active', 'inactive'],
+            type: ['string', 'null'],
+          },
+        },
+        type: 'object',
+      });
+    });
+
+    it('should drop trailing null from a [...VALUES, null] enum (updateIdentityMemory case)', () => {
+      // Mirrors builtin-tool-memory updateIdentityMemory.set.memoryType which uses
+      // `enum: [...MEMORY_TYPES, null]` and previously caused Gemini 400:
+      // "...properties[set].properties[memoryType].enum[10]: cannot be empty"
+      const tool: ChatCompletionTool = {
+        function: {
+          description: 'Update identity memory',
+          name: 'updateIdentityMemory',
+          parameters: {
+            properties: {
+              set: {
+                properties: {
+                  memoryType: {
+                    description: 'Memory type, use null for omitting the field',
+                    enum: ['preference', 'fact', 'context', null],
+                    type: ['string', 'null'],
+                  },
+                },
+                type: 'object',
+              },
+            },
+            type: 'object',
+          },
+        },
+        type: 'function',
+      };
+
+      const result = buildGoogleTool(tool);
+
+      const setSchema = (result.parametersJsonSchema as any).properties.set;
+      expect(setSchema.properties.memoryType.enum).toEqual(['preference', 'fact', 'context']);
+      expect(setSchema.properties.memoryType.type).toEqual(['string', 'null']);
     });
 
     it('should pass through const values without conversion', () => {

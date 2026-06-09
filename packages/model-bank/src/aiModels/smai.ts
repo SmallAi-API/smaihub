@@ -1068,7 +1068,6 @@ const smaiChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
-      search: true,
       video: true,
       vision: true,
     },
@@ -1082,8 +1081,6 @@ const smaiChatModels: AIChatModelCard[] = [
     releasedAt: '2026-05-20',
     settings: {
       extendParams: ['thinkingLevel', 'urlContext'],
-      searchImpl: 'params',
-      searchProvider: 'google',
     },
     type: 'chat',
   },
@@ -1091,7 +1088,6 @@ const smaiChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
-      search: true,
       structuredOutput: true,
       video: true,
       vision: true,
@@ -1106,8 +1102,6 @@ const smaiChatModels: AIChatModelCard[] = [
     releasedAt: '2026-02-23',
     settings: {
       extendParams: ['thinkingLevel3', 'urlContext'],
-      searchImpl: 'params',
-      searchProvider: 'google',
     },
     type: 'chat',
   },
