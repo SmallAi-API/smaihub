@@ -74,11 +74,6 @@ export interface GlobalServerConfig {
   enableUploadFileToServer?: boolean;
   enableVisualUnderstanding?: boolean;
   image?: PartialDeep<UserImageConfig>;
-  /**
-   * When true, the deployment has no shared KLAVIS_API_KEY env, so each user
-   * must provide their own key in `keyVaults.klavis.apiKey` to use Klavis.
-   */
-  klavisRequiresUserKey?: boolean;
   memory?: GlobalMemoryConfig;
   oAuthSSOProviders?: string[];
   systemAgent?: PartialDeep<UserServiceModelConfig>;

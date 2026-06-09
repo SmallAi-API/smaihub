@@ -4,7 +4,7 @@ import type { LobeChatDatabase } from '@lobechat/database';
 import debug from 'debug';
 
 import { PluginModel } from '@/database/models/plugin';
-import { getKlavisClientForUser, tryGetKlavisClientForUser } from '@/libs/klavis';
+import { getKlavisClient, isKlavisClientAvailable } from '@/libs/klavis';
 import { type ToolExecutionResult } from '@/server/services/toolExecution/types';
 
 const log = debug('lobe-server:klavis-service');
@@ -16,42 +16,76 @@ export interface KlavisToolExecuteParams {
   /** Tool identifier (same as Klavis server identifier, e.g., 'google-calendar') */
   identifier: string;
   toolName: string;
+  workspaceId?: string;
 }
 
 export interface KlavisServiceOptions {
   db?: LobeChatDatabase;
   userId?: string;
+  workspaceId?: string;
 }
 
 /**
- * Klavis Service (BYOK aware)
+ * Klavis Service
  *
- * Resolves the Klavis API key per request:
- *   user keyVaults.klavis.apiKey → env KLAVIS_API_KEY → KLAVIS_KEY_REQUIRED.
+ * Provides a unified interface to Klavis Client with business logic encapsulation.
+ * This service wraps Klavis Client methods to execute tools and fetch manifests.
+ *
+ * Usage:
+ * ```typescript
+ * // With database and userId (for manifest fetching)
+ * const service = new KlavisService({ db, userId });
+ * await service.executeKlavisTool({ identifier, toolName, args });
+ *
+ * // Without database (for tool execution only if you have serverUrl)
+ * const service = new KlavisService();
+ * ```
  */
 export class KlavisService {
   private db?: LobeChatDatabase;
   private userId?: string;
   private pluginModel?: PluginModel;
+  private workspaceId?: string;
 
   constructor(options: KlavisServiceOptions = {}) {
-    const { db, userId } = options;
+    const { db, userId, workspaceId } = options;
 
     this.db = db;
     this.userId = userId;
+    this.workspaceId = workspaceId;
 
     if (db && userId) {
-      this.pluginModel = new PluginModel(db, userId);
+      this.pluginModel = new PluginModel(db, userId, workspaceId);
     }
 
-    log('KlavisService initialized: hasDB=%s, hasUserId=%s', !!db, !!userId);
+    log(
+      'KlavisService initialized: hasDB=%s, hasUserId=%s, isClientAvailable=%s',
+      !!db,
+      !!userId,
+      isKlavisClientAvailable(),
+    );
   }
 
+  /**
+   * Execute a Klavis tool
+   * @param params - Tool execution parameters
+   * @returns Tool execution result
+   */
   async executeKlavisTool(params: KlavisToolExecuteParams): Promise<ToolExecutionResult> {
-    const { identifier, toolName, args } = params;
+    const { identifier, toolName, args, workspaceId } = params;
 
     log('executeKlavisTool: %s/%s with args: %O', identifier, toolName, args);
 
+    // Check if Klavis client is available
+    if (!isKlavisClientAvailable()) {
+      return {
+        content: 'Klavis service is not configured on server',
+        error: { code: 'KLAVIS_NOT_CONFIGURED', message: 'Klavis API key not found' },
+        success: false,
+      };
+    }
+
+    // Get serverUrl from plugin database
     if (!this.pluginModel) {
       return {
         content: 'Klavis service is not properly initialized',
@@ -63,26 +97,13 @@ export class KlavisService {
       };
     }
 
-    let klavisClient;
     try {
-      klavisClient = await getKlavisClientForUser(this.userId, this.db);
-    } catch (error) {
-      const err = error as Error & { message?: string };
-      const isKeyRequired = err?.message === 'KLAVIS_KEY_REQUIRED';
-      return {
-        content: isKeyRequired
-          ? 'Klavis API key is not configured. Please set your key in Settings → Klavis.'
-          : err.message,
-        error: {
-          code: isKeyRequired ? 'KLAVIS_KEY_REQUIRED' : 'KLAVIS_NOT_CONFIGURED',
-          message: err.message || 'Klavis client unavailable',
-        },
-        success: false,
-      };
-    }
-
-    try {
-      const plugin = await this.pluginModel.findById(identifier);
+      // Get plugin from database to retrieve serverUrl
+      const pluginModel =
+        workspaceId && this.db && this.userId
+          ? new PluginModel(this.db, this.userId, workspaceId)
+          : this.pluginModel;
+      const plugin = await pluginModel.findById(identifier);
       if (!plugin) {
         return {
           content: `Klavis server "${identifier}" not found in database`,
@@ -107,6 +128,8 @@ export class KlavisService {
 
       log('executeKlavisTool: calling Klavis API with serverUrl=%s', serverUrl);
 
+      // Call Klavis client
+      const klavisClient = getKlavisClient();
       const response = await klavisClient.mcpServer.callTools({
         serverUrl,
         toolArgs: args,
@@ -115,6 +138,7 @@ export class KlavisService {
 
       log('executeKlavisTool: response: %O', response);
 
+      // Handle error case
       if (!response.success || !response.result) {
         return {
           content: response.error || 'Unknown error',
@@ -123,9 +147,11 @@ export class KlavisService {
         };
       }
 
+      // Process the response
       const content = response.result.content || [];
       const isError = response.result.isError || false;
 
+      // Convert content array to string
       let resultContent = '';
       if (Array.isArray(content)) {
         resultContent = content
@@ -158,8 +184,10 @@ export class KlavisService {
   }
 
   /**
-   * Fetch Klavis tool manifests from database.
-   * Returns [] when no key is configured (legacy "not enabled" path).
+   * Fetch Klavis tool manifests from database
+   * Gets user's connected Klavis servers and builds tool manifests for agent execution
+   *
+   * @returns Array of tool manifests for connected Klavis servers
    */
   async getKlavisManifests(): Promise<LobeToolManifest[]> {
     if (!this.pluginModel) {
@@ -167,15 +195,11 @@ export class KlavisService {
       return [];
     }
 
-    const klavisClient = await tryGetKlavisClientForUser(this.userId, this.db);
-    if (!klavisClient) {
-      log('getKlavisManifests: no Klavis key configured, returning empty array');
-      return [];
-    }
-
     try {
+      // Get all plugins from database
       const allPlugins = await this.pluginModel.query();
 
+      // Filter plugins that have klavis customParams, are still supported, and are authenticated.
       const klavisPlugins = allPlugins.filter(
         (plugin) =>
           VALID_KLAVIS_IDENTIFIERS.has(plugin.identifier) &&
@@ -184,6 +208,7 @@ export class KlavisService {
 
       log('getKlavisManifests: found %d authenticated Klavis plugins', klavisPlugins.length);
 
+      // Convert to LobeToolManifest format
       const manifests: LobeToolManifest[] = klavisPlugins
         .map((plugin) => {
           if (!plugin.manifest) return null;

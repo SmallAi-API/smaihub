@@ -20,9 +20,9 @@ import type {
 export class AgentGroupService extends BaseService {
   private sessionGroupModel: SessionGroupModel;
 
-  constructor(db: LobeChatDatabase, userId: string | null) {
-    super(db, userId);
-    this.sessionGroupModel = new SessionGroupModel(db, userId!);
+  constructor(db: LobeChatDatabase, userId: string | null, workspaceId?: string) {
+    super(db, userId, workspaceId);
+    this.sessionGroupModel = new SessionGroupModel(db, userId!, workspaceId);
   }
 
   /**
@@ -42,9 +42,8 @@ export class AgentGroupService extends BaseService {
       // 构建查询条件
       const conditions = [];
 
-      if (permissionResult.condition?.userId) {
-        conditions.push(eq(sessionGroups.userId, permissionResult.condition.userId));
-      }
+      const permissionWhere = this.buildPermissionWhere(sessionGroups, permissionResult.condition);
+      if (permissionWhere) conditions.push(permissionWhere);
 
       const agentGroupList = await this.db.query.sessionGroups.findMany({
         orderBy: [asc(sessionGroups.sort), desc(sessionGroups.createdAt)],
@@ -77,9 +76,8 @@ export class AgentGroupService extends BaseService {
       // 构建查询条件
       const conditions = [eq(sessionGroups.id, groupId)];
 
-      if (permissionResult.condition?.userId) {
-        conditions.push(eq(sessionGroups.userId, permissionResult.condition.userId));
-      }
+      const permissionWhere = this.buildPermissionWhere(sessionGroups, permissionResult.condition);
+      if (permissionWhere) conditions.push(permissionWhere);
 
       const agentGroup = await this.db.query.sessionGroups.findFirst({
         where: and(...conditions),
@@ -116,7 +114,7 @@ export class AgentGroupService extends BaseService {
         .values({
           name: request.name,
           sort: request.sort,
-          userId: this.userId,
+          ...this.buildWorkspacePayload({}),
         })
         .returning();
 
@@ -157,7 +155,7 @@ export class AgentGroupService extends BaseService {
       await this.db
         .update(sessionGroups)
         .set({ ...updateData, updatedAt: new Date() })
-        .where(and(eq(sessionGroups.id, id), eq(sessionGroups.userId, this.userId)));
+        .where(and(eq(sessionGroups.id, id), this.buildWorkspaceWhere(sessionGroups)));
 
       this.log('info', '助理分类更新成功', { id });
     } catch (error) {
@@ -188,9 +186,8 @@ export class AgentGroupService extends BaseService {
 
       // 构建查询条件
       const conditions = [eq(sessionGroups.id, request.id)];
-      if (permissionResult.condition?.userId) {
-        conditions.push(eq(sessionGroups.userId, permissionResult.condition.userId));
-      }
+      const permissionWhere = this.buildPermissionWhere(sessionGroups, permissionResult.condition);
+      if (permissionWhere) conditions.push(permissionWhere);
 
       // 删除助理分类，分类内助理的 sessionGroupId 会通过数据库外键约束自动设为 null
       await this.db.delete(sessionGroups).where(and(...conditions));

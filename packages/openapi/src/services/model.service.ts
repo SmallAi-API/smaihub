@@ -19,8 +19,8 @@ import type {
  * 提供模型的查询和分组功能
  */
 export class ModelService extends BaseService {
-  constructor(db: LobeChatDatabase, userId: string | null) {
-    super(db, userId);
+  constructor(db: LobeChatDatabase, userId: string | null, workspaceId?: string) {
+    super(db, userId, workspaceId);
   }
 
   /**
@@ -44,10 +44,9 @@ export class ModelService extends BaseService {
       // 构建查询条件
       const conditions = [];
 
-      // 权限条件直接加入主条件数组
-      if (permissionResult.condition?.userId) {
-        conditions.push(eq(aiModels.userId, permissionResult.condition.userId));
-      }
+      // Add permission condition directly to the main conditions array
+      const permissionWhere = this.buildPermissionWhere(aiModels, permissionResult.condition);
+      if (permissionWhere) conditions.push(permissionWhere);
 
       // 处理 ModelsListQuery 特定参数
       const { page, pageSize, keyword, provider, type, enabled } = request;
@@ -117,9 +116,8 @@ export class ModelService extends BaseService {
 
       const conditions = [eq(aiModels.providerId, providerId), eq(aiModels.id, modelId)];
 
-      if (permissionResult.condition?.userId) {
-        conditions.push(eq(aiModels.userId, permissionResult.condition.userId));
-      }
+      const permissionWhere = this.buildPermissionWhere(aiModels, permissionResult.condition);
+      if (permissionWhere) conditions.push(permissionWhere);
 
       const model = await this.db.query.aiModels.findFirst({ where: and(...conditions) });
 
@@ -154,7 +152,7 @@ export class ModelService extends BaseService {
           where: and(
             eq(aiModels.id, payload.id),
             eq(aiModels.providerId, payload.providerId),
-            eq(aiModels.userId, this.userId),
+            this.buildWorkspaceWhere(aiModels),
           ),
         });
 
@@ -180,7 +178,7 @@ export class ModelService extends BaseService {
             sort: payload.sort ?? null,
             source: payload.source ?? null,
             type: payload.type ?? 'chat',
-            userId: this.userId,
+            ...this.buildWorkspacePayload({}),
           })
           .returning();
 
@@ -211,9 +209,8 @@ export class ModelService extends BaseService {
       }
 
       const conditions = [eq(aiModels.providerId, providerId), eq(aiModels.id, modelId)];
-      if (permissionResult.condition?.userId) {
-        conditions.push(eq(aiModels.userId, permissionResult.condition.userId));
-      }
+      const permissionWhere = this.buildPermissionWhere(aiModels, permissionResult.condition);
+      if (permissionWhere) conditions.push(permissionWhere);
 
       return await this.db.transaction(async (tx) => {
         const existingModel = await tx.query.aiModels.findFirst({ where: and(...conditions) });

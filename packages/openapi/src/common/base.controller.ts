@@ -154,6 +154,10 @@ export abstract class BaseController {
     return c.get('userId') || null;
   }
 
+  protected getWorkspaceId(c: Context): string | undefined {
+    return c.get('workspaceId') || undefined;
+  }
+
   /**
    * Get authentication type (from context set by middleware)
    * @param c Hono Context
@@ -194,7 +198,10 @@ export abstract class BaseController {
   ): Promise<boolean> {
     const rbacModel = await this.getRbacModel(c);
 
-    return await rbacModel.hasPermission(RBAC_PERMISSIONS[permissionKey], this.getUserId(c)!);
+    return await rbacModel.hasPermission(RBAC_PERMISSIONS[permissionKey], {
+      userId: this.getUserId(c)!,
+      workspaceId: this.getWorkspaceId(c),
+    });
   }
 
   /**
@@ -231,7 +238,10 @@ export abstract class BaseController {
     const permissions = permissionKeys.map((permission) => RBAC_PERMISSIONS[permission]);
 
     const rbacModel = await this.getRbacModel(c);
-    return await rbacModel.hasAnyPermission(permissions, this.getUserId(c)!);
+    return await rbacModel.hasAnyPermission(permissions, {
+      userId: this.getUserId(c)!,
+      workspaceId: this.getWorkspaceId(c),
+    });
   }
 
   /**

@@ -20,7 +20,7 @@ export class ChatController extends BaseController {
       const chatParams = (await this.getBody<ChatServiceParams>(c))!;
 
       const db = await this.getDatabase();
-      const chatService = new ChatService(db, userId);
+      const chatService = new ChatService(db, userId, this.getWorkspaceId(c));
 
       // 如果是流式响应，直接返回
       if (chatParams.stream) {
@@ -45,7 +45,7 @@ export class ChatController extends BaseController {
       const translateParams = (await this.getBody<TranslateServiceParams>(c))!;
 
       const db = await this.getDatabase();
-      const chatService = new ChatService(db, userId);
+      const chatService = new ChatService(db, userId, this.getWorkspaceId(c));
       const result = await chatService.translate(translateParams);
 
       return this.success(c, { translatedText: result }, 'Translation successful');
@@ -65,7 +65,7 @@ export class ChatController extends BaseController {
       const generationParams = (await this.getBody<MessageGenerationParams>(c))!;
 
       const db = await this.getDatabase();
-      const chatService = new ChatService(db, userId);
+      const chatService = new ChatService(db, userId, this.getWorkspaceId(c));
       const result = await chatService.generateReply(generationParams);
 
       return this.success(c, { reply: result }, 'Reply generated successfully');

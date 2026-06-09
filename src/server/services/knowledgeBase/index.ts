@@ -12,10 +12,9 @@ import pMap from 'p-map';
 import { ChunkModel } from '@/database/models/chunk';
 import { DocumentModel } from '@/database/models/document';
 import { FileModel } from '@/database/models/file';
-import { AiInfraRepos } from '@/database/repositories/aiInfra';
 import { type KnowledgeBaseDocumentHit, SearchRepo } from '@/database/repositories/search';
 import { knowledgeBaseFiles } from '@/database/schemas';
-import { getServerDefaultFilesConfig, getServerGlobalConfig } from '@/server/globalConfig';
+import { getServerDefaultFilesConfig } from '@/server/globalConfig';
 import { initModelRuntimeFromDB } from '@/server/modules/ModelRuntime';
 import { DocumentService } from '@/server/services/document';
 
@@ -89,51 +88,26 @@ export class KnowledgeBaseSearchService {
   private fileModel: FileModel;
   private searchRepo: SearchRepo;
   private documentServiceInstance?: DocumentService;
-  private aiInfraReposInstance?: AiInfraRepos;
 
-  constructor(serverDB: LobeChatDatabase, userId: string) {
+  private workspaceId?: string;
+
+  constructor(serverDB: LobeChatDatabase, userId: string, workspaceId?: string) {
     this.serverDB = serverDB;
     this.userId = userId;
-    this.chunkModel = new ChunkModel(serverDB, userId);
-    this.documentModel = new DocumentModel(serverDB, userId);
-    this.fileModel = new FileModel(serverDB, userId);
-    this.searchRepo = new SearchRepo(serverDB, userId);
+    this.workspaceId = workspaceId;
+    this.chunkModel = new ChunkModel(serverDB, userId, workspaceId);
+    this.documentModel = new DocumentModel(serverDB, userId, workspaceId);
+    this.fileModel = new FileModel(serverDB, userId, workspaceId);
+    this.searchRepo = new SearchRepo(serverDB, userId, workspaceId);
   }
 
   private get documentService() {
-    this.documentServiceInstance ??= new DocumentService(this.serverDB, this.userId);
+    this.documentServiceInstance ??= new DocumentService(
+      this.serverDB,
+      this.userId,
+      this.workspaceId,
+    );
     return this.documentServiceInstance;
-  }
-
-  private async getAiInfraRepos() {
-    if (!this.aiInfraReposInstance) {
-      const globalConfig = await getServerGlobalConfig();
-      const providerConfigs: Record<string, { enabled: boolean }> = {};
-
-      if (globalConfig.aiProvider) {
-        for (const [key, value] of Object.entries(globalConfig.aiProvider)) {
-          if (value) {
-            providerConfigs[key] = { enabled: value.enabled ?? false };
-          }
-        }
-      }
-
-      this.aiInfraReposInstance = new AiInfraRepos(this.serverDB, this.userId, providerConfigs);
-    }
-
-    return this.aiInfraReposInstance;
-  }
-
-  private async resolveEmbeddingModelConfig() {
-    const defaultConfig =
-      getServerDefaultFilesConfig().embeddingModel || DEFAULT_FILE_EMBEDDING_MODEL_ITEM;
-    const aiInfraRepos = await this.getAiInfraRepos();
-    const enabledEmbeddingProviders = await aiInfraRepos.getEnabledEmbeddingProviders();
-
-    return {
-      model: defaultConfig.model,
-      provider: enabledEmbeddingProviders[0]?.id || defaultConfig.provider,
-    };
   }
 
   async semanticSearchForChat(
@@ -144,8 +118,14 @@ export class KnowledgeBaseSearchService {
 
     // Path 1: vector search over file chunks
     const vectorPath = async (): Promise<ChatSemanticSearchChunk[]> => {
-      const { model, provider } = await this.resolveEmbeddingModelConfig();
-      const modelRuntime = await initModelRuntimeFromDB(this.serverDB, this.userId, provider);
+      const { model, provider } =
+        getServerDefaultFilesConfig().embeddingModel || DEFAULT_FILE_EMBEDDING_MODEL_ITEM;
+      const modelRuntime = await initModelRuntimeFromDB(
+        this.serverDB,
+        this.userId,
+        provider,
+        this.workspaceId,
+      );
 
       // slice content to make sure in the context window limit
       const query = input.query.length > 8000 ? input.query.slice(0, 8000) : input.query;

@@ -1,19 +1,18 @@
 import { z } from 'zod';
 
+import { wsCompatProcedure } from '@/business/server/trpc-middlewares/workspaceAuth';
 import { ConnectorModel } from '@/database/models/connector';
 import { ConnectorToolModel } from '@/database/models/connectorTool';
 import { ConnectorToolPermission } from '@/database/schemas';
 import { getKlavisClient } from '@/libs/klavis';
-import { authedProcedure, router } from '@/libs/trpc/lambda';
+import { publicProcedure, router } from '@/libs/trpc/lambda';
 import { serverDatabase } from '@/libs/trpc/lambda/middleware';
 import { MCPService } from '@/server/services/mcp';
 
 /**
- * Klavis procedure with per-user API key resolution.
- *
- * Key resolution order: user keyVaults.klavis.apiKey → env KLAVIS_API_KEY → throw KLAVIS_KEY_REQUIRED.
+ * Klavis procedure with client initialized in context
  */
-const klavisProcedure = authedProcedure.use(serverDatabase).use(async (opts) => {
+const klavisProcedure = wsCompatProcedure.use(serverDatabase).use(async (opts) => {
   const klavisClient = getKlavisClient();
 
   return opts.next({
@@ -45,13 +44,14 @@ export const klavisRouter = router({
       // same-name collisions across connectors). Falls back to toolName-only
       // if identifier is absent (legacy callers).
       if (ctx.userId && ctx.serverDB) {
-        const connectorToolModel = new ConnectorToolModel(ctx.serverDB, ctx.userId);
+        const wsId = ctx.workspaceId ?? undefined;
+        const connectorToolModel = new ConnectorToolModel(ctx.serverDB, ctx.userId, wsId);
         let connectorTool:
           | Awaited<ReturnType<typeof connectorToolModel.findByToolName>>
           | undefined;
 
         if (input.identifier) {
-          const connectorModel = new ConnectorModel(ctx.serverDB, ctx.userId);
+          const connectorModel = new ConnectorModel(ctx.serverDB, ctx.userId, wsId);
           const [connector] = await connectorModel.queryByIdentifiers([input.identifier]);
           if (connector) {
             const tools = await connectorToolModel.queryByConnector(connector.id);
@@ -103,17 +103,17 @@ export const klavisRouter = router({
     }),
 
   /**
-   * Get tools by server name. Authenticated so the per-user Klavis key is used
-   * (BYOK) instead of leaking the env-only fallback to anonymous callers.
+   * Get tools by server name (public endpoint, no auth required)
    */
-  getTools: klavisProcedure
+  getTools: publicProcedure
     .input(
       z.object({
         serverName: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
-      const response = await ctx.klavisClient.mcpServer.getTools(input.serverName as any);
+    .query(async ({ input }) => {
+      const klavisClient = getKlavisClient();
+      const response = await klavisClient.mcpServer.getTools(input.serverName as any);
 
       return {
         tools: response.tools,

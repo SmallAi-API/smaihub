@@ -28,6 +28,7 @@ interface BackgroundPollingParams {
   prechargeResult?: any;
   provider: string;
   userId: string;
+  workspaceId?: string;
 }
 
 export async function processBackgroundVideoPolling(
@@ -43,6 +44,7 @@ export async function processBackgroundVideoPolling(
     model,
     provider,
     userId,
+    workspaceId,
   } = params;
 
   log(
@@ -53,11 +55,11 @@ export async function processBackgroundVideoPolling(
   );
 
   try {
-    const asyncTaskModel = new AsyncTaskModel(db, userId);
-    const videoService = new VideoGenerationService(db, userId);
-    const generationModel = new GenerationModel(db, userId);
+    const asyncTaskModel = new AsyncTaskModel(db, userId, workspaceId);
+    const videoService = new VideoGenerationService(db, userId, workspaceId);
+    const generationModel = new GenerationModel(db, userId, workspaceId);
 
-    const modelRuntime = await initModelRuntimeFromDB(db, userId, provider);
+    const modelRuntime = await initModelRuntimeFromDB(db, userId, provider, workspaceId);
     const pollResult = await pollUntilCompletion(modelRuntime, inferenceId);
 
     if (!pollResult) {
@@ -109,7 +111,7 @@ export async function processBackgroundVideoPolling(
   } catch (error) {
     log('Background video polling error for task: %s', asyncTaskId, error);
 
-    const asyncTaskModel = new AsyncTaskModel(db, userId);
+    const asyncTaskModel = new AsyncTaskModel(db, userId, workspaceId);
     const providerContentPolicyMessage = await getProviderContentPolicyErrorMessage({
       error,
       provider,

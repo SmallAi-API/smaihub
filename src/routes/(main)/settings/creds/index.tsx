@@ -9,7 +9,6 @@ import SettingHeader from '@/routes/(main)/settings/features/SettingHeader';
 
 import { createCreateCredModal } from './features/CreateCredModal';
 import CredsList from './features/CredsList';
-import KlavisKeyCard from './features/KlavisKeyCard';
 
 const Page = () => {
   const { t } = useTranslation('setting');
@@ -31,7 +30,6 @@ const Page = () => {
           </Button>
         }
       />
-      <KlavisKeyCard />
       <CredsList key={refreshKey} />
     </>
   );

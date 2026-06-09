@@ -5,7 +5,8 @@ import { prettyJSON } from 'hono/pretty-json';
 
 // 导入用户认证中间件（支持OIDC和API Key两种认证方式）
 import { userAuthMiddleware } from './middleware/auth';
-// 导入路由
+import { workspaceAuthMiddleware } from './middleware/workspace';
+// Import routes
 import routes from './routes';
 
 // 创建Hono应用实例
@@ -15,7 +16,8 @@ const app = new Hono().basePath('/api/v1');
 app.use('*', cors());
 app.use('*', logger());
 app.use('*', prettyJSON());
-app.use('*', userAuthMiddleware); // 用户认证中间件
+app.use('*', userAuthMiddleware); // User authentication middleware
+app.use('*', workspaceAuthMiddleware);
 
 // 错误处理中间件
 app.onError((error: Error, c) => {

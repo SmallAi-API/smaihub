@@ -22,8 +22,8 @@ import type {
  * Agent 服务实现类
  */
 export class AgentService extends BaseService {
-  constructor(db: LobeChatDatabase, userId: string | null) {
-    super(db, userId);
+  constructor(db: LobeChatDatabase, userId: string | null, workspaceId?: string) {
+    super(db, userId, workspaceId);
   }
 
   /**
@@ -40,7 +40,7 @@ export class AgentService extends BaseService {
     try {
       // 基础过滤条件：当前用户 + 排除虚拟 agent（inbox、supervisor 等）
       const baseConditions = and(
-        eq(agents.userId, this.userId),
+        this.buildWorkspaceWhere(agents),
         or(eq(agents.virtual, false), isNull(agents.virtual)),
       );
 
@@ -94,7 +94,7 @@ export class AgentService extends BaseService {
           systemRole: request.systemRole || null,
           title: request.title,
           updatedAt: new Date(),
-          userId: this.userId,
+          ...this.buildWorkspacePayload({}),
         };
 
         // 插入数据库
@@ -129,9 +129,8 @@ export class AgentService extends BaseService {
       return await this.db.transaction(async (tx) => {
         // 构建查询条件
         const whereConditions = [eq(agents.id, request.id)];
-        if (permissionResult.condition?.userId) {
-          whereConditions.push(eq(agents.userId, permissionResult.condition.userId));
-        }
+        const permissionWhere = this.buildPermissionWhere(agents, permissionResult.condition);
+        if (permissionWhere) whereConditions.push(permissionWhere);
 
         // 检查 Agent 是否存在
         const existingAgent = await tx.query.agents.findFirst({
@@ -207,7 +206,7 @@ export class AgentService extends BaseService {
 
       // 检查要删除的 Agent 是否存在
       const targetAgent = await this.db.query.agents.findFirst({
-        where: eq(agents.id, request.agentId),
+        where: and(eq(agents.id, request.agentId), this.buildWorkspaceWhere(agents)),
       });
 
       if (!targetAgent) {
@@ -217,7 +216,7 @@ export class AgentService extends BaseService {
       if (request.migrateSessionTo) {
         // 验证迁移目标 Agent 存在且属于当前用户
         const migrateTarget = await this.db.query.agents.findFirst({
-          where: and(eq(agents.id, request.migrateSessionTo), eq(agents.userId, this.userId)),
+          where: and(eq(agents.id, request.migrateSessionTo), this.buildWorkspaceWhere(agents)),
         });
 
         if (!migrateTarget) {
@@ -235,10 +234,10 @@ export class AgentService extends BaseService {
         // 迁移完成后直接删除 agent 本身，sessions 已转移不需要级联删除
         await this.db
           .delete(agents)
-          .where(and(eq(agents.id, request.agentId), eq(agents.userId, this.userId)));
+          .where(and(eq(agents.id, request.agentId), this.buildWorkspaceWhere(agents)));
       } else {
-        // 无迁移：复用 AgentModel.delete，会级联删除关联的 sessions、messages、topics 等
-        const agentModel = new AgentModel(this.db, this.userId);
+        // No migration: reuse AgentModel.delete, which cascades deletion of associated sessions, messages, topics, etc.
+        const agentModel = new AgentModel(this.db, this.userId, this.workspaceId);
         await agentModel.delete(request.agentId);
       }
 
@@ -270,8 +269,8 @@ export class AgentService extends BaseService {
         throw this.createAuthError('未登录，无法获取 Agent 详情');
       }
 
-      // 复用 AgentModel 的方法获取完整的 Agent 配置
-      const agentModel = new AgentModel(this.db, this.userId);
+      // Reuse AgentModel methods to get the full Agent configuration
+      const agentModel = new AgentModel(this.db, this.userId, this.workspaceId);
       const agent = await agentModel.getAgentConfigById(agentId);
 
       if (!agent || !agent.id) {
@@ -303,7 +302,7 @@ export class AgentService extends BaseService {
           .where(
             and(
               eq(agentsToSessions.agentId, fromAgentId),
-              eq(agentsToSessions.userId, this.userId),
+              this.buildWorkspaceWhere(agentsToSessions),
             ),
           );
 
@@ -318,7 +317,7 @@ export class AgentService extends BaseService {
           .where(
             and(
               eq(agentsToSessions.agentId, fromAgentId),
-              eq(agentsToSessions.userId, this.userId),
+              this.buildWorkspaceWhere(agentsToSessions),
             ),
           );
 
@@ -341,7 +340,7 @@ export class AgentService extends BaseService {
             newSessionIds.map((sessionId) => ({
               agentId: toAgentId,
               sessionId,
-              userId: this.userId,
+              ...this.buildWorkspacePayload({}),
             })),
           );
         }

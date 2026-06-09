@@ -1,14 +1,10 @@
 import { KLAVIS_SERVER_TYPES } from '@lobechat/const';
-import { t } from 'i18next';
 import { produce } from 'immer';
 import { type SWRResponse } from 'swr';
 import useSWR from 'swr';
 
-import { message } from '@/components/AntdStaticMethods';
 import { lambdaClient, toolsClient } from '@/libs/trpc/client';
 import { type StoreSetter } from '@/store/types';
-import { useUserStore } from '@/store/user';
-import { keyVaultsConfigSelectors } from '@/store/user/selectors';
 import { setNamespace } from '@/utils/storeDebug';
 
 import { type ToolStore } from '../../store';
@@ -26,27 +22,6 @@ const n = setNamespace('klavisStore');
 
 // Set of valid Klavis server identifiers (for cleanup of deprecated servers)
 const VALID_KLAVIS_IDENTIFIERS = new Set(KLAVIS_SERVER_TYPES.map((t) => t.identifier));
-
-const surfaceKlavisError = (error: unknown): void => {
-  const msg = error instanceof Error ? error.message : String(error);
-  if (msg.includes('KLAVIS_KEY_REQUIRED')) {
-    message.error(t('klavis.errors.apiKeyRequired', { ns: 'tool' }));
-    return;
-  }
-  if (/account creation limit reached|Limit:\s*\d+/i.test(msg)) {
-    message.error(t('klavis.errors.quotaReached', { ns: 'tool' }));
-    return;
-  }
-  message.error(msg);
-};
-
-// Klavis returns 401 / "Invalid API key" when the stored key is rejected.
-// Surfacing this distinctly lets us re-open the BYOK modal so the user can
-// retry instead of being stuck after a single failed save.
-const isInvalidApiKeyError = (error: unknown): boolean => {
-  const msg = error instanceof Error ? error.message : String(error);
-  return /invalid api key|invalid_api_key|unauthorized|\b401\b/i.test(msg);
-};
 
 /**
  * Klavis Store Actions
@@ -117,51 +92,6 @@ export class KlavisStoreActionImpl {
     }
   };
 
-  closeKlavisKeyModal = (): void => {
-    this.#set(
-      produce((draft: KlavisStoreState) => {
-        draft.keyModalOpen = false;
-        draft.pendingKlavisConnect = undefined;
-      }),
-      false,
-      n('closeKlavisKeyModal'),
-    );
-  };
-
-  confirmKlavisKey = async (): Promise<KlavisServer | undefined> => {
-    const pending = this.#get().pendingKlavisConnect;
-    this.#set(
-      produce((draft: KlavisStoreState) => {
-        draft.keyModalOpen = false;
-        draft.pendingKlavisConnect = undefined;
-      }),
-      false,
-      n('confirmKlavisKey'),
-    );
-    if (!pending) return undefined;
-    return this.createKlavisServer(pending);
-  };
-
-  // Poll Klavis server auth status until CONNECTED or timeout. Used after the
-  // BYOK modal kicks off OAuth so the row refreshes once the user finishes
-  // authorization in the popup, without requiring them to click again.
-  pollKlavisAuthStatus = async (identifier: string, timeoutMs: number = 60_000): Promise<void> => {
-    const start = Date.now();
-    while (Date.now() - start < timeoutMs) {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      const server = this.#get().servers.find((s) => s.identifier === identifier);
-      if (!server) return;
-      if (server.status === KlavisServerStatus.CONNECTED) return;
-      try {
-        await this.refreshKlavisServerTools(identifier);
-      } catch {
-        // Polling errors are expected while user is still authorizing.
-      }
-      const after = this.#get().servers.find((s) => s.identifier === identifier);
-      if (!after || after.status === KlavisServerStatus.CONNECTED) return;
-    }
-  };
-
   completeKlavisServerAuth = async (identifier: string): Promise<void> => {
     // After OAuth completes, refresh tool list
     await this.#get().refreshKlavisServerTools(identifier);
@@ -171,28 +101,6 @@ export class KlavisStoreActionImpl {
     params: CreateKlavisServerParams,
   ): Promise<KlavisServer | undefined> => {
     const { userId, serverName, identifier } = params;
-
-    // BYOK pre-check: when the deployment requires a per-user Klavis key and the user
-    // hasn't set one yet, park the request and surface the modal instead of failing
-    // server-side with KLAVIS_KEY_REQUIRED.
-    const requiresUserKey =
-      typeof window !== 'undefined'
-        ? Boolean(window.__SERVER_CONFIG__?.config?.klavisRequiresUserKey)
-        : false;
-    const userKlavisKey = keyVaultsConfigSelectors.getVaultByProvider('klavis')(
-      useUserStore.getState(),
-    )?.apiKey;
-    if (requiresUserKey && !userKlavisKey) {
-      this.#set(
-        produce((draft: KlavisStoreState) => {
-          draft.keyModalOpen = true;
-          draft.pendingKlavisConnect = params;
-        }),
-        false,
-        n('createKlavisServer/requireKey'),
-      );
-      return undefined;
-    }
 
     this.#set(
       produce((draft: KlavisStoreState) => {
@@ -243,30 +151,6 @@ export class KlavisStoreActionImpl {
       return server;
     } catch (error) {
       console.error('[Klavis] Failed to create server:', error);
-
-      // If Klavis rejected the key (likely the user just typed it wrong in the
-      // BYOK modal), restore the modal + pending request so the user can fix
-      // the key without restarting from scratch. Only do this when the user
-      // actually has a saved per-user key; otherwise the env key is in play
-      // and re-opening the modal would be confusing.
-      const userKlavisKeyAtFailure = keyVaultsConfigSelectors.getVaultByProvider('klavis')(
-        useUserStore.getState(),
-      )?.apiKey;
-      if (isInvalidApiKeyError(error) && userKlavisKeyAtFailure) {
-        message.error(t('klavis.errors.invalidApiKey', { ns: 'tool' }));
-        this.#set(
-          produce((draft: KlavisStoreState) => {
-            draft.keyModalOpen = true;
-            draft.pendingKlavisConnect = params;
-            draft.loadingServerIds.delete(identifier);
-          }),
-          false,
-          n('createKlavisServer/invalidKey'),
-        );
-        return undefined;
-      }
-
-      surfaceKlavisError(error);
 
       this.#set(
         produce((draft: KlavisStoreState) => {
@@ -388,8 +272,6 @@ export class KlavisStoreActionImpl {
       });
     } catch (error) {
       console.error('[Klavis] Failed to refresh tools:', error);
-
-      surfaceKlavisError(error);
 
       this.#set(
         produce((draft: KlavisStoreState) => {

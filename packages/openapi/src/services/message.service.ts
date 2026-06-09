@@ -33,10 +33,10 @@ export interface MessageCountResult {
 export class MessageService extends BaseService {
   private coreFileService: CoreFileService;
 
-  constructor(db: LobeChatDatabase, userId: string | null) {
-    super(db, userId);
+  constructor(db: LobeChatDatabase, userId: string | null, workspaceId?: string) {
+    super(db, userId, workspaceId);
 
-    this.coreFileService = new CoreFileService(db, userId!);
+    this.coreFileService = new CoreFileService(db, userId!, workspaceId);
   }
 
   /**
@@ -96,7 +96,7 @@ export class MessageService extends BaseService {
       const result = await this.db
         .select({ count: count() })
         .from(messages)
-        .where(eq(messages.userId, targetUserId));
+        .where(this.buildPermissionWhere(messages, { userId: targetUserId }));
 
       const messageCount = result[0]?.count || 0;
       this.log('info', '用户消息统计完成', { count: messageCount });
@@ -128,7 +128,7 @@ export class MessageService extends BaseService {
       const result = await this.db
         .select({ count: count() })
         .from(messages)
-        .where(inArray(messages.topicId, topicIds));
+        .where(and(inArray(messages.topicId, topicIds), this.buildWorkspaceWhere(messages)));
 
       const messageCount = result[0]?.count || 0;
       this.log('info', '话题消息统计完成', { count: messageCount });
@@ -162,7 +162,7 @@ export class MessageService extends BaseService {
       const result = await this.db
         .select({ count: count() })
         .from(messages)
-        .where(eq(messages.userId, this.userId!));
+        .where(this.buildWorkspaceWhere(messages));
 
       const messageCount = result[0]?.count || 0;
       this.log('info', '当前用户消息统计完成', { count: messageCount });
@@ -196,8 +196,8 @@ export class MessageService extends BaseService {
 
       const { keyword, limit = 20, offset = 0 } = searchRequest;
 
-      // 构建查询条件
-      const conditions = [eq(messages.userId, this.userId!)];
+      // Build query conditions
+      const conditions = [this.buildWorkspaceWhere(messages)];
 
       const contentMatchedMessages = await this.db
         .select({ id: messages.id })
@@ -267,7 +267,7 @@ export class MessageService extends BaseService {
           throw this.createAuthorizationError(permissionResult.message || '无权访问消息列表');
         }
 
-        conditions.push(eq(messages.userId, request.userId));
+        conditions.push(this.buildPermissionWhere(messages, { userId: request.userId })!);
       }
 
       // 校验 topic 的归属以及用户有没有消息的读取权限
@@ -281,6 +281,7 @@ export class MessageService extends BaseService {
         }
 
         conditions.push(eq(messages.topicId, request.topicId));
+        conditions.push(this.buildWorkspaceWhere(messages));
       }
 
       if (request.role) {
@@ -353,9 +354,8 @@ export class MessageService extends BaseService {
 
       // 构建查询条件
       const conditions = [eq(messages.id, messageId)];
-      if (permissionResult.condition?.userId) {
-        conditions.push(eq(messages.userId, permissionResult.condition.userId));
-      }
+      const permissionWhere = this.buildPermissionWhere(messages, permissionResult.condition);
+      if (permissionWhere) conditions.push(permissionWhere);
 
       const message = (await this.db.query.messages.findFirst({
         where: and(...conditions),
@@ -431,7 +431,7 @@ export class MessageService extends BaseService {
           tools: messageData.tools,
           topicId: messageData.topicId,
           traceId: messageData.traceId,
-          userId: this.userId!,
+          ...this.buildWorkspacePayload({}),
         })
         .returning({
           id: messages.id,
@@ -449,14 +449,14 @@ export class MessageService extends BaseService {
           messageData.files.map((fileId) => ({
             fileId,
             messageId: newMessage.id,
-            userId: this.userId!,
+            ...this.buildWorkspacePayload({}),
           })),
         );
       }
 
       // 重新查询包含 session 和 topic 信息的完整消息
       const completeMessage = (await this.db.query.messages.findFirst({
-        where: eq(messages.id, newMessage.id),
+        where: and(eq(messages.id, newMessage.id), this.buildWorkspaceWhere(messages)),
         with: {
           filesToMessages: {
             with: {
@@ -524,7 +524,7 @@ export class MessageService extends BaseService {
           userId: this.userId,
         });
 
-        const chatService = new ChatService(this.db, this.userId);
+        const chatService = new ChatService(this.db, this.userId, this.workspaceId);
         let aiReplyContent = '';
 
         try {
@@ -591,7 +591,7 @@ export class MessageService extends BaseService {
         orderBy: desc(messages.createdAt),
         where: and(
           topicId === null ? isNull(messages.topicId) : eq(messages.topicId, topicId),
-          eq(messages.userId, this.userId!),
+          this.buildWorkspaceWhere(messages),
         ),
       });
 
@@ -631,10 +631,9 @@ export class MessageService extends BaseService {
       // 构建删除条件
       const whereConditions = [eq(messages.id, messageId)];
 
-      // 应用权限条件
-      if (permissionResult.condition?.userId) {
-        whereConditions.push(eq(messages.userId, permissionResult.condition.userId));
-      }
+      // Apply permission conditions
+      const permissionWhere = this.buildPermissionWhere(messages, permissionResult.condition);
+      if (permissionWhere) whereConditions.push(permissionWhere);
 
       // 使用事务删除消息、消息与文件的关联关系
       await this.db.transaction(async (trx) => {

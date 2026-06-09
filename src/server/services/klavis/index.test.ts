@@ -14,9 +14,7 @@ vi.mock('@/database/models/plugin', () => ({
 
 vi.mock('@/libs/klavis', () => ({
   getKlavisClient: vi.fn(),
-  getKlavisClientForUser: vi.fn(async () => ({})),
   isKlavisClientAvailable: vi.fn(() => true),
-  tryGetKlavisClientForUser: vi.fn(async () => ({})),
 }));
 
 vi.mock('debug', () => ({
@@ -43,11 +41,11 @@ describe('KlavisService', () => {
           },
         },
         {
-          customParams: { klavis: { isAuthenticated: true, serverName: 'Shopify' } },
-          identifier: 'shopify',
+          customParams: { klavis: { isAuthenticated: true, serverName: 'Notion' } },
+          identifier: 'notion',
           manifest: {
-            api: [{ name: 'shopify-search', parameters: { type: 'object' } }],
-            meta: { title: 'Shopify' },
+            api: [{ name: 'notion-search', parameters: { type: 'object' } }],
+            meta: { title: 'Notion' },
           },
         },
         {

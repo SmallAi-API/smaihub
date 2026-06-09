@@ -10,7 +10,6 @@ import { DragUploadProvider } from '@/components/DragUploadZone/DragUploadProvid
 import { isDesktop } from '@/const/version';
 import AgentMockDevtools from '@/features/AgentMockDevtools';
 import DevFeatureFlagPanel from '@/features/DevFeatureFlagPanel';
-import KlavisKeyModal from '@/features/KlavisKeyModal';
 import AuthProvider from '@/layout/AuthProvider';
 import AppTheme from '@/layout/GlobalProvider/AppTheme';
 import DynamicFavicon from '@/layout/GlobalProvider/DynamicFavicon';
@@ -84,7 +83,6 @@ const SPAGlobalProvider = memo<PropsWithChildren>(({ children }) => {
             </QueryProvider>
             <Suspense>
               <ImportSettings />
-              <KlavisKeyModal />
               {/* DevPanel disabled in SPA: depends on node:fs */}
               {__DEV__ && (
                 <>

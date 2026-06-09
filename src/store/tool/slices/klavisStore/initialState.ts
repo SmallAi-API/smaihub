@@ -1,4 +1,4 @@
-import { type CreateKlavisServerParams, type KlavisServer } from './types';
+import { type KlavisServer } from './types';
 
 /**
  * Klavis Store state interface
@@ -11,12 +11,8 @@ export interface KlavisStoreState {
   executingToolIds: Set<string>;
   /** Whether initialization loading is complete */
   isServersInit: boolean;
-  /** Whether the BYOK key modal is open */
-  keyModalOpen: boolean;
   /** Set of loading server IDs */
   loadingServerIds: Set<string>;
-  /** Connect params parked while waiting for the user to enter a key */
-  pendingKlavisConnect?: CreateKlavisServerParams;
   /** List of created Klavis Servers */
   servers: KlavisServer[];
 }
@@ -27,8 +23,6 @@ export interface KlavisStoreState {
 export const initialKlavisStoreState: KlavisStoreState = {
   executingToolIds: new Set(),
   isServersInit: false,
-  keyModalOpen: false,
   loadingServerIds: new Set(),
-  pendingKlavisConnect: undefined,
   servers: [],
 };
