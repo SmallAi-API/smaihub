@@ -14,6 +14,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
       'With comprehensive updates to multimodal, language, and reasoning data plus training strategy optimization, the new model significantly improves multimodal reasoning and generalized instruction following, supports up to a 128k context window, and excels in OCR and cultural tourism IP recognition tasks.',
     displayName: 'SenseNova V6.5 Pro',
     enabled: true,
+    family: 'sensenova',
     id: 'SenseNova-V6-5-Pro',
     pricing: {
       currency: 'CNY',
@@ -38,6 +39,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
       'With comprehensive updates to multimodal, language, and reasoning data plus training strategy optimization, the new model significantly improves multimodal reasoning and generalized instruction following, supports up to a 128k context window, and excels in OCR and cultural tourism IP recognition tasks.',
     displayName: 'SenseNova V6.5 Turbo',
     enabled: true,
+    family: 'sensenova',
     id: 'SenseNova-V6-5-Turbo',
     pricing: {
       currency: 'CNY',
@@ -60,6 +62,8 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'Qwen3-235B-A22B is a MoE model that introduces a hybrid reasoning mode, letting users switch seamlessly between thinking and non-thinking. It supports understanding and reasoning across 119 languages and dialects and has strong tool-calling capabilities, competing with mainstream models like DeepSeek R1, OpenAI o1, o3-mini, Grok 3, and Google Gemini 2.5 Pro across benchmarks in general ability, code and math, multilingual capability, and knowledge reasoning.',
     displayName: 'Qwen3 235B A22B',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'Qwen3-235B',
     organization: 'Qwen',
     pricing: {
@@ -83,6 +87,8 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'Qwen3-32B is a dense model that introduces a hybrid reasoning mode, letting users switch between thinking and non-thinking. With architecture improvements, more data, and better training, it performs on par with Qwen2.5-72B.',
     displayName: 'Qwen3 32B',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'Qwen3-32B',
     organization: 'Qwen',
     pricing: {
@@ -107,6 +113,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'Combines vision and language deep reasoning, supporting slow thinking and full chain-of-thought.',
     displayName: 'SenseNova V6 Reasoner',
+    family: 'sensenova',
     id: 'SenseNova-V6-Reasoner',
     pricing: {
       currency: 'CNY',
@@ -126,6 +133,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'Natively unifies image, text, and video, breaking traditional multimodal silos. It leads across core multimodal and language capabilities and ranks top-tier in multiple evaluations.',
     displayName: 'SenseNova V6 Turbo',
+    family: 'sensenova',
     id: 'SenseNova-V6-Turbo',
     pricing: {
       currency: 'CNY',
@@ -145,6 +153,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'Natively unifies image, text, and video, breaking traditional multimodal silos; wins top spots on OpenCompass and SuperCLUE.',
     displayName: 'SenseNova V6 Pro',
+    family: 'sensenova',
     id: 'SenseNova-V6-Pro',
     pricing: {
       currency: 'CNY',
@@ -160,6 +169,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     contextWindowTokens: 32_768,
     description: 'Some performance exceeds SenseChat-5-1202.',
     displayName: 'SenseChat 5.5 Beta',
+    family: 'sensenova',
     id: 'SenseChat-5-beta',
     pricing: {
       currency: 'CNY',
@@ -178,6 +188,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'Latest version based on V5.5, with significant gains in Chinese/English fundamentals, chat, STEM knowledge, humanities knowledge, writing, math/logic, and length control.',
     displayName: 'SenseChat 5.5 1202',
+    family: 'sensenova',
     id: 'SenseChat-5-1202',
     pricing: {
       currency: 'CNY',
@@ -197,6 +208,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'Latest lightweight model reaching 90%+ of full-model capability with significantly lower inference cost.',
     displayName: 'SenseChat Turbo 1202',
+    family: 'sensenova',
     id: 'SenseChat-Turbo-1202',
     pricing: {
       currency: 'CNY',
@@ -216,6 +228,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'Latest V5.5 with 128K context; major gains in math reasoning, English chat, instruction following, and long-text understanding, comparable to GPT-4o.',
     displayName: 'SenseChat 5.5',
+    family: 'sensenova',
     id: 'SenseChat-5',
     maxOutput: 131_072,
     pricing: {
@@ -235,6 +248,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'Latest V5.5 with multi-image input and broad core improvements in attribute recognition, spatial relations, action/event detection, scene understanding, emotion recognition, commonsense reasoning, and text understanding/generation.',
     displayName: 'SenseChat 5.5 Vision',
+    family: 'sensenova',
     id: 'SenseChat-Vision',
     maxOutput: 16_384,
     pricing: {
@@ -254,6 +268,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     contextWindowTokens: 32_768,
     description: 'Suitable for fast Q&A and model fine-tuning scenarios.',
     displayName: 'SenseChat 5.0 Turbo',
+    family: 'sensenova',
     id: 'SenseChat-Turbo',
     maxOutput: 32_768,
     pricing: {
@@ -269,6 +284,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     contextWindowTokens: 131_072,
     description: 'Base V4 with 128K context, strong in long-text understanding and generation.',
     displayName: 'SenseChat 4.0 128K',
+    family: 'sensenova',
     id: 'SenseChat-128K',
     maxOutput: 131_072,
     pricing: {
@@ -284,6 +300,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     contextWindowTokens: 32_768,
     description: 'Base V4 with 32K context, flexible for many scenarios.',
     displayName: 'SenseChat 4.0 32K',
+    family: 'sensenova',
     id: 'SenseChat-32K',
     maxOutput: 32_768,
     pricing: {
@@ -299,6 +316,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     contextWindowTokens: 4096,
     description: 'Base V4 with 4K context and strong general capability.',
     displayName: 'SenseChat 4.0 4K',
+    family: 'sensenova',
     id: 'SenseChat',
     maxOutput: 4096,
     pricing: {
@@ -315,6 +333,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'Designed for Hong Kong dialogue habits, slang, and local knowledge; surpasses GPT-4 in Cantonese understanding and rivals GPT-4 Turbo in knowledge, reasoning, math, and coding.',
     displayName: 'SenseChat 5.0 Cantonese',
+    family: 'sensenova',
     id: 'SenseChat-5-Cantonese',
     maxOutput: 32_768,
     pricing: {
@@ -330,6 +349,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     contextWindowTokens: 8192,
     description: 'Standard character chat model with 8K context and high response speed.',
     displayName: 'SenseChat Character',
+    family: 'sensenova',
     id: 'SenseChat-Character',
     maxOutput: 1024,
     pricing: {
@@ -346,6 +366,7 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'Advanced character chat model with 32K context, improved capability, and Chinese/English support.',
     displayName: 'SenseChat Character Pro',
+    family: 'sensenova',
     id: 'SenseChat-Character-Pro',
     maxOutput: 4096,
     pricing: {
@@ -362,6 +383,8 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-V3 is a MoE model developed by DeepSeek. It surpasses other open models like Qwen2.5-72B and Llama-3.1-405B on many benchmarks and is competitive with leading closed models such as GPT-4o and Claude 3.5 Sonnet.',
     displayName: 'DeepSeek V3',
+    family: 'deepseek',
+    generation: 'deepseek-v3',
     id: 'DeepSeek-V3',
     pricing: {
       currency: 'CNY',
@@ -380,6 +403,8 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-R1 applies large-scale reinforcement learning during post-training, greatly boosting reasoning with very little labeled data. It matches the OpenAI o1 production model on math, code, and natural language reasoning tasks.',
     displayName: 'DeepSeek R1',
+    family: 'deepseek',
+    generation: 'deepseek-r1',
     id: 'DeepSeek-R1',
     pricing: {
       currency: 'CNY',
@@ -398,6 +423,8 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-R1-Distill models are fine-tuned from open-source models using sample data generated by DeepSeek-R1.',
     displayName: 'DeepSeek R1 Distill Qwen 14B',
+    family: 'deepseek',
+    generation: 'deepseek-r1-distill',
     id: 'DeepSeek-R1-Distill-Qwen-14B',
     pricing: {
       currency: 'CNY',
@@ -416,6 +443,8 @@ const sensenovaChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-R1-Distill models are fine-tuned from open-source models using sample data generated by DeepSeek-R1.',
     displayName: 'DeepSeek R1 Distill Qwen 32B',
+    family: 'deepseek',
+    generation: 'deepseek-r1-distill',
     id: 'DeepSeek-R1-Distill-Qwen-32B',
     pricing: {
       currency: 'CNY',

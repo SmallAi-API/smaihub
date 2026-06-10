@@ -17,6 +17,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
       "Gemini's most intelligent model built for speed, combining frontier intelligence with superior search and grounding.",
     displayName: 'Gemini 3.5 Flash',
     enabled: true,
+    family: 'gemini',
+    generation: 'gemini-3.5',
     id: 'gemini-3.5-flash',
     maxOutput: 65_536,
     pricing: {
@@ -52,6 +54,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
       "Gemini 3.1 Flash Image (Nano Banana 2) is Google's fastest native image generation model with thinking support, conversational image generation and editing.",
     displayName: 'Nano Banana 2',
     enabled: true,
+    family: 'gemini',
+    generation: 'gemini-3.1',
     id: 'gemini-3.1-flash-image-preview',
     maxOutput: 32_768,
     pricing: {
@@ -85,6 +89,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
       'Gemini 3.1 Pro Preview improves on Gemini 3 Pro with enhanced reasoning capabilities and adds medium thinking level support.',
     displayName: 'Gemini 3.1 Pro Preview',
     enabled: true,
+    family: 'gemini',
+    generation: 'gemini-3.1',
     id: 'gemini-3.1-pro-preview',
     maxOutput: 65_536,
     pricing: {
@@ -173,6 +179,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
       "Gemini 3.1 Flash-Lite is Google's most cost-efficient multimodal model, optimized for high-volume agentic tasks, translation, and data processing.",
     displayName: 'Gemini 3.1 Flash-Lite',
     enabled: true,
+    family: 'gemini',
+    generation: 'gemini-3.1',
     id: 'gemini-3.1-flash-lite',
     maxOutput: 65_536,
     pricing: {
@@ -208,6 +216,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     description:
       "Gemini 3.1 Flash-Lite Preview is Google's most cost-efficient multimodal model, optimized for high-volume agentic tasks, translation, and data processing.",
     displayName: 'Gemini 3.1 Flash-Lite Preview',
+    family: 'gemini',
+    generation: 'gemini-3.1',
     id: 'gemini-3.1-flash-lite-preview',
     maxOutput: 65_536,
     pricing: {
@@ -300,6 +310,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 3 Flash is the smartest model built for speed, combining cutting-edge intelligence with excellent search grounding.',
     displayName: 'Gemini 3 Flash Preview',
+    family: 'gemini',
+    generation: 'gemini-3',
     id: 'gemini-3-flash-preview',
     maxOutput: 65_536,
     pricing: {
@@ -328,6 +340,38 @@ const vertexaiChatModels: AIChatModelCard[] = [
   },
   {
     abilities: {
+      imageOutput: true,
+      reasoning: true,
+      search: true,
+      vision: true,
+    },
+    contextWindowTokens: 131_072 + 32_768,
+    description:
+      "Gemini 3 Pro Image (Nano Banana Pro) is Google's image generation model that also supports multimodal dialogue.",
+    displayName: 'Nano Banana Pro',
+    family: 'gemini',
+    generation: 'gemini-3',
+    id: 'gemini-3-pro-image-preview',
+    maxOutput: 32_768,
+    pricing: {
+      approximatePricePerImage: 0.134,
+      units: [
+        { name: 'imageOutput', rate: 120, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 12, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    releasedAt: '2025-11-20',
+    settings: {
+      extendParams: ['imageAspectRatio', 'imageResolution'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
       functionCall: true,
       reasoning: true,
       search: true,
@@ -337,6 +381,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 2.5 Pro is Google’s most advanced reasoning model, able to reason over code, math, and STEM problems and analyze large datasets, codebases, and documents with long context.',
     displayName: 'Gemini 2.5 Pro',
+    family: 'gemini',
+    generation: 'gemini-2.5',
     id: 'gemini-2.5-pro',
     maxOutput: 65_536,
     pricing: {
@@ -367,6 +413,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 2.5 Pro Preview is Google’s most advanced reasoning model, able to reason over code, math, and STEM problems and analyze large datasets, codebases, and documents with long context.',
     displayName: 'Gemini 2.5 Pro Preview 05-06',
+    family: 'gemini',
+    generation: 'gemini-2.5',
     id: 'gemini-2.5-pro-preview-05-06',
     maxOutput: 65_536,
     pricing: {
@@ -388,6 +436,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 2.5 Pro Preview is Google’s most advanced reasoning model, able to reason over code, math, and STEM problems and analyze large datasets, codebases, and documents with long context.',
     displayName: 'Gemini 2.5 Pro Preview 03-25',
+    family: 'gemini',
+    generation: 'gemini-2.5',
     id: 'gemini-2.5-pro-preview-03-25',
     maxOutput: 65_536,
     pricing: {
@@ -409,6 +459,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 1_048_576 + 65_536,
     description: 'Gemini 2.5 Flash is Google’s best-value model with full capabilities.',
     displayName: 'Gemini 2.5 Flash',
+    family: 'gemini',
+    generation: 'gemini-2.5',
     id: 'gemini-2.5-flash',
     maxOutput: 65_536,
     pricing: {
@@ -438,6 +490,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 1_048_576 + 65_536,
     description: 'Gemini 2.5 Flash Preview is Google’s best-value model with full capabilities.',
     displayName: 'Gemini 2.5 Flash Preview 04-17',
+    family: 'gemini',
+    generation: 'gemini-2.5',
     id: 'gemini-2.5-flash-preview-04-17',
     maxOutput: 65_536,
     pricing: {
@@ -458,6 +512,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     description:
       'Nano Banana is Google’s newest, fastest, and most efficient native multimodal model, enabling conversational image generation and editing.',
     displayName: 'Nano Banana',
+    family: 'gemini',
+    generation: 'gemini-2.5',
     id: 'gemini-2.5-flash-image',
     maxOutput: 8192,
     pricing: {
@@ -482,6 +538,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 2.5 Flash-Lite is Google’s smallest, best-value model, designed for large-scale use.',
     displayName: 'Gemini 2.5 Flash-Lite',
+    family: 'gemini',
+    generation: 'gemini-2.5',
     id: 'gemini-2.5-flash-lite',
     maxOutput: 64_000,
     pricing: {
@@ -509,6 +567,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 2.5 Flash-Lite Preview is Google’s smallest, best-value model, designed for large-scale use.',
     displayName: 'Gemini 2.5 Flash-Lite Preview 06-17',
+    family: 'gemini',
+    generation: 'gemini-2.5',
     id: 'gemini-2.5-flash-lite-preview-06-17',
     maxOutput: 64_000,
     pricing: {
@@ -534,6 +594,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 2.0 Flash delivers next-gen features including exceptional speed, native tool use, multimodal generation, and a 1M-token context window.',
     displayName: 'Gemini 2.0 Flash',
+    family: 'gemini',
+    generation: 'gemini-2.0',
     id: 'gemini-2.0-flash',
     maxOutput: 8192,
     pricing: {
@@ -554,6 +616,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 1_048_576 + 8192,
     description: 'A Gemini 2.0 Flash variant optimized for cost efficiency and low latency.',
     displayName: 'Gemini 2.0 Flash-Lite',
+    family: 'gemini',
+    generation: 'gemini-2.0',
     id: 'gemini-2.0-flash-lite',
     maxOutput: 8192,
     pricing: {
@@ -575,6 +639,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 1.5 Flash 002 is an efficient multimodal model built for broad deployment.',
     displayName: 'Gemini 1.5 Flash 002',
+    family: 'gemini',
+    generation: 'gemini-1.5',
     id: 'gemini-1.5-flash-002',
     maxOutput: 8192,
     pricing: {
@@ -595,6 +661,8 @@ const vertexaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 1.5 Pro 002 is the latest production-ready model with higher-quality output, especially for math, long context, and vision tasks.',
     displayName: 'Gemini 1.5 Pro 002',
+    family: 'gemini',
+    generation: 'gemini-1.5',
     id: 'gemini-1.5-pro-002',
     maxOutput: 8192,
     pricing: {

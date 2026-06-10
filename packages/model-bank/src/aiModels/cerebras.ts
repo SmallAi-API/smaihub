@@ -6,8 +6,13 @@ const cerebrasModels: AIChatModelCard[] = [
       functionCall: true,
     },
     contextWindowTokens: 131_072,
-    displayName: 'Qwen 3 235B Instruct',
-    id: 'qwen-3-235b-a22b-instruct-2507',
+    displayName: 'GPT OSS 120B',
+    enabled: true,
+    family: 'gpt-oss',
+    generation: 'gpt-oss',
+    id: 'gpt-oss-120b',
+    knowledgeCutoff: '2024-06',
+    maxOutput: 40_960,
     pricing: {
       units: [
         { name: 'textInput', rate: 0.6, strategy: 'fixed', unit: 'millionTokens' },
@@ -38,9 +43,12 @@ const cerebrasModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 32_768,
     description:
-      'Llama 3.1 8B: a small, low-latency Llama variant for lightweight online inference and chat.',
-    displayName: 'Llama 3.1 8B',
-    id: 'llama3.1-8b',
+      "GLM-4.7 is Zhipu's new generation flagship model with 355B total parameters and 32B active parameters, fully upgraded in general dialogue, reasoning, and agent capabilities. GLM-4.7 enhances Interleaved Thinking and introduces Preserved Thinking and Turn-level Thinking.",
+    displayName: 'GLM-4.7',
+    family: 'glm',
+    generation: 'glm-4.7',
+    id: 'zai-glm-4.7',
+    maxOutput: 40_960,
     pricing: {
       units: [
         { name: 'textInput', rate: 0.1, strategy: 'fixed', unit: 'millionTokens' },

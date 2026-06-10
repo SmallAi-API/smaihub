@@ -17,6 +17,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Kimi-K2.6 is a large language model launched by Moonshot AI, with excellent coding and tool calling capabilities. Service deployment is only supported in mainland China.',
     displayName: 'Kimi K2.6',
+    family: 'kimi',
+    generation: 'kimi-k2.6',
     id: 'kimi-k2.6',
     maxOutput: 98_304,
     pricing: {
@@ -43,6 +45,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Kimi K2.5 is the most capable Kimi model, delivering open-source SOTA in agent tasks, coding, and vision understanding. It supports multimodal inputs and both thinking and non-thinking modes.',
     displayName: 'Kimi K2.5',
+    family: 'kimi',
+    generation: 'kimi-k2.5',
     id: 'kimi-k2.5',
     maxOutput: 32_768,
     pricing: {
@@ -67,6 +71,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'MiniMax-M2.5 is a flagship open-source large model from MiniMax, focusing on solving complex real-world tasks. Its core strengths are multi-language programming capabilities and the ability to solve complex tasks as an Agent.',
     displayName: 'MiniMax-M2.5',
+    family: 'minimax',
+    generation: 'minimax-m2.5',
     id: 'MiniMax-M2.5',
     maxOutput: 32_768,
     pricing: {
@@ -91,6 +97,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'MiniMax-M2.1 is a flagship open-source large model from MiniMax, focusing on solving complex real-world tasks. Its core strengths are multi-language programming capabilities and the ability to solve complex tasks as an Agent.',
     displayName: 'MiniMax-M2.1',
+    family: 'minimax',
+    generation: 'minimax-m2.1',
     id: 'MiniMax-M2.1',
     maxOutput: 32_768,
     pricing: {
@@ -118,6 +126,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen VL is a text generation model with vision understanding. It can do OCR and also summarize and reason, such as extracting attributes from product photos or solving problems from images.',
     displayName: 'Qwen3 VL Plus',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-vl-plus',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -171,6 +181,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 VL Flash: lightweight, high-speed reasoning version for latency-sensitive or high-volume requests.',
     displayName: 'Qwen3 VL Flash',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-vl-flash',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -220,6 +232,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek V4 Flash is the cost-efficient member of the V4 family with a 1M context window and hybrid thinking. Thinking mode is on by default and can be toggled via the `thinking` parameter; non-thinking mode is optimized for latency-sensitive workflows.',
     displayName: 'DeepSeek V4 Flash',
+    family: 'deepseek',
+    generation: 'deepseek-v4',
     id: 'deepseek-v4-flash',
     maxOutput: 393_216,
     pricing: {
@@ -245,6 +259,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek V4 Pro is the flagship of the V4 family, optimized for high-intensity reasoning, agentic workflows, and long-horizon planning. Thinking mode is on by default and can be toggled via the `thinking` parameter.',
     displayName: 'DeepSeek V4 Pro',
+    family: 'deepseek',
+    generation: 'deepseek-v4',
     id: 'deepseek-v4-pro',
     maxOutput: 393_216,
     pricing: {
@@ -270,6 +286,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'deepseek-v3.2 introduces sparse attention mechanism, aiming to improve training and inference efficiency when processing long texts, priced lower than deepseek-v3.1.',
     displayName: 'DeepSeek V3.2',
+    family: 'deepseek',
+    generation: 'deepseek-v3.2',
     id: 'deepseek-v3.2',
     maxOutput: 65_536,
     pricing: {
@@ -295,6 +313,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'deepseek-v3.2-exp introduces sparse attention to improve training and inference efficiency on long text, at a lower price than deepseek-v3.1.',
     displayName: 'DeepSeek V3.2 Exp',
+    family: 'deepseek',
+    generation: 'deepseek-v3.2',
     id: 'deepseek-v3.2-exp',
     maxOutput: 65_536,
     pricing: {
@@ -320,6 +340,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek V3.1 uses a hybrid reasoning architecture with both thinking and non-thinking modes.',
     displayName: 'DeepSeek V3.1',
+    family: 'deepseek',
+    generation: 'deepseek-v3.1',
     id: 'deepseek-v3.1',
     maxOutput: 65_536,
     pricing: {
@@ -344,6 +366,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'kimi-k2-thinking is a Moonshot AI thinking model with general agentic and reasoning abilities. It excels at deep reasoning and can solve hard problems via multi-step tool use.',
     displayName: 'Kimi K2 Thinking',
+    family: 'kimi',
+    generation: 'kimi-k2',
     id: 'kimi-k2-thinking',
     maxOutput: 16_384,
     organization: 'Qwen',
@@ -369,6 +393,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       '1T total parameters with 32B active. Among non-thinking models, it is top-tier in frontier knowledge, math, and coding, and stronger at general agent tasks. Optimized for agent workloads, it can take actions, not just answer questions. Best for improvisational, general chat, and agent experiences as a reflex-level model without long thinking.',
     displayName: 'Kimi K2 Instruct',
+    family: 'kimi',
+    generation: 'kimi-k2',
     id: 'Moonshot-Kimi-K2-Instruct',
     maxOutput: 8192,
     pricing: {
@@ -393,6 +419,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'The GLM series is a hybrid reasoning model from Zhipu AI built for agents, with thinking and non-thinking modes. GLM-5.1 is the latest flagship variant for long-horizon agentic engineering and complex development workflows.',
     displayName: 'GLM-5.1',
+    family: 'glm',
+    generation: 'glm-5.1',
     id: 'glm-5.1',
     maxOutput: 131_072,
     pricing: {
@@ -439,6 +467,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'The GLM series is a hybrid reasoning model from Zhipu AI built for agents, with thinking and non-thinking modes.',
     displayName: 'GLM-5',
+    family: 'glm',
+    generation: 'glm-5',
     id: 'glm-5',
     maxOutput: 16_384,
     pricing: {
@@ -484,6 +514,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'The GLM series is a hybrid reasoning model from Zhipu AI built for agents, with thinking and non-thinking modes.',
     displayName: 'GLM-4.7',
+    family: 'glm',
+    generation: 'glm-4.7',
     id: 'glm-4.7',
     maxOutput: 16_384,
     pricing: {
@@ -529,6 +561,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'The GLM series is a hybrid reasoning model from Zhipu AI built for agents, with thinking and non-thinking modes.',
     displayName: 'GLM-4.6',
+    family: 'glm',
+    generation: 'glm-4.6',
     id: 'glm-4.6',
     maxOutput: 16_384,
     pricing: {
@@ -574,6 +608,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'The GLM-4.5 series is a hybrid reasoning model from Zhipu AI built for agents, with thinking and non-thinking modes.',
     displayName: 'GLM-4.5',
+    family: 'glm',
+    generation: 'glm-4.5',
     id: 'glm-4.5',
     maxOutput: 16_384,
     pricing: {
@@ -619,6 +655,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'The GLM-4.5 series is a hybrid reasoning model from Zhipu AI built for agents, with thinking and non-thinking modes.',
     displayName: 'GLM-4.5-Air',
+    family: 'glm',
+    generation: 'glm-4.5',
     id: 'glm-4.5-air',
     maxOutput: 16_384,
     pricing: {
@@ -666,6 +704,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Next‑gen Qwen coder optimized for complex multi-file code generation, debugging, and high‑throughput agent workflows. Designed for strong tool integration and improved reasoning performance.',
     displayName: 'Qwen3 Coder Next',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-coder-next',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -713,6 +753,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen code model. The latest Qwen3-Coder series is based on Qwen3 and delivers strong coding-agent abilities, tool use, and environment interaction for autonomous programming, with excellent code performance and solid general capability.',
     displayName: 'Qwen3 Coder Plus',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-coder-plus',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -776,6 +818,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen code model. The latest Qwen3-Coder series is based on Qwen3 and delivers strong coding-agent abilities, tool use, and environment interaction for autonomous programming, with excellent code performance and solid general capability.',
     displayName: 'Qwen3 Coder Flash',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-coder-flash',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -836,6 +880,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Open-source Qwen code model. The latest qwen3-coder-480b-a35b-instruct is based on Qwen3 and delivers strong coding-agent abilities, tool use, and environment interaction for autonomous programming, with excellent code performance and solid general capability.',
     displayName: 'Qwen3 Coder 480B A35B',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-coder-480b-a35b-instruct',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -880,6 +926,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Open-source Qwen code model. The latest qwen3-coder-30b-a3b-instruct is based on Qwen3 and delivers strong coding-agent abilities, tool use, and environment interaction for autonomous programming, with excellent code performance and solid general capability.',
     displayName: 'Qwen3 Coder 30B A3B',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-coder-30b-a3b-instruct',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -927,6 +975,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3.6 27B is an open-source dense model with strong performance in reasoning, coding, and general capabilities. It supports thinking mode by default, offering balanced performance and efficiency.',
     displayName: 'Qwen3.6-27B',
+    family: 'qwen',
+    generation: 'qwen3.6',
     id: 'qwen3.6-27b',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -954,6 +1004,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'The Qwen3.6 35B-A3B native vision-language model is built on a hybrid architecture that integrates a linear attention mechanism with a sparse Mixture-of-Experts (MoE) design, achieving higher inference efficiency. Compared to the 3.5-35B-A3B model, it delivers significant improvements in agentic coding capabilities, mathematical reasoning, code reasoning, spatial intelligence, as well as object localization and target detection.',
     displayName: 'Qwen3.6-35B-A3B',
+    family: 'qwen',
+    generation: 'qwen3.6',
     id: 'qwen3.6-35b-a3b',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -981,6 +1033,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Supports text, image, and video inputs. For text-only tasks, its performance is comparable to Qwen3 Max, offering higher efficiency and lower cost. In multimodal capabilities, it delivers significant improvements over the Qwen3 VL series.',
     displayName: 'Qwen3.5-397B-A17B',
+    family: 'qwen',
+    generation: 'qwen3.5',
     id: 'qwen3.5-397b-a17b',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -1030,6 +1084,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Supports text, image, and video inputs. For text-only tasks, its performance is comparable to Qwen3 Max, offering higher efficiency and lower cost. In multimodal capabilities, it delivers significant improvements over the Qwen3 VL series.',
     displayName: 'Qwen3.5-122B-A10B',
+    family: 'qwen',
+    generation: 'qwen3.5',
     id: 'qwen3.5-122b-a10b',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -1079,6 +1135,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Supports text, image, and video inputs. For text-only tasks, its performance is comparable to Qwen3 Max, offering higher efficiency and lower cost. In multimodal capabilities, it delivers significant improvements over the Qwen3 VL series.',
     displayName: 'Qwen3.5-27B',
+    family: 'qwen',
+    generation: 'qwen3.5',
     id: 'qwen3.5-27b',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -1128,6 +1186,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Supports text, image, and video inputs. For text-only tasks, its performance is comparable to Qwen3 Max, offering higher efficiency and lower cost. In multimodal capabilities, it delivers significant improvements over the Qwen3 VL series.',
     displayName: 'Qwen3.5-35B-A3B',
+    family: 'qwen',
+    generation: 'qwen3.5',
     id: 'qwen3.5-35b-a3b',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -1175,6 +1235,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 thinking-mode open-source model. Compared to the previous version (Qwen3-235B-A22B), it significantly improves logic, general ability, knowledge, and creativity, suitable for hard reasoning scenarios.',
     displayName: 'Qwen3 235B A22B Thinking 2507',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-235b-a22b-thinking-2507',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -1199,6 +1261,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 non-thinking open-source model. Compared to the previous version (Qwen3-235B-A22B), it slightly improves subjective creativity and model safety.',
     displayName: 'Qwen3 235B A22B Instruct 2507',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-235b-a22b-instruct-2507',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -1221,6 +1285,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 thinking-mode open-source model. Compared to the previous version (Qwen3-30B-A3B), it significantly improves logic, general ability, knowledge, and creativity, suitable for hard reasoning scenarios.',
     displayName: 'Qwen3 30B A3B Thinking 2507',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-30b-a3b-thinking-2507',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -1245,6 +1311,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Compared to the previous version (Qwen3-30B-A3B), overall Chinese/English and multilingual general ability is significantly improved. Subjective open-ended tasks are specially optimized for stronger preference alignment and more helpful responses.',
     displayName: 'Qwen3 30B A3B Instruct 2507',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-30b-a3b-instruct-2507',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -1267,6 +1335,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Next-gen Qwen3 thinking-mode open-source model. Compared to the prior version (Qwen3-235B-A22B-Thinking-2507), instruction following is improved and summaries are more concise.',
     displayName: 'Qwen3 Next 80B A3B Thinking',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-next-80b-a3b-thinking',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -1291,6 +1361,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Next-gen Qwen3 non-thinking open-source model. Compared to the prior version (Qwen3-235B-A22B-Instruct-2507), it has better Chinese understanding, stronger logical reasoning, and improved text generation.',
     displayName: 'Qwen3 Next 80B A3B Instruct',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-next-80b-a3b-instruct',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -1313,6 +1385,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 is a next-gen Tongyi Qwen model with major gains in reasoning, general ability, agent capabilities, and multilingual performance, and supports switching thinking modes.',
     displayName: 'Qwen3 235B A22B',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-235b-a22b',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -1338,6 +1412,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 is a next-gen Tongyi Qwen model with major gains in reasoning, general ability, agent capabilities, and multilingual performance, and supports switching thinking modes.',
     displayName: 'Qwen3 32B',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-32b',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -1363,6 +1439,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 is a next-gen Tongyi Qwen model with major gains in reasoning, general ability, agent capabilities, and multilingual performance, and supports switching thinking modes.',
     displayName: 'Qwen3 30B A3B',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-30b-a3b',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -1388,6 +1466,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 is a next-gen Tongyi Qwen model with major gains in reasoning, general ability, agent capabilities, and multilingual performance, and supports switching thinking modes.',
     displayName: 'Qwen3 14B',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-14b',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -1413,6 +1493,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 is a next-gen Tongyi Qwen model with major gains in reasoning, general ability, agent capabilities, and multilingual performance, and supports switching thinking modes.',
     displayName: 'Qwen3 8B',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-8b',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -1438,6 +1520,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 is a next-gen Tongyi Qwen model with major gains in reasoning, general ability, agent capabilities, and multilingual performance, and supports switching thinking modes.',
     displayName: 'Qwen3 4B',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-4b',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -1463,6 +1547,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 is a next-gen Tongyi Qwen model with major gains in reasoning, general ability, agent capabilities, and multilingual performance, and supports switching thinking modes.',
     displayName: 'Qwen3 1.7B',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-1.7b',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -1488,6 +1574,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 is a next-gen Tongyi Qwen model with major gains in reasoning, general ability, agent capabilities, and multilingual performance, and supports switching thinking modes.',
     displayName: 'Qwen3 0.6B',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-0.6b',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -1517,6 +1605,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'QwQ reasoning model trained on Qwen2.5 uses RL to greatly improve reasoning. Core metrics in math/code (AIME 24/25, LiveCodeBench) and some general benchmarks (IFEval, LiveBench) reach the full DeepSeek-R1 level.',
     displayName: 'QwQ Plus',
+    family: 'qwen',
+    generation: 'qwq',
     id: 'qwq-plus',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -1549,6 +1639,8 @@ const qwenChatModels: AIChatModelCard[] = [
       'Qwen3.6 native vision-language Flash model delivers significantly improved performance compared to the 3.5-Flash version. This model focuses on enhancing agentic coding capabilities (substantially outperforming its predecessor across multiple code-agent benchmarks), as well as improving mathematical reasoning and code reasoning abilities. On the vision side, it shows notable gains in spatial intelligence, with particularly strong improvements in object localization and target detection.',
     displayName: 'Qwen3.6 Flash',
     enabled: true,
+    family: 'qwen',
+    generation: 'qwen3.6',
     id: 'qwen3.6-flash',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -1605,7 +1697,8 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 1_000_000,
     description: 'Fastest and lowest-cost Qwen model, ideal for simple tasks.',
     displayName: 'Qwen3.5 Flash',
-    enabled: true,
+    family: 'qwen',
+    generation: 'qwen3.5',
     id: 'qwen3.5-flash',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -1663,6 +1756,7 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 1_000_000,
     description: 'Fastest and lowest-cost Qwen model, ideal for simple tasks.',
     displayName: 'Qwen Flash',
+    family: 'qwen',
     id: 'qwen-flash',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -1721,6 +1815,7 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen Turbo will no longer be updated; replace it with Qwen Flash. Ultra-large Qwen model supporting Chinese, English, and other languages.',
     displayName: 'Qwen Turbo',
+    family: 'qwen',
     id: 'qwen-turbo',
     maxOutput: 16_384,
     organization: 'Qwen',
@@ -1748,13 +1843,50 @@ const qwenChatModels: AIChatModelCard[] = [
       vision: true,
     },
     config: {
+      deploymentName: 'qwen3.7-plus', // Supports context caching
+    },
+    contextWindowTokens: 1_000_000,
+    description:
+      'Qwen3.7 Plus is a multimodal interactive hybrid agent model, building upon the Qwen3.7 series text capabilities to unify vision and language. It excels at GUI operation, visual coding, and complex agentic workflows.',
+    displayName: 'Qwen3.7 Plus',
+    enabled: true,
+    family: 'qwen',
+    generation: 'qwen3.7',
+    id: 'qwen3.7-plus',
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    pricing: {
+      currency: 'CNY',
+      units: [
+        { name: 'textInput_cacheRead', rate: 2 * 0.2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 8, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    releasedAt: '2026-06-01',
+    settings: {
+      extendParams: ['enableReasoning', 'reasoningBudgetToken'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      video: true,
+      vision: true,
+    },
+    config: {
       deploymentName: 'qwen3.6-plus', // Supports context caching
     },
     contextWindowTokens: 1_000_000,
     description:
       'Qwen 3.6-Plus introduces major upgrades in coding capabilities, with a focus on Agentic Coding and front-end development, significantly enhancing the Vibe Coding experience. Its reasoning ability across general scenarios has been further improved. In terms of multimodality, capabilities such as universal recognition, OCR, and object localization have been substantially enhanced. It also fixes known issues from the Qwen 3.5-Plus release. Usage remains the same as Qwen 3.5-Plus.',
     displayName: 'Qwen3.6 Plus',
-    enabled: true,
+    family: 'qwen',
+    generation: 'qwen3.6',
     id: 'qwen3.6-plus',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -1833,6 +1965,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen 3.5 is a native vision-language Plus model. Compared to the February 15 snapshot, this version delivers substantial improvements in agentic coding capabilities and significantly faster inference speed. Its knowledge, reasoning, and long-context abilities remain at a high level, meeting the demands of complex agent tasks. It is well-suited for coding agents, production workflows, and high-throughput scenarios. This version corresponds to the April 20, 2026 snapshot.',
     displayName: 'Qwen3.5 Plus 2026-04-20',
+    family: 'qwen',
+    generation: 'qwen3.5',
     id: 'qwen3.5-plus-2026-04-20',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -1915,7 +2049,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3.5 Plus supports text, image, and video input. Its performance on pure text tasks is comparable to Qwen3 Max, with better performance and lower cost. Its multimodal capabilities are significantly improved compared to the Qwen3 VL series.',
     displayName: 'Qwen3.5 Plus',
-    enabled: true,
+    family: 'qwen',
+    generation: 'qwen3.5',
     id: 'qwen3.5-plus',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -1996,6 +2131,7 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Enhanced ultra-large Qwen model supporting Chinese, English, and other languages.',
     displayName: 'Qwen Plus',
+    family: 'qwen',
     id: 'qwen-plus',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -2059,13 +2195,48 @@ const qwenChatModels: AIChatModelCard[] = [
       search: true,
     },
     config: {
-      deploymentName: 'qwen3.6-max-preview', // Supports context caching
+      deploymentName: 'qwen3.7-max', // Supports context caching
+    },
+    contextWindowTokens: 1_000_000,
+    description:
+      'Qwen3.7 Max is the flagship omnipotent model of the AI agent era, offering comprehensive capabilities across text, image, and video understanding. It provides superior reasoning, function calling, and agent task execution performance.',
+    displayName: 'Qwen3.7 Max',
+    enabled: true,
+    family: 'qwen',
+    generation: 'qwen3.7',
+    id: 'qwen3.7-max',
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    pricing: {
+      currency: 'CNY',
+      units: [
+        { name: 'textInput_cacheRead', rate: 12 * 0.2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 12, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 36, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    releasedAt: '2026-05-20',
+    settings: {
+      extendParams: ['enableReasoning', 'reasoningBudgetToken'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+    },
+    config: {
+      deploymentName: 'qwen3.6-max-preview',
     },
     contextWindowTokens: 262_144,
     description:
       'The largest closed-source model in the Qwen3.6 series. It delivers stronger world knowledge, instruction following, and agentic coding performance for complex tasks. It is text-only, supports thinking mode by default, explicit caching, and function calling.',
     displayName: 'Qwen3.6 Max Preview',
-    enabled: true,
+    family: 'qwen',
+    generation: 'qwen3.6',
     id: 'qwen3.6-max-preview',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -2130,6 +2301,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 Max models deliver large gains over the 2.5 series in general ability, Chinese/English understanding, complex instruction following, subjective open tasks, multilingual ability, and tool use, with fewer hallucinations. The latest qwen3-max improves agentic programming and tool use over qwen3-max-preview. This release reaches field SOTA and targets more complex agent needs.',
     displayName: 'Qwen3 Max',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-max',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -2197,6 +2370,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Best-performing Qwen model for complex, multi-step tasks. The preview supports thinking.',
     displayName: 'Qwen3 Max Preview',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-max-preview',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -2263,6 +2438,7 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Hundred-billion-scale ultra-large Qwen model supporting Chinese, English, and other languages; the API model behind current Qwen2.5 products.',
     displayName: 'Qwen Max',
+    family: 'qwen',
     id: 'qwen-max',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2290,6 +2466,7 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Ultra-large Qwen model with long context and chat across long- and multi-document scenarios.',
     displayName: 'Qwen Long',
+    family: 'qwen',
     id: 'qwen-long',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -2315,6 +2492,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3.5 Omni Plus supports text, image, and video input. It is the latest full-modal Qwen model for high-quality multimodal understanding and generation.',
     displayName: 'Qwen3.5 Omni Plus',
+    family: 'qwen',
+    generation: 'qwen3.5',
     id: 'qwen3.5-omni-plus',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -2347,6 +2526,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3.5 Omni Flash is a fast, cost-effective full-modal Qwen model that supports text, image, and video input.',
     displayName: 'Qwen3.5 Omni Flash',
+    family: 'qwen',
+    generation: 'qwen3.5',
     id: 'qwen3.5-omni-flash',
     maxOutput: 65_536,
     organization: 'Qwen',
@@ -2380,6 +2561,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3-Omni-Flash is a multimodal large model built on a Thinker–Talker Mixture-of-Experts (MoE) architecture. It supports efficient understanding across text, images, audio, and video, along with speech generation capabilities. The model enables text-based interaction in 119 languages and voice interaction in 20 languages, producing human-like speech for precise cross-lingual communication. It features strong instruction-following capabilities and supports customizable system prompts, allowing flexible adaptation to different conversational styles and role settings. It is widely applicable in scenarios such as text creation, voice assistants, and multimedia analysis, delivering a natural and seamless multimodal interaction experience.',
     displayName: 'Qwen3 Omni Flash',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-omni-flash',
     maxOutput: 16_384,
     organization: 'Qwen',
@@ -2411,6 +2594,7 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen-Omni models support multimodal inputs (video, audio, images, text) and output audio and text.',
     displayName: 'Qwen Omni Turbo',
+    family: 'qwen',
     id: 'qwen-omni-turbo',
     maxOutput: 2048,
     organization: 'Qwen',
@@ -2432,6 +2616,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen-Omni models support multimodal inputs (video, audio, images, text) and output audio and text.',
     displayName: 'Qwen2.5 Omni 7B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-omni-7b',
     maxOutput: 2048,
     organization: 'Qwen',
@@ -2456,6 +2642,7 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Enhanced large-scale Qwen vision-language model with major gains in detail and text recognition, supporting over one-megapixel resolution and arbitrary aspect ratios.',
     displayName: 'Qwen VL Plus',
+    family: 'qwen',
     id: 'qwen-vl-plus',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2481,6 +2668,7 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Ultra-large Qwen vision-language model. Compared to the enhanced version, it further improves visual reasoning and instruction following for stronger visual perception and cognition.',
     displayName: 'Qwen VL Max',
+    family: 'qwen',
     id: 'qwen-vl-max',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2505,6 +2693,7 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen OCR is a text extraction model for documents, tables, exam images, and handwriting. It supports Chinese, English, French, Japanese, Korean, German, Russian, Italian, Vietnamese, and Arabic.',
     displayName: 'Qwen VL OCR',
+    family: 'qwen',
     id: 'qwen-vl-ocr',
     maxOutput: 4096,
     organization: 'Qwen',
@@ -2526,6 +2715,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen-VL (open-source) provides vision understanding and text generation, supporting agent interaction, visual grounding, spatial perception, long-video understanding, and deep reasoning, with stronger text recognition and multilingual support in complex scenes.',
     displayName: 'Qwen3 VL 30B A3B Thinking',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-vl-30b-a3b-thinking',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -2549,6 +2740,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 VL 30B non-thinking (Instruct) targets standard instruction-following, maintaining strong multimodal understanding and generation.',
     displayName: 'Qwen3 VL 30B A3B Instruct',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-vl-30b-a3b-instruct',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -2570,6 +2763,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 VL 8B thinking mode for lightweight multimodal reasoning and interaction, retaining long-context understanding.',
     displayName: 'Qwen3 VL 8B Thinking',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-vl-8b-thinking',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -2593,6 +2788,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 VL 8B non-thinking mode (Instruct) for standard multimodal generation and recognition.',
     displayName: 'Qwen3 VL 8B Instruct',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-vl-8b-instruct',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -2614,6 +2811,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 VL 235B A22B thinking mode (open-source) targets hard reasoning and long-video understanding with top-tier vision+text reasoning.',
     displayName: 'Qwen3 VL 235B A22B Thinking',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-vl-235b-a22b-thinking',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -2637,6 +2836,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 VL 235B A22B non-thinking (Instruct) is for non-thinking instruction scenarios while retaining strong visual understanding.',
     displayName: 'Qwen3 VL 235B A22B Instruct',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-vl-235b-a22b-instruct',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -2658,6 +2859,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 VL 32B thinking mode (open-source) targets hard reasoning and long-video understanding with top-tier vision+text reasoning.',
     displayName: 'Qwen3 VL 32B Thinking',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-vl-32b-thinking',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -2681,6 +2884,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen3 VL 32B non-thinking (Instruct) is for non-thinking instruction scenarios while retaining strong visual understanding.',
     displayName: 'Qwen3 VL 32B Instruct',
+    family: 'qwen',
+    generation: 'qwen3',
     id: 'qwen3-vl-32b-instruct',
     maxOutput: 32_768,
     organization: 'Qwen',
@@ -2700,6 +2905,7 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 4096,
     description: 'Qwen Math is a language model specialized for solving math problems.',
     displayName: 'Qwen Math Turbo',
+    family: 'qwen',
     id: 'qwen-math-turbo',
     maxOutput: 3072,
     organization: 'Qwen',
@@ -2719,6 +2925,7 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 4096,
     description: 'Qwen Math is a language model specialized for solving math problems.',
     displayName: 'Qwen Math Plus',
+    family: 'qwen',
     id: 'qwen-math-plus',
     maxOutput: 3072,
     organization: 'Qwen',
@@ -2738,6 +2945,7 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 131_072,
     description: 'Qwen code model.',
     displayName: 'Qwen Coder Turbo',
+    family: 'qwen',
     id: 'qwen-coder-turbo',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2757,6 +2965,7 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 131_072,
     description: 'Qwen code model.',
     displayName: 'Qwen Coder Plus',
+    family: 'qwen',
     id: 'qwen-coder-plus',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2778,6 +2987,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'QwQ reasoning model trained on Qwen2.5-32B uses RL to greatly improve reasoning. Core math/code metrics (AIME 24/25, LiveCodeBench) and some general benchmarks (IFEval, LiveBench) reach full DeepSeek-R1 levels and significantly exceed DeepSeek-R1-Distill-Qwen-32B.',
     displayName: 'QwQ 32B',
+    family: 'qwen',
+    generation: 'qwq',
     id: 'qwq-32b',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2801,6 +3012,8 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 32_768,
     description: 'QwQ is an experimental research model from Qwen focused on improved reasoning.',
     displayName: 'QwQ 32B Preview',
+    family: 'qwen',
+    generation: 'qwq',
     id: 'qwq-32b-preview',
     maxOutput: 16_384,
     organization: 'Qwen',
@@ -2826,6 +3039,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen QVQ visual reasoning model supports vision input and chain-of-thought output, with stronger performance in math, coding, visual analysis, creative, and general tasks.',
     displayName: 'QVQ Max',
+    family: 'qwen',
+    generation: 'qvq',
     id: 'qvq-max',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2851,6 +3066,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Visual reasoning model with vision input and chain-of-thought output. The qvq-plus series follows qvq-max and offers faster reasoning with a better quality-cost balance.',
     displayName: 'QVQ Plus',
+    family: 'qwen',
+    generation: 'qvq',
     id: 'qvq-plus',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2873,6 +3090,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'QVQ is an experimental research model from Qwen focused on improving visual reasoning, especially for math reasoning.',
     displayName: 'QVQ 72B Preview',
+    family: 'qwen',
+    generation: 'qvq',
     id: 'qvq-72b-preview',
     maxOutput: 16_384,
     organization: 'Qwen',
@@ -2893,6 +3112,8 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 131_072,
     description: 'Qwen2.5 open-source 7B model.',
     displayName: 'Qwen2.5 7B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-7b-instruct',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2912,6 +3133,8 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 131_072,
     description: 'Qwen2.5 open-source 14B model.',
     displayName: 'Qwen2.5 14B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-14b-instruct',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2931,6 +3154,8 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 131_072,
     description: 'Qwen2.5 open-source 32B model.',
     displayName: 'Qwen2.5 32B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-32b-instruct',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2950,6 +3175,8 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 131_072,
     description: 'Qwen2.5 open-source 72B model.',
     displayName: 'Qwen2.5 72B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-72b-instruct',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2969,6 +3196,8 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 1_000_000,
     description: 'Qwen2.5 open-source 72B model.',
     displayName: 'Qwen2.5 14B 1M',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-14b-instruct-1m',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -2986,6 +3215,8 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 4096,
     description: 'Qwen-Math delivers strong math problem-solving.',
     displayName: 'Qwen2.5 Math 7B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-math-7b-instruct',
     maxOutput: 3072,
     organization: 'Qwen',
@@ -3002,6 +3233,8 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 4096,
     description: 'Qwen-Math delivers strong math problem-solving.',
     displayName: 'Qwen2.5 Math 72B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-math-72b-instruct',
     maxOutput: 3072,
     organization: 'Qwen',
@@ -3019,6 +3252,8 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 131_072,
     description: 'Open-source Qwen code model.',
     displayName: 'Qwen2.5 Coder 7B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-coder-7b-instruct',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -3035,6 +3270,8 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 131_072,
     description: 'Open-source Qwen code model.',
     displayName: 'Qwen2.5 Coder 14B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-coder-14b-instruct',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -3051,6 +3288,8 @@ const qwenChatModels: AIChatModelCard[] = [
     contextWindowTokens: 131_072,
     description: 'Open-source Qwen code model.',
     displayName: 'Qwen2.5 Coder 32B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-coder-32b-instruct',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -3071,6 +3310,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Improved instruction following, math, problem solving, and coding, with stronger general object recognition. Supports precise visual element localization across formats, long video understanding (up to 10 minutes) with second-level event timing, temporal ordering and speed understanding, and agents that can control OS or mobile via parsing and localization. Strong key info extraction and JSON output. This is the 72B, strongest version in the series.',
     displayName: 'Qwen2.5 VL 72B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-vl-72b-instruct',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -3092,6 +3333,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Qwen2.5VL series model that reaches near Qwen2.5VL-72B performance on math and subject QA. Response style is tuned for human preference, especially for objective queries like math, logical reasoning, and knowledge QA, with clearer and more detailed outputs. This is the 32B version.',
     displayName: 'Qwen2.5 VL 32B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-vl-32b-instruct',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -3113,6 +3356,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'Improved instruction following, math, problem solving, and coding, with stronger general object recognition. Supports precise visual element localization across formats, long video understanding (up to 10 minutes) with second-level event timing, temporal ordering and speed understanding, and agents that can control OS or mobile via parsing and localization. Strong key info extraction and JSON output. This is the 72B, strongest version in the series.',
     displayName: 'Qwen2.5 VL 7B',
+    family: 'qwen',
+    generation: 'qwen2.5',
     id: 'qwen2.5-vl-7b-instruct',
     maxOutput: 8192,
     organization: 'Qwen',
@@ -3136,6 +3381,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       '685B full model released on 2025-05-28. DeepSeek-R1 uses large-scale RL in post-training, greatly improving reasoning with minimal labeled data, and performs strongly on math, coding, and natural language reasoning.',
     displayName: 'DeepSeek R1 0528',
+    family: 'deepseek',
+    generation: 'deepseek-r1',
     id: 'deepseek-r1-0528',
     maxOutput: 16_384,
     organization: 'DeepSeek',
@@ -3161,6 +3408,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-V3 is an in-house MoE model with 671B parameters and 37B active, pretrained on 14.8T tokens and strong at long text, code, math, encyclopedic knowledge, and Chinese.',
     displayName: 'DeepSeek V3',
+    family: 'deepseek',
+    generation: 'deepseek-v3',
     id: 'deepseek-v3',
     maxOutput: 8192,
     organization: 'DeepSeek',
@@ -3185,6 +3434,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-R1-Distill-Qwen-1.5B is distilled from Qwen2.5-Math-1.5B using DeepSeek R1 outputs.',
     displayName: 'DeepSeek R1 Distill Qwen 1.5B',
+    family: 'deepseek',
+    generation: 'deepseek-r1-distill',
     id: 'deepseek-r1-distill-qwen-1.5b',
     maxOutput: 16_384,
     organization: 'DeepSeek',
@@ -3205,6 +3456,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-R1-Distill-Qwen-7B is distilled from Qwen2.5-Math-7B using DeepSeek R1 outputs.',
     displayName: 'DeepSeek R1 Distill Qwen 7B',
+    family: 'deepseek',
+    generation: 'deepseek-r1-distill',
     id: 'deepseek-r1-distill-qwen-7b',
     maxOutput: 16_384,
     organization: 'DeepSeek',
@@ -3225,6 +3478,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-R1-Distill-Qwen-14B is distilled from Qwen2.5-14B using DeepSeek R1 outputs.',
     displayName: 'DeepSeek R1 Distill Qwen 14B',
+    family: 'deepseek',
+    generation: 'deepseek-r1-distill',
     id: 'deepseek-r1-distill-qwen-14b',
     maxOutput: 16_384,
     organization: 'DeepSeek',
@@ -3245,6 +3500,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-R1-Distill-Qwen-32B is distilled from Qwen2.5-32B using DeepSeek R1 outputs.',
     displayName: 'DeepSeek R1 Distill Qwen 32B',
+    family: 'deepseek',
+    generation: 'deepseek-r1-distill',
     id: 'deepseek-r1-distill-qwen-32b',
     maxOutput: 16_384,
     organization: 'DeepSeek',
@@ -3265,6 +3522,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-R1-Distill-Llama-8B is distilled from Llama-3.1-8B using DeepSeek R1 outputs.',
     displayName: 'DeepSeek R1 Distill Llama 8B',
+    family: 'deepseek',
+    generation: 'deepseek-r1-distill',
     id: 'deepseek-r1-distill-llama-8b',
     maxOutput: 16_384,
     organization: 'DeepSeek',
@@ -3285,6 +3544,8 @@ const qwenChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-R1-Distill-Llama-70B is distilled from Llama-3.3-70B-Instruct using DeepSeek R1 outputs.',
     displayName: 'DeepSeek R1 Distill Llama 70B',
+    family: 'deepseek',
+    generation: 'deepseek-r1-distill',
     id: 'deepseek-r1-distill-llama-70b',
     maxOutput: 16_384,
     organization: 'DeepSeek',
