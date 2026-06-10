@@ -2,6 +2,7 @@ import { BookOpenIcon, HomeIcon, KeyRound, MessageCircle, SearchIcon } from 'luc
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useActiveWorkspaceSlug } from '@/business/client/hooks/useActiveWorkspaceSlug';
 import { getRouteById } from '@/config/routes';
 import { useGlobalStore } from '@/store/global';
 import { SidebarTabKey } from '@/store/global/initialState';
@@ -38,6 +39,7 @@ export const useNavLayout = (): NavLayout => {
   const { t } = useTranslation('common');
   const toggleCommandMenu = useGlobalStore((s) => s.toggleCommandMenu);
   const { showMarket, hideGitHub } = useServerConfigStore(featureFlagsSelectors);
+  const activeWorkspaceSlug = useActiveWorkspaceSlug();
 
   const topNavItems = useMemo(
     () =>
@@ -114,13 +116,14 @@ export const useNavLayout = (): NavLayout => {
           title: t('tab.support'),
         },
         {
+          hidden: !!activeWorkspaceSlug,
           icon: getRouteById('memory')!.icon,
           key: SidebarTabKey.Memory,
           title: t('tab.memory'),
           url: '/memory',
         },
       ] as NavItem[],
-    [t, showMarket],
+    [t, showMarket, activeWorkspaceSlug],
   );
 
   const footer = useMemo(
@@ -136,7 +139,9 @@ export const useNavLayout = (): NavLayout => {
   const userPanel = useMemo(
     () => ({
       showDataImporter: false,
-      showMemory: true,
+      // Memory now appears in the sidebar by default; drop the duplicate entry
+      // from the user dropdown to keep that menu focused on account / settings.
+      showMemory: false,
     }),
     [],
   );

@@ -15,6 +15,7 @@ import { z } from 'zod';
 
 import { FormInput, FormPassword } from '@/components/FormInput';
 import { SkeletonInput, SkeletonSwitch } from '@/components/Skeleton';
+import { usePermission } from '@/hooks/usePermission';
 import { lambdaQuery } from '@/libs/trpc/client';
 import { aiProviderSelectors, useAiInfraStore } from '@/store/aiInfra';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
@@ -135,6 +136,7 @@ const ProviderConfig = memo<ProviderConfigProps>(
     } = settings || {};
     const { t } = useTranslation('modelProvider');
     const [form] = Form.useForm();
+    const { allowed: canManageProvider } = usePermission('manage_provider_key');
 
     const isOAuthProvider = authType === 'oauthDeviceFlow';
 
@@ -467,10 +469,12 @@ const ProviderConfig = memo<ProviderConfigProps>(
         {shouldShowForm && (
           <Form
             className={cx(styles.form, className)}
+            disabled={!canManageProvider}
             form={form}
             items={[model]}
             variant={'borderless'}
             onValuesChange={(_, values) => {
+              if (!canManageProvider) return;
               debouncedHandleValueChange(id, values);
             }}
             {...FORM_STYLE}

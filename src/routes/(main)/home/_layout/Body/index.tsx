@@ -6,10 +6,11 @@ import { EyeOffIcon, MoreHorizontalIcon, SlidersHorizontalIcon } from 'lucide-re
 import type { Key, ReactElement } from 'react';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
 
 import { isDesktop } from '@/const/version';
 import NavItem from '@/features/NavPanel/components/NavItem';
+import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
+import WorkspaceLink from '@/features/Workspace/WorkspaceLink';
 import { useActiveTabKey } from '@/hooks/useActiveTabKey';
 import type { NavItem as NavItemType } from '@/hooks/useNavLayout';
 import { useNavLayout } from '@/hooks/useNavLayout';
@@ -62,7 +63,7 @@ const mergeSidebarExpandedKeys = (
 const Body = memo(() => {
   const { t } = useTranslation('common');
   const tab = useActiveTabKey();
-  const navigate = useNavigate();
+  const navigate = useWorkspaceAwareNavigate();
   const { topNavItems, bottomMenuItems } = useNavLayout();
   const sidebarItems = useGlobalStore(systemStatusSelectors.sidebarItems);
   const sidebarExpandedKeys = useGlobalStore(systemStatusSelectors.sidebarExpandedKeys);
@@ -171,7 +172,7 @@ const Body = memo(() => {
       if (isExternal) return <div key={key}>{content}</div>;
 
       return (
-        <Link
+        <WorkspaceLink
           key={key}
           to={navItem.url!}
           onClick={(e) => {
@@ -180,8 +181,18 @@ const Body = memo(() => {
             navigate(navItem.url!);
           }}
         >
-          {content}
-        </Link>
+          <NavItem
+            active={tab === key}
+            contextMenuItems={getContextMenuItems(key)}
+            icon={navItem.icon}
+            title={navItem.title}
+            actions={
+              <DropdownMenu items={getContextMenuItems(key)} nativeButton={false}>
+                <ActionIcon icon={MoreHorizontalIcon} size={'small'} style={{ flex: 'none' }} />
+              </DropdownMenu>
+            }
+          />
+        </WorkspaceLink>
       );
     },
     [navLinkItems, getContextMenuItems, tab, handleExternalLink, navigate],

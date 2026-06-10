@@ -97,6 +97,7 @@ export interface InternalEditorProps extends EditorCanvasProps {
 const InternalEditor = memo<InternalEditorProps>(
   ({
     contentChangeLockRef,
+    disabled,
     editable = true,
     editor,
     extraPlugins,
@@ -269,6 +270,7 @@ const InternalEditor = memo<InternalEditorProps>(
           // During document hydration (e.g. route switch), we only advance snapshot
           // and skip external change callback to avoid false dirty checks.
           if (contentChangeLockRef?.current) return;
+          if (disabled) return;
 
           onContentChangeRef.current?.();
         }
@@ -277,10 +279,13 @@ const InternalEditor = memo<InternalEditorProps>(
       return () => {
         unregister();
       };
-    }, [contentChangeLockRef, editor]); // Only depend on stable refs and editor
+    }, [contentChangeLockRef, disabled, editor]); // Only depend on stable refs and editor
 
     return (
       <div
+        style={
+          disabled ? { cursor: 'not-allowed', opacity: 0.65, pointerEvents: 'none' } : undefined
+        }
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
@@ -288,7 +293,7 @@ const InternalEditor = memo<InternalEditorProps>(
       >
         <Editor
           content={''}
-          editable={editable}
+          editable={editable && !disabled}
           editor={editor}
           placeholder={finalPlaceholder}
           plugins={plugins}

@@ -10,7 +10,7 @@ import { type EnabledProviderWithModels } from '@/types/aiProvider';
 
 const prefixCls = 'ant';
 
-const styles = createStaticStyles(({ css, cssVar }) => ({
+const styles = createStaticStyles(({ css }) => ({
   popup: css`
     width: max(360px, var(--anchor-width));
     &.${prefixCls}-select-dropdown .${prefixCls}-select-item-option-grouped {
@@ -34,7 +34,10 @@ interface ModelOption {
   value: string;
 }
 
-interface ModelSelectProps extends Pick<SelectProps, 'loading' | 'size' | 'style' | 'variant'> {
+interface ModelSelectProps extends Pick<
+  SelectProps,
+  'disabled' | 'loading' | 'size' | 'style' | 'variant'
+> {
   defaultValue?: { model: string; provider?: string };
   initialWidth?: boolean;
   onChange?: (props: { model: string; provider: string }) => void;
@@ -48,9 +51,9 @@ const ModelSelect = memo<ModelSelectProps>((props) => {
   const {
     value,
     onChange,
-    showAbility = true,
     requiredAbilities,
     loading,
+    disabled,
     size,
     style,
     variant,
@@ -101,13 +104,14 @@ const ModelSelect = memo<ModelSelectProps>((props) => {
         };
       })
       .filter(Boolean) as SelectProps['options'];
-  }, [enabledList, requiredAbilities, showAbility]);
+  }, [enabledList, requiredAbilities]);
 
   return (
     <TooltipGroup>
       <Select
         className={styles.select}
         defaultValue={`${value?.provider}/${value?.model}`}
+        disabled={disabled}
         loading={loading}
         options={options}
         popupClassName={styles.popup}
