@@ -1686,6 +1686,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4o',
     id: 'gpt-4o-mini',
+    knowledgeCutoff: '2023-10',
     maxOutput: 16_385,
     pricing: {
       units: [
@@ -1708,6 +1709,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4o',
     id: 'gpt-4o',
+    knowledgeCutoff: '2023-10',
     pricing: {
       units: [
         { name: 'textInput', rate: 2.5, strategy: 'fixed', unit: 'millionTokens' },
@@ -1728,6 +1730,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4o',
     id: 'gpt-4o-2024-08-06',
+    knowledgeCutoff: '2023-10',
     pricing: {
       units: [
         { name: 'textInput', rate: 2.5, strategy: 'fixed', unit: 'millionTokens' },
@@ -1748,6 +1751,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4o',
     id: 'gpt-4o-2024-05-13',
+    knowledgeCutoff: '2023-10',
     pricing: {
       units: [
         { name: 'textInput', rate: 5, strategy: 'fixed', unit: 'millionTokens' },
@@ -1768,6 +1772,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4o',
     id: 'chatgpt-4o-latest',
+    knowledgeCutoff: '2023-10',
     pricing: {
       units: [
         { name: 'textInput', rate: 5, strategy: 'fixed', unit: 'millionTokens' },
@@ -1788,6 +1793,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4',
     id: 'gpt-4-turbo',
+    knowledgeCutoff: '2023-12',
     pricing: {
       units: [
         { name: 'textInput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
@@ -1808,6 +1814,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4',
     id: 'gpt-4-turbo-2024-04-09',
+    knowledgeCutoff: '2023-12',
     pricing: {
       units: [
         { name: 'textInput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
@@ -1827,6 +1834,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4',
     id: 'gpt-4-turbo-preview',
+    knowledgeCutoff: '2023-12',
     pricing: {
       units: [
         { name: 'textInput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
@@ -1846,6 +1854,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4',
     id: 'gpt-4-0125-preview',
+    knowledgeCutoff: '2023-12',
     pricing: {
       units: [
         { name: 'textInput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
@@ -1865,6 +1874,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4',
     id: 'gpt-4-1106-preview',
+    knowledgeCutoff: '2023-04',
     pricing: {
       units: [
         { name: 'textInput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
@@ -1884,6 +1894,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4',
     id: 'gpt-4',
+    knowledgeCutoff: '2021-09',
     pricing: {
       units: [
         { name: 'textInput', rate: 30, strategy: 'fixed', unit: 'millionTokens' },
@@ -1903,6 +1914,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4',
     id: 'gpt-4-0613',
+    knowledgeCutoff: '2021-09',
     pricing: {
       units: [
         { name: 'textInput', rate: 30, strategy: 'fixed', unit: 'millionTokens' },
@@ -1922,6 +1934,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4',
     id: 'gpt-4-32k',
+    knowledgeCutoff: '2021-09',
     pricing: {
       units: [
         { name: 'textInput', rate: 60, strategy: 'fixed', unit: 'millionTokens' },
@@ -1941,6 +1954,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4',
     id: 'gpt-4-32k-0613',
+    knowledgeCutoff: '2021-09',
     pricing: {
       units: [
         { name: 'textInput', rate: 60, strategy: 'fixed', unit: 'millionTokens' },
@@ -1960,6 +1974,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-3.5',
     id: 'gpt-3.5-turbo',
+    knowledgeCutoff: '2021-09',
     pricing: {
       units: [
         { name: 'textInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
@@ -1979,6 +1994,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-3.5',
     id: 'gpt-3.5-turbo-0125',
+    knowledgeCutoff: '2021-09',
     pricing: {
       units: [
         { name: 'textInput', rate: 0.5, strategy: 'fixed', unit: 'millionTokens' },
@@ -1998,6 +2014,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-3.5',
     id: 'gpt-3.5-turbo-1106',
+    knowledgeCutoff: '2021-09',
     pricing: {
       units: [
         { name: 'textInput', rate: 1, strategy: 'fixed', unit: 'millionTokens' },
@@ -2014,6 +2031,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-3.5',
     id: 'gpt-3.5-turbo-instruct',
+    knowledgeCutoff: '2021-09',
     pricing: {
       units: [
         { name: 'textInput', rate: 1.5, strategy: 'fixed', unit: 'millionTokens' },
@@ -2034,6 +2052,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-3.5',
     id: 'gpt-35-turbo',
+    knowledgeCutoff: '2021-09',
     maxOutput: 4096,
     type: 'chat',
   },
@@ -2047,6 +2066,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-3.5',
     id: 'gpt-35-turbo-16k',
+    knowledgeCutoff: '2021-09',
     type: 'chat',
   },
   {
@@ -2072,6 +2092,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gpt',
     generation: 'gpt-4',
     id: 'gpt-4-vision-preview',
+    knowledgeCutoff: '2023-04',
     type: 'chat',
   },
   {
@@ -2163,6 +2184,7 @@ const higressChatModels: AIChatModelCard[] = [
     displayName: 'AI21 Jamba 1.5 Mini',
     family: 'jamba',
     id: 'ai21-jamba-1.5-mini',
+    knowledgeCutoff: '2024-03',
     maxOutput: 4096,
     type: 'chat',
   },
@@ -2176,6 +2198,7 @@ const higressChatModels: AIChatModelCard[] = [
     displayName: 'AI21 Jamba 1.5 Large',
     family: 'jamba',
     id: 'ai21-jamba-1.5-large',
+    knowledgeCutoff: '2024-03',
     maxOutput: 4096,
     type: 'chat',
   },
@@ -2223,6 +2246,7 @@ const higressChatModels: AIChatModelCard[] = [
     displayName: 'Mistral Large',
     family: 'mistral',
     id: 'mistral-large',
+    knowledgeCutoff: '2023-10',
     maxOutput: 4096,
     type: 'chat',
   },
@@ -2670,7 +2694,7 @@ const higressChatModels: AIChatModelCard[] = [
       'Claude 3.5 Haiku is Anthropic’s fastest next-gen model. Compared to Claude 3 Haiku, it improves across skills and surpasses the prior largest model Claude 3 Opus on many intelligence benchmarks.',
     displayName: 'Claude 3.5 Haiku',
     enabled: true,
-    family: 'claude',
+    family: 'claude-haiku',
     generation: 'claude-3.5',
     id: 'claude-3-5-haiku-20241022',
     knowledgeCutoff: '2024-07',
@@ -2700,7 +2724,7 @@ const higressChatModels: AIChatModelCard[] = [
     description:
       'Claude 3 Haiku is Anthropic’s fastest and most compact model, designed for near-instant responses with fast, accurate performance.',
     displayName: 'Claude 3 Haiku',
-    family: 'claude',
+    family: 'claude-haiku',
     generation: 'claude-3',
     id: 'claude-3-haiku-20240307',
     knowledgeCutoff: '2023-08',
@@ -2723,7 +2747,7 @@ const higressChatModels: AIChatModelCard[] = [
     description:
       'Claude 3 Sonnet balances intelligence and speed for enterprise workloads, delivering high utility at lower cost and reliable large-scale deployment.',
     displayName: 'Claude 3 Sonnet',
-    family: 'claude',
+    family: 'claude-sonnet',
     generation: 'claude-3',
     id: 'claude-3-sonnet-20240229',
     knowledgeCutoff: '2023-08',
@@ -2747,7 +2771,7 @@ const higressChatModels: AIChatModelCard[] = [
       'Claude 3 Opus is Anthropic’s most powerful model for highly complex tasks, excelling in performance, intelligence, fluency, and comprehension.',
     displayName: 'Claude 3 Opus',
     enabled: true,
-    family: 'claude',
+    family: 'claude-opus',
     generation: 'claude-3',
     id: 'claude-3-opus-20240229',
     knowledgeCutoff: '2023-08',
@@ -2769,6 +2793,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'claude',
     generation: 'claude-2.1',
     id: 'claude-2.1',
+    knowledgeCutoff: '2023',
     maxOutput: 4096,
     pricing: {
       units: [
@@ -2811,6 +2836,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-1.5',
     id: 'gemini-1.5-flash-latest',
+    knowledgeCutoff: '2024-05',
     maxOutput: 8192,
     pricing: {
       units: [
@@ -2834,6 +2860,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-1.5',
     id: 'gemini-1.5-flash-002',
+    knowledgeCutoff: '2024-05',
     maxOutput: 8192,
     pricing: {
       units: [
@@ -2857,6 +2884,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-1.5',
     id: 'gemini-1.5-flash-001',
+    knowledgeCutoff: '2024-05',
     maxOutput: 8192,
     pricing: {
       units: [
@@ -2879,6 +2907,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-1.5',
     id: 'gemini-1.5-flash-exp-0827',
+    knowledgeCutoff: '2024-05',
     maxOutput: 8192,
     pricing: {
       units: [
@@ -2950,6 +2979,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-1.5',
     id: 'gemini-1.5-pro-latest',
+    knowledgeCutoff: '2024-05',
     maxOutput: 8192,
     pricing: {
       units: [
@@ -2974,6 +3004,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-1.5',
     id: 'gemini-1.5-pro-002',
+    knowledgeCutoff: '2024-05',
     maxOutput: 8192,
     pricing: {
       units: [
@@ -2996,6 +3027,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-1.5',
     id: 'gemini-1.5-pro-001',
+    knowledgeCutoff: '2024-05',
     maxOutput: 8192,
     pricing: {
       units: [
@@ -3019,6 +3051,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-1.5',
     id: 'gemini-1.5-pro-exp-0827',
+    knowledgeCutoff: '2024-05',
     maxOutput: 8192,
     pricing: {
       units: [
@@ -3042,6 +3075,7 @@ const higressChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-1.5',
     id: 'gemini-1.5-pro-exp-0801',
+    knowledgeCutoff: '2024-05',
     maxOutput: 8192,
     pricing: {
       units: [
@@ -3140,6 +3174,7 @@ const higressChatModels: AIChatModelCard[] = [
     enabled: true,
     family: 'mistral',
     id: 'mistral-small-latest',
+    knowledgeCutoff: '2024-11',
     pricing: {
       units: [
         { name: 'textInput', rate: 0.2, strategy: 'fixed', unit: 'millionTokens' },
@@ -3159,6 +3194,7 @@ const higressChatModels: AIChatModelCard[] = [
     enabled: true,
     family: 'mistral',
     id: 'mistral-large-latest',
+    knowledgeCutoff: '2023-10',
     pricing: {
       units: [
         { name: 'textInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },

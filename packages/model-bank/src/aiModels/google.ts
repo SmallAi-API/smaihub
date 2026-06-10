@@ -26,6 +26,7 @@ const googleChatModels: AIChatModelCard[] = [
     displayName: 'Gemini Pro Latest',
     family: 'gemini',
     id: 'gemini-pro-latest',
+    knowledgeCutoff: '2025-01',
     maxOutput: 65_536,
     pricing: {
       units: [
@@ -78,6 +79,7 @@ const googleChatModels: AIChatModelCard[] = [
     displayName: 'Gemini Flash Latest',
     family: 'gemini',
     id: 'gemini-flash-latest',
+    knowledgeCutoff: '2025-01',
     maxOutput: 65_536,
     pricing: {
       units: [
@@ -106,6 +108,7 @@ const googleChatModels: AIChatModelCard[] = [
     displayName: 'Gemini Flash-Lite Latest',
     family: 'gemini',
     id: 'gemini-flash-lite-latest',
+    knowledgeCutoff: '2025-01',
     maxOutput: 65_536,
     pricing: {
       units: [
@@ -137,6 +140,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-3.5',
     id: 'gemini-3.5-flash',
+    knowledgeCutoff: '2025-01',
     maxOutput: 65_536,
     pricing: {
       units: [
@@ -174,6 +178,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-3.1',
     id: 'gemini-3.1-flash-image-preview',
+    knowledgeCutoff: '2025-01',
     maxOutput: 32_768,
     pricing: {
       approximatePricePerImage: 0.067,
@@ -209,6 +214,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-3.1',
     id: 'gemini-3.1-pro-preview',
+    knowledgeCutoff: '2025-01',
     maxOutput: 65_536,
     pricing: {
       units: [
@@ -299,6 +305,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-3.1',
     id: 'gemini-3.1-flash-lite',
+    knowledgeCutoff: '2025-01',
     maxOutput: 65_536,
     pricing: {
       units: [
@@ -336,6 +343,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-3.1',
     id: 'gemini-3.1-flash-lite-preview',
+    knowledgeCutoff: '2025-01',
     maxOutput: 65_536,
     pricing: {
       units: [
@@ -370,6 +378,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-3',
     id: 'gemini-3-flash-preview',
+    knowledgeCutoff: '2025-01',
     maxOutput: 65_536,
     pricing: {
       units: [
@@ -409,6 +418,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-3',
     id: 'gemini-3-pro-image-preview',
+    knowledgeCutoff: '2025-01',
     maxOutput: 32_768,
     pricing: {
       approximatePricePerImage: 0.134,
@@ -439,6 +449,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemma',
     generation: 'gemma-4',
     id: 'gemma-4-26b-a4b-it',
+    knowledgeCutoff: '2025-01',
     maxOutput: 32_768,
     pricing: {
       units: [
@@ -466,6 +477,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemma',
     generation: 'gemma-4',
     id: 'gemma-4-31b-it',
+    knowledgeCutoff: '2025-01',
     maxOutput: 32_768,
     pricing: {
       units: [
@@ -496,6 +508,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-2.5',
     id: 'gemini-2.5-pro',
+    knowledgeCutoff: '2025-01',
     maxOutput: 65_536,
     pricing: {
       units: [
@@ -583,6 +596,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-2.5',
     id: 'gemini-2.5-flash',
+    knowledgeCutoff: '2025-01',
     maxOutput: 65_536,
     pricing: {
       units: [
@@ -614,6 +628,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-2.5',
     id: 'gemini-2.5-flash-image',
+    knowledgeCutoff: '2025-06',
     maxOutput: 32_768,
     pricing: {
       approximatePricePerImage: 0.039,
@@ -645,6 +660,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-2.5',
     id: 'gemini-2.5-flash-lite',
+    knowledgeCutoff: '2025-01',
     maxOutput: 65_536,
     pricing: {
       units: [
@@ -674,6 +690,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-2.0',
     id: 'gemini-2.0-flash',
+    knowledgeCutoff: '2024-08',
     maxOutput: 8192,
     pricing: {
       units: [
@@ -703,6 +720,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-2.0',
     id: 'gemini-2.0-flash-001',
+    knowledgeCutoff: '2024-08',
     maxOutput: 8192,
     pricing: {
       units: [
@@ -729,6 +747,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-2.0',
     id: 'gemini-2.0-flash-lite',
+    knowledgeCutoff: '2024-08',
     maxOutput: 8192,
     pricing: {
       units: [
@@ -749,6 +768,7 @@ const googleChatModels: AIChatModelCard[] = [
     family: 'gemini',
     generation: 'gemini-2.0',
     id: 'gemini-2.0-flash-lite-001',
+    knowledgeCutoff: '2024-08',
     maxOutput: 8192,
     pricing: {
       units: [

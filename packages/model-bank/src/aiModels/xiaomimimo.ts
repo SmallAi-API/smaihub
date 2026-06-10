@@ -15,6 +15,7 @@ const xiaomimimoChatModels: AIChatModelCard[] = [
     enabled: true,
     family: 'mimo',
     id: 'mimo-v2.5-pro',
+    knowledgeCutoff: '2024-12',
     maxOutput: 131_072,
     pricing: {
       currency: 'CNY',
@@ -71,6 +72,7 @@ const xiaomimimoChatModels: AIChatModelCard[] = [
     enabled: true,
     family: 'mimo',
     id: 'mimo-v2.5',
+    knowledgeCutoff: '2024-12',
     maxOutput: 131_072,
     pricing: {
       currency: 'CNY',
@@ -124,7 +126,17 @@ const xiaomimimoChatModels: AIChatModelCard[] = [
     displayName: 'MiMo-V2 Flash',
     family: 'mimo',
     id: 'mimo-v2-flash',
-    maxOutput: 131_072,
+    knowledgeCutoff: '2024-12',
+    maxOutput: 65_536,
+    pricing: {
+      currency: 'CNY',
+      units: [
+        { name: 'textInput', rate: 0.7, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput_cacheRead', rate: 0.07, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 2.1, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    releasedAt: '2026-03-03',
     settings: {
       extendParams: ['enableReasoning'],
     },
