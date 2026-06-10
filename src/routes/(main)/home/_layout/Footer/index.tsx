@@ -4,25 +4,34 @@ import { isDesktop } from '@lobechat/const';
 import { useAnalytics } from '@lobehub/analytics/react';
 import { type MenuProps } from '@lobehub/ui';
 import { ActionIcon, DropdownMenu, Flexbox, Icon } from '@lobehub/ui';
-import { Book, CircleHelp, FlaskConical, KeyRound, MessageCircle, Rocket } from 'lucide-react';
+import {
+  Book,
+  CircleHelp,
+  FlaskConical,
+  KeyRound,
+  MessageCircle,
+  Rocket,
+  Settings2,
+  SettingsIcon,
+} from 'lucide-react';
 import type { ReactNode } from 'react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import HighlightNotification from '@/components/HighlightNotification';
 import Billboard from '@/features/Billboard';
 import { useBillboardMenuItems } from '@/features/Billboard/MenuItems';
 import { useActiveNavKey } from '@/features/NavPanel';
-import AccountTrigger from '@/features/User/AccountPanel/AccountTrigger';
+import ThemeButton from '@/features/User/UserPanel/ThemeButton';
 import WorkspaceLink from '@/features/Workspace/WorkspaceLink';
 import { useNavLayout } from '@/hooks/useNavLayout';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors/systemStatus';
 import { useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
+import { userGeneralSettingsSelectors } from '@/store/user/slices/settings/selectors/general';
 
-import InboxButton from '../Header/components/InboxButton';
 import { resolveFooterPromotionState } from './promotionPipeline';
 
 const AGENT_ONBOARDING_PROMO_SLUG = 'agent-onboarding-promo-v1';
@@ -58,13 +67,13 @@ const Footer = memo(() => {
   const enableAgentOnboarding = useServerConfigStore((s) => s.featureFlags.enableAgentOnboarding);
   const isMobile = useServerConfigStore((s) => !!s.isMobile);
   const serverConfigInit = useServerConfigStore((s) => s.serverConfigInit);
-  const [agentOnboardingFinished, agentOnboardingStarted, classicOnboardingFinished] = useUserStore(
-    (s) => [
+  const [agentOnboardingFinished, agentOnboardingStarted, classicOnboardingFinished, isDevMode] =
+    useUserStore((s) => [
       !!s.agentOnboarding?.finishedAt,
       !!s.agentOnboarding?.activeTopicId,
       !!s.onboarding?.finishedAt,
-    ],
-  );
+      userGeneralSettingsSelectors.config(s).isDevMode,
+    ]);
   const [isAgentOnboardingCardOpen, setIsAgentOnboardingCardOpen] = useState(false);
   const [isProductHuntCardOpen, setIsProductHuntCardOpen] = useState(false);
 
@@ -229,9 +238,18 @@ const Footer = memo(() => {
 
   const helpMenuItems: MenuProps['items'] = useMemo(
     () => [
-      {
-        type: 'divider' as const,
-      },
+      ...(footer.showSettingsEntry && !isDevMode
+        ? [
+            {
+              icon: <Icon icon={Settings2} />,
+              key: 'setting',
+              label: <Link to="/settings">{t('userPanel.setting')}</Link>,
+            },
+            {
+              type: 'divider' as const,
+            },
+          ]
+        : []),
       {
         icon: <Icon icon={KeyRound} />,
         key: 'apiKey',
@@ -275,9 +293,11 @@ const Footer = memo(() => {
         : []),
     ],
     [
+      footer.showSettingsEntry,
       footer.layout,
       footer.showEvalEntry,
       handleOpenProductHuntCard,
+      isDevMode,
       shouldShowProductHuntMenuEntry,
       t,
       billboardMenuItems,
@@ -302,11 +322,23 @@ const Footer = memo(() => {
               <ActionIcon icon={FlaskConical} size={16} title="Evaluation Lab" />
             </WorkspaceLink>
           </Flexbox>
-          <AccountTrigger />
+          <ThemeButton placement={'topCenter'} size={16} />
         </Flexbox>
       ) : (
-        <Flexbox horizontal align={'center'} padding={8}>
-          <AccountTrigger actions={<InboxButton />} extraItems={helpMenuItems} />
+        <Flexbox horizontal align={'center'} gap={2} padding={8}>
+          <DropdownMenu items={helpMenuItems} placement="topLeft">
+            <ActionIcon aria-label={t('userPanel.help')} icon={CircleHelp} size={16} />
+          </DropdownMenu>
+          {isDevMode && (
+            <Link to="/settings">
+              <ActionIcon
+                aria-label={t('userPanel.setting')}
+                icon={SettingsIcon}
+                size={16}
+                title={t('userPanel.setting')}
+              />
+            </Link>
+          )}
         </Flexbox>
       )}
 
