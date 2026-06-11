@@ -157,7 +157,6 @@ export const ListItemRenderer = memo<ListItemRendererProps>(
                   onClick={(e) => {
                     e.preventDefault();
                     setDetailOpen(false);
-
                     onClose();
                     onModelChange(item.model.id, item.provider.id);
                   }}
@@ -204,6 +203,7 @@ export const ListItemRenderer = memo<ListItemRendererProps>(
                   {...item.model.abilities}
                   newBadgeLabel={newLabel}
                   proBadgeLabel={restricted ? proLabel : undefined}
+                  showInfoTag={isDevMode}
                 />
               </DropdownMenuSubmenuTrigger>
               <DropdownMenuPortal>
