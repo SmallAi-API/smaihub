@@ -392,52 +392,234 @@ describe('RuntimeExecutors', () => {
       );
     });
 
-    it('should preserve reasoning in newState when assistant returns tool calls', async () => {
-      const toolCallPayload = [
-        {
-          function: { arguments: '{}', name: 'search' },
-          id: 'call_1',
-          type: 'function',
-        },
-      ];
+    // preserveThinking gates whether reasoning is replayed into the next LLM
+    // payload (state.messages). The DB copy powers UI display after refresh and
+    // is always persisted regardless of the gate.
+    describe('reasoning replay gate', () => {
+      it('should replay assistant reasoning with tool calls when preserveThinking is enabled on a supported model', async () => {
+        const toolCallPayload = [
+          {
+            function: { arguments: '{}', name: 'search' },
+            id: 'call_1',
+            type: 'function',
+          },
+        ];
 
-      const mockChat = vi.fn().mockImplementation(async (_payload, options) => {
-        await options?.callback?.onThinking?.('Need to inspect the search results first.');
-        await options?.callback?.onToolsCalling?.({ toolsCalling: toolCallPayload });
-        await options?.callback?.onCompletion?.({
-          usage: {
-            totalInputTokens: 1,
-            totalOutputTokens: 2,
-            totalTokens: 3,
+        const mockChat = vi.fn().mockImplementation(async (_payload, options) => {
+          await options?.callback?.onThinking?.('Need to inspect the search results first.');
+          await options?.callback?.onToolsCalling?.({ toolsCalling: toolCallPayload });
+          await options?.callback?.onCompletion?.({
+            usage: {
+              totalInputTokens: 1,
+              totalOutputTokens: 2,
+              totalTokens: 3,
+            },
+          });
+          return new Response('done');
+        });
+        vi.mocked(initModelRuntimeFromDB).mockResolvedValueOnce({ chat: mockChat } as any);
+
+        const executors = createRuntimeExecutors(ctx);
+        const state = createMockState();
+
+        const instruction = {
+          payload: {
+            messages: [{ content: 'Hello', role: 'user' }],
+            model: 'gpt-4',
+            provider: 'openai',
+            tools: [],
+          },
+          type: 'call_llm' as const,
+        };
+
+        const result = await executors.call_llm!(instruction, state);
+
+        expect(result.newState.messages.at(-1)).toEqual(
+          expect.objectContaining({
+            reasoning: { content: 'Need to inspect the search results first.' },
+            role: 'assistant',
+            tool_calls: [expect.objectContaining({ id: 'call_1' })],
+          }),
+        );
+        expect(mockChat).toHaveBeenCalledWith(
+          expect.objectContaining({ preserveThinking: true }),
+          expect.anything(),
+        );
+      });
+
+      it('should persist reasoning to DB but not replay it when preserveThinking is not enabled', async () => {
+        const mockChat = vi.fn().mockImplementation(async (_payload, options) => {
+          await options?.callback?.onThinking?.('hidden reasoning');
+          await options?.callback?.onText?.('answer');
+          return new Response('done');
+        });
+        vi.mocked(initModelRuntimeFromDB).mockResolvedValueOnce({ chat: mockChat } as any);
+
+        const executors = createRuntimeExecutors(ctx);
+        const state = createMockState();
+
+        const instruction = {
+          payload: {
+            messages: [{ content: 'Hello', role: 'user' }],
+            model: 'gpt-4',
+            provider: 'openai',
+          },
+          type: 'call_llm' as const,
+        };
+
+        const result = await executors.call_llm!(instruction, state);
+        const assistant = result.newState.messages.at(-1) as any;
+
+        expect(assistant.reasoning).toBeUndefined();
+        // DB persistence must NOT be gated — UI shows reasoning after refresh
+        expect(mockMessageModel.update).toHaveBeenCalledWith(
+          'msg-123',
+          expect.objectContaining({ reasoning: { content: 'hidden reasoning' } }),
+        );
+      });
+
+      it('should replay assistant reasoning when preserveThinking is enabled on a supported model', async () => {
+        const mockChat = vi.fn().mockImplementation(async (_payload, options) => {
+          await options?.callback?.onThinking?.('preserved reasoning');
+          await options?.callback?.onText?.('answer');
+          return new Response('done');
+        });
+        vi.mocked(initModelRuntimeFromDB).mockResolvedValueOnce({ chat: mockChat } as any);
+
+        const ctxWithConfig: RuntimeExecutorContext = {
+          ...ctx,
+          agentConfig: {
+            chatConfig: { preserveThinking: true },
+            plugins: [],
+            systemRole: 'test',
+          },
+        };
+
+        const executors = createRuntimeExecutors(ctxWithConfig);
+        const state = createMockState({
+          modelRuntimeConfig: {
+            model: 'qwen3.6-plus',
+            provider: 'qwen',
           },
         });
-        return new Response('done');
+
+        const instruction = {
+          payload: {
+            messages: [{ content: 'Hello', role: 'user' }],
+            model: 'qwen3.6-plus',
+            provider: 'qwen',
+          },
+          type: 'call_llm' as const,
+        };
+
+        const result = await executors.call_llm!(instruction, state);
+        const assistant = result.newState.messages.at(-1) as any;
+
+        expect(assistant.reasoning).toEqual({
+          content: 'preserved reasoning',
+        });
+        expect(mockChat).toHaveBeenCalledWith(
+          expect.objectContaining({ preserveThinking: true }),
+          expect.anything(),
+        );
       });
-      vi.mocked(initModelRuntimeFromDB).mockResolvedValueOnce({ chat: mockChat } as any);
 
-      const executors = createRuntimeExecutors(ctx);
-      const state = createMockState();
+      it('should replay reasoning for unknown custom deployments on supported providers', async () => {
+        const mockChat = vi.fn().mockImplementation(async (_payload, options) => {
+          await options?.callback?.onThinking?.('custom deployment reasoning');
+          await options?.callback?.onText?.('answer');
+          return new Response('done');
+        });
+        vi.mocked(initModelRuntimeFromDB).mockResolvedValueOnce({ chat: mockChat } as any);
 
-      const instruction = {
-        payload: {
-          messages: [{ content: 'Hello', role: 'user' }],
-          model: 'gpt-4',
-          provider: 'openai',
-          tools: [],
-        },
-        type: 'call_llm' as const,
-      };
+        const ctxWithConfig: RuntimeExecutorContext = {
+          ...ctx,
+          agentConfig: {
+            chatConfig: { preserveThinking: true },
+            plugins: [],
+            systemRole: 'test',
+          },
+        };
 
-      const result = await executors.call_llm!(instruction, state);
+        const executors = createRuntimeExecutors(ctxWithConfig);
+        const state = createMockState({
+          modelRuntimeConfig: {
+            model: 'my-qwen-custom-deployment',
+            provider: 'qwen',
+          },
+        });
 
-      expect(result.newState.messages.at(-1)).toEqual(
-        expect.objectContaining({
-          id: 'msg-123',
-          reasoning: { content: 'Need to inspect the search results first.' },
-          role: 'assistant',
-          tool_calls: [expect.objectContaining({ id: 'call_1' })],
-        }),
-      );
+        const instruction = {
+          payload: {
+            messages: [{ content: 'Hello', role: 'user' }],
+            model: 'my-qwen-custom-deployment',
+            provider: 'qwen',
+          },
+          type: 'call_llm' as const,
+        };
+
+        const result = await executors.call_llm!(instruction, state);
+        const assistant = result.newState.messages.at(-1) as any;
+
+        expect(assistant.reasoning).toEqual({
+          content: 'custom deployment reasoning',
+        });
+        expect(mockChat).toHaveBeenCalledWith(
+          expect.objectContaining({ preserveThinking: true }),
+          expect.anything(),
+        );
+      });
+
+      it('should persist reasoning to DB but not replay it when model does not declare preserveThinking capability', async () => {
+        const mockChat = vi.fn().mockImplementation(async (_payload, options) => {
+          await options?.callback?.onThinking?.('reasoning on an unsupported model');
+          await options?.callback?.onText?.('answer');
+          return new Response('done');
+        });
+        vi.mocked(initModelRuntimeFromDB).mockResolvedValueOnce({ chat: mockChat } as any);
+
+        const ctxWithConfig: RuntimeExecutorContext = {
+          ...ctx,
+          agentConfig: {
+            chatConfig: { preserveThinking: true },
+            plugins: [],
+            systemRole: 'test',
+          },
+        };
+
+        const executors = createRuntimeExecutors(ctxWithConfig);
+        const state = createMockState({
+          modelRuntimeConfig: {
+            model: 'gpt-4',
+            provider: 'openai',
+          },
+        });
+
+        const instruction = {
+          payload: {
+            messages: [{ content: 'Hello', role: 'user' }],
+            model: 'gpt-4',
+            provider: 'openai',
+          },
+          type: 'call_llm' as const,
+        };
+
+        const result = await executors.call_llm!(instruction, state);
+        const assistant = result.newState.messages.at(-1) as any;
+
+        expect(assistant.reasoning).toBeUndefined();
+        expect(mockChat).toHaveBeenCalledWith(
+          expect.not.objectContaining({ preserveThinking: expect.any(Boolean) }),
+          expect.anything(),
+        );
+        // DB persistence must NOT be gated — UI shows reasoning after refresh
+        expect(mockMessageModel.update).toHaveBeenCalledWith(
+          'msg-123',
+          expect.objectContaining({
+            reasoning: { content: 'reasoning on an unsupported model' },
+          }),
+        );
+      });
     });
 
     it('retries empty completions on the branded provider then throws ModelEmptyError', async () => {
@@ -574,7 +756,14 @@ describe('RuntimeExecutors', () => {
         });
         vi.mocked(initModelRuntimeFromDB).mockResolvedValueOnce({ chat: mockChat } as any);
 
-        const executors = createRuntimeExecutors(ctx);
+        // Reasoning is only replayed into state.messages when preserveThinking is
+        // enabled on a supported model. Enable it here so this asserts
+        // reasoning_part capture via the state replay path.
+        const ctxWithThinking: RuntimeExecutorContext = {
+          ...ctx,
+          agentConfig: { chatConfig: { preserveThinking: true }, plugins: [], systemRole: 'test' },
+        };
+        const executors = createRuntimeExecutors(ctxWithThinking);
         const result = await executors.call_llm!(geminiInstruction(), createMockState());
 
         expect(result.newState.messages.at(-1)).toEqual(

@@ -660,6 +660,8 @@ export const createRuntimeExecutors = (
 
     try {
       type ContentPart = { text: string; type: 'text' } | { image: string; type: 'image' };
+      let shouldReplayAssistantReasoning = false;
+      let preserveThinkingForPayload: boolean | undefined;
 
       // Process messages through serverMessagesEngine to inject system role, knowledge, etc.
       // Rebuild params from agentConfig at execution time (capabilities built dynamically)
@@ -668,6 +670,40 @@ export const createRuntimeExecutors = (
       if (agentConfig) {
         const { loadModels } = await import('@/business/client/model-bank/loadModels');
         const builtinModels = await loadModels();
+
+        const preserveThinkingConfigured =
+          typeof agentConfig.chatConfig?.preserveThinking === 'boolean'
+            ? agentConfig.chatConfig.preserveThinking
+            : undefined;
+        const preserveThinkingRequested = preserveThinkingConfigured === true;
+
+        const modelCard = builtinModels.find(
+          (item) =>
+            item.providerId === provider &&
+            (item.id === model || item.config?.deploymentName === model),
+        );
+        const modelExtendParams =
+          modelCard &&
+          'settings' in modelCard &&
+          modelCard.settings &&
+          typeof modelCard.settings === 'object' &&
+          'extendParams' in modelCard.settings
+            ? (modelCard.settings as { extendParams?: string[] }).extendParams
+            : undefined;
+
+        const modelSupportsPreserveThinkingFromCard =
+          Array.isArray(modelExtendParams) && modelExtendParams.includes('preserveThinking');
+        const providerSupportsPreserveThinkingFallback =
+          provider === 'qwen' || provider === 'zhipu';
+        const modelSupportsPreserveThinking =
+          modelSupportsPreserveThinkingFromCard ||
+          (!modelCard && providerSupportsPreserveThinkingFallback);
+
+        shouldReplayAssistantReasoning = preserveThinkingRequested && modelSupportsPreserveThinking;
+        preserveThinkingForPayload =
+          modelSupportsPreserveThinking && typeof preserveThinkingConfigured === 'boolean'
+            ? preserveThinkingConfigured
+            : undefined;
 
         // Extract <refer_topic> tags from messages and fetch summaries.
         // Skip if messages already contain injected topic_reference_context
@@ -1594,6 +1630,11 @@ export const createRuntimeExecutors = (
                 };
               }
 
+              // preserveThinking only gates whether reasoning is replayed into the
+              // next LLM payload (state.messages); the DB copy powers UI display
+              // after refresh and must always be saved.
+              const replayedReasoning = shouldReplayAssistantReasoning ? finalReasoning : undefined;
+
               try {
                 // Build metadata object
                 const metadata: Record<string, any> = {};
@@ -1659,7 +1700,7 @@ export const createRuntimeExecutors = (
               newState.messages.push({
                 content,
                 id: assistantMessageItem.id,
-                reasoning: finalReasoning,
+                reasoning: replayedReasoning,
                 role: 'assistant',
                 tool_calls: stateToolCalls,
               });
