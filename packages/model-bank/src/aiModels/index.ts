@@ -70,6 +70,7 @@ export { default as ai302 } from './ai302';
 export { default as ai360 } from './ai360';
 export { default as aihubmix } from './aihubmix';
 export { default as akashchat } from './akashchat';
+export { default as antgroup } from './antgroup';
 export { default as anthropic } from './anthropic';
 export { default as azure } from './azure';
 export { default as azureai } from './azureai';
