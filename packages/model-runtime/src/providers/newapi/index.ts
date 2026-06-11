@@ -5,6 +5,7 @@ import { responsesAPIModels } from '../../const/models';
 import { createRouterRuntime } from '../../core/RouterRuntime';
 import { type CreateRouterRuntimeOptions } from '../../core/RouterRuntime/createRuntime';
 import { detectModelProvider, processMultiProviderModelList } from '../../utils/modelParse';
+import { resolveProviderRouteModels } from '../utils/resolveProviderRouteModels';
 
 const DEFAULT_BASE_URL = 'https://api.smallai.asia';
 
@@ -161,7 +162,7 @@ export const params = {
 
     return processMultiProviderModelList([...enrichedModelList, ...additionalModels], 'newapi');
   },
-  routers: (options) => {
+  routers: (options, runtimeContext?: { model?: string }) => {
     // 使用用户配置的 baseURL，如果没有则使用默认地址
     const rawBaseURL = options.baseURL?.replace(/\/v\d+[a-z]*\/?$/, '') || undefined;
     const userBaseURL = rawBaseURL || DEFAULT_BASE_URL;
@@ -195,6 +196,19 @@ export const params = {
         options: {
           ...options,
           baseURL: urlJoin(userBaseURL, '/v1'),
+        },
+      },
+      {
+        apiType: 'deepseek',
+        models: resolveProviderRouteModels(
+          'deepseek',
+          LOBE_DEFAULT_MODEL_LIST,
+          runtimeContext?.model,
+        ),
+        options: {
+          ...options,
+          baseURL: urlJoin(userBaseURL, '/v1'),
+          sdkType: 'openai',
         },
       },
       {
