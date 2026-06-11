@@ -1,11 +1,9 @@
 'use client';
 
-import { FormGroup, Grid, Icon, Segmented } from '@lobehub/ui';
-import { ProviderIcon } from '@lobehub/ui/icons';
+import { FormGroup, Grid } from '@lobehub/ui';
 import { type DatePickerProps } from 'antd';
-import { DatePicker, Divider } from 'antd';
+import { Divider } from 'antd';
 import dayjs from 'dayjs';
-import { Brain, UserIcon } from 'lucide-react';
 import { memo, type ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -22,7 +20,6 @@ import {
   Welcome,
 } from './features/overview';
 import { AssistantsRank, ModelsRank, TopicsRank } from './features/rankings';
-import { UsageCards, UsageTable, UsageTrends } from './features/usage';
 import { AiHeatmaps } from './features/visualization';
 import { GroupBy, type UserDisplayResolver } from './types';
 
@@ -106,63 +103,6 @@ const StatsSetting = memo<StatsSettingProps>(
             <AssistantsRank mobile={mobile} />
             <TopicsRank mobile={mobile} />
           </Grid>
-        </FormGroup>
-        <FormGroup
-          collapsible={false}
-          gap={16}
-          title={t('tab.usage')}
-          variant={'filled'}
-          extra={
-            <>
-              <DatePicker picker="month" value={dateRange} onChange={handleDateChange} />
-              <Segmented
-                style={{ marginLeft: 8 }}
-                value={groupBy}
-                variant={'outlined'}
-                options={[
-                  {
-                    icon: <Icon icon={Brain} />,
-                    label: t('usage.welcome.model'),
-                    value: GroupBy.Model,
-                  },
-                  {
-                    icon: <Icon icon={ProviderIcon} />,
-                    label: t('usage.welcome.provider'),
-                    value: GroupBy.Provider,
-                  },
-                  ...(enableUserDimension
-                    ? [
-                        {
-                          icon: <Icon icon={UserIcon} />,
-                          label: t('usage.welcome.user'),
-                          value: GroupBy.User,
-                        },
-                      ]
-                    : []),
-                ]}
-                onChange={(v) => setGroupBy(v as GroupBy)}
-              />
-            </>
-          }
-          styles={{
-            title: { lineHeight: '35px' },
-          }}
-        >
-          <UsageCards
-            data={data}
-            groupBy={groupBy}
-            isLoading={isLoading}
-            resolveUser={resolveUser}
-          />
-          <Divider />
-          <UsageTrends
-            data={data}
-            groupBy={groupBy}
-            isLoading={isLoading}
-            resolveUser={resolveUser}
-          />
-          <div style={{ height: 24 }} />
-          <UsageTable dateStrings={dateStrings} />
         </FormGroup>
       </>
     );
