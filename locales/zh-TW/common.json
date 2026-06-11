@@ -483,6 +483,9 @@
   "userPanel.profile": "帳戶管理",
   "userPanel.setting": "應用設定",
   "userPanel.usages": "使用情況",
+  "userPanel.workspaceCredits": "工作區積分",
+  "userPanel.workspaceSetting": "工作區設定",
+  "userPanel.workspaceUsages": "工作區使用情況",
   "version": "版本",
   "zoom": "縮放"
 }

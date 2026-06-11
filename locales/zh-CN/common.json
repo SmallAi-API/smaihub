@@ -483,6 +483,9 @@
   "userPanel.profile": "账户管理",
   "userPanel.setting": "应用设置",
   "userPanel.usages": "使用情况",
+  "userPanel.workspaceCredits": "工作区积分",
+  "userPanel.workspaceSetting": "工作区设置",
+  "userPanel.workspaceUsages": "工作区使用情况",
   "version": "版本",
   "zoom": "缩放"
 }
