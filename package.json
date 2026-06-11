@@ -159,6 +159,7 @@
   },
   "overrides": {
     "@types/react": "19.2.13",
+    "@vue/shared": "3.5.36",
     "antd": "6.3.5",
     "baseline-browser-mapping": "2.10.31",
     "better-auth": "1.4.6",
