@@ -293,7 +293,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'GPT-5.3 Codex — 专为更深入的工作而打造，帮助用户以更高的完成度处理复杂任务，擅长编码、长文档总结、回答上传文件相关问题、逐步推导数学与逻辑问题，以及通过更清晰的结构和更有用的细节支持规划与决策。',
     displayName: 'GPT-5.3 Codex',
-    enabled: true,
     id: 'gpt-5.3-codex',
     maxOutput: 128_000,
     releasedAt: '2026-02-06',
@@ -315,7 +314,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'GPT-5.2 — 专为更深入的工作而打造，帮助用户以更高的完成度处理复杂任务，擅长编码、长文档总结、回答上传文件相关问题、逐步推导数学与逻辑问题，以及通过更清晰的结构和更有用的细节支持规划与决策。',
     displayName: 'GPT-5.2',
-    enabled: true,
     id: 'gpt-5.2',
     maxOutput: 128_000,
     releasedAt: '2025-12-12',
@@ -337,7 +335,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'GPT-5.2 Chat — 专为更深入的工作而打造，帮助用户以更高的完成度处理复杂任务，擅长编码、长文档总结、回答上传文件相关问题、逐步推导数学与逻辑问题，以及通过更清晰的结构和更有用的细节支持规划与决策。',
     displayName: 'GPT-5.2 Chat',
-    enabled: true,
     id: 'gpt-5.2-chat-latest',
     maxOutput: 128_000,
     releasedAt: '2025-12-12',
@@ -359,7 +356,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'GPT-5.2 Codex — 专为更深入的工作而打造，帮助用户以更高的完成度处理复杂任务，擅长编码、长文档总结、回答上传文件相关问题、逐步推导数学与逻辑问题，以及通过更清晰的结构和更有用的细节支持规划与决策。',
     displayName: 'GPT-5.2 Codex',
-    enabled: true,
     id: 'gpt-5.2-codex',
     maxOutput: 128_000,
     releasedAt: '2026-1-12',
@@ -381,7 +377,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'GPT-5.1 — 针对编码和 agent 任务优化的旗舰模型，支持可配置的推理强度与更长上下文。',
     displayName: 'GPT-5.1',
-    enabled: true,
     id: 'gpt-5.1',
     maxOutput: 128_000,
     releasedAt: '2025-11-13',
@@ -402,7 +397,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'GPT-5.1 Codex：针对 agentic 编码任务优化的 GPT-5.1 版本，可在 Responses API 中用于更复杂的代码/代理工作流',
     displayName: 'GPT-5.1 Codex',
-    enabled: true,
     id: 'gpt-5.1-codex',
     maxOutput: 128_000,
     releasedAt: '2025-11-13',
@@ -421,7 +415,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'GPT-5.1 — 针对编码和 agent 任务优化的旗舰模型，支持可配置的推理强度与更长上下文。',
     displayName: 'GPT-5.1 Chat',
-    enabled: true,
     id: 'gpt-5.1-chat-latest',
     maxOutput: 128_000,
     releasedAt: '2025-11-13',
@@ -438,7 +431,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'GPT-5.1 Codex High：针对 agentic 编码任务优化的 GPT-5.1 版本，可在 Responses API 中用于更复杂的代码/代理工作流',
     displayName: 'GPT-5.1 Codex High',
-    enabled: true,
     id: 'gpt-5.1-codex-high',
     maxOutput: 128_000,
     releasedAt: '2025-11-13',
@@ -460,7 +452,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       '跨领域编码和代理任务的最佳模型。GPT-5 在准确性、速度、推理、上下文识别、结构化思维和问题解决方面实现了飞跃。',
     displayName: 'GPT-5',
-    enabled: true,
     id: 'gpt-5',
     maxOutput: 128_000,
     releasedAt: '2025-08-07',
@@ -480,7 +471,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'ChatGPT 中使用的 GPT-5 模型。结合了强大的语言理解与生成能力，适合对话式交互应用。',
     displayName: 'GPT-5 Chat',
-
     id: 'gpt-5-chat-latest',
     maxOutput: 128_000,
     releasedAt: '2025-08-07',
@@ -497,7 +487,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       '跨领域编码和代理任务的最佳模型。GPT-5 在准确性、速度、推理、上下文识别、结构化思维和问题解决方面实现了飞跃。',
     displayName: 'GPT-5 Codex',
-
     id: 'gpt-5-codex',
     maxOutput: 128_000,
     releasedAt: '2025-08-07',
@@ -518,7 +507,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       '跨领域编码和代理任务的最佳模型。GPT-5 在准确性、速度、推理、上下文识别、结构化思维和问题解决方面实现了飞跃。',
     displayName: 'GPT-5 Codex High',
-
     id: 'gpt-5-codex-high',
     maxOutput: 128_000,
     releasedAt: '2025-08-07',
@@ -538,7 +526,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       '跨领域编码和代理任务的最佳模型。GPT-5 在准确性、速度、推理、上下文识别、结构化思维和问题解决方面实现了飞跃。',
     displayName: 'GPT-5 Codex Medium',
-
     id: 'gpt-5-codex-medium',
     maxOutput: 128_000,
     releasedAt: '2025-08-07',
@@ -558,7 +545,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       '跨领域编码和代理任务的最佳模型。GPT-5 在准确性、速度、推理、上下文识别、结构化思维和问题解决方面实现了飞跃。',
     displayName: 'GPT-5 Codex Low',
-
     id: 'gpt-5-codex-low',
     maxOutput: 128_000,
     releasedAt: '2025-08-07',
@@ -613,7 +599,6 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 64_000,
     description: 'OpenAi 最新的生成视频模型，自带环境音效，对白同步！',
     displayName: 'Sora 2',
-    enabled: true,
     id: 'sora-2-all',
     maxOutput: 64_000,
     releasedAt: '2025-10-12',
@@ -626,7 +611,6 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 64_000,
     description: 'OpenAi 最新的生成视频模型，自带环境音效，对白同步！',
     displayName: 'Sora 2 Pro',
-    enabled: true,
     id: 'sora-2-pro-all',
     maxOutput: 64_000,
     releasedAt: '2025-10-12',
@@ -642,7 +626,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'o4-mini 是我们最新的小型 o 系列模型。 它专为快速有效的推理而优化，在编码和视觉任务中表现出极高的效率和性能。',
     displayName: 'o4-mini',
-
     id: 'o4-mini',
     maxOutput: 100_000,
     releasedAt: '2025-04-17',
@@ -662,7 +645,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'o4-mini-deep-research 是我们更快速、更实惠的深度研究模型——非常适合处理复杂的多步骤研究任务。它可以从互联网上搜索和综合信息，也可以通过 MCP 连接器访问并利用你的自有数据。',
     displayName: 'o4-mini Deep Research',
-
     id: 'o4-mini-deep-research',
     maxOutput: 100_000,
     releasedAt: '2025-06-26',
@@ -684,7 +666,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'o3 是一款全能强大的模型，在多个领域表现出色。它为数学、科学、编程和视觉推理任务树立了新标杆。它也擅长技术写作和指令遵循。用户可利用它分析文本、代码和图像，解决多步骤的复杂问题。',
     displayName: 'o3',
-
     id: 'o3',
     maxOutput: 100_000,
     releasedAt: '2025-04-16',
@@ -741,7 +722,6 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 1_047_576,
     description: 'GPT-4.1 是我们用于复杂任务的旗舰模型。它非常适合跨领域解决问题。',
     displayName: 'GPT-4.1',
-    enabled: true,
     id: 'gpt-4.1',
     maxOutput: 32_768,
     releasedAt: '2025-04-14',
@@ -760,7 +740,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'GPT-4.1 mini 提供了智能、速度和成本之间的平衡，使其成为许多用例中有吸引力的模型。',
     displayName: 'GPT-4.1 mini',
-    enabled: true,
     id: 'gpt-4.1-mini',
     maxOutput: 32_768,
     releasedAt: '2025-04-14',
@@ -777,7 +756,6 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 1_047_576,
     description: 'GPT-4.1 nano 是最快，最具成本效益的GPT-4.1模型。',
     displayName: 'GPT-4.1 nano',
-    enabled: true,
     id: 'gpt-4.1-nano',
     maxOutput: 32_768,
     releasedAt: '2025-04-14',
@@ -813,7 +791,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'ChatGPT-4o 是一款动态模型，实时更新以保持当前最新版本。它结合了强大的语言理解与生成能力，适合于大规模应用场景，包括客户服务、教育和技术支持。',
     displayName: 'GPT-4o',
-
     id: 'gpt-4o',
     releasedAt: '2024-05-13',
     settings: {
@@ -864,6 +841,31 @@ const smaiChatModels: AIChatModelCard[] = [
     displayName: 'GPT-3.5 Turbo Instruct',
     id: 'gpt-3.5-turbo-instruct',
     releasedAt: '2024-12-17',
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_000_000,
+    description:
+      "Claude Fable 5 is Anthropic's most capable model — a new tier above Opus for the most demanding reasoning and long-horizon agentic work.",
+    displayName: 'Claude Fable 5',
+    enabled: true,
+    family: 'claude-mythos',
+    generation: 'mythos-5',
+    id: 'claude-fable-5',
+    maxOutput: 128_000,
+    releasedAt: '2026-06-09',
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
+      searchImpl: 'params',
+    },
     type: 'chat',
   },
   {
@@ -991,7 +993,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'Claude Opus 4.5 是 Anthropic 的旗舰模型，结合了卓越的智能与可扩展性能，适合需要最高质量回应和推理能力的复杂任务。',
     displayName: 'Claude Opus 4.5 Thinking',
-    enabled: true,
     id: 'claude-opus-4-5-20251101-thinking',
     maxOutput: 64_000,
     releasedAt: '2025-11-24',
@@ -1012,7 +1013,6 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 200_000,
     description: 'Claude Sonnet 4.5 是 Anthropic 迄今为止最智能的模型。',
     displayName: 'Claude Sonnet 4.5',
-    enabled: true,
     id: 'claude-sonnet-4-5-20250929',
     maxOutput: 64_000,
     releasedAt: '2025-09-30',
@@ -1032,7 +1032,6 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 200_000,
     description: 'Claude Sonnet 4.5 是 Anthropic 迄今为止最智能的模型。',
     displayName: 'Claude Sonnet 4.5 Thinking',
-    enabled: true,
     id: 'claude-sonnet-4-5-20250929-thinking',
     maxOutput: 64_000,
     releasedAt: '2025-09-30',
@@ -1184,7 +1183,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 3 Pro 是全球最佳的多模态理解模型，也是 Google 迄今为止最强大的智能体和氛围编程模型，提供更丰富的视觉效果和更深层次的交互性，所有这些都建立在最先进的推理能力基础之上。',
     displayName: 'Gemini 3.0 Flash Preview',
-    enabled: true,
     id: 'gemini-3-flash-preview',
     maxOutput: 65_536,
     releasedAt: '2025-12-18',
@@ -1243,7 +1241,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 2.5 Pro 是 Google 最先进的思维模型，能够对代码、数学和STEM领域的复杂问题进行推理，以及使用长上下文分析大型数据集、代码库和文档。',
     displayName: 'Gemini 2.5 Pro',
-    enabled: true,
     id: 'gemini-2.5-pro',
     maxOutput: 65_536,
     releasedAt: '2025-06-17',
@@ -1265,7 +1262,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'gemini-2.5-pro-deepsearch 是 Google 最先进的思维模型，能够对代码、数学和STEM领域的复杂问题进行推理，以及使用长上下文分析大型数据集、代码库和文档。',
     displayName: 'Gemini 2.5 Pro Deepsearch',
-    enabled: true,
     id: 'gemini-2.5-pro-deepsearch',
     maxOutput: 65_536,
     releasedAt: '2025-06-17',
@@ -1285,7 +1281,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 2.5 Pro Preview 是 Google 最先进的思维模型，能够对代码、数学和STEM领域的复杂问题进行推理，以及使用长上下文分析大型数据集、代码库和文档。',
     displayName: 'Gemini 2.5 Pro Preview 06-05',
-    enabled: true,
     id: 'gemini-2.5-pro-preview-06-05',
     maxOutput: 65_536,
     releasedAt: '2025-05-06',
@@ -1305,7 +1300,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'Nano Banana 是 Google 最新、最快、最高效的原生多模态模型，它允许您通过对话生成和编辑图像。',
     displayName: 'Nano Banana',
-    enabled: true,
     id: 'gemini-2.5-flash-image',
     maxOutput: 8192,
 
@@ -1323,7 +1317,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 2.5 Pro Preview 是 Google 最先进的思维模型，能够对代码、数学和STEM领域的复杂问题进行推理，以及使用长上下文分析大型数据集、代码库和文档。',
     displayName: 'Gemini 2.5 Pro Preview 06-05 Thinking',
-    enabled: true,
     id: 'gemini-2.5-pro-preview-06-05-thinking',
     maxOutput: 65_536,
     releasedAt: '2025-05-06',
@@ -1345,7 +1338,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 2.5 Pro Preview 是 Google 最先进的思维模型，能够对代码、数学和STEM领域的复杂问题进行推理，以及使用长上下文分析大型数据集、代码库和文档。',
     displayName: 'Gemini 2.5 Pro Preview 05-06',
-    enabled: true,
     id: 'gemini-2.5-pro-preview-05-06',
     maxOutput: 65_536,
     releasedAt: '2025-05-06',
@@ -1488,6 +1480,27 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 256_000,
     description:
       'Grok 最新最强大的旗舰模型，在自然语言处理、数学计算和推理方面表现卓越，是一款完美的全能型选手。',
+    displayName: 'Grok 4.2 Beta',
+    enabled: true,
+    id: 'grok-4.20-beta-0309-reasoning',
+    releasedAt: '2025-11-18',
+    settings: {
+      // reasoning_effort is not supported by grok-4. Specifying reasoning_effort parameter will get an error response.
+      // extendParams: ['reasoningEffort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 256_000,
+    description:
+      'Grok 最新最强大的旗舰模型，在自然语言处理、数学计算和推理方面表现卓越，是一款完美的全能型选手。',
     displayName: 'Grok 4.1',
     enabled: true,
     id: 'grok-4.1',
@@ -1509,7 +1522,7 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 256_000,
     description: 'Grok 前沿多模态模型，专门针对高性能代理工具调用进行优化。',
     displayName: 'Grok 4.1 Fast',
-
+    enabled: true,
     id: 'grok-4-1-fast-non-reasoning',
     releasedAt: '2025-11-18',
     settings: {
@@ -1529,7 +1542,6 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 256_000,
     description: 'Grok 前沿多模态模型，专门针对高性能代理工具调用进行优化。',
     displayName: 'Grok 4.1 Fast Thinking',
-    enabled: true,
     id: 'grok-4-1-fast-reasoning',
     releasedAt: '2025-11-18',
     settings: {
@@ -1564,12 +1576,33 @@ const smaiChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      video: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_000_000,
+    description:
+      'Frontier coding model with native multimodal input, 1M context, and strong agent capabilities.',
+    displayName: 'MiniMax M3',
+    enabled: true,
+    family: 'minimax',
+    generation: 'minimax-m3',
+    id: 'MiniMax-M3',
+    maxOutput: 524_288,
+    releasedAt: '2026-06-01',
+    settings: {
+      extendParams: ['enableReasoning'],
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
     },
     contextWindowTokens: 204_800,
     description:
       'First self-evolving model with top-tier coding and agentic performance (~60 tps).',
     displayName: 'MiniMax M2.7',
-    enabled: true,
     id: 'MiniMax-M2.7',
     maxOutput: 131_072,
     releasedAt: '2026-03-18',
@@ -1701,7 +1734,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-V3.2 模型，。作为迈向新一代架构的中间步骤，V3.2 在 V3.1-Terminus 的基础上引入了 DeepSeek Sparse Attention（一种稀疏注意力机制），针对长文本的训练和推理效率进行了探索性的优化和验证。',
     displayName: 'DeepSeek V3.2',
-    enabled: true,
     id: 'Deepseek/Deepseek-V3.2',
     maxOutput: 32_768,
     releasedAt: '2025-12-03',
@@ -1716,7 +1748,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-V3.1 是深度求索全新推出的混合推理模型，支持思考与非思考2种推理模式，较 DeepSeek-R1-0528 思考效率更高。经 Post-Training 优化，Agent 工具使用与智能体任务表现大幅提升。',
     displayName: 'DeepSeek V3.1',
-    enabled: true,
     id: 'deepseek-ai/DeepSeek-V3.1',
     releasedAt: '2025-08-21',
     type: 'chat',
@@ -1730,7 +1761,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek 推出的推理模型。在输出最终回答之前，模型会先输出一段思维链内容，以提升最终答案的准确性。',
     displayName: 'DeepSeek R1',
-    enabled: true,
     id: 'deepseek-ai/DeepSeek-R1',
     maxOutput: 8192,
     releasedAt: '2025-05-28',
