@@ -1,7 +1,5 @@
 import urlJoin from 'url-join';
 
-const isDev = process.env.NODE_ENV === 'development';
-
 export const OFFICIAL_URL = 'https://www.smallai.asia';
 export const OFFICIAL_SITE = 'https://www.smallai.asia';
 export const OFFICIAL_DOMAIN = 'https://www.smallai.asia';
@@ -71,7 +69,6 @@ export const mailTo = (email: string) => `mailto:${email}`;
 
 export const AES_GCM_URL = 'https://datatracker.ietf.org/doc/html/draft-ietf-avt-srtp-aes-gcm-01';
 export const BASE_PROVIDER_DOC_URL = 'https://api.smai.ai';
-export const SITEMAP_BASE_URL = isDev ? '/sitemap.xml/' : 'sitemap';
 export const CHANGELOG_URL = 'https://api.smai.ai';
 
 export const DOWNLOAD_URL = {
