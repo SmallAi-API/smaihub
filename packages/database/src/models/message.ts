@@ -156,7 +156,6 @@ interface CreateUserAndAssistantMessagesParams {
 
 interface CreateUserAndAssistantMessagesOptions {
   timing?: ModelTimingContext;
-  touchTopicUpdatedAt?: boolean;
 }
 
 interface CreateMessageInsertParams {
@@ -218,22 +217,6 @@ export class MessageModel {
 
   private agentsToSessionsOwnership = () =>
     buildWorkspaceWhere({ userId: this.userId, workspaceId: this.workspaceId }, agentsToSessions);
-
-  /**
-   * Touch topics' updatedAt timestamp within a transaction
-   */
-  private async touchTopicUpdatedAt(trx: Transaction, topicIds: string[]) {
-    if (topicIds.length === 0) return;
-    await trx
-      .update(topics)
-      .set({ updatedAt: new Date() })
-      .where(
-        and(
-          inArray(topics.id, topicIds),
-          buildWorkspaceWhere({ userId: this.userId, workspaceId: this.workspaceId }, topics),
-        ),
-      );
-  }
 
   // **************** Query *************** //
 
@@ -1896,16 +1879,6 @@ export class MessageModel {
         this.db.transaction(async (trx) => {
           const item = await this.createInTransaction(trx, params, id, timing);
 
-          // Touch topic's updatedAt when creating a message in a topic
-          if (params.topicId) {
-            await runTimedStage(
-              timing,
-              'db.message.create.topic.touchUpdatedAt',
-              () => this.touchTopicUpdatedAt(trx, [params.topicId!]),
-              { topicCount: 1 },
-            );
-          }
-
           return item;
         }),
       {
@@ -1919,7 +1892,7 @@ export class MessageModel {
 
   createUserAndAssistantMessages = async (
     { userMessage, assistantMessage }: CreateUserAndAssistantMessagesParams,
-    { timing, touchTopicUpdatedAt = true }: CreateUserAndAssistantMessagesOptions = {},
+    { timing }: CreateUserAndAssistantMessagesOptions = {},
   ): Promise<{ assistantMessage: DBMessageItem; userMessage: DBMessageItem }> => {
     const userMessageId = this.genId();
     const assistantMessageId = this.genId();
@@ -1983,15 +1956,6 @@ export class MessageModel {
             'db.message.createUserAndAssistant.assistant',
           );
 
-          if (touchTopicUpdatedAt && topicIds.length > 0) {
-            await runTimedStage(
-              timing,
-              'db.message.createUserAndAssistant.topic.touchUpdatedAt',
-              () => this.touchTopicUpdatedAt(trx, topicIds),
-              { topicCount: topicIds.length },
-            );
-          }
-
           const userMessageItem = messageMap.get(userMessageId);
           const assistantMessageItem = messageMap.get(assistantMessageId);
 
@@ -2018,12 +1982,8 @@ export class MessageModel {
       ),
     );
 
-    const topicIds = [...new Set(newMessages.map((m) => m.topicId).filter(Boolean))] as string[];
-
     return this.db.transaction(async (trx) => {
       const result = await trx.insert(messages).values(messagesToInsert);
-
-      await this.touchTopicUpdatedAt(trx, topicIds);
 
       return result;
     });
@@ -2113,15 +2073,7 @@ export class MessageModel {
               { hasMetadata: !!metadataPatch, valueKeys: Object.keys(message) },
             );
 
-            // Touch topic's updatedAt when updating a message
             if (updated?.topicId) {
-              await runTimedStage(
-                timing,
-                'db.message.update.topic.touchUpdatedAt',
-                () => this.touchTopicUpdatedAt(trx, [updated.topicId!]),
-                { topicCount: 1 },
-              );
-
               // When this write carries token usage (assistant finalize / hetero
               // step), recompute the topic's denormalized usage rollup from its
               // messages. Gated on the *incoming* payload so streaming
