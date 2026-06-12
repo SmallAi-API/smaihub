@@ -561,9 +561,6 @@ export default {
   'userPanel.profile': 'Account',
   'userPanel.setting': 'Settings',
   'userPanel.usages': 'Usage',
-  'userPanel.workspaceCredits': 'Workspace Credits',
-  'userPanel.workspaceSetting': 'Workspace Settings',
-  'userPanel.workspaceUsages': 'Workspace Usage',
   'version': 'Version',
   'zoom': 'Zoom',
 };

@@ -17,7 +17,7 @@ import {
 import type { ReactNode } from 'react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import HighlightNotification from '@/components/HighlightNotification';
 import Billboard from '@/features/Billboard';
@@ -243,7 +243,7 @@ const Footer = memo(() => {
             {
               icon: <Icon icon={Settings2} />,
               key: 'setting',
-              label: <Link to="/settings">{t('userPanel.setting')}</Link>,
+              label: <WorkspaceLink to="/settings">{t('userPanel.setting')}</WorkspaceLink>,
             },
             {
               type: 'divider' as const,
@@ -330,14 +330,14 @@ const Footer = memo(() => {
             <ActionIcon aria-label={t('userPanel.help')} icon={CircleHelp} size={16} />
           </DropdownMenu>
           {isDevMode && (
-            <Link to="/settings">
+            <WorkspaceLink to="/settings">
               <ActionIcon
                 aria-label={t('userPanel.setting')}
                 icon={SettingsIcon}
                 size={16}
                 title={t('userPanel.setting')}
               />
-            </Link>
+            </WorkspaceLink>
           )}
         </Flexbox>
       )}
