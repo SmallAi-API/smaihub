@@ -2,7 +2,7 @@ import { codeInspectorPlugin } from 'code-inspector-plugin';
 import { type NextConfig } from 'next';
 import { type Header, type Redirect } from 'next/dist/lib/load-custom-routes';
 
-const LANDING_SITEMAP_URL = 'https://lobehub.com/sitemap.xml';
+const LANDING_SITEMAP_URL = 'https://www.smallai.asia/sitemap.xml';
 
 interface CustomNextConfig {
   experimental?: NextConfig['experimental'];
