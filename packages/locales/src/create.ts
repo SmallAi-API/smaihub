@@ -24,8 +24,8 @@ import { unwrapESMModule } from '@/utils/esm/unwrapESMModule';
 import { loadI18nNamespaceModule } from '@/utils/i18n/loadI18nNamespaceModule';
 
 const mergeNamespace = (
-  fallbackResources: Record<string, string>,
-  localeResources: Record<string, string>,
+  fallbackResources: Record<string, unknown>,
+  localeResources: Record<string, unknown>,
 ) => ({
   ...fallbackResources,
   ...localeResources,
