@@ -324,7 +324,7 @@ const buildPostProcessUrl = (
 };
 
 /**
- * Build the per-tool-call server sub-agent runner injected into the tool
+ * Build the per-tool-call server virtual sub-agent runner injected into the tool
  * execution context. Closes over the current tool payload + parent message so
  * the `callSubAgent` server tool can fork a child op without re-deriving the
  * message anchor (which it cannot do correctly from its own context).
@@ -336,7 +336,7 @@ const buildPostProcessUrl = (
  * not available (no `execVirtualSubAgent` callback, or missing agent/topic
  * context).
  */
-const buildServerSubAgentRunner = (
+const buildServerVirtualSubAgentRunner = (
   ctx: RuntimeExecutorContext,
   state: AgentState,
   chatToolPayload: ChatToolPayload,
@@ -388,7 +388,7 @@ const buildServerSubAgentRunner = (
           await ctx.messageModel.deleteMessage(placeholder.id);
         } catch (error) {
           log(
-            'buildServerSubAgentRunner: failed to clean up placeholder %s: %O',
+            'buildServerVirtualSubAgentRunner: failed to clean up placeholder %s: %O',
             placeholder.id,
             error,
           );
@@ -2475,7 +2475,7 @@ export const createRuntimeExecutors = (
                 scope: state.metadata?.scope,
                 serverDB: ctx.serverDB,
                 skipResultTruncation: true,
-                subAgent: buildServerSubAgentRunner(
+                subAgent: buildServerVirtualSubAgentRunner(
                   ctx,
                   state,
                   chatToolPayload,
@@ -2717,14 +2717,15 @@ export const createRuntimeExecutors = (
 
         log('[%s:%d] Tool execution completed', operationId, stepIndex);
 
-        // When the tool result carries an execSubAgent / execSubAgents state the
-        // GeneralChatAgent needs `stop: true` in the payload to detect it and
-        // emit the matching exec_sub_agent / exec_sub_agents instruction.  Without
-        // this flag the agent falls through to the normal LLM-call path and the
-        // sub-agent is never spawned.
-        const execTaskStateType = executionResult.state?.type as string | undefined;
-        const isExecTaskState =
-          execTaskStateType === 'execSubAgent' || execTaskStateType === 'execSubAgents';
+        // When a legacy callAgent task result carries execSubAgent / execSubAgents
+        // state, the GeneralChatAgent needs `stop: true` in the payload to detect
+        // it and emit the matching exec_sub_agent / exec_sub_agents instruction.
+        // Without this flag the agent falls through to the normal LLM-call path
+        // and the background agent run is never spawned.
+        const legacyAgentInvocationStateType = executionResult.state?.type as string | undefined;
+        const isLegacyAgentInvocationState =
+          legacyAgentInvocationStateType === 'execSubAgent' ||
+          legacyAgentInvocationStateType === 'execSubAgents';
 
         executeToolSpan.setAttributes(
           buildExecuteToolResultAttributes({ attempts: execution.attempts, success: isSuccess }),
@@ -2740,7 +2741,7 @@ export const createRuntimeExecutors = (
               isSuccess,
               // Pass tool message ID as parentMessageId for the next LLM call
               parentMessageId: toolMessageId,
-              ...(isExecTaskState && { stop: true }),
+              ...(isLegacyAgentInvocationState && { stop: true }),
               toolCall: chatToolPayload,
               toolCallId: chatToolPayload.id,
             },
@@ -3047,7 +3048,7 @@ export const createRuntimeExecutors = (
                     scope: state.metadata?.scope,
                     serverDB: ctx.serverDB,
                     skipResultTruncation: true,
-                    subAgent: buildServerSubAgentRunner(
+                    subAgent: buildServerVirtualSubAgentRunner(
                       ctx,
                       state,
                       chatToolPayload,
