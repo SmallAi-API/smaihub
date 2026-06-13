@@ -156,4 +156,6 @@ export interface AgentItem {
   updatedAt: Date;
   userId: string;
   virtual?: boolean | null;
+  /** Owning workspace; null for personal (non-workspace) agents. */
+  workspaceId?: string | null;
 }

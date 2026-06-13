@@ -108,7 +108,10 @@ export default {
   'pageEditor.duplicateSuccess': 'Page duplicated successfully',
   'pageEditor.editedAt': 'Last edited on {{time}}',
   'pageEditor.editedBy': 'Last edited by {{name}}',
-  'pageEditor.editorPlaceholder': 'Start writing your page. Press / to open the command menu',
+  'pageEditor.editMode.checking': 'Checking edit availability…',
+  'pageEditor.editMode.lockedByOther': '{{name}} is editing this document',
+  'pageEditor.editMode.lockedBySomeone': 'Someone else is editing this document',
+  'pageEditor.editorPlaceholder': 'Press "/" for AI and commands.',
   'pageEditor.empty.createNewDocument': 'Create New Page',
   'pageEditor.empty.importNotion': 'Import from Notion',
   'pageEditor.empty.title': 'Select a page to get started',
@@ -146,6 +149,10 @@ export default {
   'pageEditor.history.versionCount_other': '{{count}} versions',
 
   'pageEditor.linkCopied': 'Link copied',
+  'pageEditor.lock.editingByOther':
+    '{{name}} is editing this page. Your changes can’t be saved right now.',
+  'pageEditor.lock.editingBySomeone':
+    'Someone else is editing this page. Your changes can’t be saved right now.',
   'pageEditor.menu.copyLink': 'Copy Link',
   'pageEditor.menu.export': 'Export',
   'pageEditor.menu.export.markdown': 'Markdown',
