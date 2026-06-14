@@ -5,8 +5,6 @@
   "features.agentSelfIteration.title": "Agent 自我迭代",
   "features.assistantMessageGroup.desc": "将代理消息及其工具调用结果组合在一起显示",
   "features.assistantMessageGroup.title": "代理消息分组",
-  "features.gatewayMode.desc": "通过网关 WebSocket 在服务器上执行代理任务，而不是在本地运行。这可以加快执行速度并减少客户端资源使用。",
-  "features.gatewayMode.title": "服务器端代理执行（网关）",
   "features.groupChat.desc": "启用多代理协同群聊功能。",
   "features.groupChat.title": "群聊（多代理）",
   "features.imessage.desc": "通过本地 LobeHub Desktop BlueBubbles 桥接将代理连接到 iMessage。",

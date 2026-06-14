@@ -109,6 +109,22 @@ Available system agents and their functions:
 
 For specific content, please refer to the [Feature Flags](/docs/self-hosting/advanced/feature-flags) documentation.
 
+### `ENABLE_AGENT_GATEWAY`
+
+- Type: Optional
+- Description: Enables Gateway Mode for self-hosted deployments. It only takes effect when `AGENT_GATEWAY_URL` is also configured.
+- Default: `0`
+- Example: `1`
+
+Business builds enable Gateway Mode automatically. Self-hosted deployments can set `ENABLE_AGENT_GATEWAY=1` together with `AGENT_GATEWAY_URL` to expose Gateway Mode to clients.
+
+### `AGENT_GATEWAY_URL`
+
+- Type: Optional
+- Description: Agent Gateway endpoint used by Gateway Mode to run supported agent tasks through the backend.
+- Default: -
+- Example: `https://agent-gateway.example.com`
+
 ### `PROXY_URL`
 
 - Type: Optional
