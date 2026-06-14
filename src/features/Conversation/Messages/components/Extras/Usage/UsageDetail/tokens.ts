@@ -37,9 +37,15 @@ export const getDetailsToken = (usage: ModelUsage, modelCard?: LobeDefaultAiMode
   const inputWriteCacheTokens = usage.inputWriteCacheTokens || 0;
   const inputCacheTokens = usage.inputCachedTokens || (usage as any).cachedTokens || 0;
 
-  const inputCacheMissTokens = usage?.inputCacheMissTokens
-    ? usage?.inputCacheMissTokens
-    : totalInputTokens - (inputCacheTokens || 0) - inputToolTokens;
+  const inputCacheMissTokens =
+    typeof usage?.inputCacheMissTokens === 'number'
+      ? usage.inputCacheMissTokens
+      : totalInputTokens - (inputCacheTokens || 0) - inputToolTokens;
+  const cacheRateInputTokens = inputCacheMissTokens + inputCacheTokens + inputWriteCacheTokens;
+  const cacheRate =
+    cacheRateInputTokens > 0 && (inputCacheTokens > 0 || inputWriteCacheTokens > 0)
+      ? inputCacheTokens / cacheRateInputTokens
+      : undefined;
 
   // Pricing
   const formatPrice = getPrice(modelCard?.pricing || { units: [] });
@@ -89,6 +95,7 @@ export const getDetailsToken = (usage: ModelUsage, modelCard?: LobeDefaultAiMode
     inputCachedWrite: !!inputWriteCacheTokens
       ? { credit: inputWriteCachedCredit, token: inputWriteCacheTokens }
       : undefined,
+    inputCacheRate: cacheRate,
     inputCitation: !!usage.inputCitationTokens
       ? {
           credit: calcCredit(usage.inputCitationTokens, formatPrice.input),
