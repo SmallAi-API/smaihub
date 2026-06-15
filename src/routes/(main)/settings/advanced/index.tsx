@@ -46,6 +46,7 @@ const Page = memo(() => {
     enableInputMarkdown,
     enablePlatformAgent,
     enableImessage,
+    enableFleet,
     updateLab,
   ] = useUserStore((s) => [
     preferenceSelectors.isPreferenceInit(s),
@@ -53,6 +54,7 @@ const Page = memo(() => {
     labPreferSelectors.enableInputMarkdown(s),
     labPreferSelectors.enablePlatformAgent(s),
     labPreferSelectors.enableImessage(s),
+    labPreferSelectors.enableFleet(s),
     s.updateLab,
   ]);
 
@@ -173,6 +175,19 @@ const Page = memo(() => {
             className: styles.labItem,
             desc: tLabs('features.imessage.desc'),
             label: tLabs('features.imessage.title'),
+            minWidth: undefined,
+          } satisfies FormItemProps,
+          {
+            children: (
+              <Switch
+                checked={enableFleet}
+                loading={!isPreferenceInit}
+                onChange={(checked: boolean) => updateLab({ enableFleet: checked })}
+              />
+            ),
+            className: styles.labItem,
+            desc: tLabs('features.fleet.desc'),
+            label: tLabs('features.fleet.title'),
             minWidth: undefined,
           } satisfies FormItemProps,
         ]
