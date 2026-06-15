@@ -25,8 +25,8 @@ export const BLOG = 'https://docs.smai.ai';
 
 export const ABOUT = OFFICIAL_SITE;
 export const FEEDBACK = 'https://docs.smai.ai';
-export const PRIVACY_URL = 'https://lobehub.com/privacy';
-export const TERMS_URL = 'https://lobehub.com/terms';
+export const PRIVACY_URL = 'https://www.smallai.asia';
+export const TERMS_URL = 'https://www.smallai.asia';
 
 export const PLUGINS_INDEX_URL = 'https://chat-plugins.lobehub.com';
 
