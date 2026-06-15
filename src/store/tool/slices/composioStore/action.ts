@@ -151,7 +151,10 @@ export class ComposioStoreActionImpl {
         n('createComposioConnection/error'),
       );
 
-      return undefined;
+      // Re-throw so the caller (UI hook) can surface an actionable message to the
+      // user instead of silently doing nothing. tRPC errors carry the server's
+      // message (e.g. "no Composio-managed credentials …").
+      throw error;
     }
   };
 

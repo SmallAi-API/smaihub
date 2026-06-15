@@ -58,6 +58,8 @@ export interface CallComposioToolResult {
 export interface ComposioCatalogToolkit {
   appSlug: string;
   authSchemes: string[];
+  /** Whether the toolkit can actually be connected (no-auth, managed creds, or admin-pinned). */
+  connectable?: boolean;
   description: string;
   icon: string;
   identifier: string;

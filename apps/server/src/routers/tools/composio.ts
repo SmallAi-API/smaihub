@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
+import { getServerComposioAuthConfigId } from '@/config/composio';
 import { PluginModel } from '@/database/models/plugin';
 import { getComposioClient } from '@/libs/composio';
 import { authedProcedure, publicProcedure, router } from '@/libs/trpc/lambda';
@@ -56,21 +57,37 @@ export const composioToolsRouter = router({
 
       const items = response?.items || [];
       const toolkits = Array.isArray(items)
-        ? items.map((item: any) => {
-            const meta = item.meta || {};
-            const slug: string = item.slug || '';
-            return {
-              appSlug: slug.toUpperCase(),
-              authSchemes: item.auth_schemes || item.authSchemes || [],
-              description: meta.description || '',
-              icon: meta.logo || '',
-              // identifier is the kebab-case slug used as the local plugin id.
-              identifier: slug.toLowerCase(),
-              label: item.name || slug,
-              noAuth: item.no_auth ?? item.noAuth ?? false,
-              toolsCount: meta.tools_count ?? meta.toolsCount ?? 0,
-            };
-          })
+        ? items
+            .map((item: any) => {
+              const meta = item.meta || {};
+              const slug: string = item.slug || '';
+              const identifier = slug.toLowerCase();
+              const noAuth = item.no_auth ?? item.noAuth ?? false;
+              const composioManagedAuthSchemes =
+                item.composio_managed_auth_schemes || item.composioManagedAuthSchemes || [];
+              // A toolkit is connectable when it needs no auth, OR Composio has
+              // managed credentials for it, OR an admin pinned a custom auth
+              // config via COMPOSIO_AUTH_CONFIG_IDS. Otherwise connecting would
+              // fail with `Auth_Config_DefaultAuthConfigNotFound` — hide it.
+              const connectable =
+                noAuth ||
+                (Array.isArray(composioManagedAuthSchemes) &&
+                  composioManagedAuthSchemes.length > 0) ||
+                Boolean(getServerComposioAuthConfigId(identifier));
+              return {
+                appSlug: slug.toUpperCase(),
+                authSchemes: item.auth_schemes || item.authSchemes || [],
+                connectable,
+                description: meta.description || '',
+                icon: meta.logo || '',
+                // identifier is the kebab-case slug used as the local plugin id.
+                identifier,
+                label: item.name || slug,
+                noAuth,
+                toolsCount: meta.tools_count ?? meta.toolsCount ?? 0,
+              };
+            })
+            .filter((tk: { connectable: boolean }) => tk.connectable)
         : [];
 
       return {

@@ -21,10 +21,20 @@ export enum SkillStoreTab {
   Skills = 'skills',
 }
 
-export const SkillStoreContent = () => {
+interface SkillStoreContentProps {
+  initialTab?: SkillStoreTab;
+}
+
+export const SkillStoreContent = ({ initialTab }: SkillStoreContentProps = {}) => {
   const { t } = useTranslation('setting');
   const isComposioEnabled = useServerConfigStore(serverConfigSelectors.enableComposio);
-  const [activeTab, setActiveTab] = useState<SkillStoreTab>(SkillStoreTab.LobeHub);
+  // Honor a requested initial tab, but fall back to LobeHub when the BuiltinMCP
+  // tab is requested while Composio is disabled (the tab isn't rendered then).
+  const resolvedInitialTab =
+    initialTab === SkillStoreTab.BuiltinMCP && !isComposioEnabled
+      ? SkillStoreTab.LobeHub
+      : (initialTab ?? SkillStoreTab.LobeHub);
+  const [activeTab, setActiveTab] = useState<SkillStoreTab>(resolvedInitialTab);
   const [lobehubKeywords, setLobehubKeywords] = useState('');
   const [composioKeywords, setComposioKeywords] = useState('');
   const [skillKeywords, setSkillKeywords] = useState('');

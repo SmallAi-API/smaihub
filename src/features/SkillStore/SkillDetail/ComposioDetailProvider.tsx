@@ -14,12 +14,21 @@ import { DetailContext } from './DetailContext';
 
 interface ComposioDetailProviderProps {
   children: ReactNode;
+  /** Fallback description from the catalog item (for not-yet-connected dynamic toolkits). */
+  fallbackDescription?: string;
+  /** Fallback icon (logo URL) from the catalog item. */
+  fallbackIcon?: string;
+  /** Fallback label from the catalog item. */
+  fallbackLabel?: string;
   identifier: string;
   serverName: string;
 }
 
 export const ComposioDetailProvider = ({
   children,
+  fallbackDescription,
+  fallbackIcon,
+  fallbackLabel,
   identifier,
   serverName,
 }: ComposioDetailProviderProps) => {
@@ -35,20 +44,30 @@ export const ComposioDetailProvider = ({
   );
 
   // Dynamic catalog toolkits are not in the static list. Synthesize a config
-  // from the connected server metadata so the detail modal still renders.
+  // from the catalog item (passed as fallbacks) or the connected server
+  // metadata so the detail modal renders the correct icon/label, not the 🔌
+  // placeholder.
   const config: ComposioAppType | undefined = useMemo(() => {
     if (staticConfig) return staticConfig;
     return {
       appSlug: serverName,
       author: 'Composio',
       authorUrl: 'https://composio.dev',
-      description: '',
-      icon: serverState?.icon || '🔌',
+      description: fallbackDescription || '',
+      icon: fallbackIcon || serverState?.icon || '🔌',
       identifier,
-      label: serverState?.label || identifier,
+      label: fallbackLabel || serverState?.label || identifier,
       readme: '',
     };
-  }, [staticConfig, serverName, serverState, identifier]);
+  }, [
+    staticConfig,
+    serverName,
+    serverState,
+    identifier,
+    fallbackIcon,
+    fallbackLabel,
+    fallbackDescription,
+  ]);
 
   const isConnected = useMemo(
     () => serverState?.status === ComposioServerStatus.ACTIVE,

@@ -8,6 +8,7 @@ import React, { createElement, memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { createSkillStoreModal } from '@/features/SkillStore';
+import { SkillStoreTab } from '@/features/SkillStore/SkillStoreContent';
 import { useGlobalStore } from '@/store/global';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useToolStore } from '@/store/tool';
@@ -75,8 +76,7 @@ const BANNER_SKILL_IDS = [
   { id: 'google-calendar', type: 'composio' },
   { id: 'slack', type: 'composio' },
   { id: 'notion', type: 'lobehub' },
-  { id: 'twitter', type: 'lobehub' },
-  { id: 'github', type: 'lobehub' },
+  { id: 'github', type: 'composio' },
 ] as const;
 
 const SkillInstallBanner = memo(() => {
@@ -116,7 +116,7 @@ const SkillInstallBanner = memo(() => {
   }, []);
 
   const handleOpenStore = useCallback(() => {
-    createSkillStoreModal();
+    createSkillStoreModal({ initialTab: SkillStoreTab.BuiltinMCP });
   }, []);
 
   const handleDismiss = useCallback(

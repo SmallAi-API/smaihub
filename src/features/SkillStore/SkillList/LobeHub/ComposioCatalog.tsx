@@ -90,7 +90,10 @@ const ComposioCatalog = memo<ComposioCatalogProps>(({ keywords, category }) => {
               type="composio"
               onOpenDetail={() =>
                 createComposioSkillDetailModal({
+                  description: tk.description,
+                  icon: tk.icon,
                   identifier: tk.identifier,
+                  label: tk.label,
                   serverName: tk.appSlug,
                 })
               }

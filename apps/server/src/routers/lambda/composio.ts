@@ -109,11 +109,25 @@ export const composioRouter = router({
               type: 'use_composio_managed_auth',
             });
           } catch (error) {
-            // Defensive fallback: a toolkit that doesn't require auth rejects auth
-            // config creation with `Auth_Config_NoAuthApp`. Treat it as no-auth.
             const msg = error instanceof Error ? error.message : String(error);
+            // A toolkit that doesn't require auth rejects auth config creation
+            // with `Auth_Config_NoAuthApp` — treat it as no-auth.
             if (msg.includes('Auth_Config_NoAuthApp') || msg.includes('does not require')) {
               return registerNoAuth();
+            }
+            // A toolkit that requires auth but has no Composio-managed credentials
+            // (e.g. `twitter`) returns `Auth_Config_DefaultAuthConfigNotFound`. It
+            // can only be connected with a custom auth config (the admin's own
+            // client_id/secret), pinned per toolkit via COMPOSIO_AUTH_CONFIG_IDS.
+            // Surface an actionable 400 instead of a 500.
+            if (
+              msg.includes('Auth_Config_DefaultAuthConfigNotFound') ||
+              msg.includes('does not have managed credentials')
+            ) {
+              throw new TRPCError({
+                code: 'BAD_REQUEST',
+                message: `"${label}" has no Composio-managed credentials. An admin must create a custom auth config for it in the Composio dashboard and pin it via COMPOSIO_AUTH_CONFIG_IDS ("${identifier}": "ac_...").`,
+              });
             }
             throw error;
           }
