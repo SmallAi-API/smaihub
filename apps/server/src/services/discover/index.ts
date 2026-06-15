@@ -1173,7 +1173,7 @@ export class DiscoverService {
         avatar: typeof composioTool.icon === 'string' ? composioTool.icon : '',
         category: undefined,
         createdAt: '',
-        description: `LobeHub Mcp Server: ${composioTool.label}`,
+        description: `smai.ai Mcp 服务: ${composioTool.label}`,
         homepage: 'https://composio.dev',
         identifier: composioTool.identifier,
         manifest: undefined,

@@ -902,6 +902,7 @@
   "skillStore.emptySearch": "No matching Skills",
   "skillStore.networkError": "Network error, please try again",
   "skillStore.search": "Search skills by name or keyword, press Enter to search…",
+  "skillStore.tabs.builtinMcp": "Built-in MCP",
   "skillStore.tabs.community": "Community",
   "skillStore.tabs.custom": "Custom",
   "skillStore.tabs.lobehub": "Built-in skills",

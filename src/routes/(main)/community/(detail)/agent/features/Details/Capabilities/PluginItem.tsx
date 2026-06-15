@@ -103,7 +103,7 @@ const PluginItem = memo<PluginItemProps>(({ identifier }) => {
         avatar: '', // Avatar will be rendered by BuiltinToolIcon component
         category: undefined,
         createdAt: '',
-        description: `LobeHub Mcp Server: ${composioTool.label}`,
+        description: `smai.ai Mcp Server: ${composioTool.label}`,
         homepage: 'https://composio.dev',
         identifier: composioTool.identifier,
         manifest: undefined,

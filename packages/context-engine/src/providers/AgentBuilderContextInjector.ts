@@ -28,7 +28,7 @@ export interface OfficialToolItem {
   installed?: boolean;
   /** Tool display name */
   name: string;
-  /** Tool type: 'builtin' for built-in tools, 'composio' for LobeHub Mcp servers, 'lobehub-skill' for LobeHub Skill providers */
+  /** Tool type: 'builtin' for built-in tools, 'composio' for smai.ai Mcp Servers, 'lobehub-skill' for LobeHub Skill providers */
   type: 'builtin' | 'composio' | 'lobehub-skill';
 }
 

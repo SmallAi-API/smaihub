@@ -5,13 +5,17 @@ import { type SegmentedOptions } from 'antd/es/segmented';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
+
 import Search from './Search';
 import AddSkillButton from './SkillList/AddSkillButton';
+import ComposioList from './SkillList/Composio';
 import LobeHubList from './SkillList/LobeHub';
 import MarketSkillList from './SkillList/MarketSkills';
 import MCPList from './SkillList/MCP';
 
 export enum SkillStoreTab {
+  BuiltinMCP = 'builtinMcp',
   LobeHub = 'lobehub',
   MCP = 'mcp',
   Skills = 'skills',
@@ -19,17 +23,23 @@ export enum SkillStoreTab {
 
 export const SkillStoreContent = () => {
   const { t } = useTranslation('setting');
+  const isComposioEnabled = useServerConfigStore(serverConfigSelectors.enableComposio);
   const [activeTab, setActiveTab] = useState<SkillStoreTab>(SkillStoreTab.LobeHub);
   const [lobehubKeywords, setLobehubKeywords] = useState('');
+  const [composioKeywords, setComposioKeywords] = useState('');
   const [skillKeywords, setSkillKeywords] = useState('');
 
   const options: SegmentedOptions = [
     { label: t('skillStore.tabs.lobehub'), value: SkillStoreTab.LobeHub },
+    ...(isComposioEnabled
+      ? [{ label: t('skillStore.tabs.builtinMcp'), value: SkillStoreTab.BuiltinMCP }]
+      : []),
     { label: t('skillStore.tabs.skills'), value: SkillStoreTab.Skills },
     { label: t('skillStore.tabs.mcp'), value: SkillStoreTab.MCP },
   ];
 
   const isLobeHub = activeTab === SkillStoreTab.LobeHub;
+  const isBuiltinMCP = activeTab === SkillStoreTab.BuiltinMCP;
   const isSkills = activeTab === SkillStoreTab.Skills;
   const isMCP = activeTab === SkillStoreTab.MCP;
 
@@ -49,6 +59,7 @@ export const SkillStoreContent = () => {
         </Flexbox>
         <Search
           activeTab={activeTab}
+          onComposioSearch={setComposioKeywords}
           onLobeHubSearch={setLobehubKeywords}
           onSkillSearch={setSkillKeywords}
         />
@@ -57,6 +68,11 @@ export const SkillStoreContent = () => {
         <Flexbox flex={1} style={{ display: isLobeHub ? 'flex' : 'none', overflow: 'auto' }}>
           <LobeHubList keywords={lobehubKeywords} />
         </Flexbox>
+        {isComposioEnabled && (
+          <Flexbox flex={1} style={{ display: isBuiltinMCP ? 'flex' : 'none', overflow: 'auto' }}>
+            <ComposioList keywords={composioKeywords} />
+          </Flexbox>
+        )}
         <Flexbox flex={1} style={{ display: isSkills ? 'flex' : 'none', overflow: 'auto' }}>
           <MarketSkillList keywords={skillKeywords} />
         </Flexbox>

@@ -236,7 +236,7 @@ class ChatService {
           const server = allComposioServers.find((s) => s.identifier === composioType.identifier);
 
           officialTools.push({
-            description: `LobeHub Mcp Server: ${composioType.label}`,
+            description: `smai.ai Mcp Server: ${composioType.label}`,
             enabled: enabledPlugins.includes(composioType.identifier),
             identifier: composioType.identifier,
             installed: !!server,

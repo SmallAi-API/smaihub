@@ -61,7 +61,7 @@ const getComposioMetas = (s: ToolStoreState): LobeToolMeta[] =>
       identifier: server.identifier,
       meta: {
         avatar: '☁️',
-        description: `LobeHub Mcp Server: ${server.label}`,
+        description: `smai.ai Mcp Server: ${server.label}`,
         tags: ['composio', 'mcp'],
         title: server.label,
       },
