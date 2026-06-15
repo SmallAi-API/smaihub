@@ -72,7 +72,7 @@ export const BASE_PROVIDER_DOC_URL = 'https://api.smai.ai';
 export const CHANGELOG_URL = 'https://api.smai.ai';
 
 export const DOWNLOAD_URL = {
-  android: 'https://app.smai.ai/',
-  default: 'https://app.smai.ai/',
-  ios: 'https://app.smai.ai/',
+  android: 'https://www.smallai.asia/download',
+  default: 'https://www.smallai.asia/download',
+  ios: 'https://www.smallai.asia/download',
 } as const;

@@ -453,7 +453,7 @@ const SkillList = memo<SkillListProps>(
         {hasBuiltinTools &&
           renderSection(
             'builtinTools',
-            t('skillGroup.builtinTools', 'LobeHub 内置 Tools'),
+            t('skillGroup.builtinTools', '内置 Tools'),
             builtinToolItems.map((item) => {
               if (item.type !== 'builtin') return null;
               const localizedTitle = t(`tools.builtins.${item.builtinTool.identifier}.title`, {
@@ -561,7 +561,6 @@ const SkillList = memo<SkillListProps>(
             t('skillGroup.customSkills', '自定义 Skills'),
             renderUserAgentSkills(),
           )}
-
       </div>
     );
   },

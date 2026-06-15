@@ -1,14 +1,17 @@
 'use client';
 
 import { isDesktop } from '@lobechat/const';
+import { ClaudeCode, Codex } from '@lobehub/icons';
 import { Flexbox, Icon, Skeleton, Text } from '@lobehub/ui';
 import { createStaticStyles, cssVar } from 'antd-style';
 import {
   ChevronRightIcon,
   FolderCogIcon,
   type LucideIcon,
+  MessagesSquareIcon,
   MonitorDownIcon,
   ShieldCheckIcon,
+  SparklesIcon,
   TerminalIcon,
   ZapIcon,
 } from 'lucide-react';
@@ -94,6 +97,34 @@ const styles = createStaticStyles(({ css }) => ({
 
     background: ${cssVar.colorPrimaryBg};
   `,
+  integrationCard: css`
+    align-items: center;
+
+    padding-block: 24px;
+    padding-inline: 16px;
+    border: 1px solid ${cssVar.colorBorderSecondary};
+    border-radius: ${cssVar.borderRadiusLG};
+
+    text-align: center;
+
+    background: ${cssVar.colorBgContainer};
+
+    transition: border-color 0.2s;
+
+    &:hover {
+      border-color: ${cssVar.colorPrimaryBorder};
+    }
+  `,
+  integrationIcon: css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 64px;
+    height: 64px;
+
+    color: ${cssVar.colorText};
+  `,
   listCol: css`
     min-width: 0;
     border: 1px solid ${cssVar.colorBorderSecondary};
@@ -111,7 +142,7 @@ const styles = createStaticStyles(({ css }) => ({
   `,
   optionGrid: css`
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 1px;
     background: ${cssVar.colorBorderSecondary};
   `,
@@ -178,9 +209,7 @@ const DeviceList = memo(() => {
   // No device is selected by default — the detail panel only appears once the
   // user clicks a row.
   const [selectedId, setSelectedId] = useState<string>();
-  const [connectTab, setConnectTab] = useState<'cli' | 'desktop'>();
-
-  const openConnect = (tab: 'cli' | 'desktop') => setConnectTab(tab);
+  const [connectOpen, setConnectOpen] = useState(false);
 
   if (isLoading) return <Skeleton active paragraph={{ rows: 4 }} title={false} />;
 
@@ -206,13 +235,7 @@ const DeviceList = memo(() => {
                 desc={t('devices.empty.methodDesktop.desc')}
                 icon={MonitorDownIcon}
                 title={t('devices.empty.methodDesktop.title')}
-                onClick={() => openConnect('desktop')}
-              />
-              <ConnectOption
-                desc={t('devices.empty.methodCli.desc')}
-                icon={TerminalIcon}
-                title={t('devices.empty.methodCli.title')}
-                onClick={() => openConnect('cli')}
+                onClick={() => setConnectOpen(true)}
               />
             </div>
           </Flexbox>
@@ -257,13 +280,60 @@ const DeviceList = memo(() => {
               ))}
             </Flexbox>
           </Flexbox>
+
+          {/* Integrations: drive your devices through external clients & IM */}
+          <Flexbox gap={16}>
+            <Flexbox horizontal align={'center'} gap={8}>
+              <Icon icon={SparklesIcon} size={16} style={{ color: cssVar.colorPrimary }} />
+              <Text style={{ fontSize: 14, fontWeight: 500 }}>
+                {t('devices.integrations.title')}
+              </Text>
+            </Flexbox>
+            <Flexbox horizontal gap={16}>
+              <Flexbox className={styles.integrationCard} flex={1} gap={12}>
+                <span className={styles.integrationIcon}>
+                  <ClaudeCode.Color size={64} />
+                </span>
+                <Flexbox align={'center'} gap={2}>
+                  <Text style={{ fontSize: 14, fontWeight: 500 }}>
+                    {t('devices.integrations.claudeCode.title')}
+                  </Text>
+                  <Text className={styles.subtitle} style={{ fontSize: 12 }}>
+                    {t('devices.integrations.claudeCode.desc')}
+                  </Text>
+                </Flexbox>
+              </Flexbox>
+              <Flexbox className={styles.integrationCard} flex={1} gap={12}>
+                <span className={styles.integrationIcon}>
+                  <Codex.Color size={64} />
+                </span>
+                <Flexbox align={'center'} gap={2}>
+                  <Text style={{ fontSize: 14, fontWeight: 500 }}>
+                    {t('devices.integrations.codex.title')}
+                  </Text>
+                  <Text className={styles.subtitle} style={{ fontSize: 12 }}>
+                    {t('devices.integrations.codex.desc')}
+                  </Text>
+                </Flexbox>
+              </Flexbox>
+              <Flexbox className={styles.integrationCard} flex={1} gap={12}>
+                <span className={styles.integrationIcon}>
+                  <Icon icon={MessagesSquareIcon} size={48} />
+                </span>
+                <Flexbox align={'center'} gap={2}>
+                  <Text style={{ fontSize: 14, fontWeight: 500 }}>
+                    {t('devices.integrations.im.title')}
+                  </Text>
+                  <Text className={styles.subtitle} style={{ fontSize: 12 }}>
+                    {t('devices.integrations.im.desc')}
+                  </Text>
+                </Flexbox>
+              </Flexbox>
+            </Flexbox>
+          </Flexbox>
         </Flexbox>
 
-        <ConnectDeviceModal
-          initialTab={connectTab}
-          open={!!connectTab}
-          onClose={() => setConnectTab(undefined)}
-        />
+        <ConnectDeviceModal open={connectOpen} onClose={() => setConnectOpen(false)} />
       </>
     );
 

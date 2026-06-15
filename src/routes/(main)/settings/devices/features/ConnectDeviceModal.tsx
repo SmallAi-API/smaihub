@@ -1,35 +1,13 @@
 'use client';
 
 import { DOWNLOAD_URL } from '@lobechat/const';
-import { Button, CopyButton, Flexbox, Icon, Modal, Segmented, Text } from '@lobehub/ui';
+import { Button, Flexbox, Icon, Modal, Text } from '@lobehub/ui';
 import { createStaticStyles, cssVar } from 'antd-style';
-import { DownloadIcon, MonitorDownIcon, ShieldCheckIcon, TerminalIcon } from 'lucide-react';
-import { memo, useEffect, useState } from 'react';
+import { DownloadIcon, ShieldCheckIcon } from 'lucide-react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const styles = createStaticStyles(({ css }) => ({
-  codeBlock: css`
-    display: flex;
-    gap: 12px;
-    align-items: center;
-
-    padding-block: 10px;
-    padding-inline: 14px;
-    border: 1px solid ${cssVar.colorBorderSecondary};
-    border-radius: ${cssVar.borderRadius};
-
-    background: ${cssVar.colorFillQuaternary};
-  `,
-  command: css`
-    overflow: hidden;
-    flex: 1;
-
-    font-family: ${cssVar.fontFamilyCode};
-    font-size: 13px;
-    color: ${cssVar.colorText};
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  `,
   footer: css`
     margin-block-start: 4px;
     padding-block-start: 16px;
@@ -72,7 +50,6 @@ const styles = createStaticStyles(({ css }) => ({
 }));
 
 interface ConnectDeviceModalProps {
-  initialTab?: 'cli' | 'desktop';
   onClose: () => void;
   open: boolean;
 }
@@ -99,26 +76,8 @@ const Step = memo<StepProps>(({ index, title, desc, children, last }) => (
   </Flexbox>
 ));
 
-const CommandLine = memo<{ command: string }>(({ command }) => (
-  <div className={styles.codeBlock}>
-    <code className={styles.command}>{command}</code>
-    <CopyButton content={command} size={'small'} />
-  </div>
-));
-
-const cliCommands = {
-  connect: 'lh connect --daemon',
-  install: 'npm install -g @lobehub/cli',
-  login: 'lh login',
-};
-
-const ConnectDeviceModal = memo<ConnectDeviceModalProps>(({ onClose, open, initialTab }) => {
+const ConnectDeviceModal = memo<ConnectDeviceModalProps>(({ onClose, open }) => {
   const { t } = useTranslation('setting');
-  const [active, setActive] = useState<'cli' | 'desktop'>(initialTab ?? 'desktop');
-
-  useEffect(() => {
-    if (open) setActive(initialTab ?? 'desktop');
-  }, [open, initialTab]);
 
   return (
     <Modal
@@ -131,75 +90,30 @@ const ConnectDeviceModal = memo<ConnectDeviceModalProps>(({ onClose, open, initi
       <Flexbox gap={20}>
         <Text className={styles.subtitle}>{t('devices.connectWizard.subtitle')}</Text>
 
-        <Segmented
-          block
-          value={active}
-          options={[
-            {
-              icon: <Icon icon={MonitorDownIcon} />,
-              label: t('devices.connectWizard.method.desktop'),
-              value: 'desktop',
-            },
-            {
-              icon: <Icon icon={TerminalIcon} />,
-              label: t('devices.connectWizard.method.cli'),
-              value: 'cli',
-            },
-          ]}
-          onChange={(value) => setActive(value as 'cli' | 'desktop')}
-        />
-
-        {active === 'desktop' ? (
-          <Flexbox>
-            <Step
-              desc={t('devices.connectWizard.desktop.step1Desc')}
-              index={1}
-              title={t('devices.connectWizard.desktop.step1')}
-            >
-              <a href={DOWNLOAD_URL.default} rel="noreferrer" target="_blank">
-                <Button icon={<Icon icon={DownloadIcon} />} size={'small'} type={'primary'}>
-                  {t('devices.connectWizard.desktop.downloadLink')}
-                </Button>
-              </a>
-            </Step>
-            <Step
-              desc={t('devices.connectWizard.desktop.step2Desc')}
-              index={2}
-              title={t('devices.connectWizard.desktop.step2')}
-            />
-            <Step
-              last
-              desc={t('devices.connectWizard.desktop.step3Desc')}
-              index={3}
-              title={t('devices.connectWizard.desktop.step3')}
-            />
-          </Flexbox>
-        ) : (
-          <Flexbox>
-            <Step
-              desc={t('devices.connectWizard.cli.installDesc')}
-              index={1}
-              title={t('devices.connectWizard.cli.installTitle')}
-            >
-              <CommandLine command={cliCommands.install} />
-            </Step>
-            <Step
-              desc={t('devices.connectWizard.cli.loginDesc')}
-              index={2}
-              title={t('devices.connectWizard.cli.loginTitle')}
-            >
-              <CommandLine command={cliCommands.login} />
-            </Step>
-            <Step
-              last
-              desc={t('devices.connectWizard.cli.connectDesc')}
-              index={3}
-              title={t('devices.connectWizard.cli.connectTitle')}
-            >
-              <CommandLine command={cliCommands.connect} />
-            </Step>
-          </Flexbox>
-        )}
+        <Flexbox>
+          <Step
+            desc={t('devices.connectWizard.desktop.step1Desc')}
+            index={1}
+            title={t('devices.connectWizard.desktop.step1')}
+          >
+            <a href={DOWNLOAD_URL.default} rel="noreferrer" target="_blank">
+              <Button icon={<Icon icon={DownloadIcon} />} size={'small'} type={'primary'}>
+                {t('devices.connectWizard.desktop.downloadLink')}
+              </Button>
+            </a>
+          </Step>
+          <Step
+            desc={t('devices.connectWizard.desktop.step2Desc')}
+            index={2}
+            title={t('devices.connectWizard.desktop.step2')}
+          />
+          <Step
+            last
+            desc={t('devices.connectWizard.desktop.step3Desc')}
+            index={3}
+            title={t('devices.connectWizard.desktop.step3')}
+          />
+        </Flexbox>
 
         <Flexbox horizontal align={'center'} className={styles.footer} gap={8}>
           <Icon icon={ShieldCheckIcon} size={14} style={{ color: cssVar.colorPrimary }} />

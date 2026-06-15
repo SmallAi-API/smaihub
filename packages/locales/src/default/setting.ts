@@ -397,6 +397,13 @@ export default {
     'Download the desktop app, sign in, and your device connects automatically.',
   'devices.empty.methodDesktop.title': 'Connect via Desktop',
   'devices.empty.title': 'Connect your first device',
+  'devices.integrations.claudeCode.desc': 'Use Claude Code inside the smai.ai client.',
+  'devices.integrations.claudeCode.title': 'Claude Code in smai.ai',
+  'devices.integrations.codex.desc': 'Use Codex inside the smai.ai client.',
+  'devices.integrations.codex.title': 'Codex in smai.ai',
+  'devices.integrations.im.desc': 'Let your IM chats drive and control your devices.',
+  'devices.integrations.im.title': 'Control devices from IM',
+  'devices.integrations.title': 'More ways to use your devices',
   'devices.fallbackBadge': 'Unstable identity',
   'devices.fallbackTooltip':
     "This device couldn't be identified by its machine ID, so reinstalling the app may create a duplicate entry.",
