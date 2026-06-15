@@ -371,10 +371,10 @@ export default {
   'devices.connectWizard.cli.loginDesc':
     'Complete OAuth authorization in your browser to link the CLI with your account.',
   'devices.connectWizard.cli.loginTitle': 'Sign in',
-  'devices.connectWizard.desktop.downloadLink': 'Download LobeHub Desktop',
+  'devices.connectWizard.desktop.downloadLink': 'Download smai.ai Desktop',
   'devices.connectWizard.desktop.step1': 'Download the desktop app',
   'devices.connectWizard.desktop.step1Desc':
-    'Visit the LobeHub downloads page and get the app for your operating system.',
+    'Visit the smai.ai downloads page and get the app for your operating system.',
   'devices.connectWizard.desktop.step2': 'Sign in and open the device gateway',
   'devices.connectWizard.desktop.step2Desc':
     "After signing in, click the device gateway icon in the top-right corner and confirm it's turned on.",
@@ -385,10 +385,10 @@ export default {
     'Only device metadata is registered — your data is never accessed.',
   'devices.connectWizard.method.cli': 'Via CLI',
   'devices.connectWizard.method.desktop': 'Via Desktop',
-  'devices.connectWizard.subtitle': 'Choose how to connect your computer to LobeHub.',
+  'devices.connectWizard.subtitle': 'Choose how to connect your computer to smai.ai.',
   'devices.connectWizard.title': 'Connect Device',
   'devices.empty.desc':
-    'Once connected, LobeHub agents can read/write files, run commands, and call system tools directly on your computer.',
+    'Once connected, smai.ai agents can read/write files, run commands, and call system tools directly on your computer.',
   'devices.empty.methodCli.desc':
     'Install the CLI in your terminal — great for servers or headless machines.',
   'devices.empty.methodCli.title': 'Connect via CLI',
@@ -616,7 +616,7 @@ export default {
   'notification.inbox.desc': 'Show notifications in the in-app inbox',
   'notification.inbox.title': 'Inbox Notifications',
   'notification.push.desc':
-    'Send push notifications to your mobile devices (LobeHub mobile app required)',
+    'Send push notifications to your mobile devices (smai.ai mobile app required)',
   'notification.push.title': 'Mobile Push Notifications',
   'notification.category.billing.title': 'Billing',
   'notification.category.generation.title': 'Generation',
@@ -720,7 +720,7 @@ export default {
   'settingAgent.tag.title': 'Tag',
   'settingAgent.title': 'Agent info',
   'settingAppearance.appTray.desc':
-    'Show the LobeHub icon in the system tray or macOS menu bar. Disabling it also removes tray menu access.',
+    'Show the smai.ai icon in the system tray or macOS menu bar. Disabling it also removes tray menu access.',
   'settingAppearance.appTray.title': 'Show App Tray',
   'settingAppearance.animationMode.agile': 'Agile',
   'settingAppearance.animationMode.desc':
@@ -983,7 +983,7 @@ export default {
   'settingSystemTools.tools.grep.desc': 'GNU grep - standard text search tool',
   'settingSystemTools.tools.kimi.desc': 'Kimi CLI - Moonshot AI agentic coding CLI',
   'settingSystemTools.tools.mdfind.desc': 'macOS Spotlight search (fast indexed search)',
-  'settingSystemTools.tools.lobehub.desc': 'LobeHub CLI - manage and connect to LobeHub services',
+  'settingSystemTools.tools.lobehub.desc': 'smai.ai CLI - manage and connect to smai.ai services',
   'settingSystemTools.tools.bun.desc': 'Bun - fast JavaScript runtime and package manager',
   'settingSystemTools.tools.bunx.desc': 'bunx - Bun package runner for executing npm packages',
   'settingSystemTools.tools.node.desc': 'Node.js - JavaScript runtime for executing JS/TS',
@@ -1810,7 +1810,7 @@ When I am ___, I need ___
   'workspace.general.url.title': 'Workspace URL',
   'workspace.slugBrandApply.button': 'Apply',
   'workspace.slugBrandApply.mailBody':
-    'Hi LobeHub team,\n\nI would like to request the workspace URL "{{slug}}" (https://lobehub.com/{{slug}}).\n\n- Brand / organization I represent:\n- Official website / domain:\n- My role in the organization:\n- Organization email (please reply from this address):\n\nThanks!',
+    'Hi smai.ai team,\n\nI would like to request the workspace URL "{{slug}}" (https://www.smallai.asia/{{slug}}).\n\n- Brand / organization I represent:\n- Official website / domain:\n- My role in the organization:\n- Organization email (please reply from this address):\n\nThanks!',
   'workspace.slugBrandApply.mailButton': 'Apply via email',
   'workspace.slugBrandApply.mailSubject': 'Workspace URL brand request: {{slug}}',
   'workspace.slugBrandApply.modalCreateTip':
@@ -2325,7 +2325,7 @@ When I am ___, I need ___
     'Browser automation CLI for AI agents. Use when tasks involve website or Electron interaction such as navigation, form filling, clicking, screenshot capture, scraping data, login flows, and end-to-end app testing.',
   'tools.builtins.lobe-agent-browser.title': 'Agent Browser',
   'tools.builtins.lobehub.description':
-    'Manage the LobeHub platform via CLI — knowledge bases, memory, agents, files, search, generation, and more.',
+    'Manage the smai.ai platform via CLI — knowledge bases, memory, agents, files, search, generation, and more.',
   'tools.builtins.lobehub.title': 'smai.ai',
   'tools.builtins.task.description':
     'Task management and execution — create, track, review, and complete tasks via CLI.',
