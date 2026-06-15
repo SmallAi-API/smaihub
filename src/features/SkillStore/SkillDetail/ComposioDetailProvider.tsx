@@ -1,6 +1,6 @@
 'use client';
 
-import { getComposioAppByIdentifier } from '@lobechat/const';
+import { type ComposioAppType, getComposioAppByIdentifier } from '@lobechat/const';
 import { type ReactNode } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +25,7 @@ export const ComposioDetailProvider = ({
 }: ComposioDetailProviderProps) => {
   const { t } = useTranslation(['setting']);
 
-  const config = useMemo(() => getComposioAppByIdentifier(identifier), [identifier]);
+  const staticConfig = useMemo(() => getComposioAppByIdentifier(identifier), [identifier]);
 
   const composioServers = useToolStore(composioStoreSelectors.getServers);
 
@@ -33,6 +33,22 @@ export const ComposioDetailProvider = ({
     () => composioServers.find((s) => s.identifier === identifier),
     [identifier, composioServers],
   );
+
+  // Dynamic catalog toolkits are not in the static list. Synthesize a config
+  // from the connected server metadata so the detail modal still renders.
+  const config: ComposioAppType | undefined = useMemo(() => {
+    if (staticConfig) return staticConfig;
+    return {
+      appSlug: serverName,
+      author: 'Composio',
+      authorUrl: 'https://composio.dev',
+      description: '',
+      icon: serverState?.icon || '🔌',
+      identifier,
+      label: serverState?.label || identifier,
+      readme: '',
+    };
+  }, [staticConfig, serverName, serverState, identifier]);
 
   const isConnected = useMemo(
     () => serverState?.status === ComposioServerStatus.ACTIVE,

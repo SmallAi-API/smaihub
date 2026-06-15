@@ -14,6 +14,71 @@ const composioProcedure = authedProcedure.use(serverDatabase).use(async (opts) =
 });
 
 export const composioToolsRouter = router({
+  /**
+   * Browse the full Composio toolkit catalog (1000+ toolkits), paginated.
+   *
+   * Uses the low-level `client.toolkits.list()` instead of the SDK's
+   * `toolkits.get(query)` wrapper: the wrapper's `transformToolkitListResponse`
+   * maps `items` to an array and DROPS `next_cursor`, so cursor pagination is
+   * impossible through it. The raw client returns `{ items, next_cursor }`.
+   */
+  listCategories: publicProcedure.query(async () => {
+    const client = getComposioClient();
+    const response = await (client.toolkits as any).listCategories();
+    const items = response?.items || response || [];
+    return {
+      categories: Array.isArray(items)
+        ? items.map((c: any) => ({ name: c.name || c.slug || '', slug: c.slug || c.id || '' }))
+        : [],
+    };
+  }),
+
+  listToolkits: publicProcedure
+    .input(
+      z.object({
+        category: z.string().optional(),
+        cursor: z.string().optional(),
+        limit: z.number().min(1).max(100).optional(),
+        search: z.string().optional(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const client = getComposioClient();
+
+      const response = await (client as any).client.toolkits.list({
+        category: input.category,
+        cursor: input.cursor,
+        limit: input.limit ?? 30,
+        managed_by: 'composio',
+        search: input.search,
+        sort_by: 'usage',
+      });
+
+      const items = response?.items || [];
+      const toolkits = Array.isArray(items)
+        ? items.map((item: any) => {
+            const meta = item.meta || {};
+            const slug: string = item.slug || '';
+            return {
+              appSlug: slug.toUpperCase(),
+              authSchemes: item.auth_schemes || item.authSchemes || [],
+              description: meta.description || '',
+              icon: meta.logo || '',
+              // identifier is the kebab-case slug used as the local plugin id.
+              identifier: slug.toLowerCase(),
+              label: item.name || slug,
+              noAuth: item.no_auth ?? item.noAuth ?? false,
+              toolsCount: meta.tools_count ?? meta.toolsCount ?? 0,
+            };
+          })
+        : [];
+
+      return {
+        nextCursor: (response?.next_cursor ?? null) as string | null,
+        toolkits,
+      };
+    }),
+
   executeAction: composioProcedure
     .input(
       z.object({
@@ -28,9 +93,14 @@ export const composioToolsRouter = router({
       // supplied by the client — that would let a user drive another user's
       // connection.
       const plugin = await ctx.pluginModel.findById(input.identifier);
-      const connectedAccountId = plugin?.customParams?.composio?.connectedAccountId;
+      const composioParams = plugin?.customParams?.composio;
+      const connectedAccountId = composioParams?.connectedAccountId;
+      const isNoAuth = composioParams?.noAuth === true;
 
-      if (!connectedAccountId) {
+      // No-auth toolkits (e.g. composio_search) have no connected account and are
+      // executed with just the userId. Auth-requiring toolkits must resolve a
+      // connected account first.
+      if (!isNoAuth && !connectedAccountId) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: `No Composio connection found for "${input.identifier}".`,
@@ -39,7 +109,8 @@ export const composioToolsRouter = router({
 
       const result = await (ctx.composioClient.tools as any).execute(input.toolSlug, {
         arguments: input.toolArgs || {},
-        connectedAccountId,
+        // Omit connectedAccountId entirely for no-auth toolkits.
+        ...(isNoAuth ? {} : { connectedAccountId }),
         // Toolkit version resolves to "latest"; allow manual execution without a
         // pinned version (Composio otherwise throws ComposioToolVersionRequiredError).
         dangerouslySkipVersionCheck: true,

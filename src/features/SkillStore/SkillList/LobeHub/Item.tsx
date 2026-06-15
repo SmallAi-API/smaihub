@@ -18,13 +18,14 @@ interface ItemProps {
   identifier: string;
   isConnected: boolean;
   label: string;
+  noAuth?: boolean;
   onOpenDetail?: () => void;
   serverName?: string;
   type: 'composio' | 'lobehub';
 }
 
 const Item = memo<ItemProps>(
-  ({ description, icon, identifier, label, onOpenDetail, serverName, type }) => {
+  ({ description, icon, identifier, label, noAuth, onOpenDetail, serverName, type }) => {
     const { t } = useTranslation('setting');
     const styles = itemStyles;
     const { allowed: canCreate } = usePermission('create_content');
@@ -32,6 +33,8 @@ const Item = memo<ItemProps>(
 
     const { handleConnect, handleDisconnect, isConnected, isConnecting } = useSkillConnect({
       identifier,
+      label,
+      noAuth,
       serverName,
       type,
     });

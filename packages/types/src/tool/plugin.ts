@@ -20,6 +20,8 @@ export interface CustomPluginParams {
     appSlug: string;
     authConfigId: string;
     connectedAccountId: string;
+    /** True when the toolkit requires no authentication (no auth config / connected account). */
+    noAuth?: boolean;
     redirectUrl?: string;
     status: string;
   };

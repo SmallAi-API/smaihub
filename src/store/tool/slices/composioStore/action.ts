@@ -2,6 +2,7 @@ import { COMPOSIO_APP_TYPES } from '@lobechat/const';
 import { produce } from 'immer';
 import { type SWRResponse } from 'swr';
 import useSWR from 'swr';
+import useSWRInfinite, { type SWRInfiniteResponse } from 'swr/infinite';
 
 import { toolKeys } from '@/libs/swr/keys';
 import { lambdaClient, toolsClient } from '@/libs/trpc/client';
@@ -13,6 +14,8 @@ import { type ComposioStoreState } from './initialState';
 import {
   type CallComposioToolParams,
   type CallComposioToolResult,
+  type ComposioCatalogCategory,
+  type ComposioCatalogToolkit,
   type ComposioServer,
   ComposioServerStatus,
   type ComposioTool,
@@ -20,8 +23,6 @@ import {
 } from './types';
 
 const n = setNamespace('composioStore');
-
-const VALID_COMPOSIO_IDENTIFIERS = new Set(COMPOSIO_APP_TYPES.map((t) => t.identifier));
 
 type Setter = StoreSetter<ToolStore>;
 export const createComposioStoreSlice = (set: Setter, get: () => ToolStore, _api?: unknown) =>
@@ -91,7 +92,7 @@ export class ComposioStoreActionImpl {
   createComposioConnection = async (
     params: CreateComposioServerParams,
   ): Promise<ComposioServer | undefined> => {
-    const { appSlug, identifier, label } = params;
+    const { appSlug, identifier, label, noAuth } = params;
 
     this.#set(
       produce((draft: ComposioStoreState) => {
@@ -106,7 +107,12 @@ export class ComposioStoreActionImpl {
         appSlug,
         identifier,
         label,
+        noAuth,
       });
+
+      // No-auth toolkits (e.g. composio_search) are registered ACTIVE server-side
+      // with no redirect — skip the OAuth dance and surface them as connected.
+      const isNoAuth = (response as { noAuth?: boolean }).noAuth === true;
 
       const server: ComposioServer = {
         appSlug,
@@ -116,7 +122,7 @@ export class ComposioStoreActionImpl {
         identifier: response.identifier,
         label,
         redirectUrl: response.redirectUrl,
-        status: ComposioServerStatus.PENDING_AUTH,
+        status: isNoAuth ? ComposioServerStatus.ACTIVE : ComposioServerStatus.PENDING_AUTH,
       };
 
       this.#set(
@@ -157,6 +163,10 @@ export class ComposioStoreActionImpl {
       console.error('[Composio] Server not found:', identifier);
       return;
     }
+
+    // No-auth toolkits have no connected account to poll — they are already
+    // ACTIVE with tools synced server-side. Nothing to refresh.
+    if (!server.connectedAccountId) return;
 
     this.#set(
       produce((draft: ComposioStoreState) => {
@@ -298,6 +308,51 @@ export class ComposioStoreActionImpl {
     }
   };
 
+  /**
+   * Browse the full Composio catalog with cursor pagination. Returns an SWR
+   * infinite response whose pages each carry `{ toolkits, nextCursor }`.
+   * Drive loading with `setSize`; `nextCursor === null` means the end.
+   */
+  useFetchComposioCatalog = (
+    params: { category?: string; enabled?: boolean; search?: string } = {},
+  ): SWRInfiniteResponse<{ nextCursor: string | null; toolkits: ComposioCatalogToolkit[] }> => {
+    const { category, search, enabled = true } = params;
+
+    return useSWRInfinite(
+      (pageIndex, previousPageData) => {
+        if (!enabled) return null;
+        // Reached the end on the previous page — stop requesting.
+        if (previousPageData && previousPageData.nextCursor === null) return null;
+        const cursor = pageIndex === 0 ? undefined : previousPageData?.nextCursor;
+        return [...toolKeys.composioCatalog(category, search), cursor ?? ''];
+      },
+      async (key) => {
+        const cursor = (key.at(-1) as string) || undefined;
+        const response = await toolsClient.composio.listToolkits.query({
+          category: category || undefined,
+          cursor,
+          search: search || undefined,
+        });
+        return {
+          nextCursor: response.nextCursor,
+          toolkits: response.toolkits as ComposioCatalogToolkit[],
+        };
+      },
+      { revalidateFirstPage: false, revalidateOnFocus: false },
+    );
+  };
+
+  useFetchComposioCategories = (enabled = true): SWRResponse<ComposioCatalogCategory[]> => {
+    return useSWR<ComposioCatalogCategory[]>(
+      enabled ? toolKeys.composioCategories() : null,
+      async () => {
+        const response = await toolsClient.composio.listCategories.query();
+        return (response.categories || []) as ComposioCatalogCategory[];
+      },
+      { fallbackData: [], revalidateOnFocus: false },
+    );
+  };
+
   useFetchAppTools = (appSlug: string | undefined): SWRResponse<ComposioTool[]> => {
     return useSWR<ComposioTool[]>(
       appSlug ? toolKeys.composioAppTools(appSlug) : null,
@@ -319,40 +374,41 @@ export class ComposioStoreActionImpl {
 
         const validPlugins = composioPlugins.filter((plugin) => plugin.customParams?.composio);
 
-        // Only surface connections this client knows how to render. Identifiers
-        // outside the static catalog are hidden locally — never deleted: an
-        // outdated bundle (missing a newly-added app) would otherwise silently
-        // destroy a legitimate remote connection. Deprecating an app is a
-        // server-side concern, not a side effect of a client fetch.
-        return validPlugins
-          .filter((plugin) => VALID_COMPOSIO_IDENTIFIERS.has(plugin.identifier))
-          .map((plugin) => {
-            const params = plugin.customParams!.composio!;
-            const appType = COMPOSIO_APP_TYPES.find((t) => t.identifier === plugin.identifier);
-            const tools: ComposioTool[] = (plugin.manifest?.api || []).map((api) => ({
-              description: api.description,
-              inputSchema: api.parameters as ComposioTool['inputSchema'],
-              name: api.name,
-            }));
+        // Render every connected Composio plugin. Identifiers outside the static
+        // catalog (i.e. connected via the dynamic catalog browser) are recovered
+        // from the persisted manifest meta — never dropped. A connection is only
+        // removed by an explicit user action, never as a side effect of a fetch.
+        return validPlugins.map((plugin) => {
+          const params = plugin.customParams!.composio!;
+          const appType = COMPOSIO_APP_TYPES.find((t) => t.identifier === plugin.identifier);
+          const tools: ComposioTool[] = (plugin.manifest?.api || []).map((api) => ({
+            description: api.description,
+            inputSchema: api.parameters as ComposioTool['inputSchema'],
+            name: api.name,
+          }));
 
-            const statusMap: Record<string, ComposioServerStatus> = {
-              ACTIVE: ComposioServerStatus.ACTIVE,
-              FAILED: ComposioServerStatus.ERROR,
-              PENDING: ComposioServerStatus.PENDING_AUTH,
-            };
+          const statusMap: Record<string, ComposioServerStatus> = {
+            ACTIVE: ComposioServerStatus.ACTIVE,
+            FAILED: ComposioServerStatus.ERROR,
+            PENDING: ComposioServerStatus.PENDING_AUTH,
+          };
 
-            return {
-              appSlug: params.appSlug || '',
-              authConfigId: params.authConfigId || '',
-              connectedAccountId: params.connectedAccountId,
-              createdAt: 0,
-              identifier: plugin.identifier,
-              label: appType?.label || plugin.identifier,
-              redirectUrl: params.redirectUrl,
-              status: statusMap[params.status] || ComposioServerStatus.PENDING_AUTH,
-              tools,
-            };
-          });
+          return {
+            appSlug: params.appSlug || '',
+            authConfigId: params.authConfigId || '',
+            connectedAccountId: params.connectedAccountId,
+            createdAt: 0,
+            icon: typeof appType?.icon === 'string' ? appType.icon : undefined,
+            identifier: plugin.identifier,
+            // Prefer the static catalog label, then the manifest meta title
+            // (set at connect time for dynamic toolkits), then the identifier.
+            label: appType?.label || plugin.manifest?.meta?.title || plugin.identifier,
+            noAuth: params.noAuth === true,
+            redirectUrl: params.redirectUrl,
+            status: statusMap[params.status] || ComposioServerStatus.PENDING_AUTH,
+            tools,
+          };
+        });
       },
       {
         fallbackData: [],

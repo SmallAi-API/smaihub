@@ -9,8 +9,6 @@ import { type ToolExecutionResult } from '@/server/services/toolExecution/types'
 
 const log = debug('lobe-server:composio-service');
 
-const VALID_COMPOSIO_IDENTIFIERS = new Set(COMPOSIO_APP_TYPES.map((type) => type.identifier));
-
 export interface ComposioToolExecuteParams {
   args: Record<string, any>;
   identifier: string;
@@ -77,7 +75,8 @@ export class ComposioService {
       }
 
       const composioParams = plugin.customParams?.composio;
-      if (!composioParams?.connectedAccountId) {
+      const isNoAuth = composioParams?.noAuth === true;
+      if (!isNoAuth && !composioParams?.connectedAccountId) {
         return {
           content: `Composio configuration not found for server "${identifier}"`,
           error: {
@@ -88,17 +87,19 @@ export class ComposioService {
         };
       }
 
-      const { connectedAccountId } = composioParams;
+      const connectedAccountId = composioParams?.connectedAccountId;
 
       log(
-        'executeComposioTool: calling Composio API with connectedAccountId=%s',
+        'executeComposioTool: calling Composio API with connectedAccountId=%s, noAuth=%s',
         connectedAccountId,
+        isNoAuth,
       );
 
       const composioClient = getComposioClient();
       const result = await (composioClient.tools as any).execute(toolSlug, {
         arguments: args,
-        connectedAccountId,
+        // No-auth toolkits execute with just the userId — no connected account.
+        ...(isNoAuth ? {} : { connectedAccountId }),
         // Toolkit version resolves to "latest"; allow manual execution without a
         // pinned version (Composio otherwise throws ComposioToolVersionRequiredError).
         dangerouslySkipVersionCheck: true,
@@ -152,10 +153,13 @@ export class ComposioService {
     try {
       const allPlugins = await this.pluginModel.query();
 
+      // Expose every ACTIVE Composio plugin to the agent runtime — including
+      // toolkits connected via the dynamic catalog (outside the static curated
+      // list). The plugin's persisted manifest carries the title/meta, so no
+      // static-catalog lookup is required.
       const composioPlugins = allPlugins.filter(
         (plugin) =>
-          VALID_COMPOSIO_IDENTIFIERS.has(plugin.identifier) &&
-          plugin.customParams?.composio?.status === 'ACTIVE',
+          plugin.customParams?.composio && plugin.customParams.composio.status === 'ACTIVE',
       );
 
       log('getComposioManifests: found %d authenticated Composio plugins', composioPlugins.length);

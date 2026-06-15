@@ -15,11 +15,21 @@ const POLL_TIMEOUT_MS = 15_000;
 
 interface UseSkillConnectOptions {
   identifier: string;
+  /** Display label, used when the toolkit is not in the static catalog (dynamic catalog items). */
+  label?: string;
+  /** Toolkit requires no authentication (dynamic catalog `noAuth` flag). */
+  noAuth?: boolean;
   serverName?: string;
   type: 'composio' | 'lobehub';
 }
 
-export const useSkillConnect = ({ identifier, serverName, type }: UseSkillConnectOptions) => {
+export const useSkillConnect = ({
+  identifier,
+  label,
+  noAuth,
+  serverName,
+  type,
+}: UseSkillConnectOptions) => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isWaitingAuth, setIsWaitingAuth] = useState(false);
 
@@ -202,7 +212,8 @@ export const useSkillConnect = ({ identifier, serverName, type }: UseSkillConnec
       const newServer = await createComposioConnection({
         appSlug: appType?.appSlug ?? serverName ?? identifier,
         identifier,
-        label: appType?.label ?? identifier,
+        label: appType?.label ?? label ?? identifier,
+        noAuth,
       });
 
       if (newServer) {
@@ -220,6 +231,8 @@ export const useSkillConnect = ({ identifier, serverName, type }: UseSkillConnec
   }, [
     userId,
     serverName,
+    label,
+    noAuth,
     composioServer,
     identifier,
     createComposioConnection,

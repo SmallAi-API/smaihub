@@ -423,6 +423,15 @@ export const toolKeys = {
     'tool:composioAppTools',
     appSlug,
   ]),
+  composioCatalog: def(
+    'tool:composioCatalog',
+    (category: string | undefined, search: string | undefined) => [
+      'tool:composioCatalog',
+      category,
+      search,
+    ],
+  ),
+  composioCategories: def('tool:composioCategories', () => ['tool:composioCategories']),
   composioConnections: def('tool:composioConnections', () => ['tool:composioConnections']),
   installedPlugins: def('tool:installedPlugins', () => ['tool:installedPlugins']),
   lobehubSkillConnections: def('tool:lobehubSkillConnections', () => [

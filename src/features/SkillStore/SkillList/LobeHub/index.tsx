@@ -22,6 +22,7 @@ import { LobehubSkillStatus } from '@/store/tool/slices/lobehubSkillStore/types'
 import BuiltinItem from '../Builtin/Item';
 import Empty from '../Empty';
 import { gridStyles } from '../style';
+import ComposioCatalog from './ComposioCatalog';
 import Item from './Item';
 
 interface LobeHubListProps {
@@ -126,90 +127,98 @@ export const LobeHubList = memo<LobeHubListProps>(({ keywords }) => {
 
   const hasSearchKeywords = Boolean(keywords && keywords.trim());
 
-  if (filteredItems.length === 0) return <Empty search={hasSearchKeywords} />;
-
   return (
     <>
-      <div className={gridStyles.grid}>
-        {filteredItems.map((item) => {
-          if (item.type === 'builtinAgentSkill') {
-            const localizedTitle = t(`tools.builtins.${item.skill.identifier}.title`, {
-              defaultValue: item.skill.name,
-            });
-            const localizedDescription = t(`tools.builtins.${item.skill.identifier}.description`, {
-              defaultValue: item.skill.description,
-            });
-            return (
-              <BuiltinItem
-                avatar={item.skill.avatar}
-                description={localizedDescription}
-                identifier={item.skill.identifier}
-                key={item.skill.identifier}
-                title={localizedTitle}
-                onOpenDetail={() =>
-                  createBuiltinAgentSkillDetailModal({ identifier: item.skill.identifier })
-                }
-              />
-            );
-          }
-          if (item.type === 'builtin') {
-            const localizedTitle = t(`tools.builtins.${item.tool.identifier}.title`, {
-              defaultValue: item.tool.meta?.title || item.tool.identifier,
-            });
-            const localizedDescription = t(`tools.builtins.${item.tool.identifier}.description`, {
-              defaultValue: item.tool.meta?.description || '',
-            });
-            return (
-              <BuiltinItem
-                avatar={item.tool.meta?.avatar}
-                description={localizedDescription}
-                identifier={item.tool.identifier}
-                key={item.tool.identifier}
-                title={localizedTitle}
-                onOpenDetail={() =>
-                  createBuiltinSkillDetailModal({ identifier: item.tool.identifier })
-                }
-              />
-            );
-          }
-          if (item.type === 'lobehub') {
-            const server = getLobehubSkillServerByProvider(item.provider.id);
-            const isConnected = server?.status === LobehubSkillStatus.CONNECTED;
+      {filteredItems.length === 0 && !isComposioEnabled ? (
+        <Empty search={hasSearchKeywords} />
+      ) : (
+        <div className={gridStyles.grid}>
+          {filteredItems.map((item) => {
+            if (item.type === 'builtinAgentSkill') {
+              const localizedTitle = t(`tools.builtins.${item.skill.identifier}.title`, {
+                defaultValue: item.skill.name,
+              });
+              const localizedDescription = t(
+                `tools.builtins.${item.skill.identifier}.description`,
+                {
+                  defaultValue: item.skill.description,
+                },
+              );
+              return (
+                <BuiltinItem
+                  avatar={item.skill.avatar}
+                  description={localizedDescription}
+                  identifier={item.skill.identifier}
+                  key={item.skill.identifier}
+                  title={localizedTitle}
+                  onOpenDetail={() =>
+                    createBuiltinAgentSkillDetailModal({ identifier: item.skill.identifier })
+                  }
+                />
+              );
+            }
+            if (item.type === 'builtin') {
+              const localizedTitle = t(`tools.builtins.${item.tool.identifier}.title`, {
+                defaultValue: item.tool.meta?.title || item.tool.identifier,
+              });
+              const localizedDescription = t(`tools.builtins.${item.tool.identifier}.description`, {
+                defaultValue: item.tool.meta?.description || '',
+              });
+              return (
+                <BuiltinItem
+                  avatar={item.tool.meta?.avatar}
+                  description={localizedDescription}
+                  identifier={item.tool.identifier}
+                  key={item.tool.identifier}
+                  title={localizedTitle}
+                  onOpenDetail={() =>
+                    createBuiltinSkillDetailModal({ identifier: item.tool.identifier })
+                  }
+                />
+              );
+            }
+            if (item.type === 'lobehub') {
+              const server = getLobehubSkillServerByProvider(item.provider.id);
+              const isConnected = server?.status === LobehubSkillStatus.CONNECTED;
+              return (
+                <Item
+                  description={item.provider.description}
+                  icon={item.provider.icon}
+                  identifier={item.provider.id}
+                  isConnected={isConnected}
+                  key={item.provider.id}
+                  label={item.provider.label}
+                  type="lobehub"
+                  onOpenDetail={() =>
+                    createLobehubSkillDetailModal({ identifier: item.provider.id })
+                  }
+                />
+              );
+            }
+            const server = getComposioServerByIdentifier(item.serverType.identifier);
+            const isConnected = server?.status === ComposioServerStatus.ACTIVE;
             return (
               <Item
-                description={item.provider.description}
-                icon={item.provider.icon}
-                identifier={item.provider.id}
+                description={item.serverType.description}
+                icon={item.serverType.icon}
+                identifier={item.serverType.identifier}
                 isConnected={isConnected}
-                key={item.provider.id}
-                label={item.provider.label}
-                type="lobehub"
-                onOpenDetail={() => createLobehubSkillDetailModal({ identifier: item.provider.id })}
+                key={item.serverType.identifier}
+                label={item.serverType.label}
+                serverName={item.serverType.appSlug}
+                type="composio"
+                onOpenDetail={() =>
+                  createComposioSkillDetailModal({
+                    identifier: item.serverType.identifier,
+                    serverName: item.serverType.appSlug,
+                  })
+                }
               />
             );
-          }
-          const server = getComposioServerByIdentifier(item.serverType.identifier);
-          const isConnected = server?.status === ComposioServerStatus.ACTIVE;
-          return (
-            <Item
-              description={item.serverType.description}
-              icon={item.serverType.icon}
-              identifier={item.serverType.identifier}
-              isConnected={isConnected}
-              key={item.serverType.identifier}
-              label={item.serverType.label}
-              serverName={item.serverType.appSlug}
-              type="composio"
-              onOpenDetail={() =>
-                createComposioSkillDetailModal({
-                  identifier: item.serverType.identifier,
-                  serverName: item.serverType.appSlug,
-                })
-              }
-            />
-          );
-        })}
-      </div>
+          })}
+        </div>
+      )}
+      {isComposioEnabled && <ComposioCatalog keywords={keywords} />}
     </>
   );
 });

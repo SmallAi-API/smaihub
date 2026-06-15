@@ -25,4 +25,8 @@ export const RECOMMENDED_SKILLS: RecommendedSkillItem[] = [
   { id: 'google-drive', type: RecommendedSkillType.Composio },
   { id: 'google-calendar', type: RecommendedSkillType.Composio },
   { id: 'slack', type: RecommendedSkillType.Composio },
+  { id: 'whatsapp', type: RecommendedSkillType.Composio },
+  { id: 'youtube', type: RecommendedSkillType.Composio },
+  { id: 'figma', type: RecommendedSkillType.Composio },
+  { id: 'outlook-mail', type: RecommendedSkillType.Composio },
 ];
