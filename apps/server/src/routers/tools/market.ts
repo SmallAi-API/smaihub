@@ -21,6 +21,7 @@ import {
 import { createSandboxService } from '@/server/services/sandbox';
 
 import { scheduleToolCallReport } from './_helpers';
+import { listOptionalMarketConnectionsWithTimeout } from './_helpers/marketConnections';
 
 const log = debug('lobe-server:tools:market');
 
@@ -535,7 +536,7 @@ export const marketRouter = router({
     log('connectListConnections');
 
     try {
-      const response = await ctx.marketSDK.connect.listConnections();
+      const response = await listOptionalMarketConnectionsWithTimeout(ctx.marketSDK.connect);
       // Debug logging
       log('connectListConnections raw response: %O', response);
       log('connectListConnections connections: %O', response.connections);
