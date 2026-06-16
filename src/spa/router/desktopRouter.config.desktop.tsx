@@ -749,7 +749,9 @@ export const desktopRoutes: RouteObject[] = [
     : []),
 ];
 
-// Desktop onboarding route (Electron only in .desktop.tsx)
+// Desktop owns its onboarding flow. Web-only onboarding routes are intentionally
+// absent from Electron so personal onboarding redirects fail visibly instead of
+// looping back into desktop login.
 desktopRoutes.push({
   children: [
     {
@@ -766,23 +768,4 @@ desktopRoutes.push({
   element: <DesktopOnboarding />,
   errorElement: <ErrorBoundary />,
   path: '/desktop-onboarding',
-});
-
-// Web onboarding aliases redirect to the desktop-specific onboarding flow.
-desktopRoutes.push({
-  element: redirectElement('/desktop-onboarding'),
-  errorElement: <ErrorBoundary />,
-  path: '/onboarding',
-});
-
-desktopRoutes.push({
-  element: redirectElement('/desktop-onboarding'),
-  errorElement: <ErrorBoundary />,
-  path: '/onboarding/agent',
-});
-
-desktopRoutes.push({
-  element: redirectElement('/desktop-onboarding'),
-  errorElement: <ErrorBoundary />,
-  path: '/onboarding/classic',
 });
