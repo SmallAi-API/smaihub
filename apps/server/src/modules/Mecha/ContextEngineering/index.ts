@@ -82,6 +82,7 @@ export const serverMessagesEngine = async ({
   const engine = new MessagesEngine({
     // Capability injection
     capabilities: {
+      isCanUseAudio: capabilities?.isCanUseAudio,
       isCanUseFC: capabilities?.isCanUseFC,
       isCanUseVideo: capabilities?.isCanUseVideo,
       isCanUseVision: capabilities?.isCanUseVision,

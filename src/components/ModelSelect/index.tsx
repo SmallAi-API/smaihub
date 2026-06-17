@@ -3,6 +3,7 @@ import { type IconAvatarProps, ModelIcon } from '@lobehub/icons';
 import { Avatar, Flexbox, type FlexboxProps, Icon, Tag, Text, Tooltip } from '@lobehub/ui';
 import { createStaticStyles, useResponsive } from 'antd-style';
 import {
+  AudioLines,
   Infinity as InfinityIcon,
   LucideEye,
   LucideImage,
@@ -62,7 +63,7 @@ interface ModelInfoTagsProps extends ModelAbilities {
 
 interface FeatureTagsProps extends Pick<
   ModelAbilities,
-  'files' | 'imageOutput' | 'vision' | 'video' | 'functionCall'
+  'files' | 'imageOutput' | 'vision' | 'video' | 'audio' | 'functionCall'
 > {
   disableTooltip?: boolean;
   placement: 'top' | 'right';
@@ -99,6 +100,7 @@ const FeatureTagItem = memo<FeatureTagItemProps>(
 
 const FeatureTags = memo<FeatureTagsProps>(
   ({
+    audio,
     disableTooltip,
     files,
     functionCall,
@@ -148,6 +150,15 @@ const FeatureTags = memo<FeatureTagsProps>(
           icon={Video}
           placement={placement}
           title={t('ModelSelect.featureTag.video')}
+        />
+        <FeatureTagItem
+          className={tagClassName}
+          color={'gold'}
+          disableTooltip={disableTooltip}
+          enabled={audio}
+          icon={AudioLines}
+          placement={placement}
+          title={t('ModelSelect.featureTag.audio')}
         />
         <FeatureTagItem
           className={tagClassName}
@@ -210,6 +221,7 @@ export const ModelInfoTags = memo<ModelInfoTagsProps>(
         width={'fit-content'}
       >
         <FeatureTags
+          audio={model.audio}
           disableTooltip={disableTooltip}
           files={model.files}
           functionCall={model.functionCall}
