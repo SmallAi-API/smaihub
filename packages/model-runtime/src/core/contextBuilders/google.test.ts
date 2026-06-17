@@ -1434,7 +1434,7 @@ describe('google contextBuilders', () => {
       expect(result.parametersJsonSchema).toEqual(tool.function.parameters);
     });
 
-    it('should keep nullable type but drop null enum value (Gemini rejects empty enum entries)', () => {
+    it('should keep nullable type but strip null/empty members from enum (Gemini proto)', () => {
       const tool: ChatCompletionTool = {
         function: {
           description: 'A tool with nullable enum',
@@ -1442,7 +1442,7 @@ describe('google contextBuilders', () => {
           parameters: {
             properties: {
               status: {
-                enum: ['active', 'inactive', null],
+                enum: ['active', 'inactive', null, ''],
                 type: ['string', 'null'],
               },
             },
@@ -1454,9 +1454,9 @@ describe('google contextBuilders', () => {
 
       const result = buildGoogleTool(tool);
 
-      // The null enum value would serialize to an empty string and trigger
-      // "enum[N]: cannot be empty"; it must be dropped while the nullable
-      // `type` array is preserved to keep the field optional.
+      // Gemini proto only accepts non-empty STRING enum members; null/'' get coerced
+      // to '' and rejected with "enum[i]: cannot be empty", so they must be filtered.
+      // The nullable `type` is preserved to keep the field optional.
       expect(result.parametersJsonSchema).toEqual({
         properties: {
           status: {
@@ -1468,13 +1468,14 @@ describe('google contextBuilders', () => {
       });
     });
 
-    it('should drop trailing null from a [...VALUES, null] enum (updateIdentityMemory case)', () => {
-      // Mirrors builtin-tool-memory updateIdentityMemory.set.memoryType which uses
-      // `enum: [...MEMORY_TYPES, null]` and previously caused Gemini 400:
-      // "...properties[set].properties[memoryType].enum[10]: cannot be empty"
+    // Regression for LOBE-10456: the memory tool's `memoryType` enum carried a
+    // trailing `null` sentinel (`[...MEMORY_TYPES, null]`), which Gemini rejected
+    // with `enum[10]: cannot be empty`. The sanitizer must drop the null member.
+    it('should strip the null sentinel from a memory-style nullable enum', () => {
+      const memoryTypes = ['fact', 'event', 'people', 'preference'];
       const tool: ChatCompletionTool = {
         function: {
-          description: 'Update identity memory',
+          description: 'updateIdentityMemory-style tool',
           name: 'updateIdentityMemory',
           parameters: {
             properties: {
@@ -1482,7 +1483,7 @@ describe('google contextBuilders', () => {
                 properties: {
                   memoryType: {
                     description: 'Memory type, use null for omitting the field',
-                    enum: ['preference', 'fact', 'context', null],
+                    enum: [...memoryTypes, null],
                     type: ['string', 'null'],
                   },
                 },
@@ -1495,11 +1496,11 @@ describe('google contextBuilders', () => {
         type: 'function',
       };
 
-      const result = buildGoogleTool(tool);
+      const result = buildGoogleTool(tool) as any;
 
-      const setSchema = (result.parametersJsonSchema as any).properties.set;
-      expect(setSchema.properties.memoryType.enum).toEqual(['preference', 'fact', 'context']);
-      expect(setSchema.properties.memoryType.type).toEqual(['string', 'null']);
+      expect(result.parametersJsonSchema.properties.set.properties.memoryType.enum).toEqual(
+        memoryTypes,
+      );
     });
 
     it('should pass through const values without conversion', () => {
