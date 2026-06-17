@@ -575,6 +575,7 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
           forceVideoBase64: chatCompletion?.forceVideoBase64,
           model: postPayload.model,
         });
+        const includeUsageRequested = Boolean(postPayload.stream && !chatCompletion?.excludeUsage);
 
         let response: Stream<OpenAI.Chat.Completions.ChatCompletionChunk>;
 
@@ -582,6 +583,8 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
           bizErrorTypeTransformer: chatCompletion?.handleStreamBizErrorType,
           callbacks: options?.callback,
           payload: {
+            apiMode: 'chat_completions',
+            includeUsageRequested,
             model: payload.model,
             pricing: await getModelPricing(payload.model, this.id),
             provider: this.id,
@@ -628,10 +631,7 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
               options?.user,
               cleanedPayload.prompt_cache_key,
             ),
-            stream_options:
-              postPayload.stream && !chatCompletion?.excludeUsage
-                ? { include_usage: true }
-                : undefined,
+            stream_options: includeUsageRequested ? { include_usage: true } : undefined,
           };
 
           log('sending chat completion request with %d messages', messages.length);
@@ -1348,6 +1348,7 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
         bizErrorTypeTransformer: chatCompletion?.handleStreamBizErrorType,
         callbacks: options?.callback,
         payload: {
+          apiMode: 'responses',
           model: payload.model,
           pricing: await getModelPricing(payload.model, this.id),
           provider: this.id,
