@@ -7,7 +7,7 @@ module.exports = async ({ github, context, releaseUrl, version, tag }) => {
   const COMMENT_IDENTIFIER = '<!-- DESKTOP-BUILD-COMMENT -->';
 
   /**
-   * 生成评论内容
+   * Generate comment body content
    */
   const generateCommentBody = async () => {
     try {
