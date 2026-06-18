@@ -50,10 +50,10 @@ const Content = memo<ContentProps>(({ id }) => {
   const modelCounts = useMemo(() => {
     const counts = {
       all: allModels.length,
+      asr: 0,
       chat: 0,
       embedding: 0,
       image: 0,
-      stt: 0,
       tts: 0,
       video: 0,
     };
@@ -105,10 +105,10 @@ const Content = memo<ContentProps>(({ id }) => {
         label: formatTabLabel(t('providerModels.tabs.embedding'), modelCounts.embedding),
       },
       {
-        count: modelCounts.stt,
+        count: modelCounts.asr,
         icon: <Icon icon={MicIcon} size={16} />,
-        key: 'stt',
-        label: formatTabLabel(t('providerModels.tabs.stt'), modelCounts.stt),
+        key: 'asr',
+        label: formatTabLabel(t('providerModels.tabs.asr'), modelCounts.asr),
       },
       {
         count: modelCounts.tts,
@@ -122,10 +122,10 @@ const Content = memo<ContentProps>(({ id }) => {
     return allTabs.filter((tab) => tab.key === 'all' || tab.count > 0);
   }, [
     modelCounts.all,
+    modelCounts.asr,
     modelCounts.chat,
     modelCounts.embedding,
     modelCounts.image,
-    modelCounts.stt,
     modelCounts.tts,
     modelCounts.video,
     t,

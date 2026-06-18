@@ -1,12 +1,12 @@
 /* eslint-disable no-restricted-syntax */
 import { type ModelParamsSchema } from '../standard-parameters';
-import {
-  type AIChatModelCard,
-  type AIEmbeddingModelCard,
-  type AIImageModelCard,
-  type AIRealtimeModelCard,
-  type AISTTModelCard,
-  type AITTSModelCard,
+import type {
+  AIASRModelCard,
+  AIChatModelCard,
+  AIEmbeddingModelCard,
+  AIImageModelCard,
+  AIRealtimeModelCard,
+  AITTSModelCard,
 } from '../types/aiModel';
 
 // NewAPI Router Provider - 聚合多个 AI 服务
@@ -2222,14 +2222,13 @@ export const newapiTTSModels: AITTSModelCard[] = [
 ];
 
 // 语音识别模型
-export const newapiSTTModels: AISTTModelCard[] = [
+export const newapiASRModels: AIASRModelCard[] = [
   {
     description: '通用语音识别模型，支持多语言语音识别、语音翻译和语言识别。',
     displayName: 'Whisper',
     enabled: true,
     id: 'whisper-1',
-    releasedAt: '2024-03-08',
-    type: 'stt',
+    type: 'asr',
   },
 ];
 
@@ -2381,7 +2380,6 @@ export const allModels = [
   ...newapiChatModels,
   ...newapiEmbeddingModels,
   ...newapiTTSModels,
-  ...newapiSTTModels,
   ...newapiImageModels,
   ...newapiRealtimeModels,
 ];

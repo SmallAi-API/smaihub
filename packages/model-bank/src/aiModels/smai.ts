@@ -5,14 +5,14 @@ import {
   PRESET_VIDEO_RESOLUTIONS,
   type VideoModelParamsSchema,
 } from '../standard-parameters/video';
-import {
-  type AIChatModelCard,
-  type AIEmbeddingModelCard,
-  type AIImageModelCard,
-  type AIRealtimeModelCard,
-  type AISTTModelCard,
-  type AITTSModelCard,
-  type AIVideoModelCard,
+import type {
+  AIASRModelCard,
+  AIChatModelCard,
+  AIEmbeddingModelCard,
+  AIImageModelCard,
+  AIRealtimeModelCard,
+  AITTSModelCard,
+  AIVideoModelCard,
 } from '../types/aiModel';
 
 // smai Router Provider - 聚合多个 AI 服务
@@ -1820,14 +1820,13 @@ export const smaiTTSModels: AITTSModelCard[] = [
 ];
 
 // 语音识别模型
-export const smaiSTTModels: AISTTModelCard[] = [
+export const newapiASRModels: AIASRModelCard[] = [
   {
     description: '通用语音识别模型，支持多语言语音识别、语音翻译和语言识别。',
     displayName: 'Whisper',
     enabled: true,
     id: 'whisper-1',
-    releasedAt: '2024-03-08',
-    type: 'stt',
+    type: 'asr',
   },
 ];
 
@@ -1979,7 +1978,6 @@ export const allModels = [
   ...smaiChatModels,
   ...smaiEmbeddingModels,
   ...smaiTTSModels,
-  ...smaiSTTModels,
   ...smaiImageModels,
   ...smaiRealtimeModels,
   ...smaiVideoModels,

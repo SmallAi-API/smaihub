@@ -11,12 +11,17 @@ const MODEL_TYPES = [
   'chat',
   'embedding',
   'tts',
-  'stt',
+  'asr',
   'image',
   'text2video',
   'text2music',
   'realtime',
 ] as const;
+
+// `stt` was renamed to the standard `asr`. It is still accepted on input as a
+// deprecated alias (so existing API clients don't break) and normalized to
+// `asr` in the service layer; it is never emitted in responses.
+const MODEL_TYPE_INPUTS = [...MODEL_TYPES, 'stt'] as const;
 
 /**
  * 模型列表查询参数
@@ -24,7 +29,7 @@ const MODEL_TYPES = [
 export interface ModelsListQuery extends IPaginationQuery {
   enabled?: boolean;
   provider?: string;
-  type?: (typeof MODEL_TYPES)[number];
+  type?: (typeof MODEL_TYPE_INPUTS)[number];
 }
 
 export const ModelsListQuerySchema = PaginationQuerySchema.extend({
@@ -34,7 +39,7 @@ export const ModelsListQuerySchema = PaginationQuerySchema.extend({
     .pipe(z.boolean())
     .nullish(),
   provider: z.string().min(1).max(64).nullish(),
-  type: z.enum(MODEL_TYPES).nullish(),
+  type: z.enum(MODEL_TYPE_INPUTS).nullish(),
 });
 
 // ==================== Model Response Types ====================
@@ -60,9 +65,7 @@ const ModelPayloadBaseSchema = z.object({
   releasedAt: z.string().nullish(),
   sort: z.number().int().nullish(),
   source: z.enum(['remote', 'custom', 'builtin']).nullish(),
-  type: z
-    .enum(['chat', 'embedding', 'tts', 'stt', 'image', 'text2video', 'text2music', 'realtime'])
-    .nullish(),
+  type: z.enum(MODEL_TYPE_INPUTS).nullish(),
 });
 
 export const CreateModelRequestSchema = ModelPayloadBaseSchema.extend({

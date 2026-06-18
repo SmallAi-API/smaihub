@@ -1,11 +1,11 @@
 /* eslint-disable no-restricted-syntax */
 import { gptImage1Schema, gptImage2Schema } from '../const/imageParameters';
 import type {
+  AIASRModelCard,
   AIChatModelCard,
   AIEmbeddingModelCard,
   AIImageModelCard,
   AIRealtimeModelCard,
-  AISTTModelCard,
   AITTSModelCard,
 } from '../types/aiModel';
 
@@ -1727,15 +1727,56 @@ export const openaiTTSModels: AITTSModelCard[] = [
   },
 ];
 
-// 语音识别模型
-export const openaiSTTModels: AISTTModelCard[] = [
+// Speech recognition models
+export const openaiASRModels: AIASRModelCard[] = [
   {
     description: '通用语音识别模型，支持多语言语音识别、语音翻译和语言识别。',
     displayName: 'Whisper',
     enabled: true,
     id: 'whisper-1',
-
-    type: 'stt',
+    pricing: {
+      units: [
+        {
+          name: 'audioInput',
+          rate: 0.0001, // $0.006 per minute => $0.0001 per second
+          strategy: 'fixed',
+          unit: 'second',
+        },
+      ],
+    },
+    type: 'asr',
+  },
+  {
+    contextWindowTokens: 16_000,
+    description:
+      'GPT-4o Transcribe is a speech-to-text model that transcribes audio with GPT-4o, improving word error rate, language ID, and accuracy over the original Whisper model.',
+    displayName: 'GPT-4o Transcribe',
+    id: 'gpt-4o-transcribe',
+    maxOutput: 2000,
+    pricing: {
+      units: [
+        { name: 'textInput', rate: 2.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'audioInput', rate: 6, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    type: 'asr',
+  },
+  {
+    contextWindowTokens: 16_000,
+    description:
+      'GPT-4o Mini Transcribe is a speech-to-text model that transcribes audio with GPT-4o, improving word error rate, language ID, and accuracy over the original Whisper model.',
+    displayName: 'GPT-4o Mini Transcribe',
+    id: 'gpt-4o-mini-transcribe',
+    maxOutput: 2000,
+    pricing: {
+      units: [
+        { name: 'textInput', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'audioInput', rate: 3, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 5, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    type: 'asr',
   },
 ];
 
@@ -1940,7 +1981,7 @@ export const allModels = [
   ...openaiChatModels,
   ...openaiEmbeddingModels,
   ...openaiTTSModels,
-  ...openaiSTTModels,
+  ...openaiASRModels,
   ...openaiImageModels,
   ...openaiRealtimeModels,
 ];
