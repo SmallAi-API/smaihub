@@ -2,7 +2,6 @@ import debug from 'debug';
 import { ModelProvider } from 'model-bank';
 import type OpenAI from 'openai';
 
-import { responsesAPIModels, systemToUserModels } from '../../const/models';
 import { pruneReasoningPayload } from '../../core/contextBuilders/openai';
 import { createOpenAICompatibleRuntime } from '../../core/openaiCompatibleFactory';
 import type { ChatMethodOptions, ChatStreamPayload } from '../../types';
@@ -10,6 +9,11 @@ import { AgentRuntimeErrorType } from '../../types/error';
 import type { CreateImagePayload } from '../../types/image';
 import { AgentRuntimeError } from '../../utils/createError';
 import { sanitizeError } from '../../utils/sanitizeError';
+import {
+  isResponsesAPIModel,
+  responsesAPIModels,
+  systemToUserModels,
+} from '../openai/openaiModelId';
 
 const azureImageLogger = debug('lobe-image:azure');
 const azureSearchContextSize = process.env.OPENAI_SEARCH_CONTEXT_SIZE;
@@ -81,7 +85,7 @@ const BaseAzureOpenAI = createOpenAICompatibleRuntime({
       } = payload;
       const requestModel = deploymentName ?? model;
 
-      if (responsesAPIModels.has(model) || enabledSearch) {
+      if (isResponsesAPIModel(model) || enabledSearch) {
         return {
           ...rest,
           apiMode: 'responses',
