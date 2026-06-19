@@ -1,6 +1,6 @@
 import { type AnchorHTMLAttributes } from 'react';
 import React, { memo } from 'react';
-import { Link as RouterLink, useInRouterContext } from 'react-router-dom';
+import { Link as RouterLink, useInRouterContext } from 'react-router';
 
 interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children?: React.ReactNode | undefined;

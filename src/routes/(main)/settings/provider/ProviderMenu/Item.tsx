@@ -1,7 +1,7 @@
 import { Avatar, Center } from '@lobehub/ui';
 import { Badge } from 'antd';
 import { memo, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 
 import NavItem from '@/features/NavPanel/components/NavItem';
 import { type AiProviderListItem } from '@/types/aiProvider';

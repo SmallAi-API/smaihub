@@ -1,7 +1,7 @@
 import type * as BusinessConst from '@lobechat/business-const';
 import type * as Const from '@lobechat/const';
 import { cleanup, render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import OnBoardingContainer from './index';

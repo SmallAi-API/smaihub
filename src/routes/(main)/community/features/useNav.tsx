@@ -3,7 +3,7 @@ import { Icon } from '@lobehub/ui';
 import { Bot, House } from 'lucide-react';
 import { type ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 
 import { type MenuProps } from '@/components/Menu';
 import { DiscoverTab } from '@/types/discover';
