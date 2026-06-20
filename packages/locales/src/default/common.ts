@@ -581,6 +581,7 @@ export default {
   'userPanel.profile': 'Account',
   'userPanel.setting': 'Settings',
   'userPanel.usages': 'Usage',
+  'userPanel.workspaceSetting': 'Workspace Settings',
   'version': 'Version',
   'zoom': 'Zoom',
 };
