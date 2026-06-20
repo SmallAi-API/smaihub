@@ -11,6 +11,7 @@ import {
   KeyRound,
   MessageCircle,
   Rocket,
+  Send,
   Settings2,
   SettingsIcon,
 } from 'lucide-react';
@@ -28,7 +29,7 @@ import WorkspaceLink from '@/features/Workspace/WorkspaceLink';
 import { useNavLayout } from '@/hooks/useNavLayout';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors/systemStatus';
-import { useServerConfigStore } from '@/store/serverConfig';
+import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
 import { userGeneralSettingsSelectors } from '@/store/user/slices/settings/selectors/general';
 
@@ -67,6 +68,7 @@ const Footer = memo(() => {
   const enableAgentOnboarding = useServerConfigStore((s) => s.featureFlags.enableAgentOnboarding);
   const isMobile = useServerConfigStore((s) => !!s.isMobile);
   const serverConfigInit = useServerConfigStore((s) => s.serverConfigInit);
+  const enableBusinessFeatures = useServerConfigStore(serverConfigSelectors.enableBusinessFeatures);
   const [agentOnboardingFinished, agentOnboardingStarted, classicOnboardingFinished, isDevMode] =
     useUserStore((s) => [
       !!s.agentOnboarding?.finishedAt,
@@ -250,6 +252,17 @@ const Footer = memo(() => {
             },
           ]
         : []),
+      ...(enableBusinessFeatures
+        ? [
+            {
+              icon: <Icon icon={Send} />,
+              key: 'inviteFriend',
+              label: (
+                <WorkspaceLink to="/settings/referral">{t('userPanel.inviteFriend')}</WorkspaceLink>
+              ),
+            },
+          ]
+        : []),
       {
         icon: <Icon icon={KeyRound} />,
         key: 'apiKey',
@@ -296,6 +309,7 @@ const Footer = memo(() => {
       footer.showSettingsEntry,
       footer.layout,
       footer.showEvalEntry,
+      enableBusinessFeatures,
       handleOpenProductHuntCard,
       isDevMode,
       shouldShowProductHuntMenuEntry,
