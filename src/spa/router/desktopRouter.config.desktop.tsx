@@ -19,6 +19,7 @@ import { agentDocumentRouteMeta } from '@/features/AgentDocumentPage/routeMeta';
 import { taskRouteMeta, tasksRouteMeta } from '@/features/AgentTasks/routeMeta';
 import { fleetRouteMeta } from '@/features/Fleet/routeMeta';
 import { pageRouteMeta } from '@/features/Pages/routeMeta';
+import { verifyRouteMeta } from '@/features/Verify/routeMeta';
 import DesktopOnboarding from '@/routes/(desktop)/desktop-onboarding';
 import DownloadPage from '@/routes/(download)/download';
 import DownloadRouteLayout from '@/routes/(download)/download/_layout/RouteLayout';
@@ -760,6 +761,7 @@ export const desktopRoutes: RouteObject[] = [
   {
     element: <VerifyReportPage />,
     errorElement: <ErrorBoundary />,
+    handle: { meta: verifyRouteMeta },
     path: '/verify/:runId',
   },
 
