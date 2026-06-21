@@ -118,7 +118,20 @@ export class TaskConfigSliceActionImpl {
     }
   };
 
-  // 通过 task.updateConfig 安全 merge model/provider 到 config，不会覆盖 checkpoint/review
+  updateVerifyConfig = async (
+    id: string,
+    verify: Parameters<typeof taskService.updateVerifyConfig>[0]['verify'],
+  ): Promise<void> => {
+    try {
+      await taskService.updateVerifyConfig({ id, verify });
+      await this.#get().internal_refreshTaskDetail(id);
+    } catch (error) {
+      console.error('[TaskStore] Failed to update verify config:', error);
+      await this.#get().internal_refreshTaskDetail(id);
+    }
+  };
+
+  // Safely merges model/provider into config via task.updateConfig without overwriting checkpoint/review
   updateTaskModelConfig = async (
     id: string,
     modelConfig: { model?: string; provider?: string },

@@ -603,6 +603,7 @@ export const messengerKeys = {
 
 // ---- verify (deliverable judging) ---------------------------------------
 export const verifyKeys = {
+  criteria: def('verify:criteria', () => ['verify:criteria']),
   instruction: def('verify:instruction', (documentId: string) => [
     'verify:instruction',
     documentId,
@@ -613,6 +614,11 @@ export const verifyKeys = {
   ]),
   results: def('verify:results', (operationId: string) => ['verify:results', operationId]),
   rubric: def('verify:rubric', (rubricId: string) => ['verify:rubric', rubricId]),
+  rubricCriteria: def('verify:rubricCriteria', (rubricId: string) => [
+    'verify:rubricCriteria',
+    rubricId,
+  ]),
+  rubrics: def('verify:rubrics', () => ['verify:rubrics']),
   state: def('verify:state', (operationId: string) => ['verify:state', operationId]),
   tracing: def('verify:tracing', (tracingId: string) => ['verify:tracing', tracingId]),
 };
