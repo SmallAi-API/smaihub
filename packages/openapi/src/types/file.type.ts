@@ -372,5 +372,5 @@ export interface UpdateFileRequest {
 }
 
 export const UpdateFileSchema = z.object({
-  knowledgeBaseId: z.string().nullable().optional(),
+  knowledgeBaseId: z.string().nullish(),
 });
