@@ -19,10 +19,14 @@
   "editMessage.title": "編輯消息",
   "navigateToChat.desc": "切換到聊天標籤並輸入 smai.ai",
   "navigateToChat.title": "切換至預設會話",
+  "nextTab.desc": "在桌面應用程式中循環到下一個瀏覽器樣式的標籤；在結尾處回繞到第一個標籤",
+  "nextTab.title": "下一個標籤",
   "openChatSettings.desc": "查看和修改當前會話的設定",
   "openChatSettings.title": "打開會話設定",
   "openHotkeyHelper.desc": "查看所有快捷鍵的使用說明",
   "openHotkeyHelper.title": "打開快捷鍵幫助",
+  "prevTab.desc": "在桌面應用程式中循環到上一個標籤；在開頭處回繞到最後一個標籤",
+  "prevTab.title": "上一個標籤",
   "regenerateMessage.desc": "重新生成最後一條消息",
   "regenerateMessage.title": "重新生成消息",
   "saveDocument.desc": "立即儲存目前文件的所有變更",
@@ -35,10 +39,10 @@
   "showApp.title": "顯示主窗口",
   "switchAgent.desc": "通過按住 Ctrl 加數字 0~9 切換固定在側邊欄的助手",
   "switchAgent.title": "快捷切換助手",
+  "switchTab.desc": "在桌面應用程式的標籤欄中通過其位置（1–9）跳轉到特定標籤",
+  "switchTab.title": "按號碼切換到標籤",
   "toggleLeftPanel.desc": "顯示或隱藏左側面板",
   "toggleLeftPanel.title": "顯示/隱藏左側面板",
   "toggleRightPanel.desc": "顯示或隱藏右側面板",
-  "toggleRightPanel.title": "顯示/隱藏右側面板",
-  "toggleZenMode.desc": "專注模式下，只顯示當前會話，隱藏其他 UI",
-  "toggleZenMode.title": "切換專注模式"
+  "toggleRightPanel.title": "顯示/隱藏右側面板"
 }

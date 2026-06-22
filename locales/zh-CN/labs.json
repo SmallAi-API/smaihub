@@ -1,7 +1,7 @@
 {
   "features.agentDocumentFloatingChatPanel.desc": "仅在启用此实验功能时，在代理文档预览中显示浮动聊天面板。",
   "features.agentDocumentFloatingChatPanel.title": "代理文档浮动聊天面板",
-  "features.agentSelfIteration.desc": "允许助理自我反思、自我感知，并在持续的尝试与交互中不断自我迭代。",
+  "features.agentSelfIteration.desc": "允许代理进行反思，建立自我意识，并通过持续的尝试和互动不断迭代。",
   "features.agentSelfIteration.title": "Agent 自我迭代",
   "features.assistantMessageGroup.desc": "将代理消息及其工具调用结果组合在一起显示",
   "features.assistantMessageGroup.title": "代理消息分组",
@@ -15,5 +15,7 @@
   "features.inputMarkdown.title": "输入框 Markdown 渲染",
   "features.platformAgent.desc": "在创建菜单中显示“连接代理”条目。连接的代理（例如 OpenClaw、Hermes）在您的设备上运行，并通过 lh connect 进行通信。",
   "features.platformAgent.title": "连接代理",
+  "features.taskVerify.desc": "在任务详情中添加交付接受部分：用一句话描述接受标准，并让AI生成可编辑的验证标准。",
+  "features.taskVerify.title": "任务交付接受",
   "title": "实验室"
 }

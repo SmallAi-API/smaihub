@@ -1,5 +1,5 @@
 {
-  "authResult.failed.desc": "請再試一次或切換其他登入方式",
+  "authResult.failed.desc": "請再試一次或切換到其他登入方式",
   "authResult.failed.title": "授權失敗",
   "authResult.success.desc": "請點擊下面的開始按鈕以繼續使用 smai.ai 桌面版",
   "authResult.success.title": "授權成功",

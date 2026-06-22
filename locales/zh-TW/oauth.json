@@ -45,7 +45,7 @@
   "handoff.title.processing": "授權處理中...",
   "handoff.title.success": "授權已完成",
   "login.button": "確認登入",
-  "login.description": "應用 {{clientName}} 申請使用您的帳戶進行登入",
+  "login.description": "應用程式 {{clientName}} 正在請求使用您的帳戶進行登入",
   "login.title": "登入 {{clientName}}",
   "login.userWelcome": "歡迎回來，",
   "success.subTitle": "您已成功授權應用訪問您的帳戶，可以關閉該頁面了",

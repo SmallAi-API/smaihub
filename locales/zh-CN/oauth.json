@@ -45,7 +45,7 @@
   "handoff.title.processing": "授权处理中…",
   "handoff.title.success": "授权已完成",
   "login.button": "确认登录",
-  "login.description": "应用 {{clientName}} 申请使用你的账户进行登录",
+  "login.description": "应用程序 {{clientName}} 正在请求使用您的帐户进行登录",
   "login.title": "登录 {{clientName}}",
   "login.userWelcome": "欢迎回来，",
   "success.subTitle": "应用已获得授权。你可以关闭此页面了",
