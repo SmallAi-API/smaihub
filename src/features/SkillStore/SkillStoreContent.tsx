@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
+import { useToolStore } from '@/store/tool';
 
 import Search from './Search';
 import AddSkillButton from './SkillList/AddSkillButton';
@@ -38,6 +39,12 @@ export const SkillStoreContent = ({ initialTab }: SkillStoreContentProps = {}) =
   const [lobehubKeywords, setLobehubKeywords] = useState('');
   const [composioKeywords, setComposioKeywords] = useState('');
   const [skillKeywords, setSkillKeywords] = useState('');
+
+  // Refresh builtin-tool install state for the active workspace whenever the
+  // modal mounts, so entries opened from contexts that don't host the chat
+  // input (e.g. Home banner) don't read leftover personal-scope state.
+  const useFetchUninstalledBuiltinTools = useToolStore((s) => s.useFetchUninstalledBuiltinTools);
+  useFetchUninstalledBuiltinTools(true);
 
   const options: SegmentedOptions = [
     { label: t('skillStore.tabs.lobehub'), value: SkillStoreTab.LobeHub },
