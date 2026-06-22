@@ -308,12 +308,6 @@ const DeviceManager = memo<DeviceManagerProps>(({ onConnect, scope }) => {
                 onClick={() => onConnect('desktop')}
               />
             )}
-            <ConnectOption
-              desc={t('devices.empty.methodCli.desc')}
-              icon={TerminalIcon}
-              title={t('devices.empty.methodCli.title')}
-              onClick={() => onConnect('cli')}
-            />
           </div>
         </Flexbox>
 
