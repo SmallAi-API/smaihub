@@ -334,11 +334,11 @@ export default {
   'createModal.skillSuggestion.actions.createAnywayHint': 'Skill not a fit?',
   'createModal.skillSuggestion.actions.install': 'Add Skill',
   'createModal.skillSuggestion.actions.openSkills': 'Open Skills',
-  'createModal.skillSuggestion.actions.tryInLobeAI': 'Try in LobeAI',
+  'createModal.skillSuggestion.actions.tryInLobeAI': 'Try in smai',
   'createModal.skillSuggestion.description':
     'Even though this is phrased as a role, the reusable part is the workflow. Install it once, then use it across Agents.',
   'createModal.skillSuggestion.installed.description':
-    'You can now use this Skill in LobeAI or add it to any Agent.',
+    'You can now use this Skill in smai or add it to any Agent.',
   'createModal.skillSuggestion.installed.title': 'Skill added',
   'createModal.skillSuggestion.installError':
     "Skill wasn't added. Retry, or create an Agent anyway.",
