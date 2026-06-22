@@ -1,6 +1,7 @@
 import { type ModelPerformance, type ModelTokensUsage, type ModelUsage } from '@lobechat/types';
 
-import { type MessageToolCall, type MessageToolCallChunk } from './toolsCalling';
+import type { ModelPricingContext } from './pricing';
+import type { MessageToolCall, MessageToolCallChunk } from './toolsCalling';
 
 export type LLMRoleType = 'user' | 'system' | 'assistant' | 'function' | 'tool';
 
@@ -187,6 +188,8 @@ export interface ChatMethodOptions {
   headers?: Record<string, any>;
   /** Metadata passed to hooks (billing, tracing, etc.) */
   metadata?: Record<string, unknown>;
+  /** Request-scoped pricing context for model-bank pricing lookups. */
+  pricingContext?: ModelPricingContext;
   /**
    * send the request to the ai api endpoint
    */
