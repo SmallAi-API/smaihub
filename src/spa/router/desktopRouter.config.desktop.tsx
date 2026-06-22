@@ -20,6 +20,7 @@ import { taskRouteMeta, tasksRouteMeta } from '@/features/AgentTasks/routeMeta';
 import { fleetRouteMeta } from '@/features/Fleet/routeMeta';
 import { pageRouteMeta } from '@/features/Pages/routeMeta';
 import { verifyRouteMeta } from '@/features/Verify/routeMeta';
+import { workspaceHomeRouteMeta } from '@/features/Workspace/routeMeta';
 import DesktopOnboarding from '@/routes/(desktop)/desktop-onboarding';
 import DownloadPage from '@/routes/(download)/download';
 import DownloadRouteLayout from '@/routes/(download)/download/_layout/RouteLayout';
@@ -655,7 +656,7 @@ export const desktopRoutes: RouteObject[] = [
         children: [
           // Workspace home — handled by the persistent `DesktopHomeLayout`
           // (mirrors `/` index). Adding an element renders Home twice.
-          { index: true },
+          { handle: { meta: workspaceHomeRouteMeta }, index: true },
           ...sharedMainAreaChildren,
           // Workspace settings — `/:slug/settings/*`. Dedicated layout with
           // its own sidebar (workspace avatar + 6 tabs + back-to-chat), fully
