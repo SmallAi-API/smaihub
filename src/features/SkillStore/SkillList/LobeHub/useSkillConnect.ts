@@ -251,10 +251,26 @@ export const useSkillConnect = ({
 
   const handleDisconnect = useCallback(async () => {
     if (type === 'lobehub' && lobehubServer) {
-      await revokeLobehubConnect(lobehubServer.identifier);
+      const provider = lobehubServer.identifier;
+      await revokeLobehubConnect(provider);
+
+      const latestServer = useToolStore
+        .getState()
+        .lobehubSkillServers.find((server) => server.identifier === provider);
+
+      return latestServer?.status !== LobehubSkillStatus.CONNECTED;
     } else if (type === 'composio' && composioServer) {
-      await removeComposioConnection(composioServer.identifier);
+      const serverIdentifier = composioServer.identifier;
+      await removeComposioConnection(serverIdentifier);
+
+      const latestServer = useToolStore
+        .getState()
+        .composioServers.find((server) => server.identifier === serverIdentifier);
+
+      return latestServer?.status !== ComposioServerStatus.ACTIVE;
     }
+
+    return true;
   }, [type, lobehubServer, composioServer, revokeLobehubConnect, removeComposioConnection]);
 
   const isConnected =
