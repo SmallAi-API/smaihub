@@ -267,12 +267,12 @@ const ConnectionLine = memo<ConnectionLineProps>(
   },
 );
 
-// 中心头像组件
 const CenterAvatar = memo(() => {
   return (
     <Html
       center
       position={[0, 0, 0]}
+      zIndexRange={[10, 0]}
       style={{
         pointerEvents: 'none',
       }}
