@@ -16,7 +16,14 @@ export interface GenerationConfigState {
   imageNum: number;
 
   isAspectRatioLocked: boolean;
-  activeAspectRatio: string | null; // string - 虚拟比例; null - 原生比例
+  activeAspectRatio: string | null; // string - virtual ratio; null - native ratio
+
+  /**
+   * Object-URL previews for reference images currently being uploaded. Shared
+   * across the inline reference cards and the page-level drag-upload zone so
+   * both surfaces show the same in-flight loading placeholders.
+   */
+  uploadingImagePreviews: string[];
 
   /**
    * 标记配置是否已初始化（包括从记忆中恢复）
@@ -35,5 +42,6 @@ export const initialGenerationConfigState: GenerationConfigState = {
   parametersSchema: nanoBanana2Parameters,
   isAspectRatioLocked: false,
   activeAspectRatio: null,
+  uploadingImagePreviews: [],
   isInit: false,
 };
