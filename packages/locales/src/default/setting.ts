@@ -370,12 +370,12 @@ export default {
     'Visit the smai.ai downloads page and get the app for your operating system.',
   'devices.connectWizard.desktop.step2': 'Sign in and turn on Device Connection',
   'devices.connectWizard.desktop.step2Desc':
-    'After signing in, click Device Connection in the top-right corner of LobeHub Desktop and turn it on.',
+    'After signing in, click Device Connection in the top-right corner of smai.ai Desktop and turn it on.',
   'devices.connectWizard.desktop.step3': 'Your device appears automatically',
   'devices.connectWizard.desktop.step3Desc':
-    "Once Device Connection is on, LobeHub Desktop registers this device — you'll see it in the list once connected.",
+    "Once Device Connection is on, smai.ai Desktop registers this device — you'll see it in the list once connected.",
   'devices.connectWizard.footer':
-    'LobeHub only stores device metadata and configured working directories. File access and commands run only while LobeHub Desktop is open with Device Connection on, or while the CLI daemon is running.',
+    'smai.ai only stores device metadata and configured working directories. File access and commands run only while smai.ai Desktop is open with Device Connection on, or while the CLI daemon is running.',
   'devices.connectWizard.method.cli': 'Via CLI',
   'devices.connectWizard.method.desktop': 'Via Desktop',
   'devices.connectWizard.title': 'Connect Device',
@@ -407,12 +407,12 @@ export default {
     'Enroll a trusted machine so workspace members can run agents there with access to shared project folders, commands, and installed command-line tools.',
   'devices.overview.workspace.title': 'Run agents on shared workspace devices',
   'devices.placeholder.connection':
-    'Check whether LobeHub Desktop is open with Device Connection on, or whether the CLI daemon is running.',
+    'Check whether Desktop is open with Device Connection on, or whether the CLI daemon is running.',
   'devices.placeholder.cwd': 'Set the default working folder for agent runs.',
   'devices.placeholder.desc':
     'Review live connections, set the default working folder, and choose where agents run local operations.',
   'devices.placeholder.security':
-    "Turn off Device Connection, quit LobeHub Desktop, or stop the CLI daemon when you don't want agents to run on this machine.",
+    "Turn off Device Connection, quit Desktop, or stop the CLI daemon when you don't want agents to run on this machine.",
   'devices.placeholder.title': 'Select a device to manage it',
   'devices.placeholder.workspace.connection':
     'Check whether the CLI daemon is running on the shared machine.',
@@ -423,11 +423,11 @@ export default {
   'devices.remove.confirmDesc':
     'This disconnects the device from your account. It does not sign the device out, and it can re-register on next connect.',
   'devices.security.personal.metadata':
-    'LobeHub stores device metadata and configured working directories, not your files.',
+    'smai.ai stores device metadata and configured working directories, not your files.',
   'devices.security.personal.onlineOnly':
-    'Agents can use this device only while LobeHub Desktop is open with Device Connection on, or while the CLI daemon is running.',
+    'Agents can use this device only while smai.ai Desktop is open with Device Connection on, or while the CLI daemon is running.',
   'devices.security.personal.stop':
-    'To take a device offline, turn off Device Connection or quit LobeHub Desktop on that machine. For CLI devices, stop the daemon.',
+    'To take a device offline, turn off Device Connection or quit smai.ai Desktop on that machine. For CLI devices, stop the daemon.',
   'devices.security.title': 'Security & access',
   'devices.security.workspace.members':
     'Workspace devices are visible to members, but only owners can enroll devices and manage settings.',
