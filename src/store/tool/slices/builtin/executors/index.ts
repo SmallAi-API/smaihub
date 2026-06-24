@@ -17,6 +17,7 @@ import { knowledgeBaseExecutor } from '@lobechat/builtin-tool-knowledge-base/cli
 import { lobeAgentExecutor } from '@lobechat/builtin-tool-lobe-agent/client/executor';
 import { localSystemExecutor } from '@lobechat/builtin-tool-local-system/client/executor';
 import { memoryExecutor } from '@lobechat/builtin-tool-memory/executor';
+import { remoteDeviceExecutor } from '@lobechat/builtin-tool-remote-device/executor';
 import { taskExecutor } from '@lobechat/builtin-tool-task/client/executor';
 
 import type { BuiltinToolContext, BuiltinToolResult, IBuiltinToolExecutor } from '../types';
@@ -151,6 +152,7 @@ export const registerBuiltinToolExecutors = (): void => {
     messageExecutor,
     notebookExecutor,
     pageAgentExecutor,
+    remoteDeviceExecutor,
     skillStoreExecutor,
     skillsExecutor,
     taskExecutor,
