@@ -526,7 +526,7 @@ export default {
   'gatewayMode.beta': 'Beta',
   'gatewayMode.cardTitle': 'Agent Gateway Mode',
   'gatewayMode.desc':
-    "Run agents in the cloud through LobeHub's Agent Gateway. Tasks keep running even after you close the page.",
+    "Run agents in the cloud through smai.ai's Agent Gateway. Tasks keep running even after you close the page.",
   'search.grounding.imageSearchQueries': 'Image Search Keywords',
   'search.grounding.imageTitle': 'Found {{count}} images',
   'chatMode.agent': 'Agent',

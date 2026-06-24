@@ -186,7 +186,7 @@
   "followUpPlaceholderHeterogeneous": "跟進。",
   "gatewayMode.beta": "測試版",
   "gatewayMode.cardTitle": "代理網關模式",
-  "gatewayMode.desc": "通過 LobeHub 的代理網關在雲中運行代理。即使關閉頁面，任務仍會繼續運行。",
+  "gatewayMode.desc": "透過 smai.ai 的代理閘道在雲端運行代理。即使關閉頁面，任務仍會持續運行。",
   "group.desc": "與多位 AI 助手在共用的對話空間中協作。",
   "group.memberTooltip": "群組內有 {{count}} 位成員",
   "group.orchestratorThinking": "主持人正在思考中...",

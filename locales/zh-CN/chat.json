@@ -186,7 +186,7 @@
   "followUpPlaceholderHeterogeneous": "继续跟进。",
   "gatewayMode.beta": "Beta",
   "gatewayMode.cardTitle": "Agent Gateway 模式",
-  "gatewayMode.desc": "通过 LobeHub 的 Agent Gateway 在云端执行 Agent，即使关闭网页，任务也会继续运行。",
+  "gatewayMode.desc": "通过smai.ai的代理网关在云中运行代理。即使您关闭页面，任务仍会继续运行。",
   "group.desc": "在同一对话空间，让多个助理一起推进任务",
   "group.memberTooltip": "群组内有 {{count}} 名成员",
   "group.orchestratorThinking": "主持人思考中…",
