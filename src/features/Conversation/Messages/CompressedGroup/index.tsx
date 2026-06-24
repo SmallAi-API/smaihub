@@ -1,16 +1,8 @@
 'use client';
 
-import { type CompressionGroupMetadata, type UIChatMessage } from '@lobechat/types';
-import {
-  ActionIcon,
-  Flexbox,
-  Icon,
-  Markdown,
-  ScrollShadow,
-  Tabs,
-  type TabsProps,
-} from '@lobehub/ui';
-import { confirmModal } from '@lobehub/ui/base-ui';
+import type { CompressionGroupMetadata, UIChatMessage } from '@lobechat/types';
+import { ActionIcon, Flexbox, Icon, Markdown, ScrollShadow } from '@lobehub/ui';
+import { confirmModal, Tabs, type TabsItem } from '@lobehub/ui/base-ui';
 import { createStaticStyles, cx } from 'antd-style';
 import isEqual from 'fast-deep-equal';
 import { ChevronDown, ChevronUp, History, Sparkles, Undo2 } from 'lucide-react';
@@ -121,7 +113,7 @@ const CompressedGroupMessage = memo<CompressedGroupMessageProps>(({ id }) => {
     isGeneratingSummary,
   });
 
-  const tabItems: TabsProps['items'] = useMemo(
+  const tabItems: TabsItem[] = useMemo(
     () => [
       {
         icon: <Icon icon={Sparkles} size={14} />,
@@ -152,7 +144,6 @@ const CompressedGroupMessage = memo<CompressedGroupMessageProps>(({ id }) => {
       ) : (
         <Flexbox horizontal align={'center'} distribution={'space-between'} width={'100%'}>
           <Tabs
-            compact
             activeKey={isGeneratingSummary ? 'summary' : activeTab}
             className={styles.header}
             items={tabItems}

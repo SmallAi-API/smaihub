@@ -1,6 +1,7 @@
 'use client';
 
-import { Flexbox, Icon, Tabs, Tag } from '@lobehub/ui';
+import { Flexbox, Icon, Tag } from '@lobehub/ui';
+import { Tabs } from '@lobehub/ui/base-ui';
 import { createStaticStyles } from 'antd-style';
 import { BookOpenIcon, HistoryIcon, LayersIcon, ListIcon, SquareUserIcon } from 'lucide-react';
 import { memo } from 'react';
@@ -49,7 +50,7 @@ const Nav = memo<NavProps>(({ mobile, setActiveTab, activeTab = AssistantNavKey.
   const nav = (
     <Tabs
       activeKey={activeTab}
-      compact={mobile}
+      variant="square"
       items={[
         {
           icon: <Icon icon={BookOpenIcon} size={16} />,

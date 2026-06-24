@@ -1,7 +1,8 @@
 'use client';
 
 import { BRANDING_PROVIDER } from '@lobechat/business-const';
-import { Flexbox, Icon, Tabs } from '@lobehub/ui';
+import { Flexbox, Icon } from '@lobehub/ui';
+import { Tabs } from '@lobehub/ui/base-ui';
 import { createStaticStyles } from 'antd-style';
 import { BookOpenIcon, BrainCircuitIcon, ListIcon } from 'lucide-react';
 import { memo } from 'react';
@@ -64,8 +65,8 @@ const Nav = memo<NavProps>(({ mobile, setActiveTab, activeTab = ProviderNavKey.O
   const nav = (
     <Tabs
       activeKey={activeTab}
-      compact={mobile}
       items={items}
+      variant="square"
       onChange={(key) => setActiveTab?.(key as ProviderNavKey)}
     />
   );

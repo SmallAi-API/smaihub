@@ -1,6 +1,7 @@
 'use client';
 
-import { Flexbox, Icon, Tabs, Tag } from '@lobehub/ui';
+import { Flexbox, Icon, Tag } from '@lobehub/ui';
+import { Tabs } from '@lobehub/ui/base-ui';
 import { SkillsIcon } from '@lobehub/ui/icons';
 import { createStaticStyles } from 'antd-style';
 import { BookOpenIcon, DownloadIcon, FileTextIcon, HistoryIcon, ListIcon } from 'lucide-react';
@@ -29,17 +30,15 @@ const Nav = memo<{
   setActiveTab?: (_tab: SkillNavKey) => void;
 }>(({ mobile, setActiveTab, activeTab = SkillNavKey.Overview }) => {
   const { t } = useTranslation('discover');
-  const { versions, repository, homepage, github, resources } = useDetailContext();
+  const { versions, resources } = useDetailContext();
 
   const versionCount = versions?.length || 0;
   const resourcesCount = Object.keys(resources || {}).length;
-  const source = homepage || repository;
-  const issueTarget = github?.url || repository;
 
   const nav = (
     <Tabs
       activeKey={activeTab}
-      compact={mobile}
+      variant="square"
       items={[
         {
           icon: <Icon icon={BookOpenIcon} size={16} />,

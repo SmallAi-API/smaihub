@@ -1,7 +1,7 @@
 'use client';
 
-import { type TabsProps } from '@lobehub/ui';
-import { Flexbox, Icon, Tabs, Tag } from '@lobehub/ui';
+import { Flexbox, Icon, Tag } from '@lobehub/ui';
+import { Tabs, type TabsItem } from '@lobehub/ui/base-ui';
 import { createStaticStyles } from 'antd-style';
 import {
   BookOpenIcon,
@@ -78,7 +78,7 @@ const Nav = memo<NavProps>(
       <Tabs
         activeKey={activeTab}
         className={styles.tabs}
-        compact={mobile}
+        variant="square"
         items={
           [
             // 只有已安装的插件才显示设置 tab
@@ -168,7 +168,7 @@ const Nav = memo<NavProps>(
                   t('mcp.details.versions.title')
                 ),
             },
-          ].filter(Boolean) as TabsProps['items']
+          ].filter(Boolean) as TabsItem[]
         }
         onChange={(key) => setActiveTab?.(key as McpNavKey)}
       />
