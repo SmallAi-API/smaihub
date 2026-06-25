@@ -963,6 +963,92 @@ describe('ToolNameResolver', () => {
       });
     });
 
+    // Regression: some OpenAI-compatible / relay gateways normalize tool
+    // function names to `^[a-zA-Z0-9_]+$`, replacing hyphens in the identifier
+    // with underscores. The `____` separator survives (it's underscores), so
+    // the name round-trips as e.g. `lobe_cloud_sandbox____executeCode` and the
+    // identifier no longer matches the runtime registry, surfacing as
+    // `Builtin tool "lobe_cloud_sandbox" is not implemented`. The resolver
+    // reconciles `_`/`-` within the identifier when it doesn't match as-is.
+    describe('resolve - hyphen-to-underscore identifier recovery', () => {
+      it('should recover an identifier whose hyphens were sanitized to underscores', () => {
+        const toolCalls = [
+          {
+            function: {
+              arguments: '{"description":"hi","language":"python","code":"print(1)"}',
+              name: 'lobe_cloud_sandbox____executeCode',
+            },
+            id: 'call_1',
+            type: 'function',
+          },
+        ];
+
+        const manifests = {
+          'lobe-cloud-sandbox': {
+            api: [{ description: 'Execute code', name: 'executeCode', parameters: {} }],
+            identifier: 'lobe-cloud-sandbox',
+            meta: {},
+            type: 'builtin' as const,
+          },
+        };
+
+        const result = resolver.resolve(toolCalls, manifests);
+
+        expect(result).toHaveLength(1);
+        expect(result[0].identifier).toBe('lobe-cloud-sandbox');
+        expect(result[0].apiName).toBe('executeCode');
+        expect(result[0].type).toBe('builtin');
+      });
+
+      it('should leave a genuine underscore identifier untouched when it matches as-is', () => {
+        const toolCalls = [
+          {
+            function: { arguments: '{}', name: 'custom_mcp_plugin____run' },
+            id: 'call_1',
+            type: 'function',
+          },
+        ];
+
+        const manifests = {
+          custom_mcp_plugin: {
+            api: [{ description: '', name: 'run', parameters: {} }],
+            identifier: 'custom_mcp_plugin',
+            meta: {},
+            type: 'builtin' as const,
+          },
+        };
+
+        const result = resolver.resolve(toolCalls, manifests);
+
+        expect(result).toHaveLength(1);
+        expect(result[0].identifier).toBe('custom_mcp_plugin');
+      });
+
+      it('should not alter the identifier when no canonical match exists', () => {
+        const toolCalls = [
+          {
+            function: { arguments: '{}', name: 'unknown_plugin____action' },
+            id: 'call_1',
+            type: 'function',
+          },
+        ];
+
+        const manifests = {
+          'lobe-cloud-sandbox': {
+            api: [{ description: '', name: 'executeCode', parameters: {} }],
+            identifier: 'lobe-cloud-sandbox',
+            meta: {},
+            type: 'builtin' as const,
+          },
+        };
+
+        const result = resolver.resolve(toolCalls, manifests);
+
+        expect(result).toHaveLength(1);
+        expect(result[0].identifier).toBe('unknown_plugin');
+      });
+    });
+
     it('should handle tool calls with different types', () => {
       const toolCalls = [
         {

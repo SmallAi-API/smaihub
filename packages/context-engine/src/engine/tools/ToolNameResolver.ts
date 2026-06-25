@@ -131,6 +131,24 @@ export class ToolNameResolver {
           }
         }
 
+        // Recover identifiers whose hyphens were sanitized to underscores by an
+        // upstream gateway. Some OpenAI-compatible / relay backends normalize
+        // tool function names to `^[a-zA-Z0-9_]+$`, so `lobe-cloud-sandbox`
+        // arrives back as `lobe_cloud_sandbox` and misses the runtime registry,
+        // surfacing as `Builtin tool "lobe_cloud_sandbox" is not implemented`.
+        // The `____` separator already survives (it is underscores), so we only
+        // need to reconcile `_`/`-` within the identifier. Only runs when the
+        // identifier doesn't match a manifest as-is, so the normal path and
+        // genuine underscore identifiers are untouched.
+        if (!manifests[identifier] && !identifier.startsWith(PLUGIN_SCHEMA_API_MD5_PREFIX)) {
+          const canonicalize = (value: string) => value.replaceAll('_', '-');
+          const target = canonicalize(identifier);
+          const recovered = Object.keys(manifests).find((id) => canonicalize(id) === target);
+          if (recovered) {
+            identifier = recovered;
+          }
+        }
+
         // Step 1: Resolve hashed identifier if needed
         if (identifier.startsWith(PLUGIN_SCHEMA_API_MD5_PREFIX)) {
           const identifierMd5 = identifier.replace(PLUGIN_SCHEMA_API_MD5_PREFIX, '');
