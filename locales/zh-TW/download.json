@@ -1,6 +1,10 @@
 {
   "description": "下載桌面客戶端以獲得更好的體驗，提升性能和原生功能。",
   "downloadButton": "下載 Windows 版",
+  "downloadFor.mac": "下載 macOS",
+  "downloadFor.mac.arm64": "macOS（Apple Silicon）",
+  "downloadFor.mac.x64": "macOS（Intel）",
+  "downloadFor.windows": "下載 Windows",
   "downloading": "下載中...",
   "features.native.desc": "與系統整合的原生桌面體驗",
   "features.native.title": "原生體驗",
