@@ -2,24 +2,35 @@
 
 import { Button, Flexbox, Icon, Text, Video } from '@lobehub/ui';
 import { TypewriterEffect } from '@lobehub/ui/awesome';
-import { Download } from 'lucide-react';
+import { Apple, Download, Monitor } from 'lucide-react';
 import { motion } from 'motion/react';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import PanelTitle from '@/components/PanelTitle';
 import { useIsDark } from '@/hooks/useIsDark';
 
 import { styles } from './_layout/style';
-import { getLatestVersion, type VersionInfo } from './_lib/version';
+import { type DownloadItem, getLatestVersion, type VersionInfo } from './_lib/version';
+
+type OS = 'mac' | 'windows' | 'other';
+
+const detectOS = (): OS => {
+  if (typeof navigator === 'undefined') return 'other';
+  const ua = `${navigator.userAgent} ${navigator.platform}`.toLowerCase();
+  if (ua.includes('mac')) return 'mac';
+  if (ua.includes('win')) return 'windows';
+  return 'other';
+};
 
 const DownloadPage = memo(() => {
   const { t } = useTranslation('download');
   const isDarkMode = useIsDark();
   const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [os, setOS] = useState<OS>('other');
 
   useEffect(() => {
+    setOS(detectOS());
     getLatestVersion()
       .then((info) => {
         setVersionInfo(info);
@@ -30,15 +41,29 @@ const DownloadPage = memo(() => {
       });
   }, []);
 
-  const handleDownload = () => {
-    if (versionInfo?.downloadUrl) {
-      window.open(versionInfo.downloadUrl, '_blank');
-    }
+  const labelOf = (item: DownloadItem) => {
+    if (item.platform === 'windows') return t('downloadFor.windows');
+    if (item.arch === 'arm64') return t('downloadFor.mac.arm64');
+    if (item.arch === 'x64') return t('downloadFor.mac.x64');
+    return t('downloadFor.mac');
+  };
+
+  // Order: detected OS first, so the most relevant button is the primary one
+  const downloads = useMemo(() => {
+    const list = versionInfo?.downloads ?? [];
+    return [...list].sort((a, b) => {
+      const aMatch = a.platform === os ? 0 : 1;
+      const bMatch = b.platform === os ? 0 : 1;
+      return aMatch - bMatch;
+    });
+  }, [versionInfo, os]);
+
+  const handleDownload = (url: string) => {
+    if (url) window.open(url, '_blank');
   };
 
   return (
     <>
-      <PanelTitle title={t('title')} />
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         initial={{ opacity: 0, y: 20 }}
@@ -66,23 +91,39 @@ const DownloadPage = memo(() => {
             </Text>
           </Flexbox>
 
-          {/* Download Button */}
+          {/* Download Buttons */}
           <motion.div
             animate={{ opacity: 1, scale: 1 }}
             initial={{ opacity: 0, scale: 0.9 }}
             transition={{ delay: 0.3, duration: 0.4 }}
           >
-            <Button
-              className={styles.downloadButton}
-              disabled={loading || !versionInfo}
-              icon={<Icon icon={Download} />}
-              loading={loading}
-              size={'large'}
-              type={'primary'}
-              onClick={handleDownload}
-            >
-              {t('downloadButton')}
-            </Button>
+            <Flexbox horizontal align={'center'} gap={12} wrap={'wrap'}>
+              {loading || downloads.length === 0 ? (
+                <Button
+                  className={styles.downloadButton}
+                  disabled={!loading}
+                  icon={<Icon icon={Download} />}
+                  loading={loading}
+                  size={'large'}
+                  type={'primary'}
+                >
+                  {t('downloadButton')}
+                </Button>
+              ) : (
+                downloads.map((item, index) => (
+                  <Button
+                    className={styles.downloadButton}
+                    icon={<Icon icon={item.platform === 'mac' ? Apple : Monitor} />}
+                    key={item.url}
+                    size={'large'}
+                    type={index === 0 ? 'primary' : 'default'}
+                    onClick={() => handleDownload(item.url)}
+                  >
+                    {labelOf(item)}
+                  </Button>
+                ))
+              )}
+            </Flexbox>
           </motion.div>
 
           {/* Preview Image */}

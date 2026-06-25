@@ -25,11 +25,23 @@ inputs:
     description: 'Custom S3 endpoint (for R2/MinIO etc.)'
     required: false
     default: ''
+  artifact-name:
+    description: 'Single artifact name to download (e.g. merged-release). When empty, downloads all release-* artifacts via pattern.'
+    required: false
+    default: ''
 
 runs:
   using: composite
   steps:
-    - name: Download merged artifacts
+    - name: Download merged artifacts (by name)
+      if: inputs.artifact-name != ''
+      uses: actions/download-artifact@v7
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: release
+
+    - name: Download artifacts (by pattern)
+      if: inputs.artifact-name == ''
       uses: actions/download-artifact@v7
       with:
         path: release

@@ -1,4 +1,12 @@
+export interface DownloadItem {
+  arch?: 'arm64' | 'x64';
+  platform: 'mac' | 'windows';
+  url: string;
+}
+
 export interface VersionInfo {
+  downloads: DownloadItem[];
+  /** @deprecated Windows installer URL, kept for backward compatibility. Use `downloads`. */
   downloadUrl: string;
   releaseDate: string;
   version: string;

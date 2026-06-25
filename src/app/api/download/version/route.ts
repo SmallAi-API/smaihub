@@ -5,51 +5,83 @@ const UPDATE_SERVER_URL = 'https://smaihub-1301925107.cos.accelerate.myqcloud.co
 export const revalidate = 300; // Revalidate every 5 minutes
 export const dynamic = 'force-static';
 
-/**
- * Parse electron-builder's YAML manifest to extract version info
- */
-function parseYaml(yamlText: string): Record<string, string> {
-  const result: Record<string, string> = {};
-  const lines = yamlText.split('\n');
-
-  for (const line of lines) {
-    const match = line.match(/^(\w+):\s*(\S.*)$/);
-    if (match) {
-      result[match[1]] = match[2].trim();
-    }
-  }
-
-  return result;
+interface Manifest {
+  files: { url: string }[];
+  releaseDate: string;
+  version: string;
 }
 
-export async function GET() {
+/**
+ * Parse electron-builder's YAML manifest to extract version info and the file list.
+ * Handles both single-file manifests (stable.yml) and multi-arch ones (stable-mac.yml).
+ */
+function parseManifest(yamlText: string): Manifest {
+  const manifest: Manifest = { files: [], releaseDate: '', version: '' };
+
+  for (const line of yamlText.split('\n')) {
+    const fileUrl = line.match(/^\s+-\s+url:\s*(\S.*)$/);
+    if (fileUrl) {
+      manifest.files.push({ url: fileUrl[1].trim() });
+      continue;
+    }
+
+    const top = line.match(/^(\w+):\s*(\S.*)$/);
+    if (!top) continue;
+    if (top[1] === 'version') manifest.version = top[2].trim();
+    else if (top[1] === 'releaseDate')
+      manifest.releaseDate = top[2].trim().replaceAll(/^['"]|['"]$/g, '');
+  }
+
+  return manifest;
+}
+
+/**
+ * Fetch and parse a channel manifest. Returns null when the manifest is missing
+ * (e.g. no macOS release published yet) so the caller can degrade gracefully.
+ */
+async function fetchManifest(name: string): Promise<Manifest | null> {
   try {
-    const response = await fetch(`${UPDATE_SERVER_URL}/stable.yml`, {
+    const response = await fetch(`${UPDATE_SERVER_URL}/${name}`, {
       next: { revalidate: 300 },
     });
 
-    if (!response.ok) {
-      return NextResponse.json(
-        { error: `Failed to fetch version info: ${response.status}` },
-        { status: response.status },
-      );
-    }
+    if (!response.ok) return null;
 
-    const yamlText = await response.text();
-    const parsed = parseYaml(yamlText);
+    const text = await response.text();
+    // COS returns an XML error body for missing keys; ignore non-YAML responses
+    if (text.trimStart().startsWith('<')) return null;
 
-    const version = parsed.version || '';
-    const releaseDate = parsed.releaseDate || new Date().toISOString();
-
-    return NextResponse.json({
-      downloadUrl: `${UPDATE_SERVER_URL}/${version}/smai.ai-${version}-setup.exe`,
-      releaseDate,
-      version,
-    });
-  } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 },
-    );
+    return parseManifest(text);
+  } catch {
+    return null;
   }
+}
+
+const toUrl = (relativePath: string) => `${UPDATE_SERVER_URL}/${relativePath}`;
+
+export async function GET() {
+  const windows = await fetchManifest('stable.yml');
+
+  if (!windows) {
+    return NextResponse.json({ error: 'Failed to fetch version info' }, { status: 502 });
+  }
+
+  const mac = await fetchManifest('stable-mac.yml');
+
+  const exe = windows.files.find((file) => file.url.endsWith('.exe'));
+  const macArm64 = mac?.files.find((file) => file.url.endsWith('-arm64.dmg'));
+  const macX64 = mac?.files.find((file) => file.url.endsWith('-x64.dmg'));
+
+  const downloads: { arch?: 'arm64' | 'x64'; platform: 'mac' | 'windows'; url: string }[] = [];
+  if (exe) downloads.push({ platform: 'windows', url: toUrl(exe.url) });
+  if (macArm64) downloads.push({ arch: 'arm64', platform: 'mac', url: toUrl(macArm64.url) });
+  if (macX64) downloads.push({ arch: 'x64', platform: 'mac', url: toUrl(macX64.url) });
+
+  return NextResponse.json({
+    // Kept for backward compatibility (Windows installer URL)
+    downloadUrl: exe ? toUrl(exe.url) : '',
+    downloads,
+    releaseDate: windows.releaseDate || new Date().toISOString(),
+    version: windows.version,
+  });
 }
