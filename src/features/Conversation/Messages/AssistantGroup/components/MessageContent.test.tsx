@@ -40,7 +40,7 @@ vi.mock('../../../store', () => ({
 const useMarkdownMock = vi.fn(() => ({}));
 
 vi.mock('../useMarkdown', () => ({
-  useMarkdown: (...args: unknown[]) => useMarkdownMock(...args),
+  useMarkdown: () => useMarkdownMock(),
 }));
 
 describe('MessageContent', () => {
