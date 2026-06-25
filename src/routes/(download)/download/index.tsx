@@ -7,6 +7,7 @@ import { motion } from 'motion/react';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { createMacGuideModal } from '@/components/MacGuideModal';
 import { useIsDark } from '@/hooks/useIsDark';
 
 import { styles } from './_layout/style';
@@ -58,8 +59,23 @@ const DownloadPage = memo(() => {
     });
   }, [versionInfo, os]);
 
-  const handleDownload = (url: string) => {
+  const openUrl = (url: string) => {
     if (url) window.open(url, '_blank');
+  };
+
+  const handleDownload = (item: DownloadItem) => {
+    // macOS builds are unsigned/un-notarized, so guide users through Gatekeeper first
+    if (item.platform === 'mac') {
+      createMacGuideModal({
+        confirmText: t('macGuide.confirm'),
+        desc: t('macGuide.desc'),
+        onConfirm: () => openUrl(item.url),
+        steps: [t('macGuide.step1'), t('macGuide.step2'), t('macGuide.step3'), t('macGuide.step4')],
+        title: t('macGuide.title'),
+      });
+      return;
+    }
+    openUrl(item.url);
   };
 
   return (
@@ -115,7 +131,7 @@ const DownloadPage = memo(() => {
                     key={item.url}
                     size={'large'}
                     type={index === 0 ? 'primary' : 'default'}
-                    onClick={() => handleDownload(item.url)}
+                    onClick={() => handleDownload(item)}
                   >
                     {labelOf(item)}
                   </Button>

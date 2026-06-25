@@ -1,3 +1,4 @@
+import { GROUP_CHAT_TOPIC_URL } from '@lobechat/const';
 import type { ChatTopicStatus } from '@lobechat/types';
 import { Flexbox, Icon, Skeleton, Tag, Text, Tooltip } from '@lobehub/ui';
 import { createStaticStyles, cssVar } from 'antd-style';
@@ -102,7 +103,7 @@ const TopicItem = memo<TopicItemProps>(({ id, title, fav, active, threadId, stat
   // Construct href for cmd+click support
   const href = useMemo(() => {
     if (!activeGroupId || !id) return undefined;
-    return buildWorkspaceAwarePath(`/group/${activeGroupId}?topic=${id}`, activeWorkspaceSlug);
+    return buildWorkspaceAwarePath(GROUP_CHAT_TOPIC_URL(activeGroupId, id), activeWorkspaceSlug);
   }, [activeGroupId, activeWorkspaceSlug, id]);
 
   const [editing, isLoading] = useChatStore((s) => [
@@ -150,7 +151,7 @@ const TopicItem = memo<TopicItemProps>(({ id, title, fav, active, threadId, stat
       toggleMobileTopic(false);
       return;
     }
-    addTab(buildWorkspaceAwarePath(`/group/${activeGroupId}?topic=${id}`, activeWorkspaceSlug));
+    addTab(buildWorkspaceAwarePath(GROUP_CHAT_TOPIC_URL(activeGroupId, id), activeWorkspaceSlug));
     switchTopic(id);
     toggleMobileTopic(false);
   }, [

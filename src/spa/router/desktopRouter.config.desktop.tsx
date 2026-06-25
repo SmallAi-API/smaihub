@@ -230,6 +230,11 @@ export const sharedMainAreaChildren: RouteObject[] = [
             element: <GroupProfilePage />,
             path: 'profile',
           },
+          {
+            element: <GroupPage />,
+            handle: { meta: groupRouteMeta },
+            path: ':topicId',
+          },
         ],
         element: <DesktopGroupLayout />,
         errorElement: <ErrorBoundary />,
