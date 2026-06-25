@@ -86,4 +86,5 @@ export {
   type ModelExtendParams,
   resolveDefaultThinkingLevelForModel,
 } from './utils/modelExtendParams';
+export { isDeepSeekThinkingEligibleModel, isDeepSeekV4FamilyModel } from './utils/modelParse';
 export { parseDataUri } from './utils/uriParser';
