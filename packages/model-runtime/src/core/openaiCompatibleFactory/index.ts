@@ -125,6 +125,10 @@ type ResponseCreateParamsWithPromptCacheKey = (
   | OpenAI.Responses.ResponseCreateParams
 ) &
   OpenAIExtraParams;
+// Exclude openai's own `provider` (added in openai SDK 6.45.0 as `provider?: Provider`
+// for its third-party-provider feature) — otherwise intersecting it with our
+// `provider: string` collapses to `Provider & string`, breaking every call site
+// that passes a plain provider id string.
 export type CreateImageOptions = Omit<ClientOptions, 'apiKey' | 'provider'> &
   ModelIdMappingOptions & {
     apiKey: string;
@@ -159,6 +163,7 @@ const getGenerateObjectResponsesReasoningParams = ({
     : {};
 };
 
+// See CreateImageOptions above: drop openai's `provider` so ours stays `string`.
 export type CreateVideoOptions = Omit<ClientOptions, 'apiKey' | 'provider'> &
   ModelIdMappingOptions & {
     apiKey: string;
