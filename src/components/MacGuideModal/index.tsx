@@ -32,9 +32,9 @@ const MacGuideContent = memo<MacGuideContentProps>(({ confirmText, desc, onConfi
             <div
               style={{
                 alignItems: 'center',
-                background: cssVar.colorPrimary,
+                background: cssVar.colorPrimaryBg,
                 borderRadius: '50%',
-                color: cssVar.colorTextLightSolid,
+                color: cssVar.colorPrimary,
                 display: 'flex',
                 flexShrink: 0,
                 fontSize: 13,
