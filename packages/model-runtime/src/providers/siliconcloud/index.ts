@@ -67,7 +67,8 @@ export const params = {
         return {
           error: status,
           errorType: AgentRuntimeErrorType.ProviderBizError,
-          message: '请检查 API Key 余额是否充足,或者是否在用未实名的 API Key 访问需要实名的模型。',
+          message:
+            'Please check if your API Key balance is sufficient, or if you are using an unverified API Key to access models that require verification.',
         };
       }
 
@@ -89,7 +90,7 @@ export const params = {
       }
     },
     handlePayload: (payload) => {
-      const { max_tokens, model, thinking, ...rest } = payload;
+      const { max_tokens, model, thinking, reasoning_effort, ...rest } = payload;
       const thinkingBudget =
         thinking?.budget_tokens === 0 ? 1 : thinking?.budget_tokens || undefined;
 
@@ -100,6 +101,8 @@ export const params = {
         model,
       };
 
+      const thinkingExplicitlyDisabled = thinking?.type === 'disabled';
+
       if (thinking) {
         // Only set enable_thinking if type is explicitly provided
         if (typeof thinking.type !== 'undefined') {
@@ -109,6 +112,13 @@ export const params = {
           result.thinking_budget = Math.min(Math.max(thinkingBudget, 128), 32_768);
         }
       }
+
+      // SiliconCloud supports reasoning_effort for deepseek-ai/DeepSeek-V4-Flash.
+      // It should not be sent when thinking is explicitly disabled.
+      if (!thinkingExplicitlyDisabled && reasoning_effort) {
+        result.reasoning_effort = reasoning_effort;
+      }
+
       return result;
     },
   },
