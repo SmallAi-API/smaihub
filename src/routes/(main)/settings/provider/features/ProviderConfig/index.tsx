@@ -19,7 +19,11 @@ import { usePermission } from '@/hooks/usePermission';
 import { lambdaQuery } from '@/libs/trpc/client';
 import { aiProviderSelectors, useAiInfraStore } from '@/store/aiInfra';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
-import { type AiProviderDetailItem, type AiProviderSourceType } from '@/types/aiProvider';
+import {
+  type AiProviderDetailItem,
+  type AiProviderSourceType,
+  type UpdateAiProviderConfigParams,
+} from '@/types/aiProvider';
 import { AiProviderSourceEnum } from '@/types/aiProvider';
 import { getProviderLogoUrl } from '@/utils/providerLogo';
 
@@ -104,6 +108,7 @@ export interface ProviderConfigProps extends Omit<AiProviderDetailItem, 'enabled
     placeholder?: string;
     showModelFetcher?: boolean;
   };
+  normalizeConfigValues?: (values: UpdateAiProviderConfigParams) => UpdateAiProviderConfigParams;
   showAceGcm?: boolean;
   source?: AiProviderSourceType;
   title?: ReactNode;
@@ -124,6 +129,7 @@ const ProviderConfig = memo<ProviderConfigProps>(
     extra,
     source = AiProviderSourceEnum.Builtin,
     apiKeyUrl,
+    normalizeConfigValues,
   }) => {
     const {
       authType,
@@ -238,6 +244,12 @@ const ProviderConfig = memo<ProviderConfigProps>(
       },
       [updateAiProviderConfig],
     );
+
+    const normalizeValues = useCallback(
+      (values: UpdateAiProviderConfigParams) => normalizeConfigValues?.(values) ?? values,
+      [normalizeConfigValues],
+    );
+
     const { run: debouncedHandleValueChange } = useDebounceFn(handleValueChange, {
       wait: 500,
     });
@@ -407,7 +419,7 @@ const ProviderConfig = memo<ProviderConfigProps>(
                   // Set connection test state to prevent duplicate requests from onValuesChange
                   isCheckingConnection.current = true;
                   // Proactively save the latest form values to ensure fetchAiProviderRuntimeState retrieves up-to-date data
-                  await updateAiProviderConfig(id, form.getFieldsValue());
+                  await updateAiProviderConfig(id, normalizeValues(form.getFieldsValue()));
                 }}
               />
             ),
@@ -475,7 +487,7 @@ const ProviderConfig = memo<ProviderConfigProps>(
             variant={'borderless'}
             onValuesChange={(_, values) => {
               if (!canManageProvider) return;
-              debouncedHandleValueChange(id, values);
+              debouncedHandleValueChange(id, normalizeValues(values));
             }}
             {...FORM_STYLE}
           />
