@@ -19,10 +19,15 @@ export interface ZhipuModelCard {
   modelName: string;
 }
 
+interface ZhipuRuntimeOptions {
+  [key: string]: unknown;
+  disableToolStream?: boolean;
+}
+
 export const params = {
   baseURL: 'https://open.bigmodel.cn/api/paas/v4',
   chatCompletion: {
-    handlePayload: (payload) => {
+    handlePayload: (payload, options: ZhipuRuntimeOptions = {}) => {
       const {
         enabledSearch,
         max_tokens,
@@ -104,6 +109,10 @@ export const params = {
         },
       );
 
+      // Example: Fireworks serves GLM-5.2 but rejects the Z.ai-only `tool_stream` field.
+      const shouldEnableToolStream =
+        !options.disableToolStream && stream && isToolStreamSupportedGLMModel(model);
+
       return {
         ...rest,
         ...resolvedParams,
@@ -111,7 +120,7 @@ export const params = {
         model,
         stream,
         thinking: resolvedThinking,
-        tool_stream: stream && isToolStreamSupportedGLMModel(model) ? true : undefined,
+        tool_stream: shouldEnableToolStream ? true : undefined,
         tools: zhipuTools,
       } as any;
     },
@@ -208,6 +217,6 @@ export const params = {
     return processModelList(standardModelList, MODEL_LIST_CONFIGS.zhipu, 'zhipu');
   },
   provider: ModelProvider.ZhiPu,
-} satisfies OpenAICompatibleFactoryOptions;
+} satisfies OpenAICompatibleFactoryOptions<ZhipuRuntimeOptions>;
 
-export const LobeZhipuAI = createOpenAICompatibleRuntime(params);
+export const LobeZhipuAI = createOpenAICompatibleRuntime<ZhipuRuntimeOptions>(params);
