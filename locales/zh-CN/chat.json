@@ -191,6 +191,13 @@
   "gatewayMode.beta": "Beta",
   "gatewayMode.cardTitle": "Agent Gateway 模式",
   "gatewayMode.desc": "通过smai.ai的代理网关在云中运行代理。即使您关闭页面，任务仍会继续运行。",
+  "globalApproval.collapse": "收起",
+  "globalApproval.goToConversation": "打开会话",
+  "globalApproval.pendingCount_one": "{{count}} 项待审批",
+  "globalApproval.pendingCount_other": "{{count}} 项待审批",
+  "globalApproval.subtitle": "等待你的审批",
+  "globalApproval.title": "需要审批",
+  "globalApproval.userRequestLabel": "用户请求",
   "group.desc": "在同一对话空间，让多个助理一起推进任务",
   "group.memberTooltip": "群组内有 {{count}} 名成员",
   "group.orchestratorThinking": "主持人思考中…",
@@ -923,6 +930,7 @@
   "tool.intervention.onboarding.userProfile.responseLanguage": "回复语言",
   "tool.intervention.onboarding.userProfile.title": "确认您的个人资料更新",
   "tool.intervention.optionApprove": "批准",
+  "tool.intervention.optionApproveRemember": "批准，且类似操作不再询问",
   "tool.intervention.pending": "等待中",
   "tool.intervention.reject": "拒绝",
   "tool.intervention.rejectOnly": "仅拒绝",
@@ -1239,5 +1247,6 @@
   "workingPanel.skills.title": "技能",
   "workingPanel.space": "空间",
   "workingPanel.title": "工作面板",
-  "you": "你"
+  "you": "你",
+  "zenMode": "专注模式"
 }
