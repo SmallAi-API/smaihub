@@ -6,6 +6,12 @@ export const OFFICIAL_DOMAIN = 'https://www.smallai.asia';
 
 export const OG_URL = '/og/og.webp?v=1';
 
+export const LobeHubPath = {
+  webapi: {
+    modelConfig: '/webapi/lobehub-model-config',
+  },
+} as const;
+
 export const GITHUB = 'https://www.smallai.asia';
 export const GITHUB_ISSUES = 'https://www.smallai.asia';
 export const CHANGELOG = 'https://www.smallai.asia';
