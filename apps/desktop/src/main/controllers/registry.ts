@@ -5,6 +5,7 @@ import {
 } from '@/utils/ipc';
 
 import AuthCtr from './AuthCtr';
+import BinaryCtr from './BinaryCtr';
 import BrowserWindowsCtr from './BrowserWindowsCtr';
 import CliCtr from './CliCtr';
 import DevtoolsCtr from './DevtoolsCtr';
@@ -25,7 +26,6 @@ import ScreenCaptureCtr from './ScreenCaptureCtr';
 import ShellCommandCtr from './ShellCommandCtr';
 import ShortcutController from './ShortcutCtr';
 import SystemController from './SystemCtr';
-import ToolDetectorCtr from './ToolDetectorCtr';
 import TrayMenuCtr from './TrayMenuCtr';
 import UpdaterCtr from './UpdaterCtr';
 import WorkspaceCtr from './WorkspaceCtr';
@@ -52,7 +52,7 @@ export const controllerIpcConstructors = [
   ShellCommandCtr,
   ShortcutController,
   SystemController,
-  ToolDetectorCtr,
+  BinaryCtr,
   TrayMenuCtr,
   UpdaterCtr,
   WorkspaceCtr,

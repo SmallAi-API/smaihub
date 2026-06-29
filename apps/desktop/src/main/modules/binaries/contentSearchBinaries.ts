@@ -1,10 +1,8 @@
-import {
-  createCommandDetector,
-  type IToolDetector,
-} from '@/core/infrastructure/ToolDetectorManager';
+import type { BinarySpec } from '@/core/infrastructure/BinaryManager';
+import { defineCommandBinary } from '@/core/infrastructure/BinaryManager';
 
 /**
- * Content search tool detectors
+ * Content search binaries
  *
  * Priority order: rg (1) > ag (2) > grep (3)
  * AST search: sg (ast-grep) - separate category for AST-based code search
@@ -14,7 +12,7 @@ import {
  * ripgrep (rg) - Fastest grep alternative
  * https://github.com/BurntSushi/ripgrep
  */
-export const ripgrepDetector: IToolDetector = createCommandDetector('rg', {
+export const ripgrepBinary: BinarySpec = defineCommandBinary('rg', {
   description: 'ripgrep - fast grep alternative',
   priority: 1,
 });
@@ -23,7 +21,7 @@ export const ripgrepDetector: IToolDetector = createCommandDetector('rg', {
  * ast-grep (sg) - AST-based code search tool
  * https://ast-grep.github.io/
  */
-export const astGrepDetector: IToolDetector = createCommandDetector('sg', {
+export const astGrepBinary: BinarySpec = defineCommandBinary('sg', {
   description: 'ast-grep - AST-based code search',
   priority: 1,
 });
@@ -32,7 +30,7 @@ export const astGrepDetector: IToolDetector = createCommandDetector('sg', {
  * The Silver Searcher (ag) - Fast code searching tool
  * https://github.com/ggreer/the_silver_searcher
  */
-export const agDetector: IToolDetector = createCommandDetector('ag', {
+export const agBinary: BinarySpec = defineCommandBinary('ag', {
   description: 'The Silver Searcher',
   priority: 2,
 });
@@ -40,17 +38,17 @@ export const agDetector: IToolDetector = createCommandDetector('ag', {
 /**
  * GNU grep - Standard text search tool
  */
-export const grepDetector: IToolDetector = createCommandDetector('grep', {
+export const grepBinary: BinarySpec = defineCommandBinary('grep', {
   description: 'GNU grep',
   priority: 3,
 });
 
 /**
- * All content search detectors (text-based grep tools)
+ * All content search binaries (text-based grep tools)
  */
-export const contentSearchDetectors: IToolDetector[] = [ripgrepDetector, agDetector, grepDetector];
+export const contentSearchBinaries: BinarySpec[] = [ripgrepBinary, agBinary, grepBinary];
 
 /**
- * AST-based code search detectors
+ * AST-based code search binaries
  */
-export const astSearchDetectors: IToolDetector[] = [astGrepDetector];
+export const astSearchBinaries: BinarySpec[] = [astGrepBinary];
