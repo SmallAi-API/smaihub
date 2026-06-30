@@ -23,6 +23,7 @@ import { ModelProvider } from 'model-bank';
 
 import { DEFAULT_AGENT_CONFIG } from '@/const/settings';
 import { getSearchConfig } from '@/helpers/getSearchConfig';
+import { isCanUseFC } from '@/helpers/isCanUseFC';
 import { getAgentStoreState } from '@/store/agent';
 import {
   agentByIdSelectors,
@@ -170,6 +171,8 @@ class ChatService {
     const userMemorySettings = settingsSelectors.currentMemorySettings(getUserStoreState());
     const effectiveMemoryEffort =
       chatConfig.memory?.effort ?? userMemorySettings.effort ?? 'medium';
+    const enableAgentMode =
+      chatConfig.enableAgentMode !== false && isCanUseFC(payload.model, payload.provider!);
 
     // =================== 1.2 build agent builder context =================== //
 
@@ -279,6 +282,7 @@ class ChatService {
       agentBuilderContext,
       agentDocuments,
       agentId: targetAgentId,
+      enableAgentMode,
       // Use raw chatConfig values, not selectors with business logic that may force false
       enableHistoryCount: chatConfig.enableHistoryCount,
       enableUserMemories,
