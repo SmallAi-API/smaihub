@@ -59,6 +59,7 @@ import AgentDocumentLayout from '@/routes/(main)/agent/docs/_layout';
 import AgentDocumentRoute from '@/routes/(main)/agent/docs/[docId]';
 import { agentRouteMeta } from '@/routes/(main)/agent/features/routeMeta';
 import AgentProfilePage from '@/routes/(main)/agent/profile';
+import AgentStatsPage from '@/routes/(main)/agent/stats';
 import AgentTaskDetailRoute from '@/routes/(main)/agent/task/[taskId]';
 import AgentScopedTasksRoute from '@/routes/(main)/agent/tasks';
 import AgentTopicsPage from '@/routes/(main)/agent/topics';
@@ -185,6 +186,10 @@ export const sharedMainAreaChildren: RouteObject[] = [
           {
             element: <AgentTopicsPage />,
             path: 'topics',
+          },
+          {
+            element: <AgentStatsPage />,
+            path: 'stats',
           },
           {
             element: <AgentScopedTasksRoute />,
