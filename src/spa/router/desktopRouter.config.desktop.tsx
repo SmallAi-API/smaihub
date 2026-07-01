@@ -57,7 +57,7 @@ import DesktopAgentChatLayout from '@/routes/(main)/agent/(chat)/_layout';
 import AgentChannelPage from '@/routes/(main)/agent/channel';
 import AgentDocumentLayout from '@/routes/(main)/agent/docs/_layout';
 import AgentDocumentRoute from '@/routes/(main)/agent/docs/[docId]';
-import { agentRouteMeta } from '@/routes/(main)/agent/features/routeMeta';
+import { agentRouteMeta, topicsRouteMeta } from '@/routes/(main)/agent/features/routeMeta';
 import AgentProfilePage from '@/routes/(main)/agent/profile';
 import AgentStatsPage from '@/routes/(main)/agent/stats';
 import AgentTaskDetailRoute from '@/routes/(main)/agent/task/[taskId]';
@@ -185,6 +185,7 @@ export const sharedMainAreaChildren: RouteObject[] = [
           },
           {
             element: <AgentTopicsPage />,
+            handle: { meta: topicsRouteMeta },
             path: 'topics',
           },
           {
