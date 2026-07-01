@@ -52,6 +52,7 @@ export interface GetCommandOutputParams {
 }
 
 export interface GetCommandOutputResult {
+  duration_ms?: number;
   error?: string;
   /**
    * Present only after the command has exited.

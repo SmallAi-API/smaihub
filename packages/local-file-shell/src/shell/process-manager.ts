@@ -227,6 +227,7 @@ export class ShellProcessManager {
     const durationMs = Math.max(0, (shellProcess.endedAt ?? Date.now()) - startedAt);
 
     return {
+      duration_ms: durationMs,
       exit_code: exitCode ?? undefined,
       output: stdout + stderr,
       output_files: {

@@ -895,13 +895,35 @@ const smaiChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_000_000,
+    description:
+      "Claude Sonnet 5 is Anthropic's most capable model, building on Opus 4.7 with improvements across reasoning, agentic coding, and tool use.",
+    displayName: 'Claude Sonnet 5',
+    enabled: true,
+    id: 'claude-sonnet-5',
+    maxOutput: 128_000,
+    releasedAt: '2026-07-01',
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
       vision: true,
     },
     contextWindowTokens: 1_000_000,
     description:
       "Claude Opus 4.7 is Anthropic's most capable generally available model for complex reasoning and agentic coding.",
     displayName: 'Claude Opus 4.7',
-    enabled: true,
     id: 'claude-opus-4-7',
     maxOutput: 128_000,
     releasedAt: '2026-04-16',
@@ -923,7 +945,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'Claude Opus 4.6 is Anthropic’s most intelligent model for building agents and coding.',
     displayName: 'Claude Opus 4.6',
-    enabled: true,
     id: 'claude-opus-4-6',
     maxOutput: 128_000,
     releasedAt: '2026-02-05',
@@ -944,7 +965,6 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 200_000,
     description: 'Claude Sonnet 4.6 is Anthropic’s best combination of speed and intelligence.',
     displayName: 'Claude Sonnet 4.6',
-    enabled: true,
     id: 'claude-sonnet-4-6',
     maxOutput: 64_000,
     releasedAt: '2026-02-23',

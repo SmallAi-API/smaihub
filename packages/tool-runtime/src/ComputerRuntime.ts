@@ -364,6 +364,7 @@ export abstract class ComputerRuntime {
       };
 
       const content = formatCommandOutput({
+        durationMs: r.duration_ms,
         error: r.error,
         exitCode: r.exitCode ?? r.exit_code,
         output: r.newOutput || r.output,

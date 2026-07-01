@@ -1,4 +1,5 @@
 export interface FormatCommandOutputParams {
+  durationMs?: number;
   error?: string;
   exitCode?: number;
   output?: string;
@@ -30,6 +31,7 @@ export const formatCommandOutputFileSize = (size?: number): string => {
 export const formatCommandOutput = ({
   success,
   exitCode,
+  durationMs,
   output,
   outputFiles,
   stderr,
