@@ -188,6 +188,10 @@ export interface RunCommandState {
   exitCode?: number;
   isBackground: boolean;
   output?: string;
+  outputFiles?: {
+    stderr: { path: string; size: number; truncated: boolean };
+    stdout: { path: string; size: number; truncated: boolean };
+  };
   stderr?: string;
   stdout?: string;
   success: boolean;
@@ -196,8 +200,13 @@ export interface RunCommandState {
 export interface GetCommandOutputState {
   error?: string;
   exitCode?: number;
-  newOutput?: string;
+  outputFiles?: {
+    stderr: { path: string; size: number; truncated: boolean };
+    stdout: { path: string; size: number; truncated: boolean };
+  };
   running?: boolean;
+  stderr?: string;
+  stdout?: string;
   success: boolean;
 }
 
