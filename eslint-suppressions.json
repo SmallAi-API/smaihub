@@ -1249,11 +1249,6 @@
       "count": 1
     }
   },
-  "src/routes/(main)/eval/bench/[benchmarkId]/features/TestCasesTab/index.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/routes/(main)/eval/bench/[benchmarkId]/runs/[runId]/features/BatchResumeModal/Footer.tsx": {
     "no-restricted-imports": {
       "count": 1
