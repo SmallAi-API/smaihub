@@ -6,6 +6,8 @@ import { DocumentModel } from '@/database/models/document';
 import { FileModel } from '@/database/models/file';
 import { AiInfraRepos } from '@/database/repositories/aiInfra';
 import { SearchRepo } from '@/database/repositories/search';
+import { knowledgeBaseFiles } from '@/database/schemas';
+import { buildWorkspaceWhere } from '@/database/utils/workspace';
 import { getServerDefaultFilesConfig } from '@/server/globalConfig';
 import { initModelRuntimeFromDB } from '@/server/modules/ModelRuntime';
 
@@ -23,6 +25,9 @@ vi.mock('@/server/globalConfig', () => ({
   getServerGlobalConfig: vi.fn().mockResolvedValue({ aiProvider: {} }),
 }));
 vi.mock('@/server/modules/ModelRuntime', () => ({ initModelRuntimeFromDB: vi.fn() }));
+vi.mock('@/database/utils/workspace', () => ({
+  buildWorkspaceWhere: vi.fn(() => 'WORKSPACE_SCOPE'),
+}));
 
 describe('KnowledgeBaseSearchService', () => {
   const userId = 'user_test';
@@ -266,6 +271,26 @@ describe('KnowledgeBaseSearchService', () => {
           fileIds: ['file_1', 'file_2', 'file_extra'],
         }),
       );
+    });
+
+    it('scopes the knowledgeBaseFiles lookup to the caller (no cross-user KB resolution)', async () => {
+      serverDB.query.knowledgeBaseFiles.findMany.mockResolvedValue([{ fileId: 'file_1' }]);
+      chunkModelMock.semanticSearchForChat.mockResolvedValue([]);
+      searchRepoMock.searchKnowledgeBaseDocuments.mockResolvedValue([]);
+
+      await service.semanticSearchForChat({
+        knowledgeIds: ['kb_victim'],
+        query: 'hi',
+      });
+
+      // ownership predicate must be built for the caller's userId + table
+      expect(buildWorkspaceWhere).toHaveBeenCalledWith(
+        { userId, workspaceId: undefined },
+        knowledgeBaseFiles,
+      );
+      // and it must be combined into the actual findMany WHERE clause
+      const { where } = serverDB.query.knowledgeBaseFiles.findMany.mock.calls[0][0];
+      expect(where).toBeDefined();
     });
 
     it('captures vector path failure in errors + rejections, keeps BM25 documents', async () => {
