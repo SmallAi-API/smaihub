@@ -84,11 +84,6 @@
       "count": 1
     }
   },
-  "src/components/SplitButton/index.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/features/AgentDocumentsExplorer/ConvertToSkillModal.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -475,11 +470,6 @@
     }
   },
   "src/features/DeviceManager/DeviceDetailPanel.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/features/DeviceManager/DeviceManager.tsx": {
     "no-restricted-imports": {
       "count": 1
     }
