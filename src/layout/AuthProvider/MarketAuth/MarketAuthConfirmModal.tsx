@@ -1,10 +1,11 @@
 'use client';
 
-import { Block, Modal, Text } from '@lobehub/ui';
+import { Block, Text } from '@lobehub/ui';
 import { createStaticStyles, cx } from 'antd-style';
 import { memo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import ImperativeModal from '@/components/ImperativeModal';
 import { PRIVACY_URL, TERMS_URL } from '@/const/url';
 import AuthCard from '@/features/AuthCard';
 import { useIsDark } from '@/hooks/useIsDark';
@@ -80,7 +81,7 @@ const MarketAuthConfirmModal = memo<MarketAuthConfirmModalProps>(
       </Text>
     );
     return (
-      <Modal
+      <ImperativeModal
         centered
         cancelText={ts('cancel')}
         okText={ts('confirm')}
@@ -107,7 +108,7 @@ const MarketAuthConfirmModal = memo<MarketAuthConfirmModalProps>(
             <Text align={'center'}>{ts('description')}</Text>
           </Block>
         </AuthCard>
-      </Modal>
+      </ImperativeModal>
     );
   },
 );
