@@ -204,6 +204,8 @@ const hasMoreTopicsForSidebar = (s: ChatStoreState): boolean => {
 const isLoadingMoreTopics = (s: ChatStoreState): boolean =>
   currentTopicData(s)?.isLoadingMore ?? false;
 
+const loadMoreTopicsError = (s: ChatStoreState): unknown => currentTopicData(s)?.loadMoreError;
+
 const isExpandingPageSize = (s: ChatStoreState): boolean =>
   currentTopicData(s)?.isExpandingPageSize ?? false;
 
@@ -223,9 +225,13 @@ const agentTopicsViewHasMore = (s: ChatStoreState): boolean =>
 const agentTopicsViewIsLoadingMore = (s: ChatStoreState): boolean =>
   agentTopicsViewData(s)?.isLoadingMore ?? false;
 
+const agentTopicsViewLoadMoreError = (s: ChatStoreState): unknown =>
+  agentTopicsViewData(s)?.loadMoreError;
+
 export const topicSelectors = {
   agentTopicsViewHasMore,
   agentTopicsViewIsLoadingMore,
+  agentTopicsViewLoadMoreError,
   agentTopicsViewTopics,
   currentActiveTopic,
   currentActiveTopicSummary,
@@ -251,5 +257,6 @@ export const topicSelectors = {
   isLoadingMoreTopics,
   isSearchingTopic,
   isUndefinedTopics,
+  loadMoreTopicsError,
   searchTopics,
 };
