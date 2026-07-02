@@ -2,6 +2,7 @@ import { Flexbox } from '@lobehub/ui';
 // import { PencilLineIcon } from 'lucide-react';
 import { type FC } from 'react';
 
+import AsyncBoundary from '@/components/AsyncBoundary';
 import Loading from '@/components/Loading/BrandTextLoading';
 import NavHeader from '@/features/NavHeader';
 import WideScreenContainer from '@/features/WideScreenContainer';
@@ -19,18 +20,23 @@ import RoleTagCloud from './features/RoleTagCloud';
 const Home: FC = () => {
   const useFetchTags = useUserMemoryStore((s) => s.useFetchTags);
   const roles = useUserMemoryStore((s) => s.roles);
-  const { isLoading } = useFetchTags();
+  const persona = useUserMemoryStore((s) => s.persona);
+
+  const { isLoading: isTagsLoading, error: tagsError, mutate: mutateTags } = useFetchTags();
+  const {
+    isLoading: isPersonaLoading,
+    error: personaError,
+    mutate: mutatePersona,
+  } = useFetchPersona();
   // const { EditorModalElement, openEditor } = usePersonaEditor();
 
-  if (isLoading) return <Loading debugId={'Home'} />;
+  if (isTagsLoading || isPersonaLoading) return <Loading debugId={'Home'} />;
 
-  if (!roles || roles.length === 0) {
-    return (
-      <MemoryEmpty>
-        <MemoryAnalysis />
-      </MemoryEmpty>
-    );
-  }
+  // Persona / tags feed the store, so a failed fetch left the render falling
+  // through to the "analyze to get started" onboarding — telling the user they
+  // have no memories when the load merely errored. Branch error before empty.
+  const hasData = !!persona || roles?.length > 0;
+  const error = tagsError ?? personaError;
 
   return (
     <Flexbox flex={1} height={'100%'}>
@@ -52,9 +58,29 @@ const Home: FC = () => {
         width={'100%'}
       >
         <WideScreenContainer gap={32} paddingBlock={48}>
-          <PersonaHeader />
-          <RoleTagCloud tags={roles} />
-          <Persona />
+          <AsyncBoundary
+            data={persona ?? (roles?.length ? roles : undefined)}
+            error={error}
+            errorVariant={'page'}
+            isEmpty={!hasData}
+            empty={
+              <MemoryEmpty>
+                <MemoryAnalysis />
+              </MemoryEmpty>
+            }
+            onRetry={() => {
+              mutateTags();
+              mutatePersona();
+            }}
+          >
+            {roles?.length > 0 && <RoleTagCloud tags={roles} />}
+            {persona && (
+              <>
+                <PersonaHeader />
+                <Persona />
+              </>
+            )}
+          </AsyncBoundary>
         </WideScreenContainer>
       </Flexbox>
       {/* {EditorModalElement} */}
@@ -63,3 +89,7 @@ const Home: FC = () => {
 };
 
 export default Home;
+// eslint-disable-next-line @eslint-react/no-unnecessary-use-prefix
+function useFetchPersona(): { isLoading: any; error: any; mutate: any } {
+  throw new Error('Function not implemented.');
+}
