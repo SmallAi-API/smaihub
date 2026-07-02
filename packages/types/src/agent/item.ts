@@ -94,8 +94,7 @@ export interface LobeAgentConfig {
 }
 
 export type LobeAgentConfigKeys =
-  | keyof LobeAgentConfig
-  | ['params', keyof LobeAgentConfig['params']];
+  keyof LobeAgentConfig | ['params', keyof LobeAgentConfig['params']];
 
 /**
  * Zod schema for creating a new agent.
@@ -122,6 +121,12 @@ export const CreateAgentSchema = z.object({
   title: z.string().nullish(),
   tts: z.custom<LobeAgentTTSConfig>().optional(),
   virtual: z.boolean().nullish(),
+  /**
+   * `private` keeps the agent visible only to its creator within the workspace;
+   * `public` (default) makes it visible to every workspace member. Ignored in
+   * personal mode (no workspaceId).
+   */
+  visibility: z.enum(['private', 'public']).optional(),
 });
 
 export type CreateAgentConfig = z.infer<typeof CreateAgentSchema>;
@@ -156,6 +161,11 @@ export interface AgentItem {
   updatedAt: Date;
   userId: string;
   virtual?: boolean | null;
+  /**
+   * Workspace-scoped visibility. `public` (default) = every workspace member
+   * can see this agent; `private` = creator-only. Ignored in personal mode.
+   */
+  visibility?: 'private' | 'public';
   /** Owning workspace; null for personal (non-workspace) agents. */
   workspaceId?: string | null;
 }
