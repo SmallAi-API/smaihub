@@ -414,7 +414,6 @@ export class ComposioStoreActionImpl {
         });
       },
       {
-        fallbackData: [],
         onSuccess: (data) => {
           this.#set(
             produce((draft: ComposioStoreState) => {
