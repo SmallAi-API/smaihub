@@ -12,7 +12,8 @@ import {
 import { Editor, useEditorState } from '@lobehub/editor/react';
 import { createStaticStyles } from 'antd-style';
 import isEqual from 'fast-deep-equal';
-import { memo, type RefObject, useCallback, useEffect, useMemo, useRef } from 'react';
+import type { CSSProperties, RefObject } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { createChatInputRichPlugins } from '@/features/ChatInput/InputEditor/plugins';
@@ -128,6 +129,18 @@ const InternalEditor = memo<InternalEditorProps>(
       return new File([data], name, { type: mimeType });
     }, []);
     const finalPlaceholder = placeholder || t('pageEditor.editorPlaceholder');
+    const wrapperStyle = useMemo<CSSProperties>(
+      () => ({
+        cursor: disabled ? 'not-allowed' : undefined,
+        maxWidth: '100%',
+        minWidth: 0,
+        opacity: disabled ? 0.65 : undefined,
+        overflow: 'hidden',
+        pointerEvents: disabled ? 'none' : undefined,
+        width: '100%',
+      }),
+      [disabled],
+    );
 
     // Build plugins array
     const plugins = useMemo(() => {
@@ -287,9 +300,7 @@ const InternalEditor = memo<InternalEditorProps>(
 
     return (
       <div
-        style={
-          disabled ? { cursor: 'not-allowed', opacity: 0.65, pointerEvents: 'none' } : undefined
-        }
+        style={wrapperStyle}
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
