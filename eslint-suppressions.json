@@ -434,11 +434,6 @@
       "count": 1
     }
   },
-  "src/features/DeviceManager/DeviceManager.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/features/EditorCanvas/LinearFilePlugin.tsx": {
     "no-restricted-imports": {
       "count": 1

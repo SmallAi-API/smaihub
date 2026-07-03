@@ -2,8 +2,8 @@
 
 import { isDesktop } from '@lobechat/const';
 import type { DeviceScope } from '@lobechat/types';
-import { Button, Checkbox, Flexbox, Icon, Skeleton, Text } from '@lobehub/ui';
-import { confirmModal } from '@lobehub/ui/base-ui';
+import { Checkbox, Flexbox, Icon, Skeleton, Text } from '@lobehub/ui';
+import { Button, confirmModal } from '@lobehub/ui/base-ui';
 import { createStaticStyles, cssVar } from 'antd-style';
 import {
   ChevronRightIcon,
@@ -461,7 +461,6 @@ const DeviceManager = memo<DeviceManagerProps>(({ onConnect, scope }) => {
                   isCurrent={isCurrent(device.deviceId)}
                   key={device.deviceId}
                   selected={device.deviceId === selectedId}
-                  selectionActive={selectionActive}
                   // Withholding the handler also withholds the checkbox; non-
                   // editable rows render without a tick so bulk selection only
                   // ever includes devices the server would accept.
