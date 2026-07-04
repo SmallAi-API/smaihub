@@ -15,6 +15,9 @@ import { useDetailContext } from '../DetailProvider';
 const styles = createStaticStyles(({ css, cssVar }) => {
   return {
     link: css`
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
       color: ${cssVar.colorTextDescription};
 
       &:hover {
