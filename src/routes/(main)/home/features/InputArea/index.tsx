@@ -1,7 +1,7 @@
 import { Flexbox } from '@lobehub/ui';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import DragUploadZone, { useUploadFiles } from '@/components/DragUploadZone';
+import { useUploadFiles } from '@/components/DragUploadZone';
 import { type ActionKeys } from '@/features/ChatInput';
 import { ChatInputProvider, DesktopChatInput } from '@/features/ChatInput';
 import { useHomeDailyBrief } from '@/hooks/useHomeDailyBrief';
@@ -16,6 +16,8 @@ import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfi
 
 import BotIntegrationBanner, { BOT_INTEGRATION_BANNER_ID } from './BotIntegrationBanner';
 import { stripMarkdownLinks } from './hintFormat';
+import InputDragUpload from './InputDragUpload';
+import MessengerBanner, { MESSENGER_BANNER_ID } from './MessengerBanner';
 import SkillInstallBanner, { SKILL_INSTALL_BANNER_ID } from './SkillInstallBanner';
 import StarterList from './StarterList';
 import { useSend } from './useSend';
@@ -23,7 +25,7 @@ import { useSend } from './useSend';
 const leftActions: ActionKeys[] = ['agentMode', 'plus'];
 const rightActions: ActionKeys[] = ['modelLabel'];
 
-type BannerKind = 'skill' | 'botIntegration';
+type BannerKind = 'skill' | 'botIntegration' | 'messenger';
 
 const InputArea = () => {
   const { loading, send, agentId } = useSend();
@@ -48,7 +50,9 @@ const InputArea = () => {
   const isBotIntegrationBannerDismissed = useGlobalStore(
     systemStatusSelectors.isBannerDismissed(BOT_INTEGRATION_BANNER_ID),
   );
-
+  const isMessengerBannerDismissed = useGlobalStore(
+    systemStatusSelectors.isBannerDismissed(MESSENGER_BANNER_ID),
+  );
   const chatInputRef = useRef<HTMLDivElement>(null);
 
   // Wait for both stores to finish hydrating before drawing — server config
@@ -68,7 +72,7 @@ const InputArea = () => {
       candidates.push('skill');
     }
     if (!isBotIntegrationBannerDismissed) candidates.push('botIntegration');
-
+    if (!isMessengerBannerDismissed) candidates.push('messenger');
     if (candidates.length === 0) return;
 
     hasPickedRef.current = true;
@@ -78,14 +82,15 @@ const InputArea = () => {
     isBotIntegrationBannerDismissed,
     isComposioEnabled,
     isLobehubSkillEnabled,
-
+    isMessengerBannerDismissed,
     isSkillBannerDismissed,
     serverConfigInit,
   ]);
 
   const isActiveBannerDismissed =
     (activeBanner === 'skill' && isSkillBannerDismissed) ||
-    (activeBanner === 'botIntegration' && isBotIntegrationBannerDismissed);
+    (activeBanner === 'botIntegration' && isBotIntegrationBannerDismissed) ||
+    (activeBanner === 'messenger' && isMessengerBannerDismissed);
   const visibleBanner = isActiveBannerDismissed ? null : activeBanner;
 
   // Get agent's model info for vision support check. Falls back to an empty
@@ -126,8 +131,9 @@ const InputArea = () => {
       >
         {visibleBanner === 'skill' && <SkillInstallBanner />}
         {visibleBanner === 'botIntegration' && <BotIntegrationBanner />}
-
-        <DragUploadZone
+        {visibleBanner === 'messenger' && <MessengerBanner />}
+        <InputDragUpload
+          radius={20}
           style={{ position: 'relative', zIndex: 1 }}
           onUploadFiles={handleUploadFiles}
         >
@@ -160,7 +166,7 @@ const InputArea = () => {
               showControlBar={false}
             />
           </ChatInputProvider>
-        </DragUploadZone>
+        </InputDragUpload>
       </Flexbox>
 
       <StarterList />
