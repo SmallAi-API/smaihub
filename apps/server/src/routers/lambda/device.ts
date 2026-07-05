@@ -18,6 +18,7 @@ import { type DeviceAttachment, deviceGateway } from '@/server/services/deviceGa
 
 import { preserveWorkspaceCache } from './deviceWorkingDirs';
 import { assertWorkspaceRootApproved } from './deviceWorkspaceGuard';
+import { workingDirConfigSchema } from './workingDirSchema';
 
 // Derive the zod enum from the canonical config so new platforms are
 // automatically covered without touching this file.
@@ -820,10 +821,7 @@ export const deviceRouter = router({
         defaultCwd: z.string().nullish(),
         deviceId: z.string(),
         friendlyName: z.string().max(100).nullish(),
-        workingDirs: z
-          .array(z.object({ path: z.string(), repoType: z.enum(['git', 'github']).optional() }))
-          .max(20)
-          .optional(),
+        workingDirs: z.array(workingDirConfigSchema).max(20).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -908,16 +906,7 @@ export const deviceRouter = router({
         defaultCwd: z.string().nullish(),
         deviceId: z.string(),
         friendlyName: z.string().max(100).nullish(),
-        workingDirs: z
-          .array(
-            z.object({
-              git: z.object({ activeWorktree: z.string().optional() }).optional(),
-              path: z.string(),
-              repoType: z.enum(['git', 'github']).optional(),
-            }),
-          )
-          .max(20)
-          .optional(),
+        workingDirs: z.array(workingDirConfigSchema).max(20).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
