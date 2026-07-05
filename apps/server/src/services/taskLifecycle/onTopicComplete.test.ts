@@ -67,7 +67,6 @@ describe('TaskLifecycleService.onTopicComplete', () => {
     taskModel.shouldPauseOnTopicComplete = vi.fn().mockReturnValue(true);
     // Avoid generateHandoff side effects by skipping when lastAssistantContent is undefined
     (service as any).taskTopicModel.updateStatus = updateTopicStatus;
-    (service as any).taskTopicModel.updateHandoffContent = vi.fn().mockResolvedValue(undefined);
     (service as any).briefModel.create = createBrief;
     (service as any).briefModel.hasUnresolvedUrgentByTask = vi.fn().mockResolvedValue(false);
   });

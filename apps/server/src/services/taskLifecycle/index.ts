@@ -125,7 +125,7 @@ export class TaskLifecycleService {
       // 1. Update topic status
       if (topicId) await this.taskTopicModel.updateStatus(taskId, topicId, 'completed');
 
-      // 2. Generate handoff summary + topic title (best-effort LLM synthesis).
+      // 2. Generate handoff summary + topic title
       if (topicId && lastAssistantContent) {
         await this.generateHandoff(
           taskId,
@@ -452,9 +452,7 @@ export class TaskLifecycleService {
         await this.topicModel.update(topicId, { title: handoff.title });
       }
 
-      // Store handoff in task_topics dedicated fields. `handoff.content` (the raw
-      // last message) is persisted separately in onTopicComplete so it survives
-      // even when this LLM synthesis throws.
+      // Store handoff in task_topics dedicated fields
       await this.taskTopicModel.updateHandoff(taskId, topicId, handoff);
 
       log('handoff generated for topic %s: title=%s', topicId, handoff.title);

@@ -88,6 +88,7 @@ export class TopicDocumentModel {
         and(
           eq(topicDocuments.topicId, topicId),
           this.ownership(),
+          buildWorkspaceWhere({ userId: this.userId, workspaceId: this.workspaceId }, documents),
           filter?.type ? eq(documents.fileType, filter.type) : undefined,
         ),
       )
