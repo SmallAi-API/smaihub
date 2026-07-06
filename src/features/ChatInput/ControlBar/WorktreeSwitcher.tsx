@@ -1,4 +1,8 @@
-import type { DeviceGitWorktreeListItem, WorkingDirEntry } from '@lobechat/types';
+import {
+  deriveWorktreePath,
+  type DeviceGitWorktreeListItem,
+  type WorkingDirEntry,
+} from '@lobechat/types';
 import { Icon, Tooltip } from '@lobehub/ui';
 import {
   confirmModal,
@@ -11,12 +15,13 @@ import {
   toast,
 } from '@lobehub/ui/base-ui';
 import { createStaticStyles, cssVar } from 'antd-style';
-import { CheckIcon, GitForkIcon, Trash2Icon } from 'lucide-react';
+import { CheckIcon, FolderPlusIcon, GitForkIcon, Trash2Icon } from 'lucide-react';
 import { memo, type MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { gitService } from '@/services/git';
 
+import { openCreateWorktreeModal } from './CreateWorktreeModal';
 import { useCommitWorkingDirectory } from './useCommitWorkingDirectory';
 
 const styles = createStaticStyles(({ css }) => ({
@@ -189,6 +194,32 @@ const styles = createStaticStyles(({ css }) => ({
     overflow-y: auto;
     max-height: 360px;
     padding: 6px;
+  `,
+  createItemWrapper: css`
+    padding: 6px;
+    border-block-start: 1px solid ${cssVar.colorSplit};
+  `,
+  createItem: css`
+    cursor: pointer;
+
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    padding-block: 6px;
+    padding-inline: 8px;
+    border-radius: 8px;
+
+    font-size: 13px;
+    color: ${cssVar.colorText};
+
+    &:hover {
+      background: ${cssVar.colorFillTertiary};
+    }
+  `,
+  createItemIcon: css`
+    flex: none;
+    color: ${cssVar.colorTextSecondary};
   `,
   name: css`
     overflow: hidden;
@@ -456,6 +487,37 @@ const WorktreeSwitcher = memo<WorktreeSwitcherProps>(
       [deviceId, onWorktreesChange, path, t, tCommon],
     );
 
+    // Create a worktree on a fresh branch (mirrors the branch switcher's "create
+    // branch" flow), then switch the working directory into it. Returns an error
+    // message for inline display in the modal, or undefined on success.
+    const handleCreateWorktree = useCallback(
+      async (branch: string): Promise<string | undefined> => {
+        const worktreePath = deriveWorktreePath(sourcePath, branch);
+        const result = await gitService.addGitWorktree({ branch, deviceId, path, worktreePath });
+        if (!result.success) return result.error || t('workingDirectory.createWorktreeFailed');
+
+        // Point the conversation at the freshly created worktree, then reconcile
+        // the list so the new row (now `current`) appears.
+        const createdPath = result.worktreePath ?? worktreePath;
+        await commit({
+          git: { activeWorktree: createdPath },
+          path: sourcePath,
+          repoType: isGithub ? 'github' : 'git',
+        });
+        await onWorktreesChange?.();
+        return undefined;
+      },
+      [commit, deviceId, isGithub, onWorktreesChange, path, sourcePath, t],
+    );
+
+    const openCreateWorktree = useCallback(() => {
+      setOpen(false);
+      openCreateWorktreeModal({
+        onSubmit: handleCreateWorktree,
+        resolvePath: (branch) => deriveWorktreePath(sourcePath, branch),
+      });
+    }, [handleCreateWorktree, sourcePath]);
+
     // Scroll the current worktree into view each time the dropdown opens — the
     // list mounts at scrollTop=0, so a current worktree below the fold would
     // otherwise read as "nothing selected".
@@ -584,6 +646,17 @@ const WorktreeSwitcher = memo<WorktreeSwitcherProps>(
                       );
                     })
                   )}
+                </div>
+
+                <div className={styles.createItemWrapper}>
+                  <DropdownMenuItem
+                    className={styles.createItem}
+                    closeOnClick={false}
+                    onClick={openCreateWorktree}
+                  >
+                    <Icon className={styles.createItemIcon} icon={FolderPlusIcon} size={14} />
+                    <div>{t('workingDirectory.createWorktreeAction')}</div>
+                  </DropdownMenuItem>
                 </div>
               </div>
             </DropdownMenuPopup>
