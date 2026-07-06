@@ -279,6 +279,31 @@ export class DocumentModel {
    * @returns the ids of the documents that were re-published.
    */
   publishToWorkspace = async (rootId: string): Promise<{ documentIds: string[] }> => {
+    return this.setVisibility(rootId, 'public');
+  };
+
+  /**
+   * Flip a document subtree's `visibility`. Bidirectional companion to
+   * `publishToWorkspace`; both directions cascade the whole subtree so the
+   * P1 tree-consistency invariant (private/public do not mix inside one tree)
+   * holds after the transition.
+   *
+   * The `eq(user_id)` + `eq(visibility, fromVisibility)` guards keep the
+   * operation creator-only and idempotent against rows that already sit at the
+   * target visibility. Rows created by other workspace members inside the
+   * subtree (rare — happens if a public tree gets nested workspace edits) are
+   * intentionally left untouched: only the caller's own rows flip.
+   *
+   * Unpublishing is safe by design — after the flip, `buildWorkspaceWhere`
+   * hides those rows from other members immediately; already-loaded content in
+   * their client stays until they refresh.
+   */
+  setVisibility = async (
+    rootId: string,
+    visibility: 'private' | 'public',
+  ): Promise<{ documentIds: string[] }> => {
+    const fromVisibility = visibility === 'public' ? 'private' : 'public';
+
     return this.db.transaction(async (trx) => {
       const scopedTrx = new DocumentModel(
         trx as LobeChatDatabase,

@@ -58,7 +58,20 @@ export class TopicDocumentModel {
   };
 
   /**
+<<<<<<< HEAD
    * Get all documents associated with a topic
+=======
+   * Get all documents associated with a topic.
+   *
+   * The junction table doesn't carry a `visibility` column, so its
+   * `ownership()` only matches the current workspace. Without a second
+   * visibility guard on the joined `documents` row, a private document
+   * previously shared into a workspace-visible topic would leak back to
+   * every workspace member after its creator flipped it to `private` via
+   * `setVisibility`. Apply `buildWorkspaceWhere` on `documents`
+   * so the join drops rows the current viewer can no longer read — they
+   * simply disappear from the sidebar list.
+>>>>>>> 84885c8c85 (🧹 chore: remove LOBE-XXX internal marker references from source comments (#16778))
    */
   findByTopicId = async (
     topicId: string,

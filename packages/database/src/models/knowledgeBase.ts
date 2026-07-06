@@ -225,10 +225,21 @@ export class KnowledgeBaseModel {
       .where(and(eq(knowledgeBases.id, id), this.ownership()));
 
   /**
-   * Publish a private knowledge base into the workspace. **One-way only** —
-   * mirrors `FileModel.publishToWorkspace`. The combined `user_id = ?` +
-   * `visibility = 'private'` guards lock the operation to the creator's own
-   * still-private KB; an already-public row is a no-op.
+   * Publish a private knowledge base into the workspace. Thin wrapper around
+   * `setVisibility(id, 'public')`; kept as a named method for the TRPC
+   * `publishKnowledgeBaseToWorkspace` procedure and existing callers.
+   */
+  publishToWorkspace = async (id: string) => this.setVisibility(id, 'public');
+
+  /**
+   * Flip a knowledge base's `visibility`. Bidirectional companion to
+   * `publishToWorkspace`. The combined `user_id = ?` +
+   * `visibility = fromVisibility` guards keep the operation creator-only and
+   * idempotent against rows already at the target visibility.
+   *
+   * Unpublishing is safe by design — this column only gates KB list
+   * enumeration; other members lose the sidebar entry immediately, while
+   * downstream RAG paths handle a missing/unreachable KB.
    */
   publishToWorkspace = async (id: string) =>
     this.db

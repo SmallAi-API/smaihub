@@ -41,7 +41,7 @@ const HomePage = memo(() => {
 
   // Gate each section independently so a failure in one featured list surfaces a
   // Retry there instead of leaving the whole page on a permanent skeleton
-  // (LOBE-11223).
+  //
   return (
     <>
       <Title more={t('home.more')} moreLink={'/community/agent'}>

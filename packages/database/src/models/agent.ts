@@ -505,8 +505,19 @@ export class AgentModel {
   };
 
   getAgentAssignedKnowledge = async (id: string) => {
-    // Run both queries in parallel for better performance
-    // Include userId check to ensure user can only access their own agent's knowledge
+    // The junction tables carry the mount (created by whoever wired the agent
+    // to the KB / file); the ownership() predicates below match the caller's
+    // own mount rows within the same workspace.
+    //
+    // The joined `knowledgeBases` / `files` rows also need a visibility guard
+    // in the `leftJoin` ON clause: without it, a KB or file that was later
+    // flipped back to `private` via `setVisibility` would keep
+    // leaking its name / description into every mounted-agent view across the
+    // workspace. Enforcing the guard on the ON clause (rather than WHERE)
+    // keeps the mount row in the result but nulls out the referenced entity —
+    // callers can then treat `id === null` as "unavailable" and render a
+    // placeholder in the editor list, while `resolveAgentKnowledgeBaseIds` in
+    // the runtime naturally skips such rows via its `k.id` filter.
     const [knowledgeBaseResult, fileResult] = await Promise.all([
       this.db
         .select({ enabled: agentsKnowledgeBases.enabled, knowledgeBases })
