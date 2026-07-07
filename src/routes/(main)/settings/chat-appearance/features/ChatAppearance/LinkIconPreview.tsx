@@ -49,19 +49,12 @@ const LinkIconPreview = memo(() => (
       i18nKey="settingChatAppearance.linkIcon.previewMessage"
       ns="setting"
       components={{
-        repo: (
-          <SampleLink
-            href="https://github.com/lobehub/lobehub"
-            kind="github"
-            label="lobehub/lobehub"
-          />
-        ),
         site: (
           <SampleLink
-            domain="lobehub.com"
-            href="https://lobehub.com"
+            domain="api.smai.ai"
+            href="https://api.smai.ai"
             kind="generic"
-            label="lobehub.com"
+            label="api.smai.ai"
           />
         ),
       }}
