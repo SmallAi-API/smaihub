@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -33,6 +33,9 @@ vi.mock('@/services/git', () => ({
 
 vi.mock('@lobehub/ui', () => ({
   Icon: () => <span data-testid="icon" />,
+  Input: ({ value, onChange, placeholder }: any) => (
+    <input placeholder={placeholder} value={value} onChange={onChange} />
+  ),
   Tooltip: ({ children }: { children: ReactNode }) => (
     <span data-testid="worktree-tooltip">{children}</span>
   ),
