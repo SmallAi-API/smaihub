@@ -73,11 +73,14 @@ export class Crawler {
           };
         }
 
+        console.error(
+          `[${impl}] returned empty or short content (length: ${res?.content?.length ?? 0})`,
+        );
         finalError = new Error(`${impl} returned empty or short content`);
         finalError.name = 'EmptyCrawlResultError';
         finalCrawler = impl;
       } catch (error) {
-        console.error(error);
+        console.error(`[${impl}]`, error);
         finalError = error as Error;
         finalCrawler = impl;
       }
