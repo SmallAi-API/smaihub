@@ -7,6 +7,8 @@
   "features.assistantMessageGroup.title": "助手訊息彙整群組",
   "features.fleet.desc": "在標題欄中顯示艦隊條目 — 一個並排的儀表板，顯示您所有代理上運行的任務。",
   "features.fleet.title": "艦隊視圖",
+  "features.foldFinishedTurn.desc": "在最終答案可見後，將已完成代理回合的過程（推理和工具調用）折疊在「已處理」標題下。點擊以展開過程。",
+  "features.foldFinishedTurn.title": "折疊已完成回合",
   "features.groupChat.desc": "啟用多智能體群組聊天編排功能。",
   "features.groupChat.title": "群組聊天（多智能體）",
   "features.imessage.desc": "通過本地 LobeHub Desktop BlueBubbles 橋接連接代理到 iMessage。",

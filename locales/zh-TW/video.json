@@ -27,8 +27,12 @@
   "generation.status.generating": "生成中...",
   "generation.validation.endFrameRequiresStartFrame": "結束畫面必須有開始畫面。請先設置開始畫面。",
   "topic.createNew": "建立新主題",
+  "topic.createdBy": "由 {{name}} 創建",
   "topic.deleteConfirm": "刪除視頻主題",
   "topic.deleteConfirmDesc": "您即將刪除此視頻主題。此操作無法撤銷。",
+  "topic.privateTitle": "私人",
   "topic.title": "視頻主題",
-  "topic.untitled": "默認主題"
+  "topic.untitled": "默認主題",
+  "topic.visibility.existingLocked": "當前主題的可見性是固定的。請創建一個新主題以選擇不同的空間。",
+  "topic.workspaceTitle": "工作區"
 }
