@@ -12,6 +12,9 @@ export default defineConfig({
         __dirname,
         '../../packages/device-control/src/workspace',
       ),
+      // Not hoisted to the (super)project root node_modules, so resolve it to
+      // workspace source like the packages above.
+      '@lobechat/device-identity': resolve(__dirname, '../../packages/device-identity/src'),
       '@lobechat/local-file-shell': resolve(__dirname, '../../packages/local-file-shell/src'),
     },
     coverage: {
