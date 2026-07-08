@@ -415,6 +415,8 @@ export default {
   'devices.remove.confirmMany': 'Remove {{count}} devices?',
   'devices.remove.confirmManyDesc':
     'This disconnects the selected devices from your account. They are not signed out, and each can re-register on next connect.',
+  'devices.remove.currentSessionWarning':
+    "This includes the device you're using right now — removing it disconnects your current session.",
   'devices.selection.selected': '{{count}} selected',
   'devices.selection.total': '{{count}} devices',
   'devices.status.offline': 'Offline',
@@ -555,6 +557,7 @@ export default {
   'memory.enabled.desc':
     'Allow to extract preferences and info from conversations and use them later. You can view, edit, or clear memory anytime.',
   'memory.enabled.title': 'Enable Memory',
+  'memory.manageEntry': 'Manage memories',
   'memory.title': 'Memory Settings',
   'message.success': 'Update successful',
   'notification.enabled': 'Enabled',

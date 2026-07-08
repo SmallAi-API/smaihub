@@ -2,8 +2,8 @@
 
 import { isDesktop } from '@lobechat/const';
 import type { DeviceScope } from '@lobechat/types';
-import { Checkbox, Flexbox, Icon, Skeleton, Text } from '@lobehub/ui';
-import { Button, confirmModal } from '@lobehub/ui/base-ui';
+import { Button, Checkbox, Flexbox, Icon, Skeleton, Text } from '@lobehub/ui';
+import { confirmModal } from '@lobehub/ui/base-ui';
 import { createStaticStyles, cssVar } from 'antd-style';
 import {
   ChevronRightIcon,
@@ -112,7 +112,7 @@ const styles = createStaticStyles(({ css }) => ({
   `,
   optionGrid: css`
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 1px;
     background: ${cssVar.colorBorderSecondary};
   `,
@@ -390,8 +390,13 @@ const DeviceManager = memo<DeviceManagerProps>(({ onConnect, scope }) => {
   const handleBulkRemove = () => {
     const ids = editableDevices.filter((d) => checkedIds.has(d.deviceId)).map((d) => d.deviceId);
     if (ids.length === 0) return;
+    // Revoking the machine the user is on right now disconnects this very session
+    // — call it out so a bulk sweep can't silently cut the ground from under them.
+    const includesCurrent = ids.some((id) => isCurrent(id));
     confirmModal({
-      content: t('devices.remove.confirmManyDesc', { count: ids.length }),
+      content: includesCurrent
+        ? `${t('devices.remove.confirmManyDesc', { count: ids.length })}\n\n${t('devices.remove.currentSessionWarning')}`
+        : t('devices.remove.confirmManyDesc', { count: ids.length }),
       okButtonProps: { danger: true },
       okText: t('devices.actions.removeSelected', { count: ids.length }),
       onOk: async () => {
@@ -461,6 +466,7 @@ const DeviceManager = memo<DeviceManagerProps>(({ onConnect, scope }) => {
                   isCurrent={isCurrent(device.deviceId)}
                   key={device.deviceId}
                   selected={device.deviceId === selectedId}
+                  selectionActive={selectionActive}
                   // Withholding the handler also withholds the checkbox; non-
                   // editable rows render without a tick so bulk selection only
                   // ever includes devices the server would accept.
