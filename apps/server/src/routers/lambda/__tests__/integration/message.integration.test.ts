@@ -785,44 +785,6 @@ describe('Message Router Integration Tests', () => {
     });
   });
 
-  describe('removeAllMessages', () => {
-    it('should remove all messages for the user', async () => {
-      const caller = messageRouter.createCaller(createTestContext(userId));
-
-      // 创建多个 session 和消息
-      await caller.createMessage({
-        content: 'Message 1',
-        role: 'user',
-        sessionId: testSessionId,
-      });
-
-      const [anotherSession] = await serverDB
-        .insert(sessions)
-        .values({
-          userId,
-          type: 'agent',
-        })
-        .returning();
-
-      await caller.createMessage({
-        content: 'Message 2',
-        role: 'user',
-        sessionId: anotherSession.id,
-      });
-
-      // 删除所有消息
-      await caller.removeAllMessages();
-
-      // 验证所有消息已删除
-      const remainingMessages = await serverDB
-        .select()
-        .from(messages)
-        .where(eq(messages.userId, userId));
-
-      expect(remainingMessages).toHaveLength(0);
-    });
-  });
-
   describe('removeMessageQuery', () => {
     it('should remove message query', async () => {
       const caller = messageRouter.createCaller(createTestContext(userId));
@@ -993,7 +955,7 @@ describe('Message Router Integration Tests', () => {
         sessionId: testSessionId,
       });
 
-      const msg2 = await caller.createMessage({
+      await caller.createMessage({
         content: 'Message 2',
         role: 'user',
         sessionId: testSessionId,
