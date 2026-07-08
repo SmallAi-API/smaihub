@@ -1,10 +1,6 @@
 # LobeChat Development Guidelines
 
-This document serves as a comprehensive guide for all team members when developing LobeChat.
-
-## Project Description
-
-You are developing an open-source, modern-design AI Agent Workspace: LobeHub (previously LobeChat).
+Guidelines for using AI coding agents in this opensource LobeHub repository.
 
 ## Tech Stack
 
@@ -41,7 +37,46 @@ lobehub/
 └── e2e/                    # E2E tests (Cucumber + Playwright)
 ```
 
-## Development Workflow
+## SPA Routes and Features
+
+SPA-related code is grouped under `src/spa/` (entries + router) and `src/routes/` (page segments). We use a **roots vs features** split: route trees only hold page segments; business logic and UI live in features.
+
+- **`src/spa/`** – SPA entry points (`entry.web.tsx`, `entry.mobile.tsx`, `entry.desktop.tsx`, `entry.popup.tsx`) and React Router config (`router/`, with `desktopRouter.config.*`, `mobileRouter.config.tsx`, `popupRouter.config.tsx`). Keeps router config next to entries to avoid confusion with `src/routes/`.
+
+- **`src/routes/` (roots)**\
+  Only page-segment files: `_layout/index.tsx`, `index.tsx` (or `page.tsx`), and dynamic segments like `[id]/index.tsx`. Keep these **thin**: they should only import from `@/features/*` and compose layout/page, with no business logic or heavy UI.
+
+- **`src/features/`**\
+  Business components by **domain** (e.g. `Pages`, `PageEditor`, `Home`). Put layout chunks (sidebar, header, body), hooks, and domain-specific UI here. Each feature exposes an `index.ts` (or `index.tsx`) with clear exports.
+
+When adding or changing SPA routes:
+
+1. In `src/routes/`, add only the route segment files (layout + page) that delegate to features.
+2. Implement layout and page content under `src/features/<Domain>/` and export from there.
+3. In route files, use `import { X } from '@/features/<Domain>'` (or `import Y from '@/features/<Domain>/...'`). Do not add new `features/` folders inside `src/routes/`.
+4. **Register the desktop route tree in both configs:** `src/spa/router/desktopRouter.config.tsx` and `src/spa/router/desktopRouter.config.desktop.tsx` must stay in sync (same paths and nesting). Updating only one can cause **blank screens** if the other build path expects the route. `desktopRouter.sync.test.tsx` guards this invariant — keep it passing.
+
+See the **spa-routes** skill for the full convention and file-division rules.
+
+## Development
+
+### Starting the Dev Environment
+
+```bash
+# SPA dev mode (frontend only, proxies API to localhost:3010)
+bun run dev:spa
+
+# Full-stack dev (Next.js + Vite SPA concurrently)
+bun run dev
+```
+
+After `dev:spa` starts, the terminal prints a **Debug Proxy** URL:
+
+```plaintext
+Debug Proxy: https://app.lobehub.com/_dangerous_local_dev_proxy?debug-host=http%3A%2F%2Flocalhost%3A9876
+```
+
+Open this URL to develop locally against the production backend (app.lobehub.com). The proxy page loads your local Vite dev server's SPA into the online environment, enabling HMR with real server config.
 
 ### Git Workflow
 
@@ -67,26 +102,20 @@ lobehub/
 ### Testing Strategy
 
 ```bash
-# Web tests
-bunx vitest run --silent='passed-only' '[file-path-pattern]'
-
-# Package tests (e.g., database)
-cd packages/[package-name] && bunx vitest run --silent='passed-only' '[file-path-pattern]'
+bun run check [changed-files...]
 ```
 
-- Prefer `vi.spyOn` over `vi.mock`
-
-### Type Checking
-
-```bash
-bun run type-check
-```
+- No selector = **lint + test in a single pass** — run it once; don't fire a separate pass per selector. `--lint` / `--test` / `--type` narrow scope and are composable within one run. Default files = all working-tree changes (staged + unstaged + untracked); explicit paths override.
+- `--lint` auto-fixes the given files and prints the applied fixes as a diff, so you can review what changed.
+- `--test` auto-discovers the related tests for the given source files and runs them under the nearest owning vitest config (e.g. `packages/database`) — no need to `cd` into packages.
+- `--type` runs the full type-check. NEVER run `bun run test` — the full suite takes \~10 minutes.
+- To run tests manually (e.g. a single file or unusual flags), `cd` into the owning package first: `cd packages/database && bunx vitest run --silent='passed-only' '[file-path]'`.
 
 ### i18n
 
 - Add keys to a namespace file under `src/locales/default/` (e.g. `agent.ts`, `auth.ts`)
-- For dev preview: translate `locales/zh-CN/` and `locales/en-US/`
-- `pnpm i18n` is slow; run it manually when locale keys need updating (e.g. before opening a PR).
+- Hand-write en-US + zh-CN for dev preview: author the English source in `src/locales/default/*.ts`, mirror it to `locales/en-US/`, and hand-translate `locales/zh-CN/`.
+- Before opening the PR, run `bun run i18n` (slow) to fill the remaining locales with the script — don't hand-translate those.
 
 ### Code Style
 
@@ -94,16 +123,6 @@ bun run type-check
 
 ### Code Review
 
-Before reviewing a PR / diff / branch change, read the **deep-review** skill (`.agents/skills/deep-review/SKILL.md`). Ordinary review requests use its light mode (inline review against the dimension quick checklists); the full multi-subagent deep mode runs only on explicit invocation.
+Before reviewing a PR / diff / branch change, read the **deep-review** skill. Ordinary review requests use its light mode (inline review against the dimension quick checklists); the full multi-subagent deep mode runs only on explicit invocation.
 
 When designing or reviewing user-facing flows (empty/loading/error states, confirmations, async feedback, button hierarchy, lists at scale, pickers), follow LobeHub's design values in [`DESIGN.md`](./DESIGN.md) — Natural / Meaningful / Certainty / Growth (自然 / 意义感 / 确定性 / 成长).
-
-<!-- BEGIN:nextjs-agent-rules -->
-
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-
-**Keep this block, including in commits.** It is part of the project's agent setup, maintained by `next dev` for every agent that works here. If it appears as an uncommitted change, that is intentional — commit it as-is. Do not remove it to clean up a diff; it will be regenerated.
-
-<!-- END:nextjs-agent-rules -->
