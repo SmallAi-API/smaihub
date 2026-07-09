@@ -3,7 +3,10 @@ import type { LobeToolManifest } from '@lobechat/context-engine';
 import type { LobeChatDatabase } from '@lobechat/database';
 import debug from 'debug';
 
+import { ConnectorModel } from '@/database/models/connector';
+import { ConnectorToolModel } from '@/database/models/connectorTool';
 import { PluginModel } from '@/database/models/plugin';
+import type { UserConnectorToolItem } from '@/database/schemas';
 import { getComposioClient, isComposioClientAvailable } from '@/libs/composio';
 import { type ToolExecutionResult } from '@/server/services/toolExecution/types';
 
@@ -20,8 +23,19 @@ export interface ComposioServiceOptions {
   userId?: string;
 }
 
+/**
+ * Server-side Composio runtime.
+ *
+ * Source of truth is `user_connectors` (+ `user_connector_tools`): a Composio
+ * connection lives on a connector row whose `metadata.composio` carries the
+ * runtime config (`connectedAccountId`). The legacy `user_installed_plugins`
+ * projection is still read as a **fallback** for connections created before the
+ * dual-write landed, so no data migration is required.
+ */
 export class ComposioService {
   private pluginModel?: PluginModel;
+  private connectorModel?: ConnectorModel;
+  private connectorToolModel?: ConnectorToolModel;
   private userId?: string;
 
   constructor(options: ComposioServiceOptions = {}) {
@@ -29,7 +43,10 @@ export class ComposioService {
     this.userId = userId;
 
     if (db && userId) {
+      // Personal-scoped, mirroring the write path in the composio lambda router.
       this.pluginModel = new PluginModel(db, userId);
+      this.connectorModel = new ConnectorModel(db, userId);
+      this.connectorToolModel = new ConnectorToolModel(db, userId);
     }
 
     log(
@@ -53,7 +70,7 @@ export class ComposioService {
       };
     }
 
-    if (!this.pluginModel || !this.userId) {
+    if (!this.userId || (!this.connectorModel && !this.pluginModel)) {
       return {
         content: 'Composio service is not properly initialized',
         error: {
@@ -65,18 +82,8 @@ export class ComposioService {
     }
 
     try {
-      const plugin = await this.pluginModel.findById(identifier);
-      if (!plugin) {
-        return {
-          content: `Composio server "${identifier}" not found in database`,
-          error: { code: 'COMPOSIO_SERVER_NOT_FOUND', message: `Server ${identifier} not found` },
-          success: false,
-        };
-      }
-
-      const composioParams = plugin.customParams?.composio;
-      const isNoAuth = composioParams?.noAuth === true;
-      if (!isNoAuth && !composioParams?.connectedAccountId) {
+      const { connectedAccountId, noAuth: isNoAuth } = await this.resolveComposioConfig(identifier);
+      if (!isNoAuth && !connectedAccountId) {
         return {
           content: `Composio configuration not found for server "${identifier}"`,
           error: {
@@ -86,8 +93,6 @@ export class ComposioService {
           success: false,
         };
       }
-
-      const connectedAccountId = composioParams?.connectedAccountId;
 
       log(
         'executeComposioTool: calling Composio API with connectedAccountId=%s, noAuth=%s',
@@ -144,33 +149,114 @@ export class ComposioService {
     }
   }
 
-  async getComposioManifests(): Promise<LobeToolManifest[]> {
-    if (!this.pluginModel) {
-      log('getComposioManifests: pluginModel not available, returning empty array');
-      return [];
+  /**
+   * Resolve the Composio runtime config (`connectedAccountId` + `noAuth`) for an
+   * identifier. Connector metadata first (new path); plugin customParams as
+   * fallback (old connections without a connector projection).
+   *
+   * `noAuth` is only projected onto the plugin table (`registerNoAuth` never
+   * writes a connector row), so a connector hit always implies auth-required.
+   */
+  private async resolveComposioConfig(
+    identifier: string,
+  ): Promise<{ connectedAccountId?: string; noAuth: boolean }> {
+    if (this.connectorModel) {
+      const [connector] = await this.connectorModel.queryByIdentifiers([identifier]);
+      const fromConnector = connector?.metadata?.composio?.connectedAccountId;
+      if (fromConnector) return { connectedAccountId: fromConnector, noAuth: false };
     }
 
-    try {
-      const allPlugins = await this.pluginModel.query();
+    if (this.pluginModel) {
+      const plugin = await this.pluginModel.findById(identifier);
+      const composio = plugin?.customParams?.composio;
+      return {
+        connectedAccountId: composio?.connectedAccountId,
+        noAuth: composio?.noAuth === true,
+      };
+    }
 
-      // Expose every ACTIVE Composio plugin to the agent runtime — including
-      // toolkits connected via the dynamic catalog (outside the static curated
-      // list). The plugin's persisted manifest carries the title/meta, so no
-      // static-catalog lookup is required.
-      const composioPlugins = allPlugins.filter(
-        (plugin) =>
-          plugin.customParams?.composio && plugin.customParams.composio.status === 'ACTIVE',
-      );
+    return { noAuth: false };
+  }
 
-      log('getComposioManifests: found %d authenticated Composio plugins', composioPlugins.length);
+  async getComposioManifests(): Promise<LobeToolManifest[]> {
+    const manifests: LobeToolManifest[] = [];
+    const coveredIdentifiers = new Set<string>();
 
-      const manifests: LobeToolManifest[] = composioPlugins
-        .map((plugin) => {
-          if (!plugin.manifest) return null;
+    // 1. Connector-based (new path): rows whose metadata.composio marks them as
+    //    Composio connectors and are ACTIVE. Tool defs come from
+    //    user_connector_tools (all of them, so disabled tools stay visible for
+    //    downstream permission patching).
+    if (this.connectorModel && this.connectorToolModel) {
+      try {
+        const connectors = await this.connectorModel.query();
+        const composioConnectors = connectors.filter(
+          (c) => c.isEnabled && c.metadata?.composio?.status === 'ACTIVE',
+        );
 
+        if (composioConnectors.length > 0) {
+          const tools = await this.connectorToolModel.queryAllByConnectorIds(
+            composioConnectors.map((c) => c.id),
+          );
+          const toolsByConnector = new Map<string, UserConnectorToolItem[]>();
+          for (const tool of tools) {
+            const list = toolsByConnector.get(tool.userConnectorId) ?? [];
+            list.push(tool);
+            toolsByConnector.set(tool.userConnectorId, list);
+          }
+
+          for (const connector of composioConnectors) {
+            const connectorTools = toolsByConnector.get(connector.id) ?? [];
+            if (connectorTools.length === 0) continue;
+
+            const appType = COMPOSIO_APP_TYPES.find((t) => t.identifier === connector.identifier);
+            const label = connector.name || appType?.label || connector.identifier;
+
+            manifests.push({
+              api: connectorTools.map((t) => ({
+                description: t.description ?? '',
+                name: t.toolName,
+                parameters: (t.inputSchema ?? { properties: {}, type: 'object' }) as Record<
+                  string,
+                  unknown
+                >,
+              })),
+              author: 'Composio',
+              homepage: 'https://composio.dev',
+              identifier: connector.identifier,
+              meta: {
+                avatar: connector.metadata?.avatar || '☁️',
+                description: `Composio: ${label}`,
+                tags: ['composio', 'mcp'],
+                title: label,
+              },
+              type: 'builtin',
+              version: '1.0.0',
+            } as LobeToolManifest);
+            coveredIdentifiers.add(connector.identifier);
+          }
+        }
+      } catch (error) {
+        console.error('ComposioService.getComposioManifests (connector) error: %O', error);
+      }
+    }
+
+    // 2. Plugin-based fallback (old path): only for identifiers not already
+    //    covered by a connector projection. Preserves manifests for connections
+    //    created before dual-write, so no migration is needed.
+    if (this.pluginModel) {
+      try {
+        const allPlugins = await this.pluginModel.query();
+        const composioPlugins = allPlugins.filter(
+          (plugin) =>
+            plugin.customParams?.composio?.status === 'ACTIVE' &&
+            !coveredIdentifiers.has(plugin.identifier),
+        );
+
+        for (const plugin of composioPlugins) {
+          if (!plugin.manifest) continue;
           const appType = COMPOSIO_APP_TYPES.find((t) => t.identifier === plugin.identifier);
 
-          return {
+          manifests.push({
             api: plugin.manifest.api || [],
             author: 'Composio',
             homepage: 'https://composio.dev',
@@ -183,16 +269,15 @@ export class ComposioService {
             },
             type: 'builtin',
             version: '1.0.0',
-          };
-        })
-        .filter(Boolean) as LobeToolManifest[];
-
-      log('getComposioManifests: returning %d manifests', manifests.length);
-
-      return manifests;
-    } catch (error) {
-      console.error('ComposioService.getComposioManifests error: %O', error);
-      return [];
+          } as LobeToolManifest);
+        }
+      } catch (error) {
+        console.error('ComposioService.getComposioManifests (plugin) error: %O', error);
+      }
     }
+
+    log('getComposioManifests: returning %d manifests', manifests.length);
+
+    return manifests;
   }
 }

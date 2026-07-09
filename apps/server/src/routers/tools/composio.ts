@@ -2,6 +2,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { getServerComposioAuthConfigId } from '@/config/composio';
+import { ConnectorModel } from '@/database/models/connector';
 import { PluginModel } from '@/database/models/plugin';
 import { getComposioClient } from '@/libs/composio';
 import { authedProcedure, publicProcedure, router } from '@/libs/trpc/lambda';
@@ -11,7 +12,8 @@ import { MCPService } from '@/server/services/mcp';
 const composioProcedure = authedProcedure.use(serverDatabase).use(async (opts) => {
   const composioClient = getComposioClient();
   const pluginModel = new PluginModel(opts.ctx.serverDB, opts.ctx.userId);
-  return opts.next({ ctx: { ...opts.ctx, composioClient, pluginModel } });
+  const connectorModel = new ConnectorModel(opts.ctx.serverDB, opts.ctx.userId);
+  return opts.next({ ctx: { ...opts.ctx, composioClient, connectorModel, pluginModel } });
 });
 
 export const composioToolsRouter = router({
@@ -105,14 +107,21 @@ export const composioToolsRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // Resolve the connected account server-side from the caller's own plugin
-      // record (PluginModel is user-scoped). Never trust a connectedAccountId
-      // supplied by the client — that would let a user drive another user's
-      // connection.
-      const plugin = await ctx.pluginModel.findById(input.identifier);
-      const composioParams = plugin?.customParams?.composio;
-      const connectedAccountId = composioParams?.connectedAccountId;
-      const isNoAuth = composioParams?.noAuth === true;
+      // Resolve the connected account server-side from the caller's own records
+      // (models are user-scoped). Never trust a connectedAccountId supplied by
+      // the client — that would let a user drive another user's connection.
+      // Connector metadata first (new path); plugin customParams as fallback for
+      // connections created before the connector projection existed.
+      const [connector] = await ctx.connectorModel.queryByIdentifiers([input.identifier]);
+      let connectedAccountId = connector?.metadata?.composio?.connectedAccountId;
+      // noAuth is only projected onto the plugin table (registerNoAuth never
+      // writes a connector row), so a connector hit always implies auth-required.
+      let isNoAuth = false;
+      if (!connectedAccountId) {
+        const plugin = await ctx.pluginModel.findById(input.identifier);
+        connectedAccountId = plugin?.customParams?.composio?.connectedAccountId;
+        isNoAuth = plugin?.customParams?.composio?.noAuth === true;
+      }
 
       // No-auth toolkits (e.g. composio_search) have no connected account and are
       // executed with just the userId. Auth-requiring toolkits must resolve a
