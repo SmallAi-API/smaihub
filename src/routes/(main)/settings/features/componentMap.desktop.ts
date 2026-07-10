@@ -8,6 +8,7 @@ import { SettingsTabs } from '@/store/global/initialState';
 import About from '../about';
 import Advanced from '../advanced';
 import APIKey from '../apikey';
+import Connector from '../connector';
 import Creds from '../creds';
 import Devices from '../devices';
 import Hotkey from '../hotkey';
@@ -44,6 +45,8 @@ export const componentMap = {
   [SettingsTabs.Creds]: Creds,
   [SettingsTabs.Security]: Security,
   [SettingsTabs.Skill]: Skill,
+  [SettingsTabs.Connector]: Connector,
+
   [SettingsTabs.Plans]: Plans,
   [SettingsTabs.Credits]: Credits,
   [SettingsTabs.Billing]: Billing,
