@@ -544,14 +544,14 @@ describe('convertUsage', () => {
     };
 
     const responseUsage = {
-      input_tokens: 1_000_000,
+      input_tokens: 1000000,
       input_tokens_details: {
-        cached_tokens: 100_000,
-        cache_write_tokens: 400_000,
+        cached_tokens: 100000,
+        cache_write_tokens: 400000,
       },
       output_tokens: 0,
-      total_tokens: 1_000_000,
-    } as OpenAI.Responses.ResponseUsage;
+      total_tokens: 1000000,
+    } as unknown as OpenAI.Responses.ResponseUsage;
 
     const result = convertOpenAIResponseUsage(responseUsage, { pricing });
 
