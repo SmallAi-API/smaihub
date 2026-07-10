@@ -550,8 +550,11 @@ describe('convertUsage', () => {
         cache_write_tokens: 400000,
       },
       output_tokens: 0,
-      total_tokens: 1000000,
-    } as unknown as OpenAI.Responses.ResponseUsage;
+      output_tokens_details: {
+        reasoning_tokens: 0,
+      },
+      total_tokens: 1_000_000,
+    } as OpenAI.Responses.ResponseUsage;
 
     const result = convertOpenAIResponseUsage(responseUsage, { pricing });
 
