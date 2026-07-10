@@ -83,5 +83,6 @@ export const CHANGELOG_URL = 'https://api.smai.ai';
 export const DOWNLOAD_URL = {
   android: 'https://www.smallai.asia/download',
   default: 'https://www.smallai.asia/download',
+  mobile: 'https://www.smallai.asia/download',
   ios: 'https://www.smallai.asia/download',
 } as const;

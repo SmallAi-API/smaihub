@@ -7,6 +7,7 @@ import { ActionIcon, DropdownMenu, Flexbox, Icon } from '@lobehub/ui';
 import {
   Book,
   CircleHelp,
+  Download,
   FlaskConical,
   KeyRound,
   MessageCircle,
@@ -340,7 +341,22 @@ const Footer = memo(() => {
           </a>
         ),
       },
-
+      {
+        type: 'divider',
+      },
+      ...(!isDesktop && footer.layout === 'compact'
+        ? [
+            {
+              icon: <Icon icon={Download} />,
+              key: 'get-app',
+              label: (
+                <WorkspaceLink escape to="/downloads">
+                  {t('getApp')}
+                </WorkspaceLink>
+              ),
+            },
+          ]
+        : []),
       ...(footer.showEvalEntry && footer.layout === 'compact'
         ? [
             {
@@ -372,18 +388,18 @@ const Footer = memo(() => {
       trackedMenuKeys: collectMenuKeys(ownItems),
     };
   }, [
-    trackMenuClick,
     footer.showSettingsEntry,
     footer.layout,
     footer.showEvalEntry,
-    enableBusinessFeatures,
-    handleOpenProductHuntCard,
     isDevMode,
-    shouldShowProductHuntMenuEntry,
     t,
     settingLabelKey,
-    billboardMenuItems,
+    enableBusinessFeatures,
+    shouldShowProductHuntMenuEntry,
+    handleOpenProductHuntCard,
+    trackMenuClick,
     isHomeSidebar,
+    billboardMenuItems,
   ]);
 
   const handleMenuOpenChange = useCallback(

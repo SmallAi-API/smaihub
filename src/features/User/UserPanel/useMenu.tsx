@@ -1,8 +1,8 @@
-import { DOWNLOAD_URL, isDesktop } from '@lobechat/const';
+import { isDesktop } from '@lobechat/const';
 import { Flexbox, Hotkey, Icon, Tag } from '@lobehub/ui';
 import { BrainCircuit, Download, HardDriveDownload, LogOut, Settings2 } from 'lucide-react';
-import { type PropsWithChildren } from 'react';
-import { memo, useMemo } from 'react';
+import type { PropsWithChildren } from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
@@ -13,7 +13,6 @@ import { DEFAULT_DESKTOP_HOTKEY_CONFIG } from '@/const/desktop';
 import DataImporter from '@/features/DataImporter';
 import WorkspaceLink from '@/features/Workspace/WorkspaceLink';
 import { useNavLayout } from '@/hooks/useNavLayout';
-import { usePlatform } from '@/hooks/usePlatform';
 import { useUserStore } from '@/store/user';
 import { authSelectors } from '@/store/user/selectors';
 
@@ -53,13 +52,6 @@ export const useMenu = () => {
   const { userPanel } = useNavLayout();
   const businessMenuItems = useBusinessMenuItems(isLogin);
   const hasActiveWorkspace = useHasActiveWorkspace();
-  const { isIOS, isAndroid } = usePlatform();
-
-  const downloadUrl = useMemo(() => {
-    if (isIOS) return DOWNLOAD_URL.ios;
-    if (isAndroid) return DOWNLOAD_URL.android;
-    return DOWNLOAD_URL.default;
-  }, [isIOS, isAndroid]);
 
   const settings: MenuProps['items'] = [
     {
@@ -88,15 +80,14 @@ export const useMenu = () => {
         ]
       : []),
   ];
-
-  const getDesktopApp: MenuProps['items'] = [
+  const getApp: MenuProps['items'] = [
     {
       icon: <Icon icon={Download} />,
-      key: 'get-desktop-app',
+      key: 'get-app',
       label: (
-        <a href={downloadUrl} rel="noopener noreferrer" target="_blank">
-          {t('getDesktopApp')}
-        </a>
+        <WorkspaceLink escape to="/downloads">
+          {t('getApp')}
+        </WorkspaceLink>
       ),
     },
   ];
@@ -108,7 +99,6 @@ export const useMenu = () => {
 
     ...(isLogin ? settings : []),
     ...businessMenuItems,
-    ...(!isDesktop ? [{ type: 'divider' as const }, ...getDesktopApp] : []),
     ...(userPanel.showDataImporter && isLogin
       ? [
           {
@@ -121,6 +111,7 @@ export const useMenu = () => {
           },
         ]
       : []),
+    ...(!isDesktop ? getApp : []),
   ]
     .filter(Boolean)
     // Remove consecutive dividers to prevent double divider lines

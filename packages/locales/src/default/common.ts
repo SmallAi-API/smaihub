@@ -300,6 +300,7 @@ export default {
   'delete': 'Delete',
   'document': 'User Manual',
   'download': 'Download',
+  'getApp': 'Get App',
   'getDesktopApp': 'Get Desktop App',
   'goToTarget': 'Go to target',
   'duplicate': 'Duplicate',
