@@ -1,8 +1,8 @@
 ---
 title: Configuring S3 Storage Service
 description: >-
-  Learn how to configure S3 storage service to support multimodal AI sessions and image uploads.
-
+  Learn how to configure S3 storage service to support multimodal AI sessions
+  and image uploads.
 tags:
   - S3 Storage
   - Multimodal AI
@@ -55,15 +55,8 @@ LobeHub supports multimodal AI sessions, including the ability to upload unstruc
 
 - Type: Optional
 - Description: Whether to set ACL to `public-read` when uploading files
-- Default: `1`
-- Example: `0`
-
-### `S3_PUBLIC_DOMAIN`
-
-- Type: Required
-- Description: Public access domain for the bucket, used to access files in the bucket
-- Default: -
-- Example: `https://files.example.com`
+- Default: `-` (disabled; the ACL is only set when explicitly configured to `1`)
+- Example: `1`
 
 ### `S3_ENABLE_PATH_STYLE`
 
@@ -75,11 +68,11 @@ LobeHub supports multimodal AI sessions, including the ability to upload unstruc
 <Callout type={'info'}>
   `path-style` and `virtual-host` are different methods of accessing buckets and objects in S3, with differences in URL structure and domain name resolution.
 
-Assuming the S3 service provider's domain is s3.example.net, the bucket is mybucket, and the object is config.env, the specific differences are:
+  Assuming the S3 service provider's domain is s3.example.net, the bucket is mybucket, and the object is config.env, the specific differences are:
 
-- path-style: `s3.example.net/mybucket/config.env`
-- virtual-host: `mybucket.s3.example.net/config.env`
-  </Callout>
+  - path-style: `s3.example.net/mybucket/config.env`
+  - virtual-host: `mybucket.s3.example.net/config.env`
+</Callout>
 
 ### `LLM_VISION_IMAGE_USE_BASE64`
 
@@ -93,3 +86,12 @@ When set to `1`, LobeHub will convert images to base64 encoding before uploading
 ```log
 Route: [xai] ProviderBizError: Fetching images over plain http:// is not supported.
 ```
+
+### `LLM_VISION_VIDEO_USE_BASE64`
+
+- Type: Optional
+- Description: Set to `1` to use base64 encoding for video upload.
+- Default: undefined
+- Example: `1`
+
+When set to `1`, LobeHub will convert videos to base64 encoding before uploading them to the LLM model.

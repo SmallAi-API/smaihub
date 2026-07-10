@@ -1,74 +1,68 @@
 ---
-title: Lobe Chat API Client-Server Interaction Logic
+title: Chat API Client-Server Interaction Logic
 description: >-
-  Explore the client-server interaction logic of Lobe Chat API, including event sequences.
-
+  Explore the client-server interaction logic of LobeHub Chat API, including
+  event sequences and core components.
 tags:
-  - Lobe Chat API
+  - Chat API
   - Client-Server Interaction
-  - Event Sequences
-  - API Logic
+  - Model Runtime
+  - Agent Runtime
+  - MCP
 ---
 
-# Lobe Chat API Client-Server Interaction Logic
+# Chat API Client-Server Interaction Logic
 
-This document explains the implementation logic of Lobe Chat API in client-server interactions, including event sequences and core components involved.
+This document explains the implementation logic of
+LobeHub Chat API in client-server interactions,
+including event sequences and core components involved.
 
 ## Interaction Sequence Diagram
 
 ```mermaid
 sequenceDiagram
     participant Client as Frontend Client
-    participant ChatService as Frontend ChatService
+    participant AgentLoop as Agent Runtime Loop
+    participant ChatService as ChatService
     participant ChatAPI as Backend Chat API
-    participant AgentRuntime as AgentRuntime
+    participant ModelRuntime as Model Runtime
     participant ModelProvider as Model Provider API
-    participant PluginGateway as Plugin Gateway
+    participant ToolExecution as Tool Execution Layer
 
-    Client->>ChatService: Call createAssistantMessage
-    Note over ChatService: Process messages, tools, and parameters
+    Client->>AgentLoop: sendMessage()
+    Note over AgentLoop: Create GeneralChatAgent + AgentRuntime
 
-    ChatService->>ChatService: Call getChatCompletion
-    Note over ChatService: Prepare request parameters
+    loop Agent Plan-Execute Loop
+        AgentLoop->>AgentLoop: Agent decides next instruction
 
-    ChatService->>ChatAPI: Send POST request to /webapi/chat/[provider]
+        alt call_llm instruction
+            AgentLoop->>ChatService: getChatCompletion
+            Note over ChatService: Context engineering
+            ChatService->>ChatAPI: POST /webapi/chat/[provider]
+            ChatAPI->>ModelRuntime: Initialize ModelRuntime
+            ModelRuntime->>ModelProvider: Chat completion request
+            ModelProvider-->>ChatService: Stream back SSE response
+            ChatService-->>Client: onMessageHandle callback
 
-    ChatAPI->>AgentRuntime: Initialize AgentRuntime
-    Note over AgentRuntime: Create runtime with provider and user config
+        else call_tool instruction
+            AgentLoop->>ToolExecution: Execute tool
+            Note over ToolExecution: Builtin / MCP / Plugin
+            ToolExecution-->>AgentLoop: Return tool result
 
-    ChatAPI->>AgentRuntime: Call chat method
-    AgentRuntime->>ModelProvider: Send chat completion request
+        else request_human_* instruction
+            AgentLoop-->>Client: Request user intervention
+            Client->>AgentLoop: User feedback
 
-    ModelProvider-->>AgentRuntime: Return streaming response
-    AgentRuntime-->>ChatAPI: Process response and return stream
-
-    ChatAPI-->>ChatService: Stream back SSE response
-
-    ChatService->>ChatService: Handle streaming response with fetchSSE
-    Note over ChatService: Process event stream with fetchEventSource
-
-    loop For each data chunk
-        ChatService->>ChatService: Handle different event types (text, tool_calls, reasoning, etc.)
-        ChatService-->>Client: Return current chunk via onMessageHandle callback
+        else finish instruction
+            AgentLoop-->>Client: onFinish callback
+        end
     end
 
-    ChatService-->>Client: Return complete result via onFinish callback
-
-    Note over ChatService,ModelProvider: Plugin calling scenario
-    ModelProvider-->>ChatService: Return response with tool_calls
-    ChatService->>ChatService: Parse tool calls
-    ChatService->>ChatService: Call runPluginApi
-    ChatService->>PluginGateway: Send plugin request to gateway
-    PluginGateway-->>ChatService: Return plugin execution result
-    ChatService->>ModelProvider: Return plugin result to model
-    ModelProvider-->>ChatService: Generate final response based on plugin result
-
-    Note over ChatService,ModelProvider: Preset task scenario
-    Client->>ChatService: Trigger preset task (e.g., translation, search)
-    ChatService->>ChatService: Call fetchPresetTaskResult
+    Note over Client,ModelProvider: Preset task scenario (bypasses Agent loop)
+    Client->>ChatService: fetchPresetTaskResult
     ChatService->>ChatAPI: Send preset task request
     ChatAPI-->>ChatService: Return task result
-    ChatService-->>Client: Return result via callback function
+    ChatService-->>Client: Return result via callback
 ```
 
 ## Main Process Steps
@@ -76,7 +70,7 @@ sequenceDiagram
 ### 1. Client Initiates Request
 
 After the user sends a message, `sendMessage()`
-(`src/store/chat/slices/aiChat/actions/conversationLifecycle.ts`)
+(`src/store/chat/slices/agentRun/actions/entries/conversationLifecycle.ts`)
 creates the user message and assistant message placeholder,
 then calls `executeClientAgent()`.
 
@@ -88,7 +82,7 @@ of the entire chat flow. Every chat interaction
 is driven by the `AgentRuntime.step()` loop.
 
 **Initialization**
-(`src/store/chat/slices/aiChat/actions/streamingExecutor.ts`):
+(`src/store/chat/slices/agentRun/actions/transports/client/streamingExecutor.ts`):
 
 1. Resolve agent config (model, provider, plugin list, etc.)
 2. Create the tool registry via `createAgentToolsEngine()`
@@ -132,20 +126,28 @@ the executor calls ChatService:
 - Uses `fetchSSE` from the `@lobechat/fetch-sse` package
   to send the request to the backend API
 
-3. **Backend Processes Request**:
-   - `src/app/(backend)/webapi/chat/[provider]/route.ts` receives the request
-   - Initializes AgentRuntime
-   - Creates the appropriate model instance based on user configuration and provider
+### 4. Backend Processes Request
 
-4. **Model Call**:
-   - `src/libs/agent-runtime/AgentRuntime.ts` calls the respective model provider's API
-   - Returns streaming response
+- `src/app/(backend)/webapi/chat/[provider]/route.ts`
+  receives the request
+- Calls `initModelRuntimeFromDB` to read user's provider
+  config from the database and initialize ModelRuntime
+- A tRPC route `apps/server/src/routers/lambda/aiChat.ts`
+  also exists for server-side message sending
+  and structured output scenarios
 
-5. **Process Response**:
-   - Backend converts model response to Stream and returns it
-   - Frontend processes streaming response via fetchSSE and [fetchEventSource](https://github.com/Azure/fetch-event-source)
-   - Handles different types of events (text, tool calls, reasoning, etc.)
-   - Passes results back to client through callback functions
+### 5. Model Call and Response Processing
+
+- `ModelRuntime`
+  (`packages/model-runtime/src/core/ModelRuntime.ts`)
+  calls the respective model provider's API
+  and returns a streaming response
+- Frontend processes the streaming response via
+  `fetchSSE` and
+  [fetchEventSource](https://github.com/Azure/fetch-event-source)
+- Handles different types of events
+  (text, tool calls, reasoning, etc.)
+- Passes results back to client through callback functions
 
 ### 6. Tool Calling Scenario
 
@@ -198,17 +200,23 @@ These tasks use the `fetchPresetTaskResult` method,
 which is similar to the normal chat flow
 but uses specially designed prompt chains.
 
-**Execution Timing**: Preset tasks are mainly triggered in the following scenarios:
+**Execution Timing**:
 
-1. **Agent Information Auto-generation**: Triggered when users create or edit an agent
+1. **Agent Information Auto-generation**: Triggered when
+   users create or edit an agent
    - Agent avatar generation (via `autoPickEmoji` method)
-   - Agent description generation (via `autocompleteAgentDescription` method)
-   - Agent tag generation (via `autocompleteAgentTags` method)
-   - Agent title generation (via `autocompleteAgentTitle` method)
-
-2. **Message Translation**: Triggered when users manually click the translate button (via `translateMessage` method)
-
-3. **Web Search**: When search is enabled but the model doesn't support tool calling, search functionality is implemented via `fetchPresetTaskResult`
+   - Agent description generation
+     (via `autocompleteAgentDescription` method)
+   - Agent tag generation
+     (via `autocompleteAgentTags` method)
+   - Agent title generation
+     (via `autocompleteAgentTitle` method)
+2. **Message Translation**: Triggered when users manually
+   click the translate button
+   (via `translateMessage` method)
+3. **Web Search**: When search is enabled but the model
+   doesn't support tool calling, search functionality
+   is implemented via `fetchPresetTaskResult`
 
 **Code Examples**:
 
@@ -229,9 +237,15 @@ autoPickEmoji: async () => {
     },
     params: merge(
       get().internal_getSystemAgentForMeta(),
-      chainPickEmoji([meta.title, meta.description, systemRole].filter(Boolean).join(',')),
+      chainPickEmoji(
+        [meta.title, meta.description, systemRole]
+          .filter(Boolean)
+          .join(','),
+      ),
     ),
-    trace: get().getCurrentTracePayload({ traceName: TraceNameMap.EmojiPicker }),
+    trace: get().getCurrentTracePayload({
+      traceName: TraceNameMap.EmojiPicker,
+    }),
   });
 };
 ```
@@ -247,10 +261,19 @@ translateMessage: async (id, targetLang) => {
   chatService.fetchPresetTaskResult({
     onFinish: async (data) => {
       if (data && supportLocales.includes(data)) from = data;
-      await updateMessageTranslate(id, { content, from, to: targetLang });
+      await updateMessageTranslate(id, {
+        content,
+        from,
+        to: targetLang,
+      });
     },
-    params: merge(translationSetting, chainLangDetect(message.content)),
-    trace: get().getCurrentTracePayload({ traceName: TraceNameMap.LanguageDetect }),
+    params: merge(
+      translationSetting,
+      chainLangDetect(message.content),
+    ),
+    trace: get().getCurrentTracePayload({
+      traceName: TraceNameMap.LanguageDetect,
+    }),
   });
 
   // Perform translation
@@ -266,11 +289,24 @@ translateMessage: async (id, targetLang) => {
       }
     },
     onFinish: async () => {
-      await updateMessageTranslate(id, { content, from, to: targetLang });
-      internal_toggleChatLoading(false, id, n('translateMessage(end)', { id }) as string);
+      await updateMessageTranslate(id, {
+        content,
+        from,
+        to: targetLang,
+      });
+      internal_toggleChatLoading(
+        false,
+        id,
+        n('translateMessage(end)', { id }) as string,
+      );
     },
-    params: merge(translationSetting, chainTranslate(message.content, targetLang)),
-    trace: get().getCurrentTracePayload({ traceName: TraceNameMap.Translation }),
+    params: merge(
+      translationSetting,
+      chainTranslate(message.content, targetLang),
+    ),
+    trace: get().getCurrentTracePayload({
+      traceName: TraceNameMap.Translation,
+    }),
   });
 };
 ```
@@ -290,14 +326,14 @@ depends on the scenario:
   continue generation, group orchestration decisions.
   The loop runs in the browser, entry point is
   `executeClientAgent()`
-  (`src/store/chat/slices/aiChat/actions/streamingExecutor.ts`)
+  (`src/store/chat/slices/agentRun/actions/transports/client/streamingExecutor.ts`)
 - **Server-side loop** (queue/local):
   Group chat supervisor agent, sub-agent tasks,
   API/Cron triggers. The loop runs on the server,
   streaming events to the client via SSE, entry point is
   `AgentRuntimeService.executeStep()`
-  (`src/server/services/agentRuntime/AgentRuntimeService.ts`),
-  tRPC route at `src/server/routers/lambda/aiAgent.ts`
+  (`apps/server/src/services/agentRuntime/AgentRuntimeService.ts`),
+  tRPC route at `apps/server/src/routers/lambda/aiAgent.ts`
 
 ## Model Runtime
 
@@ -324,11 +360,25 @@ into a unified interface.
 **Core Interface**:
 
 ```ts
+// packages/model-runtime/src/core/BaseAI.ts
 export interface LobeRuntimeAI {
   baseURL?: string;
-  chat(payload: ChatStreamPayload, options?: ChatCompetitionOptions): Promise<Response>;
-  embeddings?(payload: EmbeddingsPayload, options?: EmbeddingsOptions): Promise<Embeddings[]>;
+  chat?(
+    payload: ChatStreamPayload,
+    options?: ChatMethodOptions,
+  ): Promise<Response>;
+  generateObject?(
+    payload: GenerateObjectPayload,
+    options?: GenerateObjectOptions,
+  ): Promise<any>;
+  embeddings?(
+    payload: EmbeddingsPayload,
+    options?: EmbeddingsOptions,
+  ): Promise<Embeddings[]>;
   models?(): Promise<any>;
+  createImage?: (
+    payload: CreateImagePayload,
+  ) => Promise<CreateImageResponse>;
   textToSpeech?: (
     payload: TextToSpeechPayload,
     options?: TextToSpeechOptions,
@@ -336,116 +386,35 @@ export interface LobeRuntimeAI {
 }
 ```
 
-**Adapter Implementation Examples**:
+**Adapter Architecture**: Through two factory functions —
+`openaiCompatibleFactory` and
+`anthropicCompatibleFactory` — most providers can be
+integrated with minimal configuration. Currently supports
+over 40 model providers (OpenAI, Anthropic, Google,
+Azure, Bedrock, Ollama, etc.), with implementations
+in `packages/model-runtime/src/providers/`.
 
-1. **OpenRouter Adapter**: OpenRouter is a unified API that allows access to AI models from multiple providers. Lobe Chat implements support for OpenRouter through an adapter:
+## Agent Runtime
 
-   ```ts
-   // OpenRouter adapter implementation
-   class LobeOpenRouterAI implements LobeRuntimeAI {
-     client: OpenAI;
-     baseURL: string;
+Agent Runtime (`packages/agent-runtime/`) is LobeHub's
+agent orchestration engine. As described above, it is the
+core execution engine that drives the entire chat flow.
 
-     constructor(options: OpenAICompatibleOptions) {
-       // Initialize OpenRouter client using OpenAI-compatible API
-       this.client = new OpenAI({
-         apiKey: options.apiKey,
-         baseURL: OPENROUTER_BASE_URL,
-         defaultHeaders: {
-           'HTTP-Referer': 'https://github.com/lobehub/lobe-chat',
-           'X-Title': 'LobeHub',
-         },
-       });
-       this.baseURL = OPENROUTER_BASE_URL;
-     }
+**Core Components**:
 
-     // Implement chat functionality
-     async chat(payload: ChatCompletionCreateParamsBase, options?: RequestOptions) {
-       // Convert Lobe Chat request format to OpenRouter format
-       // Handle model mapping, message format, etc.
-       return this.client.chat.completions.create(
-         {
-           ...payload,
-           model: payload.model || 'openai/gpt-4-turbo', // Default model
-         },
-         options,
-       );
-     }
-
-     // Implement other LobeRuntimeAI interface methods
-   }
-   ```
-
-2. **Google Gemini Adapter**: Gemini is Google's large language model. Lobe Chat supports Gemini series models through a dedicated adapter:
-
-   ```ts
-   import { GoogleGenerativeAI } from '@google/generative-ai';
-
-   // Gemini adapter implementation
-   class LobeGoogleAI implements LobeRuntimeAI {
-     client: GoogleGenerativeAI;
-     baseURL: string;
-     apiKey: string;
-
-     constructor(options: GoogleAIOptions) {
-       // Initialize Google Generative AI client
-       this.client = new GoogleGenerativeAI(options.apiKey);
-       this.apiKey = options.apiKey;
-       this.baseURL = options.baseURL || GOOGLE_AI_BASE_URL;
-     }
-
-     // Implement chat functionality
-     async chat(payload: ChatCompletionCreateParamsBase, options?: RequestOptions) {
-       // Select appropriate model (supports Gemini Pro, Gemini Flash, etc.)
-       const modelName = payload.model || 'gemini-pro';
-       const model = this.client.getGenerativeModel({ model: modelName });
-
-       // Process multimodal inputs (e.g., images)
-       const contents = this.processMessages(payload.messages);
-
-       // Set generation parameters
-       const generationConfig = {
-         temperature: payload.temperature,
-         topK: payload.top_k,
-         topP: payload.top_p,
-         maxOutputTokens: payload.max_tokens,
-       };
-
-       // Create chat session and get response
-       const chat = model.startChat({
-         generationConfig,
-         history: contents.slice(0, -1),
-         safetySettings: this.getSafetySettings(payload),
-       });
-
-       // Handle streaming response
-       return this.handleStreamResponse(chat, contents, options?.signal);
-     }
-
-     // Implement other processing methods
-     private processMessages(messages) {
-       /* ... */
-     }
-     private getSafetySettings(payload) {
-       /* ... */
-     }
-     private handleStreamResponse(chat, contents, signal) {
-       /* ... */
-     }
-   }
-   ```
-
-**Different Model Implementations**:
-
-- `src/libs/agent-runtime/openai/index.ts` - OpenAI implementation
-- `src/libs/agent-runtime/anthropic/index.ts` - Anthropic implementation
-- `src/libs/agent-runtime/google/index.ts` - Google implementation
-- `src/libs/agent-runtime/openrouter/index.ts` - OpenRouter implementation
-
-For detailed implementation, see:
-
-- `src/libs/agent-runtime/AgentRuntime.ts` - Core runtime class
-- `src/libs/agent-runtime/BaseAI.ts` - Define base interface
-- `src/libs/agent-runtime/runtimeMap.ts` - Provider mapping table
-- `src/libs/agent-runtime/UniformRuntime/index.ts` - Handle multi-model unified runtime
-- `src/libs/agent-runtime/utils/openaiCompatibleFactory/index.ts` - OpenAI compatible adapter factory
+- **`AgentRuntime`**
+  (`packages/agent-runtime/src/core/runtime.ts`):
+  The "engine" that executes the Agent instruction loop,
+  supporting `call_llm`, `call_tool`, `finish`,
+  `compress_context`, `request_human_*`, etc.
+- **`GeneralChatAgent`**
+  (`packages/agent-runtime/src/agents/GeneralChatAgent.ts`):
+  The "brain" that decides which instruction to execute
+  next based on current state
+- **`GroupOrchestrationRuntime`**
+  (`packages/agent-runtime/src/groupOrchestration/`):
+  Multi-agent orchestration supporting speak / broadcast /
+  delegate / executeTask collaboration modes
+- **`UsageCounter`**: Token usage and cost tracking
+- **`InterventionChecker`**:
+  Security blacklist for managing agent behavior boundaries
