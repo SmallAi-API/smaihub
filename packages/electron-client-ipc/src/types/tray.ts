@@ -1,3 +1,21 @@
+export interface TrayAgentItem {
+  id: string;
+  title: string;
+  url: string;
+}
+
+export interface TrayNavigationItem {
+  subtitle?: string;
+  title: string;
+  url: string;
+}
+
+export interface TrayNavigationSnapshot {
+  agents: TrayAgentItem[];
+  pinned: TrayNavigationItem[];
+  recent: TrayNavigationItem[];
+}
+
 /**
  * 显示托盘通知的参数
  */

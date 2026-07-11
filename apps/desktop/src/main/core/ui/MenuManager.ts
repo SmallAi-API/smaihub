@@ -1,6 +1,8 @@
-import { type Menu } from 'electron';
+import type { TrayNavigationSnapshot } from '@lobechat/electron-client-ipc';
+import type { Menu } from 'electron';
 
-import { createMenuImpl, type IMenuPlatform, type MenuOptions } from '@/menus';
+import type { IMenuPlatform, MenuOptions } from '@/menus';
+import { createMenuImpl } from '@/menus';
 import { createLogger } from '@/utils/logger';
 
 import { type App } from '../App';
@@ -39,9 +41,9 @@ export class MenuManager {
   /**
    * Build tray menu (usually called by tray manager)
    */
-  buildTrayMenu(): Menu {
+  buildTrayMenu(snapshot?: TrayNavigationSnapshot): Menu {
     logger.debug('Building tray menu');
-    return this.platformImpl.buildTrayMenu();
+    return this.platformImpl.buildTrayMenu(snapshot);
   }
 
   /**
