@@ -1,3 +1,6 @@
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+
 import type * as LobechatConst from '@lobechat/const';
 import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -327,6 +330,18 @@ describe('Footer agent onboarding promotion', () => {
     await renderFooter({ desktop: true });
 
     expect(screen.queryByTestId('highlight-notification')).not.toBeInTheDocument();
+  });
+});
+
+describe('Footer SmallAI desktop promotion', () => {
+  it('links the promotion action to the canonical /app route', async () => {
+    const source = await readFile(
+      path.join(process.cwd(), 'src/routes/(main)/home/_layout/Footer/index.tsx'),
+      'utf8',
+    );
+
+    expect(source).toContain("actionHref: '/app'");
+    expect(source).not.toContain("actionHref: '/download'");
   });
 });
 
