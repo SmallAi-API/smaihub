@@ -129,8 +129,6 @@ export class ToolNameResolver {
           } else {
             return null;
           }
-        } else if (offeredSet && !offeredSet.has(toolCall.function.name)) {
-          return null;
         }
 
         // Recover identifiers whose hyphens were sanitized to underscores by an
