@@ -1078,6 +1078,11 @@ desktopRoutes.push({
     'Desktop > Download > Layout',
   ),
   errorElement: <ErrorBoundary />,
+  path: '/app',
+});
+
+desktopRoutes.push({
+  element: redirectElement('/app'),
   path: '/download',
 });
 

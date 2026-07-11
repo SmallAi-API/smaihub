@@ -112,6 +112,19 @@ describe('desktopRouter config sync', () => {
     );
   });
 
+  it('serves the legacy SmallAI page at /app and redirects /download in both configs', async () => {
+    const [asyncSource, syncSource] = await readDesktopRouterSources();
+
+    for (const source of [asyncSource, syncSource]) {
+      expect(source).toContain("path: '/app'");
+      expect(source).toContain("element: redirectElement('/app')");
+      expect(source).toContain("path: '/download'");
+    }
+
+    expect(asyncSource).toContain("import('@/routes/(download)/download')");
+    expect(syncSource).toContain("from '@/routes/(download)/download'");
+  });
+
   it('route handle.meta declarations must match between web and desktop configs', async () => {
     const [asyncSource, syncSource] = await readDesktopRouterSources();
 

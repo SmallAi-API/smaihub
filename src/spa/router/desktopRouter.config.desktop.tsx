@@ -806,6 +806,11 @@ desktopRoutes.push({
   ],
   element: <DownloadRouteLayout />,
   errorElement: <ErrorBoundary />,
+  path: '/app',
+});
+
+desktopRoutes.push({
+  element: redirectElement('/app'),
   path: '/download',
 });
 
