@@ -40,7 +40,7 @@ import { resolveFooterPromotionState } from './promotionPipeline';
 const AGENT_ONBOARDING_PROMO_SLUG = 'agent-onboarding-promo-v1';
 
 const PRODUCT_HUNT_NOTIFICATION = {
-  actionHref: '/download',
+  actionHref: '/app',
   endTime: new Date('2026-04-30T00:00:00Z'),
   image: 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com/logo/windows.png',
   slug: 'smai.ai-desktop',
