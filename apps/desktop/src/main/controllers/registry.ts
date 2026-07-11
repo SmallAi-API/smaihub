@@ -6,6 +6,7 @@ import {
 
 import AuthCtr from './AuthCtr';
 import BinaryCtr from './BinaryCtr';
+import BrowserSidebarCtr from './BrowserSidebarCtr';
 import BrowserWindowsCtr from './BrowserWindowsCtr';
 import CliCtr from './CliCtr';
 import DevtoolsCtr from './DevtoolsCtr';
@@ -33,6 +34,7 @@ import WorkspaceCtr from './WorkspaceCtr';
 export const controllerIpcConstructors = [
   HeterogeneousAgentCtr,
   AuthCtr,
+  BrowserSidebarCtr,
   BrowserWindowsCtr,
   CliCtr,
   DevtoolsCtr,
