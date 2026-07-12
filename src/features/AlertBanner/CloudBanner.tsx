@@ -1,7 +1,8 @@
 'use client';
 
 import { LOBE_CHAT_CLOUD } from '@lobechat/business-const';
-import { Button, Center, Flexbox, Icon, lobeStaticStylish } from '@lobehub/ui';
+import { Center, Flexbox, Icon, lobeStaticStylish } from '@lobehub/ui';
+import { Button } from '@lobehub/ui/base-ui';
 import { useSize } from 'ahooks';
 import { createStaticStyles, cx } from 'antd-style';
 import { ArrowRightIcon } from 'lucide-react';

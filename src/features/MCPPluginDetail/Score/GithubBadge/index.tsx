@@ -1,4 +1,5 @@
-import { Markdown, Select, Snippet, Tag } from '@lobehub/ui';
+import { Markdown, Snippet, Tag } from '@lobehub/ui';
+import { Select } from '@lobehub/ui/base-ui';
 import { Divider } from 'antd';
 import { cssVar } from 'antd-style';
 import { memo, useState } from 'react';
