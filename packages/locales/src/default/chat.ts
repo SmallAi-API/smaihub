@@ -825,7 +825,6 @@ export default {
   'shareModal.withPluginInfo': 'Include Skill Information',
   'shareModal.withRole': 'Include Message Role',
   'shareModal.withSystemRole': 'Include Agent Profile',
-  'sharePage.actions.findMord': 'Find more',
   'sharePage.actions.tryItYourself': 'Try it yourself',
   'sharePage.error.forbidden.subtitle': 'This share is private and not accessible.',
   'sharePage.error.forbidden.title': 'Access Denied',
@@ -838,6 +837,9 @@ export default {
   'sharePage.menu.goToLobeHub': 'Go to LobeHub',
   'sharePage.menu.more': 'More',
   'sharePage.menu.report': 'Report',
+  'sharePage.pill.edit': 'Edit',
+  'sharePage.pill.openInApp': 'Open in {{appName}}',
+  'sharePage.pill.sharedVia': 'Shared via {{appName}}',
   'sharePageDisclaimer':
     'This content is shared by a user and does not represent the views of smai.ai, smai.ai is not responsible for any consequences arising from this shared content.',
   'signalCallbacks.collapse': 'Hide details',
