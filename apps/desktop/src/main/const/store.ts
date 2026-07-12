@@ -34,6 +34,7 @@ export const STORE_DEFAULTS: ElectronMainStore = {
   gatewayDeviceName: '',
   gatewayEnabled: true,
   gatewayUrl: 'https://device-gateway.smai.ai',
+  gatewayWorkspaceEnrollments: [],
   heteroTracingEnabled: false,
   imessageBridgeConfigs: [],
   locale: 'auto',
