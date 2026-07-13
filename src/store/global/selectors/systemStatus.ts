@@ -387,6 +387,7 @@ const modelSwitchPanelGroupMode = (s: GlobalState) =>
   s.status.modelSwitchPanelGroupMode || 'byProvider';
 const modelSwitchPanelWidth = (s: GlobalState) => s.status.modelSwitchPanelWidth || 460;
 const pageAgentPanelWidth = (s: GlobalState) => s.status.pageAgentPanelWidth || 360;
+const workingSidebarWidth = (s: GlobalState) => s.status.workingSidebarWidth || 360;
 
 const leftPanelWidth = (s: GlobalState): number => {
   return normalizeNavPanelWidth(s.status.leftPanelWidth);
@@ -498,4 +499,5 @@ export const systemStatusSelectors = {
   videoTopicViewMode,
   videoTopicPanelWidth,
   wideScreen,
+  workingSidebarWidth,
 };
