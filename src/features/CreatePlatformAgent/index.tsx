@@ -171,7 +171,14 @@ const CreatePlatformAgentContent = memo<CreatePlatformAgentContentProps>(
       } else if (!fetchingProfile && !agentName) {
         setAgentName(selectedPlatformDef.name);
       }
-    }, [step, agentProfile, fetchingProfile]);
+    }, [
+      step,
+      agentProfile,
+      fetchingProfile,
+      agentName,
+      selectedPlatformDef.name,
+      agentDescription,
+    ]);
 
     const handlePlatformChange = useCallback((type: RemoteHeterogeneousAgentType) => {
       setPlatform(type);
@@ -405,12 +412,6 @@ const CreatePlatformAgentContent = memo<CreatePlatformAgentContentProps>(
                           {t('platformAgent.create.downloadDesktop')}
                         </Button>
                       </a>
-                    </Flexbox>
-                    <Flexbox gap={4}>
-                      <span>{t('platformAgent.create.noDevicesCliHint')}</span>
-                      <Typography.Text code copyable>
-                        {t('platformAgent.create.noDevicesCmd')}
-                      </Typography.Text>
                     </Flexbox>
                   </Flexbox>
                 }
