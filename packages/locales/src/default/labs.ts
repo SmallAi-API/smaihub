@@ -31,8 +31,7 @@ export default {
   'features.messageTextSelectionActions.desc':
     'Show a quick action when selecting text in chat messages so the selected text can be added to the next conversation context.',
   'features.messageTextSelectionActions.title': 'Message Text Selection Actions',
-  'features.platformAgent.desc':
-    'Show the "Connect Agent" entry in the create menu. Connected agents (e.g. OpenClaw, Hermes) run on your own devices and communicate back via lh connect.',
+  'features.platformAgent.desc': 'Show the "Connect Agent" entry in the create menu.',
   'features.platformAgent.title': 'Connect Agent',
   'features.taskVerify.desc':
     'Add a delivery-acceptance section to the task detail: describe acceptance in one sentence and let AI generate editable verify criteria.',

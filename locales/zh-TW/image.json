@@ -53,6 +53,8 @@
   "generation.metadata.createdAt": "創建於 {{time}}",
   "generation.status.failed": "生成失敗",
   "generation.status.generating": "生成中...",
+  "generationTopic.notFound.desc": "此生成不存在或不再可訪問——它可能已被刪除或其擁有者已將其設置為私密。",
+  "generationTopic.notFound.title": "生成不可用",
   "notSupportGuide.desc": "當前的部署模式不支持 AI 圖像生成。請切換到 <1>伺服器資料庫部署模式</1>，或使用 <3>smai.ai</3>。",
   "notSupportGuide.features.fileIntegration.desc": "與檔案管理系統深度整合，生成的圖片自動保存到檔案系統，支援統一管理和組織",
   "notSupportGuide.features.fileIntegration.title": "檔案系統互通",

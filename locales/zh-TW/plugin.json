@@ -157,6 +157,7 @@
   "builtins.lobe-claude-code.worktree.enter.failed": "無法進入工作樹",
   "builtins.lobe-claude-code.worktree.enter.idle": "進入工作樹",
   "builtins.lobe-claude-code.worktree.enter.loading": "正在進入工作樹",
+  "builtins.lobe-claude-code.worktree.exit.completed": "已離開工作樹",
   "builtins.lobe-claude-code.worktree.exit.failed": "無法離開工作樹",
   "builtins.lobe-claude-code.worktree.exit.idle": "離開工作樹",
   "builtins.lobe-claude-code.worktree.exit.loading": "正在離開工作樹",

@@ -10,7 +10,7 @@ module.exports = defineConfig({
   outputLocales: ['zh-CN', 'zh-TW'],
   temperature: 0,
   saveImmediately: true,
-  modelName: 'gpt-5.6-luna',
+  modelName: 'gpt-4o-mini',
   experimental: {
     jsonMode: true,
   },
