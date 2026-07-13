@@ -4,6 +4,9 @@ export const OFFICIAL_URL = 'https://www.smallai.asia';
 export const OFFICIAL_SITE = 'https://www.smallai.asia';
 export const OFFICIAL_DOMAIN = 'https://www.smallai.asia';
 
+export const OFFICIAL_DEVICE_GATEWAY_URL = 'https://device-gateway.smai.ai';
+export const OFFICIAL_AGENT_GATEWAY_URL = 'https://agent-gateway.smai.ai';
+
 export const OG_URL = '/og/og.webp?v=1';
 
 export const LobeHubPath = {
@@ -86,3 +89,8 @@ export const DOWNLOAD_URL = {
   mobile: 'https://www.smallai.asia/download',
   ios: 'https://www.smallai.asia/download',
 } as const;
+
+export const channelDocUrl = (platform: string) => urlJoin(USAGE_DOCUMENTS, 'channels', platform);
+
+export const discoverUrl = (type: string, identifier: string) =>
+  urlJoin(OFFICIAL_SITE, 'discover', type, identifier);
