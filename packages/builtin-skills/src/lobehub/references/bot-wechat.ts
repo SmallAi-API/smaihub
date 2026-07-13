@@ -2,7 +2,7 @@ const content = `# WeChat Bot Setup Guide
 
 Connect a WeChat bot to your agent via iLink API.
 
-**Setup Guide:** https://lobehub.com/docs/usage/channels/wechat
+**Setup Guide:** https://docs.smai.ai/docs/usage/channels/wechat
 
 ## Credentials
 
