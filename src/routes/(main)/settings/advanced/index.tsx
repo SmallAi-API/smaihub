@@ -56,6 +56,7 @@ const Page = memo(() => {
     enableFoldFinishedTurn,
     enableMessageTextSelectionActions,
     enableInAppBrowser,
+    enableArtifactDeployment,
     updateLab,
   ] = useUserStore((s) => [
     preferenceSelectors.isPreferenceInit(s),
@@ -68,6 +69,7 @@ const Page = memo(() => {
     labPreferSelectors.enableFoldFinishedTurn(s),
     labPreferSelectors.enableMessageTextSelectionActions(s),
     labPreferSelectors.enableInAppBrowser(s),
+    labPreferSelectors.enableArtifactDeployment(s),
     s.updateLab,
   ]);
 
@@ -303,6 +305,19 @@ const Page = memo(() => {
           } satisfies FormItemProps,
         ]
       : []),
+    {
+      children: (
+        <Switch
+          checked={enableArtifactDeployment}
+          loading={!isPreferenceInit}
+          onChange={(checked: boolean) => updateLab({ enableArtifactDeployment: checked })}
+        />
+      ),
+      className: styles.labItem,
+      desc: tLabs('features.artifactDeployment.desc'),
+      label: tLabs('features.artifactDeployment.title'),
+      minWidth: undefined,
+    } satisfies FormItemProps,
   ];
 
   const labsGroup: FormGroupItemType = {
