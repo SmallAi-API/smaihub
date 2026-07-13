@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import AsyncError from '@/components/AsyncError';
 import { FORM_STYLE } from '@/const/layoutTokens';
+import { SettingsSearchAnchor } from '@/features/SettingsSearch/anchor';
 import SettingHeader from '@/routes/(main)/settings/features/SettingHeader';
 import { autoUpdateService } from '@/services/electron/autoUpdate';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
@@ -116,7 +117,11 @@ const Page = memo(() => {
       {
         children: <Switch />,
         desc: t('settingCommon.devMode.desc'),
-        label: t('settingCommon.devMode.title'),
+        label: (
+          <SettingsSearchAnchor id={'advanced-dev-mode'}>
+            {t('settingCommon.devMode.title')}
+          </SettingsSearchAnchor>
+        ),
         minWidth: undefined,
         name: 'isDevMode',
         valuePropName: 'checked',
@@ -132,7 +137,11 @@ const Page = memo(() => {
               ),
               className: styles.labItem,
               desc: t('tab.advanced.gatewayMode.desc'),
-              label: t('tab.advanced.gatewayMode.title'),
+              label: (
+                <SettingsSearchAnchor id={'advanced-gateway-mode'}>
+                  {t('tab.advanced.gatewayMode.title')}
+                </SettingsSearchAnchor>
+              ),
               minWidth: undefined,
             } satisfies FormItemProps,
           ]
@@ -153,7 +162,11 @@ const Page = memo(() => {
           <Select options={channelOptions} value={channel} onChange={handleChannelChange} />
         ),
         desc: t('tab.advanced.updateChannel.desc'),
-        label: t('tab.advanced.updateChannel.title'),
+        label: (
+          <SettingsSearchAnchor id={'advanced-update-channel'}>
+            {t('tab.advanced.updateChannel.title')}
+          </SettingsSearchAnchor>
+        ),
       },
     ],
     title: t('tab.advanced.appUpdates.title'),
@@ -294,7 +307,7 @@ const Page = memo(() => {
 
   const labsGroup: FormGroupItemType = {
     children: labItems,
-    title: tLabs('title'),
+    title: <SettingsSearchAnchor id={'advanced-labs'}>{tLabs('title')}</SettingsSearchAnchor>,
   };
   const items = isDesktop
     ? [advancedGroup, updateChannelGroup, labsGroup]
