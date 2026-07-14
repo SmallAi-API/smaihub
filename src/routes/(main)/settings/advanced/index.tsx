@@ -287,7 +287,7 @@ const Page = memo(() => {
           } satisfies FormItemProps,
         ]
       : []),
-    // The in-app browser rides on the Electron <webview> tag — desktop only.
+    // The in-app browser pages are main-process WebContentsViews — desktop only.
     ...(isDesktop
       ? [
           {

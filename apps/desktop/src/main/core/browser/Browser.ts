@@ -181,7 +181,6 @@ export default class Browser {
         contextIsolation: true,
         preload: path.join(preloadDir, 'index.js'),
         sandbox: false,
-        webviewTag: true,
       },
       width: resolvedState.width,
       x: resolvedState.x,
