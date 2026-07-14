@@ -92,7 +92,7 @@ export class ComposioStoreActionImpl {
   createComposioConnection = async (
     params: CreateComposioServerParams,
   ): Promise<ComposioServer | undefined> => {
-    const { appSlug, identifier, label, noAuth } = params;
+    const { appSlug, identifier, label, agentId } = params;
 
     this.#set(
       produce((draft: ComposioStoreState) => {
@@ -104,10 +104,10 @@ export class ComposioStoreActionImpl {
 
     try {
       const response = await lambdaClient.composio.createConnection.mutate({
+        agentId,
         appSlug,
         identifier,
         label,
-        noAuth,
       });
 
       // No-auth toolkits (e.g. composio_search) are registered ACTIVE server-side
@@ -115,6 +115,7 @@ export class ComposioStoreActionImpl {
       const isNoAuth = (response as { noAuth?: boolean }).noAuth === true;
 
       const server: ComposioServer = {
+        agentId,
         appSlug,
         authConfigId: response.authConfigId,
         connectedAccountId: response.connectedAccountId,
@@ -229,6 +230,7 @@ export class ComposioStoreActionImpl {
       );
 
       await lambdaClient.composio.updateComposioPlugin.mutate({
+        agentId: server.agentId,
         appSlug: server.appSlug,
         authConfigId: server.authConfigId,
         connectedAccountId: server.connectedAccountId,

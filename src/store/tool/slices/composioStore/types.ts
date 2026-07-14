@@ -15,6 +15,8 @@ export interface ComposioTool {
 }
 
 export interface ComposioServer {
+  /** Bind this connection to an agent (Agent-exclusive connection). */
+  agentId?: string;
   appSlug: string;
   authConfigId: string;
   connectedAccountId: string;
@@ -31,6 +33,8 @@ export interface ComposioServer {
 }
 
 export interface CreateComposioServerParams {
+  /** Bind this connection to an agent (Agent-exclusive connection). */
+  agentId?: string;
   appSlug: string;
   identifier: string;
   label: string;
