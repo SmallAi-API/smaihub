@@ -106,9 +106,17 @@ export interface QuotaMenuHelpers {
   now: number;
 }
 
+export interface FetchQuotaOptions {
+  force?: boolean;
+}
+
 interface QuotaMenuProps<S extends QuotaSnapshotBase> {
   createErrorSnapshot: (error: unknown) => S;
-  fetchQuota: () => Promise<S>;
+  fetchQuota: (options?: FetchQuotaOptions) => Promise<S>;
+  /** Localized explanation for `status: 'error'`; falls back to `error`. */
+  getErrorText?: (quota: S) => string | undefined;
+  /** Localized explanation for a manual refresh error when stale data is preserved. */
+  getRefreshErrorText?: (quota: S) => string | undefined;
   /** Localized explanation for `status: 'unavailable'`; falls back to `error`. */
   getUnavailableText?: (quota: S) => string | undefined;
   getWindows: (quota: S) => QuotaWindowItem[];
@@ -143,16 +151,28 @@ const QuotaMenu = <S extends QuotaSnapshotBase>({
   const loadQuota = useCallback(async () => {
     setLoading(true);
 
-    try {
-      const nextQuota = await fetchQuota();
-      setQuota(nextQuota);
-    } catch (error) {
-      console.error('Failed to fetch agent quota:', error);
-      setQuota(createErrorSnapshot(error));
-    } finally {
-      setLoading(false);
-    }
-  }, [createErrorSnapshot, fetchQuota]);
+      try {
+        const nextQuota = await fetchQuota(options.manual ? { force: true } : undefined);
+        applyQuotaResult(nextQuota, options, requestId, requestSourceKey);
+      } catch (error) {
+        console.error('Failed to fetch agent quota:', error);
+        applyQuotaResult(createErrorSnapshot(error), options, requestId, requestSourceKey);
+      } finally {
+        if (isCurrentRequest(requestId, requestSourceKey)) {
+          setLoading(false);
+        }
+      }
+    },
+    [applyQuotaResult, createErrorSnapshot, fetchQuota, isCurrentRequest],
+  );
+
+  useEffect(() => {
+    sourceKeyRef.current = sourceKey;
+    quotaRef.current = null;
+    lastTransientErrorAtRef.current = 0;
+    setQuota(null);
+    setRefreshError(null);
+  }, [sourceKey]);
 
   useEffect(() => {
     void loadQuota();
@@ -213,7 +233,14 @@ const QuotaMenu = <S extends QuotaSnapshotBase>({
   const windows = quota ? getWindows(quota) : [];
   const firstWindow = windows.find((item) => item.window)?.window;
   const compactLeftPercent = firstWindow ? clampPercent(100 - firstWindow.usedPercent) : undefined;
-  const hasQuotaData = windows.some((item) => item.window) || (!!quota && !!hasExtraData?.(quota));
+  const hasQuotaData = hasQuotaDataForSnapshot(quota);
+  const manualRefreshErrorText =
+    refreshError && (getRefreshErrorText?.(refreshError) || t('heteroAgent.quota.refreshFailed'));
+  const staleSnapshotErrorText =
+    quota?.status === 'error' && hasQuotaData
+      ? getRefreshErrorText?.(quota) || t('heteroAgent.quota.refreshFailed')
+      : undefined;
+  const refreshErrorText = manualRefreshErrorText || staleSnapshotErrorText;
 
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
@@ -284,8 +311,10 @@ const QuotaMenu = <S extends QuotaSnapshotBase>({
         <div className={styles.emptyState}>
           {getUnavailableText?.(quota) || quota.error || t('heteroAgent.quota.unavailable')}
         </div>
-      ) : quota?.status === 'error' ? (
-        <div className={styles.error}>{quota.error || t('heteroAgent.quota.unavailable')}</div>
+      ) : quota?.status === 'error' && !hasQuotaData ? (
+        <div className={styles.error}>
+          {getErrorText?.(quota) || quota.error || t('heteroAgent.quota.unavailable')}
+        </div>
       ) : hasQuotaData ? (
         <>
           <Flexbox gap={10}>{windows.map((item) => renderQuotaWindow(item))}</Flexbox>

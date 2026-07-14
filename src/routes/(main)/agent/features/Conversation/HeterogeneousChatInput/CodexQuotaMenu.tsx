@@ -9,7 +9,8 @@ import { useTranslation } from 'react-i18next';
 
 import { heterogeneousAgentService } from '@/services/electron/heterogeneousAgent';
 
-import QuotaMenu, { type QuotaMenuHelpers, type QuotaWindowItem } from './QuotaMenu';
+import type { FetchQuotaOptions, QuotaMenuHelpers, QuotaWindowItem } from './QuotaMenu';
+import QuotaMenu from './QuotaMenu';
 
 const styles = createStaticStyles(({ css }) => ({
   resetCredits: css`
@@ -37,7 +38,12 @@ const CodexQuotaMenu = memo<CodexQuotaMenuProps>(({ command, env }) => {
   const { t } = useTranslation('chat');
 
   const fetchQuota = useCallback(
-    () => heterogeneousAgentService.getCodexQuota({ command, env }),
+    (options?: FetchQuotaOptions) =>
+      heterogeneousAgentService.getCodexQuota({
+        command,
+        env,
+        ...(options?.force ? { force: true } : {}),
+      }),
     [command, env],
   );
 
