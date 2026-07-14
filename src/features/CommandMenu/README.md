@@ -412,12 +412,7 @@ const { t } = useTranslation('common');
 
 ```typescript
 export type ContextType =
-  | 'agent'
-  | 'painting'
-  | 'settings'
-  | 'resource'
-  | 'page'
-  | 'your-new-context'; // Add this
+  'agent' | 'painting' | 'settings' | 'resource' | 'page' | 'your-new-context'; // Add this
 ```
 
 **Step 2**: Add detection rule to `utils/context.ts`:
@@ -541,7 +536,7 @@ Remember to:
 
 Search is handled server-side via tRPC. To modify:
 
-**Backend**: Update `src/server/routers/lambda/search.ts` (or similar)
+**Backend**: Update `apps/server/src/routers/lambda/search.ts` (or similar)
 
 **Frontend**: Search results display in `SearchResults.tsx`
 

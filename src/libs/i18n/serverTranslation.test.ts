@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_LANG } from '@/const/locale';
 import { normalizeLocale } from '@/locales/resources';
 
-import { getLocale, translation } from './translation';
+import { getLocale, translation } from './serverTranslation';
 
 // Mock external dependencies
 vi.mock('next/headers', () => ({
