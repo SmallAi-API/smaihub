@@ -2968,6 +2968,12 @@ export class MessageModel {
   addFiles = async (messageId: string, fileIds: string[]): Promise<{ success: boolean }> => {
     if (fileIds.length === 0) return { success: true };
 
+    // The insert below has no ownership predicate of its own, so verify the
+    // target message is actually visible to this user/workspace first —
+    // otherwise a caller could attach files to another tenant's message.
+    const message = await this.findById(messageId);
+    if (!message) return { success: false };
+
     try {
       const validFileIds = await this.filterExistingFileIds(this.db, fileIds);
       if (validFileIds.length === 0) return { success: true };
