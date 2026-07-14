@@ -40,6 +40,12 @@ export default {
   'brief.title': 'Brief',
   'brief.viewAllTasks': 'View all tasks',
   'brief.viewRun': 'View run',
+  'cardBindingPromoBanner.cta': 'Claim now',
+  'cardBindingPromoBanner.dismiss': 'Dismiss',
+  'cardBindingPromoBanner.label': 'Add your first payment method and get 1M credits free',
+  'homePromoBanner.cta': 'Try now',
+  'homePromoBanner.dismiss': 'Dismiss',
+  'homePromoBanner.label': '{{model}} is now available',
   'project.create': 'New project',
   'project.deleteConfirm':
     "This project will be deleted and can't be recovered. Confirm to continue.",
