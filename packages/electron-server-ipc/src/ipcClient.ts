@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import fs from 'node:fs';
 import net from 'node:net';
 import os from 'node:os';
@@ -14,8 +13,10 @@ export class ElectronIpcClient {
   private socketPath: string | null = null;
   private connected: boolean = false;
   private socket: net.Socket | null = null;
-
-  private requestQueue: Map<string, { reject: Function; resolve: Function }> = new Map();
+  private requestQueue: Map<
+    string,
+    { reject: (error: any) => void; resolve: (value: any) => void }
+  > = new Map();
 
   private reconnectTimeout: NodeJS.Timeout | null = null;
   private connectionAttempts: number = 0;
