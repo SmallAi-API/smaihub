@@ -549,6 +549,8 @@ export class KnowledgeRepo {
           AND kbf.knowledge_base_id = ${knowledgeBaseId}
         LEFT JOIN ${documents} d
           ON f.id = d.file_id AND d.source_type = 'file'
+        LEFT JOIN ${users} u
+          ON f.user_id = u.id
         WHERE ${sql.join(kbWhereConditions, sql` AND `)}
       `;
     }
@@ -592,6 +594,8 @@ export class KnowledgeRepo {
       FROM ${files} f
       LEFT JOIN ${documents} d
        ON f.id = d.file_id AND d.source_type = 'file'
+      LEFT JOIN ${users} u
+        ON f.user_id = u.id
       WHERE ${sql.join(whereConditions, sql` AND `)}
     `;
   }

@@ -3,6 +3,8 @@
   "features.agentGraphConfig.title": "代理程式圖形執行階段設定",
   "features.agentSelfIteration.desc": "允許代理人反思、建立自我意識，並通過持續的嘗試和互動不斷迭代。",
   "features.agentSelfIteration.title": "代理自我迭代",
+  "features.artifactDeployment.desc": "將工件發佈到託管的 URL，並從對話側邊欄管理版本",
+  "features.artifactDeployment.title": "工件部署",
   "features.assistantMessageGroup.desc": "將助手訊息及其工具調用結果彙整成群組顯示",
   "features.assistantMessageGroup.title": "助手訊息彙整群組",
   "features.claudeCodeSdk.desc": "透過 Claude Agent SDK 運行 Claude Code 會話，而不是啟動 CLI。這樣可以實現更豐富的串流和會話控制。",
