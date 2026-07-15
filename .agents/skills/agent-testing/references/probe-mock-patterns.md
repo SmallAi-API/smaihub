@@ -255,6 +255,69 @@ Re-tested end-to-end against the running dev server. The previous claim ("blocks
   show `0` even though the agent owns them in the DB; click **清空筛选 / Clear filters** (or
   `setStatus('all')` + clear) to reveal them.
 
+### A9. ✅ WORKS — before/after visual diffing by checking out the OLD file, but HMR is NOT trustworthy for it
+
+- **Situation**: producing labeled before→after evidence for a UI/style change (Case 5 requires a
+  real "before" render, not a code-derived guess). The clean way is to write the pre-change version
+  of the file into the working tree (`git show <base>:<path> > <path>`), capture, then restore.
+- **Doesn't work — silently**: assuming Vite HMR applied the swap. In this run the FIRST swap
+  hot-applied fine, and the SECOND one did not: the file on disk was the old version while the
+  renderer kept the new computed styles for 24s+ of polling. Screenshots taken then would have been
+  the AFTER state mislabeled as BEFORE — a Case-5 failure that no screenshot review would catch,
+  because both look plausible.
+- **Works — gate every capture on a measured version signal, not on a sleep**: pick a property that
+  differs between the two versions and read it back with `getComputedStyle` before shooting.
+  ```bash
+  # after writing the old file, confirm the OLD css is actually live
+  agent-browser --cdp 9222 eval '(function(){var i=document.querySelector("<selector>");
+    var s=getComputedStyle(i);return JSON.stringify({pos:s.position,bg:s.backgroundColor})})()'
+  # expect the OLD values; if not, force a full reload and re-enter the surface
+  agent-browser --cdp 9222 eval 'location.reload(); 1'
+  ```
+  A full reload resets SPA state, so budget for re-navigating and re-establishing any fixture
+  (re-open the tab, re-drag a resizable panel, …). Restore the new file the same way and re-measure
+  before the AFTER shots.
+- **Corollary — a layout change may be invisible at the default size.** A `flex: 1` right-alignment
+  fix renders identically to the broken version in a narrow container (the content already fills the
+  row); the difference only appears once there is slack. Drive the app's own resize affordance with
+  real mouse events before concluding "no visual change":
+  ```bash
+  # DraggablePanel handle: .ant-draggable-panel-left-handle (find via getComputedStyle cursor: col-resize)
+  agent-browser --cdp 9222 mouse move < handleX > 500
+  agent-browser --cdp 9222 mouse down left
+  for X in 1050 900 750 600 420; do
+    agent-browser --cdp 9222 mouse move $X 500
+    sleep 0.2
+  done
+  agent-browser --cdp 9222 mouse up left
+  ```
+  (zsh does not word-split unquoted vars — inline the `--cdp` flags, don't stash them in `$AB`.)
+
+### A10. ⚠️ `git checkout -- <file>` to revert an injection DESTROYS the branch's uncommitted changes in that file
+
+- **Situation**: A4/A6/A8/E10 all end with "revert with `git checkout -- <file>`". That is only safe
+  when the file was **clean** before the injection. When you are verifying a branch that has
+  **uncommitted working-tree changes** (the common case for a pre-PR review), and your probe lands in
+  one of those same modified files, `git checkout --` resets it to **HEAD** — silently wiping the very
+  feature edits you were sent to verify, not just your probe.
+- **Measured**: injecting a one-line probe into a component that the branch had already modified
+  (uncommitted), then `git checkout -- <file>`, reverted the file to its committed version. The
+  branch's uncommitted edits (a changed selector + a title fallback) were gone, and the file no longer
+  matched what the user asked to test. Nothing warns you — the probe residue check
+  (`grep -rn AGENT-TEST`) comes back clean either way, because your marker is gone too.
+- **Works — snapshot the file yourself before injecting, restore from the snapshot:**
+  ```bash
+  cp <file> /tmp/probe-backup-$(basename <file>)     # BEFORE the edit
+  # ... inject, HMR, capture ...
+  cp /tmp/probe-backup-$(basename <file>) <file>     # restore — preserves uncommitted work
+  ```
+  Then prove the restore is exact: `git diff -- <file>` must show the SAME blob hash as before the
+  probe (`index <old>..<new>` — the right-hand hash is the working-tree blob), and
+  `grep -rn AGENT-TEST` must be empty. Check `git status --short` before you start so you know which
+  files are dirty; for a dirty file, `git checkout --` is never the revert.
+- **Corollary**: `git stash` has the same failure shape (it takes the branch's edits with it). If you
+  must use git to revert, scope it to a file you have confirmed is clean.
+
 ---
 
 ## B. Cache / stale state that MASKS the failure
@@ -330,6 +393,23 @@ Re-tested end-to-end against the running dev server. The previous claim ("blocks
 - The cache persists to **two durable tiers** (`src/libs/swr/localStorageProvider.ts`):
   IndexedDB for the big collections and localStorage for small shells. That is why B1's
   cold-load recipe clears localStorage, sessionStorage, IndexedDB **and** the Cache API.
+
+### B4. Component-local `useState` seeded from a cached list item does NOT reset when fresh data arrives — re-seeded fixtures render stale flags
+
+- **Situation**: verifying an "unread → click → read" flag on a list row whose component
+  initializes local state from the item (`useState(Boolean(item.readAt))`). The fixture was
+  re-seeded in the DB with the flag cleared (`read_at` NULL, confirmed by SQL), yet on reload
+  one row rendered as already-read.
+- **Cause (measured)**: the SWR persisted cache (B3's IndexedDB tier) hydrates the list first
+  with the PREVIOUS round's item (flag set, because an earlier run had clicked it). `useState`
+  captures that initial value; when the fresh server response (flag clear) replaces the SWR
+  data, the row does not remount (same React key = same item id), so the stale local state
+  sticks. No amount of waiting fixes it.
+- **Works**: for any assertion on an initial-render flag that flows through `useState(init)`,
+  force a clean first frame by deleting only the SWR IndexedDB database (`lobehub-local-data`)
+  and reloading — login survives (the session cookie is not touched), unlike B1's full clear.
+  Verify the DB value separately with SQL so a stale render is attributed to cache, not to the
+  change under test.
 
 ---
 
