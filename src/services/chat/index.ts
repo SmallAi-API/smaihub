@@ -69,7 +69,7 @@ const providersWithDeploymentName = new Set<string>([
   ModelProvider.Qwen,
   ModelProvider.Volcengine,
 ]);
-interface GetChatCompletionPayload extends Partial<Omit<ChatStreamPayload, 'messages'>> {
+export interface GetChatCompletionPayload extends Partial<Omit<ChatStreamPayload, 'messages'>> {
   agentId?: string;
   groupId?: string;
   messages: UIChatMessage[];
@@ -79,6 +79,11 @@ interface GetChatCompletionPayload extends Partial<Omit<ChatStreamPayload, 'mess
    */
   resolvedAgentConfig: ResolvedAgentConfig;
   topicId?: string;
+}
+
+export interface PreparedAssistantMessageContext {
+  options: FetchOptions;
+  params: Partial<ChatStreamPayload>;
 }
 
 type ChatStreamInputParams = Partial<Omit<ChatStreamPayload, 'messages'>> & {
@@ -124,7 +129,7 @@ class ChatService {
     return targetAgentId || undefined;
   };
 
-  createAssistantMessage = async (
+  buildAssistantMessageContext = async (
     {
       messages,
       agentId,
@@ -134,7 +139,7 @@ class ChatService {
       ...params
     }: GetChatCompletionPayload,
     options?: FetchOptions,
-  ) => {
+  ): Promise<PreparedAssistantMessageContext> => {
     const payload = merge(
       {
         model: DEFAULT_AGENT_CONFIG.model,
@@ -320,8 +325,9 @@ class ChatService {
       provider: payload.provider!,
     });
 
-    return this.getChatCompletion(
-      {
+    return {
+      options: { ...options, agentId: targetAgentId, topicId },
+      params: {
         ...params,
         ...extendParams,
         enabledSearch: searchConfig.enabledSearch && searchConfig.useModelSearch ? true : undefined,
@@ -330,8 +336,13 @@ class ChatService {
         stream: chatConfig.enableStreaming !== false,
         tools,
       },
-      { ...options, agentId: targetAgentId, topicId },
-    );
+    };
+  };
+
+  createAssistantMessage = async (params: GetChatCompletionPayload, options?: FetchOptions) => {
+    const prepared = await this.buildAssistantMessageContext(params, options);
+
+    return this.getChatCompletion(prepared.params, prepared.options);
   };
 
   createAssistantMessageStream = async ({
@@ -357,9 +368,11 @@ class ChatService {
       metadata,
       signal: abortController?.signal,
       stepContext,
-      trace: this.mapTrace(trace, TraceTagMap.Chat),
+      trace: this.mapChatTrace(trace),
     });
   };
+
+  mapChatTrace = (trace?: TracePayload): TracePayload => this.mapTrace(trace, TraceTagMap.Chat);
 
   getChatCompletion = async (params: Partial<ChatStreamPayload>, options?: FetchOptions) => {
     const { agentId, metadata, signal, responseAnimation, topicId } = options ?? {};
