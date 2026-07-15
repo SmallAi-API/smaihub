@@ -22,7 +22,7 @@ import { remoteDeviceExecutor } from '@lobechat/builtin-tool-remote-device/execu
 import { taskExecutor } from '@lobechat/builtin-tool-task/client/executor';
 
 import type { BuiltinToolContext, BuiltinToolResult, IBuiltinToolExecutor } from '../types';
-import { claudeCodeExecutor, codexExecutor } from './heteroCli';
+import { ampExecutor, claudeCodeExecutor, codexExecutor } from './heteroCli';
 import { activatorExecutor } from './lobe-activator';
 import { agentDocumentsExecutor } from './lobe-agent-documents';
 import { messageExecutor } from './lobe-message';
@@ -140,8 +140,9 @@ export const registerBuiltinToolExecutors = (): void => {
   if (executorsRegistered) return;
 
   registerExecutors([
-    // Hook-only executors for heterogeneous CLI agents (Claude Code / Codex) —
+    // Hook-only executors for heterogeneous CLI agents —
     // observe their shell tool results via `onAfterCall` (never invoked).
+    ampExecutor,
     claudeCodeExecutor,
     codexExecutor,
     agentBuilderExecutor,
