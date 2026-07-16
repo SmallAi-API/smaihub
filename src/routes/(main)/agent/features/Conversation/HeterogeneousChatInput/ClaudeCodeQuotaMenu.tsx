@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { heterogeneousAgentService } from '@/services/electron/heterogeneousAgent';
 
 import type { FetchQuotaOptions, QuotaWindowItem } from './QuotaMenu';
-import QuotaMenu from './QuotaMenu';
+import QuotaMenu, { createQuotaSourceKey } from './QuotaMenu';
 
 const createErrorSnapshot = (error: unknown): ClaudeCodeQuotaSnapshot => ({
   error: error instanceof Error ? error.message : String(error),
@@ -19,12 +19,15 @@ const createErrorSnapshot = (error: unknown): ClaudeCodeQuotaSnapshot => ({
   weekly: null,
 });
 
+const isRateLimitError = (quota: ClaudeCodeQuotaSnapshot) => quota.error?.includes('429') ?? false;
+
 interface ClaudeCodeQuotaMenuProps {
   env?: Record<string, string>;
 }
 
 const ClaudeCodeQuotaMenu = memo<ClaudeCodeQuotaMenuProps>(({ env }) => {
   const { t } = useTranslation('chat');
+  const sourceKey = createQuotaSourceKey('claude-code', env);
 
   const fetchQuota = useCallback(
     (options?: FetchQuotaOptions) =>
@@ -74,12 +77,29 @@ const ClaudeCodeQuotaMenu = memo<ClaudeCodeQuotaMenuProps>(({ env }) => {
     [t],
   );
 
+  const getErrorText = useCallback(
+    (quota: ClaudeCodeQuotaSnapshot) => {
+      if (isRateLimitError(quota)) return t('heteroAgent.claudeQuota.errorRateLimited');
+    },
+    [t],
+  );
+
+  const getRefreshErrorText = useCallback(
+    (quota: ClaudeCodeQuotaSnapshot) => {
+      if (isRateLimitError(quota)) return t('heteroAgent.claudeQuota.refreshRateLimited');
+    },
+    [t],
+  );
+
   return (
     <QuotaMenu
       createErrorSnapshot={createErrorSnapshot}
       fetchQuota={fetchQuota}
+      getErrorText={getErrorText}
+      getRefreshErrorText={getRefreshErrorText}
       getUnavailableText={getUnavailableText}
       getWindows={getWindows}
+      sourceKey={sourceKey}
       title={t('heteroAgent.claudeQuota.title')}
       tooltip={t('heteroAgent.claudeQuota.tooltip')}
     />

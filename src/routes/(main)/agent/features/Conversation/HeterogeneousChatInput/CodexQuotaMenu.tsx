@@ -441,6 +441,7 @@ const CodexQuotaMenu = memo<CodexQuotaMenuProps>(({ command, env }) => {
       getWindows={getWindows}
       hasExtraData={hasExtraData}
       renderFooter={renderFooter}
+      sourceKey={sourceKey}
       title={t('heteroAgent.codexQuota.title')}
       tooltip={t('heteroAgent.codexQuota.tooltip')}
     />

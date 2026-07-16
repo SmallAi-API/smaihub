@@ -3,13 +3,13 @@
 import { BRANDING_PROVIDER } from '@lobechat/business-const';
 import { AES_GCM_URL, FORM_STYLE } from '@lobechat/const';
 import { type FormGroupItemType, type FormItemProps } from '@lobehub/ui';
-import { Avatar, Flexbox, Form, Icon, Skeleton } from '@lobehub/ui';
+import { Avatar, Flexbox, Form, Icon, Skeleton, Tooltip } from '@lobehub/ui';
 import { Switch } from '@lobehub/ui/base-ui';
 import { useDebounceFn } from 'ahooks';
 import { Form as AntdForm } from 'antd';
 import { createStaticStyles, cssVar, cx, responsive } from 'antd-style';
 import { InfoIcon, Loader2Icon, LockIcon } from 'lucide-react';
-import { type ReactNode } from 'react';
+import { type MouseEvent, type ReactNode } from 'react';
 import { memo, useCallback, useLayoutEffect, useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { z } from 'zod';
@@ -263,6 +263,11 @@ const ProviderConfig = memo<ProviderConfigProps>(
       // OAuth tokens are saved directly to DB by the tRPC endpoint
       await useAiInfraStore.getState().refreshAiProviderDetail();
       await useAiInfraStore.getState().refreshAiProviderRuntimeState();
+    }, []);
+
+    // Keep clicks on the built-in notice icon from toggling the collapse panel.
+    const stopPropagation = useCallback((e: MouseEvent) => {
+      e.stopPropagation();
     }, []);
 
     const apiKeyItem: FormItemProps[] =

@@ -34,7 +34,7 @@ export const BRANDING_EMAIL = {
   support: 'wasskayyy@gmail.com',
 };
 
-export const BRANDING_PROVIDER = 'lobehub';
+export const BRANDING_PROVIDER = 'smai';
 
 export const COPYRIGHT = `© ${new Date().getFullYear()} ${ORG_NAME}`;
 export const COPYRIGHT_FULL = `${COPYRIGHT}. All rights reserved.`;

@@ -5,10 +5,11 @@ import { ActionIcon, Flexbox, Icon, Popover, Skeleton, Text, Tooltip } from '@lo
 import { createStaticStyles, cssVar, cx } from 'antd-style';
 import { ChevronDownIcon, GaugeIcon, RefreshCwIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const QUOTA_STALE_MS = 60_000;
+const QUOTA_RETRY_COOLDOWN_MS = 60_000;
 
 const styles = createStaticStyles(({ css }) => ({
   emptyState: css`
@@ -25,6 +26,16 @@ const styles = createStaticStyles(({ css }) => ({
     color: ${cssVar.colorError};
 
     background: ${cssVar.colorErrorBg};
+  `,
+  refreshNotice: css`
+    padding: 8px;
+    border: 1px solid ${cssVar.colorWarningBorder};
+    border-radius: ${cssVar.borderRadius};
+
+    font-size: 12px;
+    color: ${cssVar.colorWarningText};
+
+    background: ${cssVar.colorWarningBg};
   `,
   header: css`
     padding-block-end: 8px;
@@ -103,6 +114,17 @@ const LOW_QUOTA_THRESHOLD = 15;
 
 const isLowQuota = (leftPercent: number) => leftPercent < LOW_QUOTA_THRESHOLD;
 
+type QuotaSourcePart = Record<string, string | undefined> | string | null | undefined;
+
+const normalizeQuotaSourcePart = (part: QuotaSourcePart) => {
+  if (!part || typeof part === 'string') return part ?? null;
+
+  return Object.entries(part).sort(([left], [right]) => left.localeCompare(right));
+};
+
+export const createQuotaSourceKey = (...parts: QuotaSourcePart[]) =>
+  JSON.stringify(parts.map((part) => normalizeQuotaSourcePart(part)));
+
 export interface QuotaSnapshotBase {
   error: string | null;
   status: 'error' | 'ok' | 'unavailable';
@@ -144,6 +166,10 @@ interface QuotaMenuProps<S extends QuotaSnapshotBase> {
   tooltip: string;
 }
 
+interface LoadQuotaOptions {
+  manual?: boolean;
+}
+
 /**
  * Shared quota popover for local CLI agents: gauge trigger with the most
  * binding window's remaining percent, plus per-window progress bars and
@@ -153,10 +179,13 @@ const QuotaMenu = <S extends QuotaSnapshotBase>({
   contentWidth,
   createErrorSnapshot,
   fetchQuota,
+  getErrorText,
+  getRefreshErrorText,
   getUnavailableText,
   getWindows,
   hasExtraData,
   renderFooter,
+  sourceKey = 'default',
   title,
   tooltip,
 }: QuotaMenuProps<S>) => {
@@ -164,6 +193,7 @@ const QuotaMenu = <S extends QuotaSnapshotBase>({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [quota, setQuota] = useState<S | null>(null);
+  const [refreshError, setRefreshError] = useState<S | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const lastTransientErrorAtRef = useRef(0);
   const quotaRef = useRef<S | null>(null);
@@ -264,7 +294,7 @@ const QuotaMenu = <S extends QuotaSnapshotBase>({
 
   useEffect(() => {
     void loadQuota();
-  }, [loadQuota]);
+  }, [loadQuota, sourceKey]);
 
   useEffect(() => {
     const interval = window.setInterval(() => setNow(Date.now()), QUOTA_STALE_MS);
@@ -338,7 +368,14 @@ const QuotaMenu = <S extends QuotaSnapshotBase>({
       setOpen(nextOpen);
 
       if (!nextOpen || loading) return;
-      if (!quota || Date.now() - quota.updatedAt > QUOTA_STALE_MS) void loadQuota();
+      const currentTime = Date.now();
+      const recentlyFailed =
+        lastTransientErrorAtRef.current > 0 &&
+        currentTime - lastTransientErrorAtRef.current < QUOTA_RETRY_COOLDOWN_MS;
+
+      if ((!quota || currentTime - quota.updatedAt > QUOTA_STALE_MS) && !recentlyFailed) {
+        void loadQuota();
+      }
     },
     [loadQuota, loading, quota],
   );
@@ -394,7 +431,7 @@ const QuotaMenu = <S extends QuotaSnapshotBase>({
             disabled={loading}
             icon={RefreshCwIcon}
             size={'small'}
-            onClick={() => void loadQuota()}
+            onClick={() => void loadQuota({ manual: true })}
           />
         </Tooltip>
       </Flexbox>
