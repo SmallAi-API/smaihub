@@ -55,6 +55,7 @@ const Page = memo(() => {
     enableClaudeCodeSdk,
     enableFoldFinishedTurn,
     enableMessageTextSelectionActions,
+    enableOAuthApps,
     enableInAppBrowser,
     enableArtifactDeployment,
     enableBuiltinTerminal,
@@ -69,6 +70,7 @@ const Page = memo(() => {
     labPreferSelectors.enableClaudeCodeSdk(s),
     labPreferSelectors.enableFoldFinishedTurn(s),
     labPreferSelectors.enableMessageTextSelectionActions(s),
+    labPreferSelectors.enableOAuthApps(s),
     labPreferSelectors.enableInAppBrowser(s),
     labPreferSelectors.enableArtifactDeployment(s),
     labPreferSelectors.enableBuiltinTerminal(s),
@@ -227,6 +229,19 @@ const Page = memo(() => {
       className: styles.labItem,
       desc: tLabs('features.messageTextSelectionActions.desc'),
       label: tLabs('features.messageTextSelectionActions.title'),
+      minWidth: undefined,
+    },
+    {
+      children: (
+        <Switch
+          checked={enableOAuthApps}
+          loading={!isPreferenceInit}
+          onChange={(checked) => updateLab({ enableOAuthApps: checked })}
+        />
+      ),
+      className: styles.labItem,
+      desc: tLabs('features.oauthApps.desc'),
+      label: tLabs('features.oauthApps.title'),
       minWidth: undefined,
     },
     ...(isDesktop
