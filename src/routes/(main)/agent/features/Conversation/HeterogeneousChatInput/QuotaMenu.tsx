@@ -115,7 +115,8 @@ export interface QuotaWindowItem {
   window: HeteroQuotaWindow | null;
 }
 
-export interface QuotaMenuHelpers {
+export interface QuotaMenuHelpers<S> {
+  applyQuota: (quota: S) => void;
   formatDuration: (ms: number) => string | undefined;
   now: number;
 }
@@ -125,6 +126,7 @@ export interface FetchQuotaOptions {
 }
 
 interface QuotaMenuProps<S extends QuotaSnapshotBase> {
+  contentWidth?: number;
   createErrorSnapshot: (error: unknown) => S;
   fetchQuota: (options?: FetchQuotaOptions) => Promise<S>;
   /** Localized explanation for `status: 'error'`; falls back to `error`. */
@@ -136,7 +138,8 @@ interface QuotaMenuProps<S extends QuotaSnapshotBase> {
   getWindows: (quota: S) => QuotaWindowItem[];
   /** Extra agent-specific data (beyond windows) that makes the body worth rendering. */
   hasExtraData?: (quota: S) => boolean;
-  renderFooter?: (quota: S, helpers: QuotaMenuHelpers) => ReactNode;
+  renderFooter?: (quota: S, helpers: QuotaMenuHelpers<S>) => ReactNode;
+  sourceKey?: string;
   title: string;
   tooltip: string;
 }
@@ -147,6 +150,7 @@ interface QuotaMenuProps<S extends QuotaSnapshotBase> {
  * reset countdowns. Agent specifics come in through the props.
  */
 const QuotaMenu = <S extends QuotaSnapshotBase>({
+  contentWidth,
   createErrorSnapshot,
   fetchQuota,
   getUnavailableText,
@@ -161,9 +165,79 @@ const QuotaMenu = <S extends QuotaSnapshotBase>({
   const [loading, setLoading] = useState(false);
   const [quota, setQuota] = useState<S | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  const lastTransientErrorAtRef = useRef(0);
+  const quotaRef = useRef<S | null>(null);
+  const requestIdRef = useRef(0);
+  const sourceKeyRef = useRef(sourceKey);
 
-  const loadQuota = useCallback(async () => {
-    setLoading(true);
+  const hasQuotaDataForSnapshot = useCallback(
+    (snapshot: S | null) => {
+      if (!snapshot) return false;
+
+      return getWindows(snapshot).some((item) => item.window) || !!hasExtraData?.(snapshot);
+    },
+    [getWindows, hasExtraData],
+  );
+
+  const setQuotaSnapshot = useCallback((nextQuota: S) => {
+    quotaRef.current = nextQuota;
+    setQuota(nextQuota);
+  }, []);
+
+  const applyQuota = useCallback(
+    (nextQuota: S) => {
+      if (sourceKeyRef.current !== sourceKey) return;
+
+      // A completed mutation owns the newest snapshot. Invalidate any older
+      // read still in flight so it cannot repaint pre-mutation quota data.
+      requestIdRef.current += 1;
+      setLoading(false);
+      setRefreshError(null);
+      setQuotaSnapshot(nextQuota);
+    },
+    [setQuotaSnapshot, sourceKey],
+  );
+
+  const isCurrentRequest = useCallback(
+    (requestId: number, requestSourceKey: string) =>
+      requestId === requestIdRef.current && requestSourceKey === sourceKeyRef.current,
+    [],
+  );
+
+  const applyQuotaResult = useCallback(
+    (
+      nextQuota: S,
+      options: LoadQuotaOptions = {},
+      requestId = requestIdRef.current,
+      requestSourceKey = sourceKeyRef.current,
+    ) => {
+      if (!isCurrentRequest(requestId, requestSourceKey)) return;
+
+      if (nextQuota.status === 'error') {
+        lastTransientErrorAtRef.current = Date.now();
+
+        if (hasQuotaDataForSnapshot(quotaRef.current)) {
+          if (options.manual) setRefreshError(nextQuota);
+          return;
+        }
+      } else {
+        lastTransientErrorAtRef.current = 0;
+      }
+
+      setRefreshError(null);
+      setQuotaSnapshot(nextQuota);
+    },
+    [hasQuotaDataForSnapshot, isCurrentRequest, setQuotaSnapshot],
+  );
+
+  const loadQuota = useCallback(
+    async (options: LoadQuotaOptions = {}) => {
+      const requestSourceKey = sourceKeyRef.current;
+      const requestId = requestIdRef.current + 1;
+      requestIdRef.current = requestId;
+
+      setRefreshError(null);
+      setLoading(true);
 
       try {
         const nextQuota = await fetchQuota(options.manual ? { force: true } : undefined);
@@ -245,8 +319,11 @@ const QuotaMenu = <S extends QuotaSnapshotBase>({
   );
 
   const windows = quota ? getWindows(quota) : [];
-  const firstWindow = windows.find((item) => item.window)?.window;
-  const compactLeftPercent = firstWindow ? clampPercent(100 - firstWindow.usedPercent) : undefined;
+  const compactLeftPercent = windows.reduce<number | undefined>((mostBinding, item) => {
+    if (!item.window) return mostBinding;
+    const leftPercent = clampPercent(100 - item.window.usedPercent);
+    return mostBinding === undefined ? leftPercent : Math.min(mostBinding, leftPercent);
+  }, undefined);
   const hasQuotaData = hasQuotaDataForSnapshot(quota);
   const manualRefreshErrorText =
     refreshError && (getRefreshErrorText?.(refreshError) || t('heteroAgent.quota.refreshFailed'));
@@ -302,7 +379,7 @@ const QuotaMenu = <S extends QuotaSnapshotBase>({
   };
 
   const content = (
-    <Flexbox className={styles.popover} gap={10}>
+    <Flexbox className={styles.popover} gap={10} style={{ width: contentWidth }}>
       <Flexbox horizontal align={'center'} className={styles.header} justify={'space-between'}>
         <Flexbox gap={2}>
           <Text strong>{title}</Text>
@@ -339,7 +416,8 @@ const QuotaMenu = <S extends QuotaSnapshotBase>({
       ) : hasQuotaData ? (
         <>
           <Flexbox gap={10}>{windows.map((item) => renderQuotaWindow(item))}</Flexbox>
-          {quota && renderFooter?.(quota, { formatDuration, now })}
+          {quota && renderFooter?.(quota, { applyQuota, formatDuration, now })}
+          {refreshErrorText && <div className={styles.refreshNotice}>{refreshErrorText}</div>}
         </>
       ) : (
         <div className={styles.emptyState}>{t('heteroAgent.quota.noData')}</div>
