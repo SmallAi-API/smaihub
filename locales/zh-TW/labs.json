@@ -7,6 +7,8 @@
   "features.artifactDeployment.title": "工件部署",
   "features.assistantMessageGroup.desc": "將助手訊息及其工具調用結果彙整成群組顯示",
   "features.assistantMessageGroup.title": "助手訊息彙整群組",
+  "features.builtinTerminal.desc": "在聊天頁面上顯示一個終端按鈕，點擊後會在底部打開內建終端面板，並在本地 shell 中運行每個主題的標籤。",
+  "features.builtinTerminal.title": "內建終端",
   "features.claudeCodeSdk.desc": "透過 Claude Agent SDK 運行 Claude Code 會話，而不是啟動 CLI。這樣可以實現更豐富的串流和會話控制。",
   "features.claudeCodeSdk.title": "Claude Code SDK 執行時",
   "features.fleet.desc": "在標題欄中顯示艦隊條目 — 一個並排的儀表板，顯示您所有代理上運行的任務。",

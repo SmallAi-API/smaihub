@@ -7,6 +7,8 @@
   "features.artifactDeployment.title": "Artifact 部署",
   "features.assistantMessageGroup.desc": "将代理消息及其工具调用结果组合在一起显示",
   "features.assistantMessageGroup.title": "代理消息分组",
+  "features.builtinTerminal.desc": "在聊天页面上显示一个终端按钮，打开位于底部的内置终端面板，按主题标签在本地 shell 中运行。",
+  "features.builtinTerminal.title": "内置终端",
   "features.claudeCodeSdk.desc": "通过 Claude Agent SDK 运行 Claude Code 会话，替代 CLI 进程方式，提供更丰富的流式输出与会话控制。",
   "features.claudeCodeSdk.title": "Claude Code SDK 运行时",
   "features.fleet.desc": "在标题栏显示 Fleet 入口——把当前账号下所有运行中的任务并排展示的看板。",

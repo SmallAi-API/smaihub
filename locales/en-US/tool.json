@@ -67,6 +67,7 @@
   "codeInterpreter.files": "Files:",
   "codeInterpreter.output": "Output:",
   "codeInterpreter.returnValue": "Return Value:",
+  "connector.actionFailed": "Operation failed, please try again",
   "connector.add.title": "Add Custom Connector",
   "connector.deleteAccountConfirmContent": "This removes the connector and its authorization from your account. Any agent that uses it will need to be re-authorized afterwards.",
   "connector.deleteAgentConfirmContent": "This connector belongs to the agent “{{agent}}”. Deleting it will also remove this tool from that agent.",

@@ -67,6 +67,7 @@
   "codeInterpreter.files": "文件：",
   "codeInterpreter.output": "输出：",
   "codeInterpreter.returnValue": "返回值：",
+  "connector.actionFailed": "操作失败，请重试",
   "connector.add.title": "添加自定义连接器",
   "connector.deleteAccountConfirmContent": "此操作会移除该连接器及其在你账号下的授权。之后任何使用它的助理都需要重新授权。",
   "connector.deleteAgentConfirmContent": "该连接器归属于助理「{{agent}}」。删除它会同时把这个工具从该助理中移除。",

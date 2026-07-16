@@ -14,10 +14,6 @@ export const OSS_GPT_PROVIDER = 'smai';
 export const NEW_IMAGE_MODEL = 'gpt-image-2';
 export const NEW_IMAGE_MODEL_NAME = 'GPT Image 2';
 
-// Video
-export const NEW_VIDEO_MODEL = 'dreamina-seedance-2-0-260128';
-export const NEW_VIDEO_MODEL_NAME = 'Seedance 2.0';
-
 export const BUSINESS_HOME_NEW_MODELS = [
   {
     model: NEW_CLAUDE_MODEL,
@@ -35,11 +31,6 @@ export const BUSINESS_HOME_NEW_MODELS = [
     model: NEW_IMAGE_MODEL,
     title: NEW_IMAGE_MODEL_NAME,
     type: 'image',
-  },
-  {
-    model: NEW_VIDEO_MODEL,
-    title: NEW_VIDEO_MODEL_NAME,
-    type: 'video',
   },
 ] satisfies HomeNewModelItem[];
 
@@ -60,10 +51,5 @@ export const OSS_HOME_NEW_MODELS = [
     model: NEW_IMAGE_MODEL,
     title: NEW_IMAGE_MODEL_NAME,
     type: 'image',
-  },
-  {
-    model: NEW_VIDEO_MODEL,
-    title: NEW_VIDEO_MODEL_NAME,
-    type: 'video',
   },
 ] satisfies HomeNewModelItem[];
