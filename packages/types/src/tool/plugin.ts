@@ -26,6 +26,8 @@ export interface CustomPluginParams {
      * Falls back to the row creator for rows written before this field existed.
      */
     linkedByUserId?: string;
+    /** Toolkit requires no authentication (from the catalog `noAuth` flag). */
+    noAuth?: boolean;
     redirectUrl?: string;
     status: string;
   };

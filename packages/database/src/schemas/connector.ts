@@ -123,6 +123,8 @@ export interface ComposioConnectorMetadata {
    * this field existed; runtime falls back to the row creator for those.
    */
   linkedByUserId?: string;
+  /** Toolkit requires no authentication (from the catalog `noAuth` flag). */
+  noAuth?: boolean;
   redirectUrl?: string;
   /** 'PENDING' | 'ACTIVE' | 'FAILED' — Composio-side connection status */
   status: string;

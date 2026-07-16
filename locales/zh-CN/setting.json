@@ -2364,7 +2364,6 @@
   "workspace.members.invite.seatInsufficient": "仅剩 {{remaining}} 个座位。购买更多座位以邀请 {{required}} 名新成员，或邀请查看者（他们不占用座位）。",
   "workspace.members.invite.seatInsufficientNoBuy": "仅剩 {{remaining}} 个座位。请请求工作区所有者购买更多座位，或邀请查看者（他们不占用座位）。",
   "workspace.members.invite.submit": "邀请",
-  "workspace.members.invite.subtitle": "通过输入他们的电子邮件地址并分配角色来添加新成员",
   "workspace.members.invite.success": "团队成员已成功邀请。",
   "workspace.members.invite.title": "邀请成员",
   "workspace.members.invite.upgradePlanCta": "升级计划",

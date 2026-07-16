@@ -126,6 +126,10 @@ export const composioToolsRouter = router({
       const [connector] = await ctx.connectorModel.queryByIdentifiers([input.identifier]);
       const connectorComposio = connector?.metadata?.composio;
       let connectedAccountId = connectorComposio?.connectedAccountId;
+      // No-auth toolkits carry no connected account; the flag is the source of
+      // truth for skipping account resolution below. Tracked alongside the
+      // connection so the plugin-table fallback can override it.
+      let isNoAuth = connectorComposio?.noAuth === true;
       // The Composio user entity that OWNS the account (linked it), NOT the
       // caller. In a workspace the resolved row may belong to another member;
       // passing the caller's id fails Composio's account/entity validation.
@@ -138,6 +142,7 @@ export const composioToolsRouter = router({
         const pluginComposio = plugin?.customParams?.composio;
         connectedAccountId = pluginComposio?.connectedAccountId;
         ownerUserId = pluginComposio?.linkedByUserId ?? plugin?.userId;
+        isNoAuth = isNoAuth || pluginComposio?.noAuth === true;
       }
 
       // No-auth toolkits (e.g. composio_search) have no connected account and are
