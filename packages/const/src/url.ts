@@ -43,9 +43,9 @@ export const MORE_MODEL_PROVIDER_REQUEST_URL = 'https://www.smallai.asia';
 
 export const MORE_FILE_PREVIEW_REQUEST_URL = 'https://www.smallai.asia';
 
-export const AGENTS_INDEX_GITHUB = 'https://github.com/lobehub/lobe-chat-agents';
-export const AGENTS_INDEX_GITHUB_ISSUE = urlJoin(AGENTS_INDEX_GITHUB, 'issues/new');
-export const AGENTS_OFFICIAL_URL = 'https://lobehub.com/agent';
+export const AGENTS_INDEX_GITHUB = 'https://www.smallaia.sia';
+export const AGENTS_INDEX_GITHUB_ISSUE = 'https://www.smallaia.sia';
+export const AGENTS_OFFICIAL_URL = 'https://www.smallai.asia/agent';
 
 export const AGENT_CHAT_URL = (agentId: string, mobile?: boolean) => {
   if (mobile) return `/agent/${agentId}`;
