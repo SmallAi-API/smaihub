@@ -6,6 +6,16 @@ export default {
   'messenger.scopePersonalTag': 'personal',
   'messenger.detail.addServer': 'Add server',
   'messenger.detail.addWorkspace': 'Add workspace',
+  'messenger.detail.commands.agents': 'List your agents and switch the active one',
+  'messenger.detail.commands.feedback':
+    'Send feedback to the smai.ai team (no AI reply), e.g. /feedback your message',
+  'messenger.detail.commands.help': 'Show all commands in the bot',
+  'messenger.detail.commands.hint': 'Send these commands to the bot in a direct message.',
+  'messenger.detail.commands.new': 'Start a new conversation',
+  'messenger.detail.commands.start': 'Link your account to smai.ai',
+  'messenger.detail.commands.stop': 'Stop the current execution',
+  'messenger.detail.commands.switch': 'Switch between your personal scope and workspaces',
+  'messenger.detail.commands.title': 'Commands',
   'messenger.detail.connections.connected': 'Connected',
   'messenger.detail.connections.empty': 'Open the bot and send /start to link your account.',
   'messenger.detail.connections.linkHint':
@@ -79,12 +89,12 @@ export default {
   'messenger.discord.connections.disconnectTitle': 'Remove server',
   'messenger.discord.installBlocked.dismiss': 'Got it',
   'messenger.discord.installBlocked.suggestion':
-    "DM the LobeHub bot on Discord to link your personal account — you don't need to add the bot again. Or ask the original installer to remove this server in LobeHub Settings → Messenger before re-adding it.",
+    "DM the smai.ai bot on Discord to link your personal account — you don't need to add the bot again. Or ask the original installer to remove this server in smai.ai Settings → Messenger before re-adding it.",
   'messenger.discord.installBlocked.title': 'Server already connected',
   'messenger.discord.installBlocked.withName':
-    '"{{workspace}}" is already connected to LobeHub by another user.',
+    '"{{workspace}}" is already connected to smai.ai by another user.',
   'messenger.discord.installBlocked.withoutName':
-    'This Discord server is already connected to LobeHub by another user.',
+    'This Discord server is already connected to smai.ai by another user.',
   'messenger.discord.installResult.failed':
     'Discord install failed ({{reason}}). Please try again or contact support.',
   'messenger.discord.installResult.reasons.accessDenied': 'authorization was cancelled',
@@ -111,6 +121,9 @@ export default {
     'Chat with your smai.ai agents on Slack by DMing or mentioning @smai.ai in any workspace.',
   'messenger.list.telegram.description':
     'Chat with your smai.ai agents on Telegram, and choose which agent replies.',
+  'messenger.list.wechat.description':
+    'Scan with WeChat to chat privately with your smai.ai agents and switch agents with /agents.',
+  'messenger.paidBadge': 'Pro',
   'messenger.setActiveFailed': 'Failed to set as active.',
   'messenger.setActiveSuccess': 'Active agent updated.',
   'messenger.subtitle':
@@ -118,10 +131,50 @@ export default {
   'messenger.title': 'Messenger',
   'messenger.unlinkConfirm':
     'Disconnect your {{platform}} account from smai.ai? Inbound messages will stop until you /start again.',
+  'messenger.unlinkConfirmWechat':
+    'Disconnect your WeChat account from smai.ai? Inbound messages will stop until you scan the QR code to reconnect.',
   'messenger.unlinkCta': 'Disconnect',
   'messenger.unlinkFailed': 'Failed to disconnect.',
   'messenger.unlinkSuccess': 'Disconnected.',
   'messenger.unlinkTitle': 'Disconnect account',
+  'messenger.wechat.accountLabel': 'WeChat account',
+  'messenger.wechat.cancelRescan': 'Cancel rescan',
+  'messenger.wechat.connectCta': 'Generate QR code',
+  'messenger.wechat.connected': 'WeChat connected.',
+  'messenger.wechat.defaultAgent': 'Default agent',
+  'messenger.wechat.defaultAgentHint':
+    'New WeChat messages will be routed to this agent. You can switch later with /agents.',
+  'messenger.wechat.error.alreadyLinkedToOther':
+    'This WeChat account is already connected to another smai.ai account.',
+  'messenger.wechat.error.connectionFailed':
+    'WeChat was verified, but message delivery could not start. Please try again.',
+  'messenger.wechat.error.incompleteConfirmation':
+    'WeChat returned incomplete account information. Generate a new QR code and try again.',
+  'messenger.wechat.error.pollFailed':
+    'Could not check the QR code status. Please generate a new code and try again.',
+  'messenger.wechat.error.qrUnavailable': 'Could not generate a WeChat QR code. Please try again.',
+  'messenger.wechat.error.unlinkBeforeRelink':
+    'Disconnect the current WeChat account before connecting another one.',
+  'messenger.wechat.paidDescription':
+    'WeChat System Bot is available on paid personal plans. Upgrade to connect and run it.',
+  'messenger.wechat.paidTitle': 'Upgrade to connect WeChat',
+  'messenger.wechat.qr.expired': 'This QR code expired. Generate a new one to continue.',
+  'messenger.wechat.qr.scanned': 'Scanned. Confirm the connection in WeChat.',
+  'messenger.wechat.qr.tip':
+    'Open WeChat on your phone, scan this code, and confirm. This code is single-use and expires in 5 minutes.',
+  'messenger.wechat.qr.waiting': 'Waiting for WeChat to scan…',
+  'messenger.wechat.rescan': 'Rescan',
+  'messenger.wechat.retry': 'Try again',
+  'messenger.wechat.runtime.failedDescription':
+    'The WeChat connection is offline. Rescan to refresh its credentials.',
+  'messenger.wechat.runtime.failedTitle': 'WeChat connection needs attention',
+  'messenger.wechat.runtime.sessionExpiredDescription':
+    'WeChat ended this login session. Rescan to reconnect without changing the active agent.',
+  'messenger.wechat.runtime.sessionExpiredTitle': 'WeChat session expired',
+  'messenger.wechat.selectAgentHint':
+    'WeChat is connected. Select an Agent to receive new messages.',
+  'messenger.wechat.setupTitle': 'Connect WeChat',
+  'messenger.wechat.upgradeCta': 'View plans',
   'verify.confirm.conflict.description':
     'This {{platform}} account is already linked to smai.ai account {{email}}. Sign in to that account to manage the link, or unlink there before retrying.',
   'verify.confirm.conflict.switchAccount': 'Sign in with another account',
