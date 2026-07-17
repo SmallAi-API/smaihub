@@ -25,6 +25,8 @@
   "features.inputMarkdown.title": "輸入框 Markdown 渲染",
   "features.messageTextSelectionActions.desc": "在聊天訊息中選取文字時顯示快速操作，讓選取的文字可以加入下一次對話的內容中。",
   "features.messageTextSelectionActions.title": "訊息文字選取操作",
+  "features.oauthApps.desc": "在個人和工作區設置中顯示 OAuth 應用程式管理。此功能預設為隱藏。",
+  "features.oauthApps.title": "OAuth 應用程式",
   "features.platformAgent.desc": "在創建菜單中顯示「連接代理」選項。",
   "features.platformAgent.title": "連接代理",
   "features.taskVerify.desc": "在任務詳細信息中添加交付接受部分：用一句話描述接受，並讓 AI 生成可編輯的驗證標準。",

@@ -117,6 +117,7 @@
   "verify.error.unlinkBeforeRelink": "该smai.ai账户已链接到该平台上的另一个账户。在链接新账户之前，请在设置 → Messenger中断开它。",
   "verify.signInCta": "登录以继续",
   "verify.signInRequired": "请登录smai.ai以确认链接。",
+  "verify.success.backToLobeHub": "返回 smai.ai",
   "verify.success.description": "您的帐户现在已连接到 {{platform}}。打开 {{platform}} 并发送您的第一条消息。",
   "verify.success.openBot": "在 {{platform}} 中打开",
   "verify.success.title": "链接成功！"

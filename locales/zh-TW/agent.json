@@ -274,7 +274,6 @@
   "channel.wechatBotIdHint": "在 QR 碼授權後分配的機器人識別碼。",
   "channel.wechatConnectedInfo": "已連接的微信帳號",
   "channel.wechatGenerateQrCode": "生成 QR 碼",
-  "channel.wechatIdleNotice": "如果超過 7 天沒有用戶發送消息，該連接將自動暫停。要恢復，請點擊「通過 QR 碼重新綁定」。",
   "channel.wechatManagedCredentials": "此通道已通過 QR 碼授權連接。憑證自動管理。",
   "channel.wechatQrExpired": "QR 碼已過期。請刷新以獲取新的 QR 碼。",
   "channel.wechatQrLoadFailed": "無法加載 QR 碼。請再試一次。",

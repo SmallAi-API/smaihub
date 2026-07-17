@@ -45,6 +45,7 @@
   "homePromoBanner.dismiss": "關閉",
   "homePromoBanner.label": "{{model}} 現已上線",
   "inbox.needsYou.title": "需要您",
+  "inbox.news.markAllRead": "標記全部為已讀",
   "inbox.news.subtitle": "無需決定 — 只需一瞥",
   "inbox.news.title": "每日簡報",
   "inbox.running.title": "{{count}} 個任務正在運行",
