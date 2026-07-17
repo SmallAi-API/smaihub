@@ -431,6 +431,7 @@ export default {
   'plans.message.normalLLM': 'Standard Models',
   'plans.message.proLLM': 'Premium Models',
   'plans.message.tooltip': 'Estimated based on average {{number}} tokens per message',
+  'plans.messageChannels.monitoring': 'Message monitoring',
   'plans.messageChannels.title': 'Message Channels',
   'plans.messageChannels.wechat': 'WeChat channel',
   'plans.mostPicked': 'Most Popular',
