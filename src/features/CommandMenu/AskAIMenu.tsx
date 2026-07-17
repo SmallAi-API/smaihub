@@ -1,11 +1,11 @@
 import { DEFAULT_AVATAR, DEFAULT_INBOX_AVATAR } from '@lobechat/const';
-import { Avatar } from '@lobehub/ui';
 import { GroupBotSquareIcon } from '@lobehub/ui/icons';
 import { Command } from 'cmdk';
 import { Bot, Image } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import AgentAvatar from '@/features/AgentAvatar';
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
 import { useHomeStore } from '@/store/home';
 import { homeAgentListSelectors } from '@/store/home/selectors';
@@ -60,7 +60,12 @@ const AskAIMenu = memo(() => {
   return (
     <Command.Group heading={heading}>
       <Command.Item value="lobe-ai" onSelect={handleAskLobeAI}>
-        <Avatar emojiScaleWithBackground avatar={DEFAULT_INBOX_AVATAR} shape="square" size={18} />
+        <AgentAvatar
+          emojiScaleWithBackground
+          avatar={DEFAULT_INBOX_AVATAR}
+          shape="square"
+          size={18}
+        />
         <div className={styles.itemContent}>
           <div className={styles.itemLabel}>smai.ai</div>
         </div>
@@ -92,7 +97,7 @@ const AskAIMenu = memo(() => {
           value={`agent-${agent.id}`}
           variant="detailed"
           icon={
-            <Avatar
+            <AgentAvatar
               emojiScaleWithBackground
               avatar={typeof agent.avatar === 'string' ? agent.avatar : DEFAULT_AVATAR}
               shape="square"

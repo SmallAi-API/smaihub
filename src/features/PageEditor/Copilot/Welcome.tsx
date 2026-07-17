@@ -1,10 +1,11 @@
 'use client';
 
-import { Avatar, Flexbox, Text } from '@lobehub/ui';
+import { Flexbox, Text } from '@lobehub/ui';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DEFAULT_INBOX_AVATAR } from '@/const/index';
+import AgentAvatar from '@/features/AgentAvatar';
 import { conversationSelectors, useConversationStore } from '@/features/Conversation';
 import SuggestQuestions from '@/features/SuggestQuestions';
 import { useAgentStore } from '@/store/agent';
@@ -25,7 +26,7 @@ const AgentBuilderWelcome = memo(() => {
           paddingBottom: 16,
         }}
       >
-        <Avatar avatar={agent?.avatar || DEFAULT_INBOX_AVATAR} shape={'square'} size={78} />
+        <AgentAvatar avatar={agent?.avatar || DEFAULT_INBOX_AVATAR} shape={'square'} size={78} />
         <Text fontSize={24} weight={'bold'}>
           {t('pageCopilot.title')}
         </Text>

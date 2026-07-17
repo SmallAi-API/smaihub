@@ -1,9 +1,10 @@
 import { DEFAULT_AVATAR, DEFAULT_INBOX_AVATAR } from '@lobechat/const';
-import { Avatar, preventDefault } from '@lobehub/ui';
+import { preventDefault } from '@lobehub/ui';
 import { Command } from 'cmdk';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import AgentAvatar from '@/features/AgentAvatar';
 import { useAgentStore } from '@/store/agent';
 import { builtinAgentSelectors } from '@/store/agent/selectors/builtinAgentSelectors';
 import { useHomeStore } from '@/store/home';
@@ -66,7 +67,12 @@ const AskAgentCommands = memo(() => {
           onMouseDown={preventDefault}
           onSelect={() => handleAgentSelect(inboxAgentId, 'smai', DEFAULT_INBOX_AVATAR)}
         >
-          <Avatar emojiScaleWithBackground avatar={DEFAULT_INBOX_AVATAR} shape="square" size={18} />
+          <AgentAvatar
+            emojiScaleWithBackground
+            avatar={DEFAULT_INBOX_AVATAR}
+            shape="square"
+            size={18}
+          />
           <div className={styles.itemContent}>
             <div className={styles.itemLabel}>@smai.ai</div>
           </div>
@@ -87,7 +93,7 @@ const AskAgentCommands = memo(() => {
             )
           }
         >
-          <Avatar
+          <AgentAvatar
             emojiScaleWithBackground
             avatar={typeof agent.avatar === 'string' ? agent.avatar : DEFAULT_AVATAR}
             shape="square"

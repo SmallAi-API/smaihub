@@ -1,6 +1,6 @@
 'use client';
 
-import { ActionIcon, Avatar, Block, Text } from '@lobehub/ui';
+import { ActionIcon, Block, Text } from '@lobehub/ui';
 import { ChevronsUpDownIcon } from 'lucide-react';
 import { type PropsWithChildren } from 'react';
 import React, { memo } from 'react';
@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 import { DESKTOP_HEADER_ICON_SMALL_SIZE } from '@/const/layoutTokens';
 import { DEFAULT_AVATAR, DEFAULT_INBOX_AVATAR } from '@/const/meta';
+import AgentAvatar from '@/features/AgentAvatar';
 import { SkeletonItem } from '@/features/NavPanel/components/SkeletonList';
 import { useAgentStore } from '@/store/agent';
 import { agentSelectors, builtinAgentSelectors } from '@/store/agent/selectors';
@@ -45,7 +46,7 @@ const Agent = memo<PropsWithChildren>(() => {
           overflow: 'hidden',
         }}
       >
-        <Avatar
+        <AgentAvatar
           avatar={isInbox ? avatar || DEFAULT_INBOX_AVATAR : avatar || DEFAULT_AVATAR}
           background={backgroundColor || undefined}
           shape={'square'}

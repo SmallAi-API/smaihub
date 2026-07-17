@@ -1,10 +1,11 @@
 import { DEFAULT_AVATAR, INBOX_SESSION_ID } from '@lobechat/const';
-import { Avatar, Block, Flexbox, Text } from '@lobehub/ui';
+import { Block, Flexbox, Text } from '@lobehub/ui';
 import { createStaticStyles, cssVar } from 'antd-style';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DEFAULT_INBOX_AVATAR } from '@/const/meta';
+import AgentAvatar from '@/features/AgentAvatar';
 import { taskDetailPath } from '@/features/AgentTasks/shared/taskDetailPath';
 import BriefCardActions from '@/features/DailyBrief/BriefCardActions';
 import BriefCardArtifacts from '@/features/DailyBrief/BriefCardArtifacts';
@@ -89,7 +90,7 @@ const InboxBriefCard = memo<InboxBriefCardProps>(({ brief }) => {
 
       <Flexbox horizontal align={'flex-start'} gap={10}>
         {agent && (
-          <Avatar
+          <AgentAvatar
             avatar={agent.avatar || (isInbox ? DEFAULT_INBOX_AVATAR : DEFAULT_AVATAR)}
             background={agent.backgroundColor || cssVar.colorBgContainer}
             shape={'circle'}

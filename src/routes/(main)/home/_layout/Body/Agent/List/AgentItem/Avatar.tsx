@@ -1,15 +1,16 @@
 import { DEFAULT_AVATAR } from '@lobechat/const';
-import { Avatar } from '@lobehub/ui';
 import { memo } from 'react';
 
-interface AgentAvatarProps {
+import AgentAvatar from '@/features/AgentAvatar';
+
+interface AgentItemAvatarProps {
   avatar?: string;
   avatarBackground?: string;
 }
 
-const AgentAvatar = memo<AgentAvatarProps>(({ avatar, avatarBackground }) => {
+const AgentItemAvatar = memo<AgentItemAvatarProps>(({ avatar, avatarBackground }) => {
   return (
-    <Avatar
+    <AgentAvatar
       emojiScaleWithBackground
       avatar={avatar || DEFAULT_AVATAR}
       background={avatarBackground}
@@ -19,4 +20,4 @@ const AgentAvatar = memo<AgentAvatarProps>(({ avatar, avatarBackground }) => {
   );
 });
 
-export default AgentAvatar;
+export default AgentItemAvatar;

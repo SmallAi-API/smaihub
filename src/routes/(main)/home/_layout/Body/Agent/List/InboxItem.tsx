@@ -1,12 +1,13 @@
 'use client';
 
 import { DEFAULT_INBOX_AVATAR } from '@lobechat/const';
-import { Avatar, Icon } from '@lobehub/ui';
+import { Icon } from '@lobehub/ui';
 import { createStaticStyles } from 'antd-style';
 import { Loader2 } from 'lucide-react';
 import { type CSSProperties } from 'react';
 import { memo } from 'react';
 
+import AgentAvatar from '@/features/AgentAvatar';
 import NavItem from '@/features/NavPanel/components/NavItem';
 import WorkspaceLink from '@/features/Workspace/WorkspaceLink';
 import { usePrefetchAgent } from '@/hooks/usePrefetchAgent';
@@ -65,7 +66,7 @@ const InboxItem = memo<InboxItemProps>(({ className, style }) => {
   prefetchAgent(inboxAgentId!);
 
   const avatarNode = (
-    <Avatar emojiScaleWithBackground avatar={inboxAgentAvatar} shape={'square'} size={24} />
+    <AgentAvatar emojiScaleWithBackground avatar={inboxAgentAvatar} shape={'square'} size={24} />
   );
 
   return (
