@@ -104,7 +104,7 @@ const styles = createStaticStyles(({ css }) => ({
   `,
   optionGrid: css`
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 1px;
 
     border-block-start: 1px solid ${cssVar.colorBorderSecondary};
@@ -353,12 +353,6 @@ const DeviceManager = memo<DeviceManagerProps>(({ onConnect, scope, visibility }
               icon={MonitorDownIcon}
               title={t('devices.empty.methodDesktop.title')}
               onClick={() => onConnect('desktop')}
-            />
-            <ConnectOption
-              desc={t('devices.empty.methodCli.desc')}
-              icon={TerminalIcon}
-              title={t('devices.empty.methodCli.title')}
-              onClick={() => onConnect('cli')}
             />
           </div>
         )}
