@@ -22,7 +22,7 @@ import { remoteDeviceExecutor } from '@lobechat/builtin-tool-remote-device/execu
 import { taskExecutor } from '@lobechat/builtin-tool-task/client/executor';
 
 import type { BuiltinToolContext, BuiltinToolResult, IBuiltinToolExecutor } from '../types';
-import { ampExecutor, claudeCodeExecutor, codexExecutor } from './heteroCli';
+import { ampExecutor, claudeCodeExecutor, codexExecutor, openCodeExecutor } from './heteroCli';
 import { activatorExecutor } from './lobe-activator';
 import { agentDocumentsExecutor } from './lobe-agent-documents';
 import { messageExecutor } from './lobe-message';
@@ -154,6 +154,7 @@ export const registerBuiltinToolExecutors = (): void => {
     ampExecutor,
     claudeCodeExecutor,
     codexExecutor,
+    openCodeExecutor,
     agentBuilderExecutor,
     agentDocumentsExecutor,
     agentManagementExecutor,
