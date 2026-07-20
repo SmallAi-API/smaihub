@@ -4,7 +4,7 @@ import urlJoin from 'url-join';
 import { createRouterRuntime } from '../../core/RouterRuntime';
 import { type CreateRouterRuntimeOptions } from '../../core/RouterRuntime/createRuntime';
 import { detectModelProvider, processMultiProviderModelList } from '../../utils/modelParse';
-import { responsesAPIModels } from '../openai/openaiModelId';
+import { responsesAPIModels } from '../openai/modelId';
 import { resolveProviderRouteModels } from '../utils/resolveProviderRouteModels';
 
 const DEFAULT_BASE_URL = 'https://api.smallai.asia';

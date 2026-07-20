@@ -7,6 +7,7 @@ import { QwenAIStream } from '../../core/streams';
 import { processMultiProviderModelList } from '../../utils/modelParse';
 import { createQwenImage } from './createImage';
 import { createQwenVideo } from './createVideo';
+import { isThinkingForcedQwenModel } from './modelId';
 
 export interface QwenModelCard {
   id: string;
@@ -85,21 +86,31 @@ export const params = {
                 : {}),
               ...(!thinkingExplicitlyDisabled && reasoning_effort && { reasoning_effort }),
             }
-          : model.includes('-thinking')
+          : isThinkingForcedQwenModel(model)
             ? {
                 enable_thinking: true,
-                thinking_budget:
-                  thinking?.budget_tokens === 0 ? 0 : thinking?.budget_tokens || undefined,
+                // A disabled preference carries budget_tokens: 0 — sending it alongside
+                // a forced-on thinking flag would zero out the reasoning budget.
+                ...(!thinkingExplicitlyDisabled && {
+                  thinking_budget:
+                    thinking?.budget_tokens === 0 ? 0 : thinking?.budget_tokens || undefined,
+                }),
               }
-            : thinking
+            : model.includes('-thinking')
               ? {
-                  ...(thinking.type !== undefined && {
-                    enable_thinking: thinking.type === 'enabled',
-                  }),
+                  enable_thinking: true,
                   thinking_budget:
                     thinking?.budget_tokens === 0 ? 0 : thinking?.budget_tokens || undefined,
                 }
-              : {}),
+              : thinking
+                ? {
+                    ...(thinking.type !== undefined && {
+                      enable_thinking: thinking.type === 'enabled',
+                    }),
+                    thinking_budget:
+                      thinking?.budget_tokens === 0 ? 0 : thinking?.budget_tokens || undefined,
+                  }
+                : {}),
         ...(typeof preserveThinking === 'boolean' && { preserve_thinking: preserveThinking }),
         frequency_penalty: undefined,
         messages,
