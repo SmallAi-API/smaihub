@@ -918,31 +918,31 @@ const smaiChatModels: AIChatModelCard[] = [
     releasedAt: '2024-12-17',
     type: 'chat',
   },
-  // {
-  //   abilities: {
-  //     functionCall: true,
-  //     reasoning: true,
-  //     search: true,
-  //     structuredOutput: true,
-  //     vision: true,
-  //   },
-  //   contextWindowTokens: 1_000_000,
-  //   description:
-  //     "Claude Fable 5 is Anthropic's most capable model — a new tier above Opus for the most demanding reasoning and long-horizon agentic work.",
-  //   displayName: 'Claude Fable 5',
-  //   enabled: true,
-  //   family: 'claude-mythos',
-  //   generation: 'mythos-5',
-  //   id: 'claude-fable-5',
-  //   maxOutput: 128_000,
-  //   releasedAt: '2026-06-09',
-  //   settings: {
-  //     disabledParams: ['temperature', 'top_p'],
-  //     extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
-  //     searchImpl: 'params',
-  //   },
-  //   type: 'chat',
-  // },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_000_000,
+    description:
+      "Claude Fable 5 is Anthropic's most capable model — a new tier above Opus for the most demanding reasoning and long-horizon agentic work.",
+    displayName: 'Claude Fable 5',
+    enabled: true,
+    family: 'claude-mythos',
+    generation: 'mythos-5',
+    id: 'claude-fable-5',
+    maxOutput: 128_000,
+    releasedAt: '2026-06-09',
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
   {
     abilities: {
       functionCall: true,
