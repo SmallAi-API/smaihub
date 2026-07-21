@@ -314,12 +314,7 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
         </Flexbox>
 
         <Flexbox gap={16} style={{ width: '100%' }}>
-          <Alert
-            description={t('authResult.success.desc')}
-            style={{ width: '100%' }}
-            title={t('authResult.success.title')}
-            type={'success'}
-          />
+          <Alert style={{ width: '100%' }} title={t('authResult.success.title')} type={'success'} />
           <UserInfo
             style={{
               background: cssVar.colorFillSecondary,
@@ -338,7 +333,7 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
             {t('back')}
           </Button>
           <Button type={'primary'} onClick={onNext}>
-            {t('screen5.navigation.next')}
+            {t('next')}
           </Button>
         </Flexbox>
       </Center>
@@ -582,7 +577,7 @@ const LoginStep = memo<LoginStepProps>(({ onBack, onNext }) => {
             {t('back')}
           </Button>
           <Button type={'primary'} onClick={onNext}>
-            {t('screen5.navigation.next')}
+            {t('next')}
           </Button>
         </Flexbox>
       )}
