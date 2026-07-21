@@ -1,5 +1,4 @@
-import { type ChatModelCard, type ModelProviderCard } from '@/types/llm';
-
+import type { ChatModelCard, ModelProviderCard } from '../types';
 import NewAPIProvider from './newapi';
 import OpenAIProvider from './openai';
 import SMAIProvider from './smai';

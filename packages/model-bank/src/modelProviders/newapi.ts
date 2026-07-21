@@ -1,4 +1,4 @@
-import { ModelProviderCard } from '@/types/llm';
+import type { ModelProviderCard } from '../types';
 
 const NewAPI: ModelProviderCard = {
   apiKeyUrl: 'https://api.smai.ai',
