@@ -1160,6 +1160,47 @@ const smaiChatModels: AIChatModelCard[] = [
   },
   {
     abilities: {
+      audio: true,
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_048_576 + 65_536,
+    description: 'Points to gemini-3.6-flash',
+    displayName: 'Gemini Flash Latest',
+    family: 'gemini',
+    id: 'gemini-flash-latest',
+    knowledgeCutoff: '2026-03',
+    maxOutput: 65_536,
+    pricing: {
+      units: [
+        { name: 'textInput_cacheRead', rate: 0.15, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 1.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 1.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'videoInput', rate: 1.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'audioInput', rate: 1.5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 7.5, strategy: 'fixed', unit: 'millionTokens' },
+        {
+          lookup: { prices: { '1h': 1 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['thinkingLevel', 'urlContext'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
       functionCall: true,
       reasoning: true,
       video: true,
@@ -1169,7 +1210,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       "Gemini's most intelligent model built for speed, combining frontier intelligence with superior search and grounding.",
     displayName: 'Gemini 3.5 Flash',
-    enabled: true,
     id: 'gemini-3.5-flash',
     maxOutput: 65_536,
     releasedAt: '2026-05-20',
