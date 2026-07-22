@@ -8,6 +8,7 @@ import { UPLOAD_STATUS_SET } from '@/types/files/upload';
 import { useAgentId } from '../../hooks/useAgentId';
 import FileItem from '../FilePreview/FileItem';
 import ContextItem from './ContextItem';
+import ElementItem from './ElementItem';
 import SelectionItem from './SelectionItem';
 
 const styles = createStaticStyles(({ css }) => ({
@@ -97,9 +98,13 @@ const ContextList = memo(() => {
             style={{ paddingBlockStart: 8 }}
             wrap={'wrap'}
           >
-            {selectionList.map((item) => (
-              <SelectionItem key={item.id} {...item} />
-            ))}
+            {selectionList.map((item) =>
+              item.source === 'element' ? (
+                <ElementItem key={item.id} {...item} />
+              ) : (
+                <SelectionItem key={item.id} {...item} />
+              ),
+            )}
             {completedFiles.map((item) => (
               <ContextItem key={item.id} {...item} />
             ))}
