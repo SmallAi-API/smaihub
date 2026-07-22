@@ -15,7 +15,7 @@ import {
   Text,
 } from '@lobehub/ui';
 import { Button, Segmented, Select, toast } from '@lobehub/ui/base-ui';
-import { createStaticStyles, cssVar, cssVar, cx, useResponsive } from 'antd-style';
+import { createStaticStyles, cssVar, cx, useResponsive } from 'antd-style';
 import dayjs from 'dayjs';
 import {
   BadgeCheck,
@@ -1034,6 +1034,7 @@ const AcceptancePage = memo<AcceptancePageProps>(
             {isOwner && (
               <DecisionBar
                 acceptedCount={acceptedCount}
+                embedded={isEmbedded}
                 feedbackCount={activeFeedbackCount}
                 needsFixCount={needsFixCount}
                 pending={pending}

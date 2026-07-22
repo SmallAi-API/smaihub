@@ -130,8 +130,6 @@ export const useCategory = (): CategoryGroup[] => {
 
     const system: CategoryItem[] = [
       makeItem({ icon: Database, key: SettingsTabs.Storage, label: t('setting:tab.storage') }),
-      isDevMode &&
-        makeItem({ icon: KeyIcon, key: SettingsTabs.APIKey, label: t('auth:tab.apikey') }),
       makeItem({
         icon: EllipsisIcon,
         key: SettingsTabs.Advanced,

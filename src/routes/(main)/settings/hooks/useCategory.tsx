@@ -230,11 +230,6 @@ export const useCategory = () => {
         key: SettingsTabs.Advanced,
         label: t('tab.advanced'),
       },
-      isDevMode && {
-        icon: KeyIcon,
-        key: SettingsTabs.APIKey,
-        label: tAuth('tab.apikey'),
-      },
       enableOAuthApps && {
         icon: AppWindowIcon,
         key: SettingsTabs.OAuthApps,

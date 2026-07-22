@@ -3,8 +3,8 @@
 import { Flexbox, Icon, Text } from '@lobehub/ui';
 import { Button } from '@lobehub/ui/base-ui';
 import { createStaticStyles, cssVar } from 'antd-style';
-import { BadgeCheck, ListTodo, Loader2, RotateCcw } from 'lucide-react';
-import { memo } from 'react';
+import { BadgeCheck, CircleAlert, ListTodo, Loader2, RefreshCw, RotateCcw } from 'lucide-react';
+import { memo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const styles = createStaticStyles(({ css }) => ({
@@ -16,7 +16,7 @@ const styles = createStaticStyles(({ css }) => ({
     inset-block-end: 16px;
 
     display: flex;
-    gap: 14px;
+    gap: 10px;
     align-items: center;
 
     padding-block: 12px;
@@ -27,15 +27,27 @@ const styles = createStaticStyles(({ css }) => ({
     background: ${cssVar.colorBgElevated};
     box-shadow: ${cssVar.boxShadowTertiary};
   `,
-  glyph: css`
-    display: flex;
-    flex: none;
-    align-items: center;
-    justify-content: center;
+  // The completion mark springs in the instant review finishes — the felt beat
+  // the abrupt ring→disc swap never had, landing at the decision bar where the
+  // user's next action (accept / send back) already is, not behind a filter.
+  completePop: css`
+    @keyframes acceptance-decision-complete-pop {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
 
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+      55% {
+        transform: scale(1.18);
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    animation: acceptance-decision-complete-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   `,
 }));
 
@@ -47,8 +59,8 @@ type BarState = 'accepted' | 'live' | 'rejected' | 'settled';
  * rendered by the bar as the BadgeCheck disc, not here.
  */
 const ProgressRing = memo<{ done: number; total: number }>(({ done, total }) => {
-  const size = 36;
-  const stroke = 3.5;
+  const size = 20;
+  const stroke = 2;
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
   const ratio = total > 0 ? Math.min(done / total, 1) : 0;
@@ -109,8 +121,17 @@ ProgressRing.displayName = 'AcceptanceProgressRing';
 interface DecisionBarProps {
   /** Checks the user has signed off, of `totalCount` reviewable ones. */
   acceptedCount: number;
+  /**
+   * Rendered as the in-chat portal embed. The send-back there drafts the repair
+   * prompt straight into the composer sitting beside it, which makes "copy the
+   * review" a redundant second way to move the same text — drop it and leave
+   * one send-back path.
+   */
+  embedded?: boolean;
   /** Active (not-yet-consumed) feedback recorded this round. */
   feedbackCount: number;
+  /** Checks the user reviewed as needing a fix (待修复) — decided, not pending. */
+  needsFixCount: number;
   onAccept: () => void;
   /** Copy the hardcoded repair prompt for pasting to any agent. */
   onCopyReview: () => void;
@@ -120,6 +141,9 @@ interface DecisionBarProps {
   /** Dispatch the repair prompt straight into the origin agent conversation. */
   onRerun: () => void;
   pending: boolean;
+  /** A live round that is a dispatched repair — coloured as an in-progress task
+      (warning), not a neutral verify, to match the system's task-process cue. */
+  repairing?: boolean;
   /** The origin conversation is known — the rerun dispatch has a target. */
   rerunAvailable: boolean;
   rerunPending: boolean;
@@ -141,13 +165,16 @@ interface DecisionBarProps {
 const DecisionBar = memo<DecisionBarProps>(
   ({
     acceptedCount,
+    embedded,
     feedbackCount,
+    needsFixCount,
     onAccept,
     onCopyReview,
     onOpenFeedback,
     onRejectComment,
     onRerun,
     pending,
+    repairing,
     rerunAvailable,
     rerunPending,
     state,
@@ -158,33 +185,69 @@ const DecisionBar = memo<DecisionBarProps>(
     const { t } = useTranslation('verify');
 
     const stateMeta = {
-      accepted: { bg: cssVar.colorSuccessBg, color: cssVar.colorSuccess, icon: BadgeCheck },
-      live: { bg: cssVar.colorInfoBg, color: cssVar.colorInfo, icon: Loader2 },
-      rejected: { bg: cssVar.colorErrorBg, color: cssVar.colorError, icon: RotateCcw },
+      accepted: { color: cssVar.colorSuccess, icon: BadgeCheck },
+      // A repair round is an in-progress TASK — warn-coloured refresh, matching
+      // the task-process cue; a plain verify stays neutral info.
+      live: repairing
+        ? { color: cssVar.colorWarning, icon: RefreshCw }
+        : { color: cssVar.colorInfo, icon: Loader2 },
+      rejected: { color: cssVar.colorError, icon: RotateCcw },
       settled: null,
     }[state];
 
     const allConfirmed = totalCount > 0 && acceptedCount >= totalCount;
     const hasFeedback = feedbackCount > 0;
+    // The dial tracks DECIDED checks (accepted + 待修复), so a fully-reviewed
+    // union reads as done even when some checks still need a fix.
+    const decidedCount = acceptedCount + needsFixCount;
+    // Every check reviewed, but some need a fix — a review outcome, not a
+    // success and not "still awaiting". Reads as an attention mark, never the
+    // near-complete progress dial that made the state look like an all-clear.
+    const settledNeedsFix =
+      state === 'settled' && !allConfirmed && decidedCount >= totalCount && needsFixCount > 0;
+
+    // Pop the completion mark only on the real IN-SESSION transition into a
+    // finished review — never on mount-when-already-done (revisiting a settled
+    // acceptance) and never on an unrelated re-render. Seed the ref to `null`
+    // so the first render (whatever its state) is treated as the baseline, not
+    // a transition: `prev === false && now` is the one edge that fires.
+    const reviewComplete = allConfirmed || settledNeedsFix;
+    const prevComplete = useRef<boolean | null>(null);
+    const justCompleted = prevComplete.current === false && reviewComplete;
+    useEffect(() => {
+      prevComplete.current = reviewComplete;
+    }, [reviewComplete]);
 
     return (
       <div className={styles.bar}>
-        {stateMeta || allConfirmed ? (
-          // A fully signed-off review earns the badge, not a maxed-out dial —
-          // the same mark the accepted state carries.
-          <div
-            className={styles.glyph}
-            style={{ background: stateMeta?.bg ?? cssVar.colorSuccessBg }}
-          >
-            <Icon
-              color={stateMeta?.color ?? cssVar.colorSuccess}
-              icon={stateMeta?.icon ?? BadgeCheck}
-              size={18}
-              spin={state === 'live'}
-            />
-          </div>
+        {stateMeta ? (
+          // accepted / live / rejected — a plain coloured status mark.
+          <Icon
+            color={stateMeta.color}
+            icon={stateMeta.icon}
+            size={22}
+            spin={state === 'live'}
+            style={{ flex: 'none' }}
+          />
+        ) : allConfirmed ? (
+          // Every check signed off — the same clean badge the accepted state carries.
+          <Icon
+            className={justCompleted ? styles.completePop : undefined}
+            color={cssVar.colorSuccess}
+            icon={BadgeCheck}
+            size={22}
+            style={{ flex: 'none' }}
+          />
+        ) : settledNeedsFix ? (
+          <Icon
+            className={justCompleted ? styles.completePop : undefined}
+            color={cssVar.colorWarning}
+            icon={CircleAlert}
+            size={22}
+            style={{ flex: 'none' }}
+          />
         ) : (
-          <ProgressRing done={acceptedCount} total={totalCount} />
+          <ProgressRing done={decidedCount} total={totalCount} />
         )}
         <Flexbox gap={2} style={{ flex: 1, minWidth: 0 }}>
           <Text ellipsis strong style={{ fontSize: 14 }}>
@@ -211,8 +274,9 @@ const DecisionBar = memo<DecisionBarProps>(
         )}
 
         {/* A dispatched send-back (repairing) keeps the copy entry alive —
-            the reviewer may still hand the prompt to another agent. */}
-        {state === 'live' && hasFeedback && (
+            the reviewer may still hand the prompt to another agent. Embedded,
+            the composer beside it already receives the draft. */}
+        {state === 'live' && hasFeedback && !embedded && (
           <Button disabled={pending} style={{ flex: 'none' }} type={'fill'} onClick={onCopyReview}>
             {t('acceptance.bar.copyReview')}
           </Button>
@@ -223,14 +287,16 @@ const DecisionBar = memo<DecisionBarProps>(
             // Feedback is queued — the delivery isn't being accepted now; the
             // bar's job is getting the repair round started.
             <>
-              <Button
-                disabled={pending}
-                style={{ flex: 'none' }}
-                type={'fill'}
-                onClick={onCopyReview}
-              >
-                {t('acceptance.bar.copyReview')}
-              </Button>
+              {!embedded && (
+                <Button
+                  disabled={pending}
+                  style={{ flex: 'none' }}
+                  type={'fill'}
+                  onClick={onCopyReview}
+                >
+                  {t('acceptance.bar.copyReview')}
+                </Button>
+              )}
               {rerunAvailable && (
                 <Button
                   disabled={pending}
