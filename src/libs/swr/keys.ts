@@ -772,6 +772,7 @@ export const messengerKeys = {
     tokenScopeKey,
   ]),
   peek: def('messenger:peek', (randomId: string) => ['messenger:peek', randomId]),
+  pushWindow: def('messenger:pushWindow', (platform: string) => ['messenger:pushWindow', platform]),
 };
 
 // ---- verify (deliverable judging) ---------------------------------------
