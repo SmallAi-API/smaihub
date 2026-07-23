@@ -1264,3 +1264,15 @@ active: true, remoteServerUrl: 'http://localhost:<port>', storageMode: 'selfHost
     concurrently from ONE worktree makes both optimizers share `<root>/node_modules/.vite` —
     two cold optimizers clobber each other and dynamic imports 504 (`Outdated Optimize Dep`)
     indefinitely. Boot them sequentially (let one finish bundling before starting the other).
+
+### Concurrent agent-browser cleanup must stay session-scoped
+
+- **Situation:** A follow-up Web verification starts while unrelated
+  `agent-browser` sessions are also running on the same machine. New sessions
+  may hang if another task is concurrently restarting its browser daemon.
+- **Doesn't work:** Running `agent-browser close --all` or killing every
+  `agent-browser`/Chrome process. That destroys unrelated verification work and
+  can race with another task recreating the daemon.
+- **Works:** Close only the exact session names created by the current run,
+  wait for the competing daemon restart to settle, then create one fresh,
+  uniquely named session and reload the seeded auth state.
