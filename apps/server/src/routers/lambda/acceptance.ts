@@ -574,4 +574,54 @@ export const acceptanceRouter = router({
 
       return ctx.acceptanceService.reject(acceptance.id, input.comment);
     }),
+
+  /**
+   * Rename the acceptance's sidebar entry. Stored as a `metadata.title`
+   * override so the source topic/task/document title is never touched —
+   * `resolveSubject` prefers this override when present. An empty title clears
+   * the override, falling back to the subject's own title.
+   */
+  rename: acceptanceWriteProcedure
+    .input(z.object({ id: z.string(), title: z.string().max(200) }))
+    .mutation(async ({ ctx, input }) => {
+      const acceptance = await resolveAcceptance(ctx, input.id);
+      assertWorkspaceRowManageable(ctx, acceptance.userId, 'acceptance');
+
+      const nextTitle = input.title.trim();
+      const { title: _prevTitle, ...restMetadata } = acceptance.metadata ?? {};
+      const updated = await ctx.acceptanceService.acceptanceModel.update(acceptance.id, {
+        metadata: nextTitle ? { ...restMetadata, title: nextTitle } : restMetadata,
+      });
+      return updated;
+    }),
+
+  /**
+   * Owner override of the acceptance's decision state from the list — a manual
+   * correction, distinct from the `accept`/`reject` flows that also record a
+   * round decision. Limited to the user-terminal states.
+   */
+  updateStatus: acceptanceWriteProcedure
+    .input(z.object({ id: z.string(), status: z.enum(['accepted', 'delivered', 'rejected']) }))
+    .mutation(async ({ ctx, input }) => {
+      const acceptance = await resolveAcceptance(ctx, input.id);
+      assertWorkspaceRowManageable(ctx, acceptance.userId, 'acceptance');
+
+      await ctx.acceptanceService.acceptanceModel.updateStatus(acceptance.id, input.status);
+      return { id: acceptance.id, status: input.status, success: true };
+    }),
+
+  /**
+   * Delete the acceptance aggregate. Its chained round reports detach rather
+   * than delete — `verify_runs.acceptance_id` is nulled by the FK, so the
+   * per-round report URLs stay live.
+   */
+  remove: acceptanceWriteProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const acceptance = await resolveAcceptance(ctx, input.id);
+      assertWorkspaceRowManageable(ctx, acceptance.userId, 'acceptance');
+
+      await ctx.acceptanceService.acceptanceModel.delete(acceptance.id);
+      return { id: acceptance.id, success: true };
+    }),
 });
