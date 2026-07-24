@@ -79,6 +79,7 @@ export { default as bailiancodingplan } from './bailianCodingPlan';
 export { default as bedrock } from './bedrock';
 export { default as bfl } from './bfl';
 export { default as cerebras } from './cerebras';
+export { default as chatgpt } from './chatGPT';
 export { default as cloudflare } from './cloudflare';
 export { default as cohere } from './cohere';
 export { default as cometapi } from './cometapi';

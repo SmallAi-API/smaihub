@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { id } from 'zod/v4/locales';
 
 import {
   LobeDeepSeekAI,
@@ -159,7 +160,7 @@ describe('LobeDeepSeekAI', () => {
 
         expect(fetchSpy).toHaveBeenCalledTimes(1);
         expect(requestURL).toBe(expectedURL);
-        expect(models?.map(({ id }) => id)).toContain('deepseek-chat');
+        expect(models?.map(() => id)).toContain('deepseek-chat');
       },
     );
   });

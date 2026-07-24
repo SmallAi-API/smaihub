@@ -44,6 +44,7 @@ export { default as BailianCodingPlanProviderCard } from './bailianCodingPlan';
 export { default as BedrockProviderCard } from './bedrock';
 export { default as BflProviderCard } from './bfl';
 export { default as CerebrasProviderCard } from './cerebras';
+export { default as ChatGPTProviderCard } from './chatGPT';
 export { default as CloudflareProviderCard } from './cloudflare';
 export { default as CohereProviderCard } from './cohere';
 export { default as CometAPIProviderCard } from './cometapi';
