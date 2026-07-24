@@ -54,6 +54,8 @@
   "duplicateSession.success": "تم النسخ بنجاح",
   "duplicateSession.title": "نسخة {{title}}",
   "duplicateTitle": "نسخة {{title}}",
+  "editedFiles.title_one": "تم تعديل {{count}} ملف",
+  "editedFiles.title_other": "تم تعديل {{count}} ملفات",
   "emptyAgent": "لا يوجد وكلاء بعد. ابدأ بأول وكيل لك — وابنِ نظامك بمرور الوقت.",
   "emptyAgentAction": "إنشاء وكيل",
   "extendParams.disableContextCaching.desc": "يقلل ما يصل إلى 90٪ من تكلفة توليد محادثة واحدة ويوفر سرعة تصل إلى 4 أضعاف. تفعيل هذا سيقوم تلقائيًا بإلغاء الحد على عدد الرسائل التاريخية. <1>اعرف المزيد</1>",

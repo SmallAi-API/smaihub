@@ -54,6 +54,8 @@
   "duplicateSession.success": "Kopyalama başarılı",
   "duplicateSession.title": "{{title}} Kopyası",
   "duplicateTitle": "{{title}} Kopyası",
+  "editedFiles.title_one": "{{count}} dosya düzenlendi",
+  "editedFiles.title_other": "{{count}} dosya düzenlendi",
   "emptyAgent": "Henüz Ajan yok. İlk Ajanınızı oluşturarak sisteminizi zamanla inşa edin.",
   "emptyAgentAction": "Ajan Oluştur",
   "extendParams.disableContextCaching.desc": "Tek bir konuşmanın üretim maliyetini %90'a kadar azaltır ve 4 kata kadar hız sağlar. Bu özellik etkinleştirildiğinde, geçmiş mesaj sayısı sınırı otomatik olarak devre dışı bırakılır. <1>Daha fazla bilgi edinin</1>",

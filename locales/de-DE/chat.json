@@ -54,6 +54,8 @@
   "duplicateSession.success": "Kopie erfolgreich",
   "duplicateSession.title": "{{title}} – Kopie",
   "duplicateTitle": "{{title}} – Kopie",
+  "editedFiles.title_one": "Bearbeitete {{count}} Datei",
+  "editedFiles.title_other": "Bearbeitete {{count}} Dateien",
   "emptyAgent": "Noch keine Agenten. Beginnen Sie mit Ihrem ersten Agenten – bauen Sie Ihr System nach und nach auf.",
   "emptyAgentAction": "Agent erstellen",
   "extendParams.disableContextCaching.desc": "Reduziert die Kosten pro Gespräch um bis zu 90 % und erhöht die Geschwindigkeit um bis zu das 4-Fache. Aktivieren Sie dies, um die Begrenzung der historischen Nachrichten automatisch zu deaktivieren. <1>Mehr erfahren</1>",
