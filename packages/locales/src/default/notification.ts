@@ -44,6 +44,21 @@ export default {
   'storage_overage_cap_reached':
     'Your storage pay-as-you-go monthly cap of ${{monthlyCap}} has been reached. Estimated charges this cycle are ${{estimatedCycleCharge}}. New uploads beyond your included storage will be blocked until the next billing cycle or until you increase the cap.',
   'storage_overage_cap_reached_title': 'Storage pay-as-you-go cap reached',
+  'subscription_payment_failed':
+    'Your subscription renewal payment failed. Please update your payment method to keep your subscription active.',
+  'subscription_payment_failed_action': 'Update payment method',
+  'subscription_payment_failed_title': 'Subscription renewal payment failed',
+  'topic_comment_activity': '{{actorLabel}} commented on your topic.',
+  'topic_comment_activity_mentioned': '{{actorLabel}} mentioned you in a comment.',
+  'topic_comment_activity_mentioned_title': 'You were mentioned in a comment',
+  'topic_comment_activity_replied': '{{actorLabel}} replied to your comment.',
+  'topic_comment_activity_replied_title': 'New reply to your comment',
+  'topic_comment_activity_title': 'New topic comment',
+  'topic_comment_removed_by_workspace_owner':
+    'Your comment was removed by a Workspace Owner. Open the discussion to view its place in the thread.',
+  'topic_comment_removed_by_workspace_owner_title': 'Comment removed',
+  'topic_comment_restored_by_workspace_owner': 'A Workspace Owner restored your comment.',
+  'topic_comment_restored_by_workspace_owner_title': 'Comment restored',
   'video_generation_completed': 'Your video "{{prompt}}" is ready.',
   'video_generation_completed_title': 'Video generation completed',
   'workspace_member_invited':
