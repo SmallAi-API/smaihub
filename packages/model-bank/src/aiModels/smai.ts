@@ -953,12 +953,15 @@ const smaiChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 1_000_000,
     description:
-      "Claude Opus 5 is Anthropic's most capable model, building on Opus 4.7 with improvements across reasoning, agentic coding, and tool use.",
+      "Claude Opus 5 is Anthropic's strongest Opus model, built for deep reasoning, agentic coding, and long-horizon professional work.",
     displayName: 'Claude Opus 5',
     enabled: true,
+    family: 'claude-opus',
+    generation: 'claude-5',
     id: 'claude-opus-5',
+    knowledgeCutoff: '2026-05',
     maxOutput: 128_000,
-    releasedAt: '2026-05-29',
+    releasedAt: '2026-07-24',
     settings: {
       disabledParams: ['temperature', 'top_p'],
       extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
