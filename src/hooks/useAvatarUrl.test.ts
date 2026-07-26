@@ -62,7 +62,7 @@ describe('useAvatarUrl', () => {
 
   // Regression: prefixing these turned a local disk read into a network request.
   // On a flaky connection the <img> errored and @lobehub/ui fell back to the
-  // title's initials — the inbox agent rendered as "SM" instead of its avatar.
+  // title's initials — the agent rendered as "SM" instead of its avatar.
   it.each(['/logo.png', '/avatars/agent-default.png', '/icons/icon-192x192.png'])(
     'should leave bundled asset %s local on desktop',
     (avatar) => {
@@ -73,6 +73,18 @@ describe('useAvatarUrl', () => {
       expect(result.current).toBe(avatar);
     },
   );
+
+  // Regression: an uploaded avatar is stored as `/f/<fileId>`, an auth-guarded
+  // route. Prefixing it produced a bare cross-origin <img> with no credentials,
+  // which 404s. It must stay root-relative so the desktop backend proxy can
+  // intercept it and inject Oidc-Auth.
+  it('should leave the uploaded-file proxy path local on desktop', () => {
+    setDesktopCloud();
+
+    const { result } = renderHook(() => useAvatarUrl('/f/file_abc123'));
+
+    expect(result.current).toBe('/f/file_abc123');
+  });
 
   it('should not treat a server path that merely contains a bundled segment as bundled', () => {
     setDesktopCloud();
