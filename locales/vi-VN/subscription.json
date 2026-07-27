@@ -141,6 +141,8 @@
   "models.link": "Xem",
   "models.output": "Đầu ra",
   "models.title": "Mô hình",
+  "navPanelUpgrade.desc": "Nâng cấp để mở khóa các tính năng mở rộng",
+  "navPanelUpgrade.dismiss": "Tạm ẩn",
   "payDiffPrice": "Thanh toán phần chênh lệch",
   "payment.error.actions.billing": "Quản lý thanh toán",
   "payment.error.actions.home": "Quay về trang chủ",

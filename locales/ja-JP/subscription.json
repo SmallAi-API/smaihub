@@ -141,6 +141,8 @@
   "models.link": "表示",
   "models.output": "出力",
   "models.title": "モデル",
+  "navPanelUpgrade.desc": "アップグレードして拡張機能をアンロック",
+  "navPanelUpgrade.dismiss": "今は非表示にする",
   "payDiffPrice": "差額を支払う",
   "payment.error.actions.billing": "請求管理",
   "payment.error.actions.home": "ホームに戻る",

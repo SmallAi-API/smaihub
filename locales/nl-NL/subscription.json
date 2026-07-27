@@ -141,6 +141,8 @@
   "models.link": "Bekijk",
   "models.output": "Uitvoer",
   "models.title": "Modellen",
+  "navPanelUpgrade.desc": "Upgrade om uitgebreide functies te ontgrendelen",
+  "navPanelUpgrade.dismiss": "Voorlopig verbergen",
   "payDiffPrice": "Betaal Verschil",
   "payment.error.actions.billing": "Facturatiebeheer",
   "payment.error.actions.home": "Terug naar Startpagina",

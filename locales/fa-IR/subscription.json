@@ -141,6 +141,8 @@
   "models.link": "مشاهده",
   "models.output": "خروجی",
   "models.title": "مدل‌ها",
+  "navPanelUpgrade.desc": "برای باز کردن قابلیت‌های گسترده ارتقا دهید",
+  "navPanelUpgrade.dismiss": "فعلاً پنهان شود",
   "payDiffPrice": "پرداخت مابه‌التفاوت",
   "payment.error.actions.billing": "مدیریت صورتحساب",
   "payment.error.actions.home": "بازگشت به خانه",

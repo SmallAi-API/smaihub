@@ -141,6 +141,8 @@
   "models.link": "Anzeigen",
   "models.output": "Ausgabe",
   "models.title": "Modelle",
+  "navPanelUpgrade.desc": "Upgraden Sie, um erweiterte Funktionen freizuschalten",
+  "navPanelUpgrade.dismiss": "Vorerst ausblenden",
   "payDiffPrice": "Differenz bezahlen",
   "payment.error.actions.billing": "Abrechnungsverwaltung",
   "payment.error.actions.home": "Zur Startseite",

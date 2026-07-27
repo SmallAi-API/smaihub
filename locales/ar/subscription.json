@@ -141,6 +141,8 @@
   "models.link": "عرض",
   "models.output": "إخراج",
   "models.title": "النماذج",
+  "navPanelUpgrade.desc": "قم بالترقية لفتح قدرات موسّعة",
+  "navPanelUpgrade.dismiss": "إخفاء مؤقتًا",
   "payDiffPrice": "دفع الفرق",
   "payment.error.actions.billing": "إدارة الفوترة",
   "payment.error.actions.home": "العودة إلى الصفحة الرئيسية",

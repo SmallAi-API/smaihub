@@ -141,6 +141,8 @@
   "models.link": "Ver",
   "models.output": "Saída",
   "models.title": "Modelos",
+  "navPanelUpgrade.desc": "Atualize para desbloquear capacidades estendidas",
+  "navPanelUpgrade.dismiss": "Ocultar por enquanto",
   "payDiffPrice": "Pagar Diferença",
   "payment.error.actions.billing": "Gerenciar Cobrança",
   "payment.error.actions.home": "Voltar para Início",

@@ -291,6 +291,8 @@
   "models.link": "查看",
   "models.output": "输出",
   "models.title": "模型",
+  "navPanelUpgrade.desc": "升级以解锁更多能力",
+  "navPanelUpgrade.dismiss": "暂时隐藏",
   "payDiffPrice": "支付差价",
   "payment.error.actions.billing": "账单管理",
   "payment.error.actions.home": "返回首页",

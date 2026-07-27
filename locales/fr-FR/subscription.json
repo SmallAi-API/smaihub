@@ -141,6 +141,8 @@
   "models.link": "Voir",
   "models.output": "Sortie",
   "models.title": "Modèles",
+  "navPanelUpgrade.desc": "Mettez à niveau pour débloquer des fonctionnalités étendues",
+  "navPanelUpgrade.dismiss": "Masquer pour l'instant",
   "payDiffPrice": "Payer la différence",
   "payment.error.actions.billing": "Gestion de la facturation",
   "payment.error.actions.home": "Retour à l'accueil",

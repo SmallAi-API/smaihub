@@ -141,6 +141,8 @@
   "models.link": "Visualizza",
   "models.output": "Output",
   "models.title": "Modelli",
+  "navPanelUpgrade.desc": "Effettua l'upgrade per sbloccare funzionalità estese",
+  "navPanelUpgrade.dismiss": "Nascondi per ora",
   "payDiffPrice": "Paga la differenza",
   "payment.error.actions.billing": "Gestione fatturazione",
   "payment.error.actions.home": "Torna alla home",

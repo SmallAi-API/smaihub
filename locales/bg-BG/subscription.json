@@ -141,6 +141,8 @@
   "models.link": "Преглед",
   "models.output": "Изход",
   "models.title": "Модели",
+  "navPanelUpgrade.desc": "Надстройте, за да отключите разширени възможности",
+  "navPanelUpgrade.dismiss": "Скрий засега",
   "payDiffPrice": "Плати разликата",
   "payment.error.actions.billing": "Управление на плащания",
   "payment.error.actions.home": "Обратно към началната страница",

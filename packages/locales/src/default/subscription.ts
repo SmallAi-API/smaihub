@@ -343,6 +343,8 @@ export default {
   'models.link': 'View',
   'models.output': 'Output',
   'models.title': 'Models',
+  'navPanelUpgrade.desc': 'Upgrade to unlock extended capabilities',
+  'navPanelUpgrade.dismiss': 'Hide for now',
   'payDiffPrice': 'Pay Difference',
   'payment.error.actions.billing': 'Billing Management',
   'payment.error.actions.home': 'Back to Home',
