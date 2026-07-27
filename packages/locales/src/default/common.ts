@@ -1,11 +1,12 @@
 export default {
   'about': 'About',
   'advanceSettings': 'Advanced Settings',
-  'alert.cloud.action': 'Get Started Now',
-  'alert.cloud.desc': 'Free Subscription Plan · 50 Image Generations Included',
-  'alert.cloud.descOnMobile': 'Free Subscription Plan · 50 Image Generations Included',
-  'alert.cloud.title': 'May Day Special · GPT Image 2 Available Free for a Limited Time',
-  'agentOnboardingPromo.actionLabel': 'Try it now',
+  'alert.cloud.action': 'Try now',
+  'alert.cloud.desc':
+    'All registered users get {{credit}} free credits per month—no setup needed. Includes global cloud sync and advanced web search.',
+  'alert.cloud.descOnMobile':
+    'All registered users get {{credit}} free credits per month—no setup needed.',
+  'alert.cloud.title': '{{name}} beta is live',
   'agentViewAll.addToSidebar': 'Show in sidebar',
   'agentViewAll.columns.author': 'Author',
   'agentViewAll.columns.name': 'Name',
@@ -26,9 +27,6 @@ export default {
   'agentViewAll.untitled': 'Untitled Agent',
   'agentViewAll.view.card': 'Card',
   'agentViewAll.view.list': 'List',
-  'agentOnboardingPromo.description':
-    'Set up your agent teams in a quick chat with smai.ai. Your existing agents remain unchanged.',
-  'agentOnboardingPromo.title': 'Quick Wizard',
   'appLoading.appIdle': 'Ready to start',
   'appLoading.appInitializing': 'Application is starting...',
   'appLoading.failed':

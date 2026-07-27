@@ -39,6 +39,8 @@ export const TERMS_URL = 'https://www.smallai.asia';
 
 export const PLUGINS_INDEX_URL = 'https://chat-plugins.lobehub.com';
 
+export const OPS_ASSETS_BASE_URL = 'https://chat-cloud.lobeobjects.space/dc/ops-assets';
+
 export const MORE_MODEL_PROVIDER_REQUEST_URL = 'https://www.smallai.asia';
 
 export const MORE_FILE_PREVIEW_REQUEST_URL = 'https://www.smallai.asia';

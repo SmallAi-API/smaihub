@@ -10,7 +10,6 @@ import {
   Download,
   FlaskConical,
   KeyRound,
-  MessageCircle,
   Rocket,
   Send,
   Settings2,
@@ -19,7 +18,6 @@ import {
 import type { ReactNode } from 'react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
 
 import { useHasActiveWorkspace } from '@/business/client/hooks/useHasActiveWorkspace';
 import HighlightNotification from '@/components/HighlightNotification';
@@ -36,8 +34,6 @@ import { useUserStore } from '@/store/user';
 import { userGeneralSettingsSelectors } from '@/store/user/slices/settings/selectors/general';
 
 import { resolveFooterPromotionState } from './promotionPipeline';
-
-const AGENT_ONBOARDING_PROMO_SLUG = 'agent-onboarding-promo-v1';
 
 const PRODUCT_HUNT_NOTIFICATION = {
   actionHref: '/app',
@@ -100,7 +96,6 @@ const collectMenuKeys = (items: FooterMenuItems): string[] =>
 
 const Footer = memo(() => {
   const { t } = useTranslation('common');
-  const navigate = useNavigate();
   const { analytics } = useAnalytics();
   const { footer } = useNavLayout();
   const hasActiveWorkspace = useHasActiveWorkspace();
@@ -108,61 +103,29 @@ const Footer = memo(() => {
   const activeNavKey = useActiveNavKey();
   const isHomeSidebar = activeNavKey === 'home';
   const billboardMenuItems = useBillboardMenuItems();
-  const enableAgentOnboarding = useServerConfigStore((s) => s.featureFlags.enableAgentOnboarding);
-  const isMobile = useServerConfigStore((s) => !!s.isMobile);
   const serverConfigInit = useServerConfigStore((s) => s.serverConfigInit);
   const enableBusinessFeatures = useServerConfigStore(serverConfigSelectors.enableBusinessFeatures);
-  const [agentOnboardingFinished, agentOnboardingStarted, classicOnboardingFinished, isDevMode] =
-    useUserStore((s) => [
-      !!s.agentOnboarding?.finishedAt,
-      !!s.agentOnboarding?.activeTopicId,
-      !!s.onboarding?.finishedAt,
-      userGeneralSettingsSelectors.config(s).isDevMode,
-    ]);
-  const [isAgentOnboardingCardOpen, setIsAgentOnboardingCardOpen] = useState(false);
+  const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
   const [isProductHuntCardOpen, setIsProductHuntCardOpen] = useState(false);
 
-  const [isAgentOnboardingPromoRead, isProductHuntNotificationRead, updateSystemStatus] =
-    useGlobalStore((s) => [
-      systemStatusSelectors.isNotificationRead(AGENT_ONBOARDING_PROMO_SLUG)(s),
-      systemStatusSelectors.isNotificationRead(PRODUCT_HUNT_NOTIFICATION.slug)(s),
-      s.updateSystemStatus,
-    ]);
+  const [isProductHuntNotificationRead, updateSystemStatus] = useGlobalStore((s) => [
+    systemStatusSelectors.isNotificationRead(PRODUCT_HUNT_NOTIFICATION.slug)(s),
+    s.updateSystemStatus,
+  ]);
 
   const isWithinTimeWindow = useMemo(() => {
     const now = new Date();
     return now >= PRODUCT_HUNT_NOTIFICATION.startTime && now <= PRODUCT_HUNT_NOTIFICATION.endTime;
   }, []);
 
-  const {
-    shouldAutoShowAgentOnboardingPromo,
-    shouldAutoShowProductHuntCard,
-    shouldShowProductHuntMenuEntry,
-  } = useMemo(
+  const { shouldAutoShowProductHuntCard, shouldShowProductHuntMenuEntry } = useMemo(
     () =>
       resolveFooterPromotionState({
-        agentOnboardingFinished,
-        agentOnboardingStarted,
-        classicOnboardingFinished,
-        enableAgentOnboarding: !!enableAgentOnboarding,
-        isAgentOnboardingPromoRead,
-        isDesktop,
-        isMobile,
         isProductHuntNotificationRead,
         isWithinProductHuntWindow: isWithinTimeWindow,
         serverConfigInit,
       }),
-    [
-      agentOnboardingFinished,
-      agentOnboardingStarted,
-      classicOnboardingFinished,
-      enableAgentOnboarding,
-      isAgentOnboardingPromoRead,
-      isMobile,
-      isProductHuntNotificationRead,
-      isWithinTimeWindow,
-      serverConfigInit,
-    ],
+    [isProductHuntNotificationRead, isWithinTimeWindow, serverConfigInit],
   );
 
   const trackPromotionEvent = useCallback(
@@ -202,16 +165,6 @@ const Footer = memo(() => {
   );
 
   useEffect(() => {
-    if (!shouldAutoShowAgentOnboardingPromo) return;
-
-    setIsAgentOnboardingCardOpen(true);
-    trackPromotionEvent('agent_onboarding_promo_viewed', {
-      spm: 'homepage.agent_onboarding_promo.viewed',
-      trigger: 'auto',
-    });
-  }, [shouldAutoShowAgentOnboardingPromo, trackPromotionEvent]);
-
-  useEffect(() => {
     if (!shouldAutoShowProductHuntCard) return;
 
     setIsProductHuntCardOpen(true);
@@ -220,23 +173,6 @@ const Footer = memo(() => {
       trigger: 'auto',
     });
   }, [isWithinTimeWindow, shouldAutoShowProductHuntCard, trackPromotionEvent]);
-
-  const handleCloseAgentOnboardingCard = useCallback(() => {
-    setIsAgentOnboardingCardOpen(false);
-    markNotificationRead(AGENT_ONBOARDING_PROMO_SLUG);
-    trackPromotionEvent('agent_onboarding_promo_closed', {
-      spm: 'homepage.agent_onboarding_promo.closed',
-    });
-  }, [markNotificationRead, trackPromotionEvent]);
-
-  const handleAgentOnboardingAction = useCallback(() => {
-    setIsAgentOnboardingCardOpen(false);
-    markNotificationRead(AGENT_ONBOARDING_PROMO_SLUG);
-    trackPromotionEvent('agent_onboarding_promo_clicked', {
-      spm: 'homepage.agent_onboarding_promo.clicked',
-    });
-    navigate('/onboarding/agent');
-  }, [markNotificationRead, navigate, trackPromotionEvent]);
 
   const handleOpenProductHuntCard = useCallback(() => {
     setIsProductHuntCardOpen(true);
@@ -261,17 +197,6 @@ const Footer = memo(() => {
   }, [trackPromotionEvent]);
 
   const activePromotion = useMemo<PromotionCard | undefined>(() => {
-    if (isAgentOnboardingCardOpen) {
-      return {
-        actionIcon: <Icon icon={MessageCircle} size={14} />,
-        actionLabel: t('agentOnboardingPromo.actionLabel'),
-        description: t('agentOnboardingPromo.description'),
-        onAction: handleAgentOnboardingAction,
-        onClose: handleCloseAgentOnboardingCard,
-        title: t('agentOnboardingPromo.title'),
-      };
-    }
-
     if (isProductHuntCardOpen) {
       return {
         actionHref: PRODUCT_HUNT_NOTIFICATION.actionHref,
@@ -285,15 +210,7 @@ const Footer = memo(() => {
     }
 
     return undefined;
-  }, [
-    handleAgentOnboardingAction,
-    handleCloseAgentOnboardingCard,
-    handleCloseProductHuntCard,
-    handleProductHuntActionClick,
-    isAgentOnboardingCardOpen,
-    isProductHuntCardOpen,
-    t,
-  ]);
+  }, [handleCloseProductHuntCard, handleProductHuntActionClick, isProductHuntCardOpen, t]);
 
   const { helpMenuItems, trackedMenuKeys } = useMemo<{
     helpMenuItems: MenuProps['items'];
