@@ -30,7 +30,8 @@ import { workspaceHomeRouteMeta } from '@/features/Workspace/routeMeta';
 import DesktopOnboarding from '@/routes/(desktop)/desktop-onboarding';
 import DownloadPage from '@/routes/(download)/download';
 import DownloadRouteLayout from '@/routes/(download)/download/_layout/RouteLayout';
-// Layouts — sync import (Electron local, no network overhead)
+// Layouts — sync import (Electron local, no network overhead).
+// Unlike the web router, Electron intentionally does not register idle preload groups.
 import DesktopMainLayout from '@/routes/(main)/_layout';
 import ImagePage from '@/routes/(main)/(create)/image';
 import DesktopImageLayout from '@/routes/(main)/(create)/image/_layout';

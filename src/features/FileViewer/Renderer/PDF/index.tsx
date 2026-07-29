@@ -21,7 +21,7 @@ const options = {
 
 const maxWidth = 1200;
 
-interface PDFViewerProps {
+export interface PDFViewerProps {
   fileId: string;
   url: string | null;
 }

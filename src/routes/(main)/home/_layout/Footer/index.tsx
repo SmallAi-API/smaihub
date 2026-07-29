@@ -23,7 +23,7 @@ import { useHasActiveWorkspace } from '@/business/client/hooks/useHasActiveWorks
 import HighlightNotification from '@/components/HighlightNotification';
 import Billboard from '@/features/Billboard';
 import { useBillboardMenuItems } from '@/features/Billboard/MenuItems';
-import { useActiveNavKey } from '@/features/NavPanel';
+import { useActiveNavKey } from '@/features/NavPanel/useActiveNavKey';
 import ThemeButton from '@/features/User/UserPanel/ThemeButton';
 import WorkspaceLink from '@/features/Workspace/WorkspaceLink';
 import { useNavLayout } from '@/hooks/useNavLayout';
