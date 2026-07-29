@@ -5,7 +5,7 @@ import { wsCompatProcedure } from '@/business/server/trpc-middlewares/workspaceA
 import { getServerComposioAuthConfigId } from '@/config/composio';
 import { ConnectorModel } from '@/database/models/connector';
 import { PluginModel } from '@/database/models/plugin';
-import { getComposioClient } from '@/libs/composio';
+import { getComposioClient, isComposioConnectedAccountNotFoundError } from '@/libs/composio';
 import { publicProcedure, router } from '@/libs/trpc/lambda';
 import { serverDatabase } from '@/libs/trpc/lambda/middleware';
 import { MCPService } from '@/server/services/mcp';
@@ -126,10 +126,6 @@ export const composioToolsRouter = router({
       const [connector] = await ctx.connectorModel.queryByIdentifiers([input.identifier]);
       const connectorComposio = connector?.metadata?.composio;
       let connectedAccountId = connectorComposio?.connectedAccountId;
-      // No-auth toolkits carry no connected account; the flag is the source of
-      // truth for skipping account resolution below. Tracked alongside the
-      // connection so the plugin-table fallback can override it.
-      let isNoAuth = connectorComposio?.noAuth === true;
       // The Composio user entity that OWNS the account (linked it), NOT the
       // caller. In a workspace the resolved row may belong to another member;
       // passing the caller's id fails Composio's account/entity validation.
@@ -142,28 +138,38 @@ export const composioToolsRouter = router({
         const pluginComposio = plugin?.customParams?.composio;
         connectedAccountId = pluginComposio?.connectedAccountId;
         ownerUserId = pluginComposio?.linkedByUserId ?? plugin?.userId;
-        isNoAuth = isNoAuth || pluginComposio?.noAuth === true;
       }
 
-      // No-auth toolkits (e.g. composio_search) have no connected account and are
-      // executed with just the userId. Auth-requiring toolkits must resolve a
-      // connected account first.
-      if (!isNoAuth && !connectedAccountId) {
+      if (!connectedAccountId) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: `No Composio connection found for "${input.identifier}".`,
         });
       }
 
-      const result = await (ctx.composioClient.tools as any).execute(input.toolSlug, {
-        arguments: input.toolArgs || {},
-        // Omit connectedAccountId entirely for no-auth toolkits.
-        ...(isNoAuth ? {} : { connectedAccountId }),
-        // Toolkit version resolves to "latest"; allow manual execution without a
-        // pinned version (Composio otherwise throws ComposioToolVersionRequiredError).
-        dangerouslySkipVersionCheck: true,
-        userId: ownerUserId ?? ctx.userId,
-      });
+      let result: unknown;
+      try {
+        result = await (ctx.composioClient.tools as any).execute(input.toolSlug, {
+          arguments: input.toolArgs || {},
+          connectedAccountId,
+          // Toolkit version resolves to "latest"; allow manual execution without a
+          // pinned version (Composio otherwise throws ComposioToolVersionRequiredError).
+          dangerouslySkipVersionCheck: true,
+          userId: ownerUserId ?? ctx.userId,
+        });
+      } catch (error) {
+        if (connector?.id && isComposioConnectedAccountNotFoundError(error)) {
+          try {
+            await ctx.connectorModel.markComposioConnectionUnavailable(
+              connector.id,
+              connectedAccountId,
+            );
+          } catch {
+            // Preserve the remote execution error if the secondary health write fails.
+          }
+        }
+        throw error;
+      }
 
       if (!result) {
         return {
