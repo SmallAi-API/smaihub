@@ -131,7 +131,7 @@ export interface AuthConfig {
   type: 'none' | 'bearer' | 'oauth2'; // accessToken 的过期时间戳
 }
 
-interface HttpMCPClientParams {
+export interface HttpMCPClientParams {
   auth?: AuthConfig;
   headers?: Record<string, string>;
   name: string;
