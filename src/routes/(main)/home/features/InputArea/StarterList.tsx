@@ -1,4 +1,4 @@
-import { Jimeng, Moonshot, OpenAI, ZAI } from '@lobehub/icons';
+import { Claude, OpenAI } from '@lobehub/icons';
 import { Center, Skeleton, Tag, Tooltip } from '@lobehub/ui';
 import { Button } from '@lobehub/ui/base-ui';
 import { App } from 'antd';
@@ -21,7 +21,7 @@ import { agentByIdSelectors } from '@/store/agent/selectors';
 
 import { useResolvedHomeAgentId } from '../AgentSelect/useResolvedHomeAgentId';
 import { trackHomeModelShortcutClicked } from './starterListAnalytics';
-import { NEW_GLM_MODEL, NEW_IMAGE_MODEL, NEW_KIMI_MODEL, NEW_VIDEO_MODEL } from './starterModels';
+import { NEW_CLAUDE_MODEL, NEW_GPT_MODEL, NEW_IMAGE_MODEL } from './starterModels';
 import { useStarterModelDefaults } from './useStarterModelDefaults';
 
 const styles = createStaticStyles(({ css, cssVar }) => ({
@@ -50,10 +50,9 @@ const getStarterItemProvider = (item: HomeNewModelItem, fallbackProvider: string
   item.provider ?? fallbackProvider;
 const skeletonWidths = [112, 150, 126, 138];
 const starterModelIcons: Record<string, ComponentType<{ size: number }>> = {
-  [NEW_GLM_MODEL]: ZAI.Avatar,
+  [NEW_CLAUDE_MODEL]: Claude.Avatar,
   [NEW_IMAGE_MODEL]: OpenAI.Avatar,
-  [NEW_KIMI_MODEL]: Moonshot.Avatar,
-  [NEW_VIDEO_MODEL]: Jimeng.Avatar,
+  [NEW_GPT_MODEL]: OpenAI.Avatar,
 };
 
 const StarterList = memo(() => {

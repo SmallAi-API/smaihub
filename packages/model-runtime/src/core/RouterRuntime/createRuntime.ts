@@ -40,11 +40,12 @@ import { isNonRetryableRequestError } from '../../utils/isNonRetryableRequestErr
 import type { ModelIdMappingOptions } from '../../utils/modelIdMapping';
 import { postProcessModelList } from '../../utils/postProcessModelList';
 import { safeParseJSON } from '../../utils/safeParseJSON';
-import { type LobeRuntimeAI } from '../BaseAI';
-import {
-  type CreateImageOptions,
-  type CreateVideoOptions,
-  type CustomClientOptions,
+import { setRuntimeSignatureScopeSource } from '../../utils/signatureScope';
+import type { LobeRuntimeAI } from '../BaseAI';
+import type {
+  CreateImageOptions,
+  CreateVideoOptions,
+  CustomClientOptions,
 } from '../openaiCompatibleFactory';
 import { type ApiType, type RuntimeClass } from './apiTypes';
 
@@ -503,6 +504,12 @@ export const createRouterRuntime = ({
         ...this._options,
         ...optionOverrides,
       };
+      const signatureScopeSource = {
+        apiType: resolvedApiType,
+        channelId,
+        provider: this._id,
+        routerId: router.id ?? this._id,
+      };
 
       /**
        * Vertex AI uses GoogleGenAI credentials flow rather than API keys.
@@ -535,11 +542,14 @@ export const createRouterRuntime = ({
           );
         }
 
+        const runtime = LobeVertexAI.initFromVertexAI(vertexOptions);
+        setRuntimeSignatureScopeSource(runtime, signatureScopeSource);
+
         return {
           channelId,
           id: resolvedApiType,
           remark,
-          runtime: LobeVertexAI.initFromVertexAI(vertexOptions),
+          runtime,
         };
       }
 
@@ -549,6 +559,7 @@ export const createRouterRuntime = ({
           ? (router.runtime ?? baseRuntimeMap[resolvedApiType] ?? LobeOpenAI)
           : (baseRuntimeMap[resolvedApiType] ?? LobeOpenAI);
       const runtime: LobeRuntimeAI = new providerAI({ ...finalOptions, id: this._id });
+      setRuntimeSignatureScopeSource(runtime, signatureScopeSource);
 
       if (this._id === 'lobehub') {
         timing(
