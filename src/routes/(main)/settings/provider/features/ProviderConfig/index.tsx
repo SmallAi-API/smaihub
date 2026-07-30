@@ -61,6 +61,11 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
     }
   `,
   form: css`
+    /* The group header is the first thing on the page, so its own top padding
+       reads as dead space under the nav bar. The page inset is enough. */
+    .${prefixCls}-collapse-header {
+      padding-block-start: 0 !important;
+    }
     .${prefixCls}-form-item-control:has(.${prefixCls}-input,.${prefixCls}-select) {
       flex: none;
     }
@@ -448,7 +453,11 @@ const ProviderConfig = memo<ProviderConfigProps>(
         style={{
           height: 24,
           maxHeight: 24,
-          ...(enabled ? {} : { filter: 'grayscale(100%)', maxHeight: 24, opacity: 0.66 }),
+          // OAuth providers keep full-colour branding while off: the enable
+          // switch sits right beside them, so dimming only adds noise
+          ...(enabled || isOAuthProvider
+            ? {}
+            : { filter: 'grayscale(100%)', maxHeight: 24, opacity: 0.66 }),
         }}
       >
         <Avatar alt={name || id} avatar={getProviderLogoUrl(id, name)} size={28} />
@@ -462,7 +471,9 @@ const ProviderConfig = memo<ProviderConfigProps>(
         {isCustom && <UpdateProviderInfo />}
         {canDeactivate && !(enableBusinessFeatures && id === BRANDING_PROVIDER) && (
           <>
-            {!isCustom && (
+            {/* OAuth providers pair the switch with a connect action, so the
+                built-in notice would crowd the row */}
+            {!isCustom && !isOAuthProvider && (
               <Tooltip title={t('providerModels.config.builtinNotice')}>
                 <Icon
                   color={cssVar.colorTextTertiary}
@@ -492,8 +503,10 @@ const ProviderConfig = memo<ProviderConfigProps>(
       <>
         {isOAuthProvider && (
           <OAuthDeviceFlowAuth
+            // when the provider cannot be deactivated there is no switch to
+            // gate on, so the connect action stays available
+            enabled={!canDeactivate || enabled}
             extra={headerExtra}
-            name={name || id}
             providerId={id}
             title={headerTitle}
             onAuthChange={handleOAuthChange}
