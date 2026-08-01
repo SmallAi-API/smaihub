@@ -1,4 +1,4 @@
-import { App } from 'antd';
+import { toast } from '@lobehub/ui/base-ui';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -19,7 +19,6 @@ export const useUploadFilesValidation = (
   imageConstraints?: ImageConstraints,
 ) => {
   const { t } = useTranslation('components');
-  const { message } = App.useApp();
 
   const validateFiles = useCallback(
     (files: File[], currentCount: number = 0): boolean => {
@@ -47,7 +46,7 @@ export const useUploadFilesValidation = (
               const actualSizeStr = formatFileSize(failedFile.actualSize!);
               const maxSizeStr = formatFileSize(failedFile.maxSize!);
               const fileName = failedFile.fileName || 'File';
-              message.error(
+              toast.error(
                 t('MultiImagesUpload.validation.fileSizeExceededDetail', {
                   actualSize: actualSizeStr,
                   fileName,
@@ -60,7 +59,7 @@ export const useUploadFilesValidation = (
               const fileList = fileSizeFailures
                 .map((f) => `${f.fileName || 'File'} (${formatFileSize(f.actualSize!)})`)
                 .join(', ');
-              message.error(
+              toast.error(
                 t('MultiImagesUpload.validation.fileSizeExceededMultiple', {
                   count: fileSizeFailures.length,
                   fileList,
@@ -69,7 +68,7 @@ export const useUploadFilesValidation = (
               );
             }
           } else if (error === 'imageCountExceeded') {
-            message.error(t('MultiImagesUpload.validation.imageCountExceeded'));
+            toast.error(t('MultiImagesUpload.validation.imageCountExceeded'));
           }
         });
         return false;
@@ -77,7 +76,7 @@ export const useUploadFilesValidation = (
 
       return true;
     },
-    [maxCount, maxFileSize, message, t],
+    [maxCount, maxFileSize, t],
   );
   const validateDimensions = useCallback(
     async (file: File): Promise<boolean> => {
@@ -91,7 +90,7 @@ export const useUploadFilesValidation = (
             if (result.minWidth) parts.push(`width ≥ ${result.minWidth}px`);
             if (result.minHeight) parts.push(`height ≥ ${result.minHeight}px`);
 
-            message.error(
+            toast.error(
               t('ImageUpload.validation.imageDimensionTooSmall', {
                 fileName: result.fileName || file.name,
                 height: result.height,
@@ -104,7 +103,7 @@ export const useUploadFilesValidation = (
             if (result.maxWidth) parts.push(`width ≤ ${result.maxWidth}px`);
             if (result.maxHeight) parts.push(`height ≤ ${result.maxHeight}px`);
 
-            message.error(
+            toast.error(
               t('ImageUpload.validation.imageDimensionTooLarge', {
                 fileName: result.fileName || file.name,
                 height: result.height,
@@ -119,7 +118,7 @@ export const useUploadFilesValidation = (
             const max = imageConstraints.aspectRatio?.max;
             const range = min && max ? `${min}–${max}` : min ? `≥ ${min}` : `≤ ${max}`;
 
-            message.error(
+            toast.error(
               t('ImageUpload.validation.imageAspectRatioInvalid', {
                 actualRatio: ratio,
                 fileName: result.fileName || file.name,
@@ -135,7 +134,7 @@ export const useUploadFilesValidation = (
 
       return true;
     },
-    [imageConstraints, message, t],
+    [imageConstraints, t],
   );
   return {
     validateDimensions,
