@@ -14,9 +14,7 @@ import { authSelectors } from '@/store/user/slices/auth/selectors';
 
 import HomeHeader from './HomeHeader';
 import HomeModeContent from './HomeModeContent';
-import HomePortrait from './HomePortrait';
 import InputArea from './InputArea';
-import PortraitBubble from './PortraitBubble';
 import type { HomeMode } from './types';
 
 /** Mirrors the row hover bleed in HomeModeContent; the viewport would clip it. */
@@ -304,18 +302,7 @@ const Home = memo(() => {
       <div className={cx(styles.header, styles.content, railCollapsed && styles.contentCollapsed)}>
         <HomeHeader />
         {/* No portrait for signed-out visitors, so no one to speak the line. */}
-        {isLogin && (
-          <div className={cx(styles.bubbleSlot, railCollapsed && styles.bubbleSlotCollapsed)}>
-            <PortraitBubble />
-          </div>
-        )}
       </div>
-
-      {isLogin && (
-        <div className={cx(styles.portrait, railCollapsed && styles.portraitCollapsed)}>
-          <HomePortrait />
-        </div>
-      )}
 
       <Flexbox
         className={cx(styles.main, styles.content, railCollapsed && styles.contentCollapsed)}
