@@ -12,7 +12,8 @@
  *    already set, so an OPENAI_API_KEY exported in the shell wins over the project `.env` one and
  *    the gateway answers 401 — which only surfaces once the proxy problem is fixed.
  *
- * Usage: NODE_OPTIONS="--import ./scripts/i18nProxy.mjs" lobe-i18n
+ * Wired into `pnpm i18n` via `node --import`. With no proxy configured the hook never registers,
+ * so CI — which has no `.env` — runs the CLI unmodified.
  */
 import { readFileSync } from 'node:fs';
 import https from 'node:https';
@@ -22,8 +23,23 @@ import tls from 'node:tls';
 
 import { parse } from 'dotenv';
 
+// Read the project `.env` ourselves: the CLI's own `dotenv.config()` does not override variables
+// that are already set, so a shell-exported OPENAI_API_KEY would shadow the project one.
+const fileEnv = (() => {
+  try {
+    return parse(readFileSync('.env'));
+  } catch {
+    return {};
+  }
+})();
+
+for (const key of ['OPENAI_API_KEY', 'OPENAI_PROXY_URL']) {
+  if (fileEnv[key]) process.env[key] = fileEnv[key];
+}
+
 const proxyUrl =
   process.env.I18N_HTTP_PROXY ||
+  fileEnv.I18N_HTTP_PROXY ||
   process.env.HTTPS_PROXY ||
   process.env.https_proxy ||
   process.env.HTTP_PROXY ||
@@ -70,14 +86,4 @@ if (proxyUrl) {
   // The loader hook reads the agent from here; it runs in a separate module scope.
   globalThis.__i18nProxyAgent = createTunnelAgent(proxyUrl);
   register('./i18nProxyHooks.mjs', import.meta.url);
-}
-
-// Let the project `.env` win over shell-exported OpenAI credentials.
-try {
-  const fileEnv = parse(readFileSync('.env'));
-  for (const key of ['OPENAI_API_KEY', 'OPENAI_PROXY_URL']) {
-    if (fileEnv[key]) process.env[key] = fileEnv[key];
-  }
-} catch {
-  // no .env in cwd, nothing to reconcile
 }

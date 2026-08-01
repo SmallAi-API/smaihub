@@ -82,7 +82,7 @@
     "e2e:install": "playwright install",
     "e2e:ui": "playwright test --ui",
     "hotfix:branch": "tsx ./scripts/hotfixWorkflow/index.ts",
-    "i18n": "npm run workflow:i18n && lobe-i18n && prettier -c --write \"locales/**\"",
+    "i18n": "npm run workflow:i18n && node --import ./scripts/i18nProxy.mjs ./node_modules/@lobehub/i18n-cli/dist/cli.js && prettier -c --write \"locales/**\"",
     "i18n:unused": "tsx ./scripts/i18nWorkflow/analyzeUnusedKeys.ts",
     "i18n:unused-clean": "tsx ./scripts/i18nWorkflow/cleanUnusedKeys.ts",
     "lint": "npm run lint:ts && npm run lint:style && npm run type-check && npm run lint:circular",
