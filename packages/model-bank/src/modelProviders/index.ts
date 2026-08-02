@@ -1,6 +1,5 @@
 import type { ChatModelCard, ModelProviderCard } from '../types';
 import NewAPIProvider from './newapi';
-import OpenAIProvider from './openai';
 import SMAIProvider from './smai';
 
 /**
@@ -9,10 +8,9 @@ import SMAIProvider from './smai';
 export const LOBE_DEFAULT_MODEL_LIST: ChatModelCard[] = [
   SMAIProvider.chatModels,
   NewAPIProvider.chatModels,
-  OpenAIProvider.chatModels,
 ].flat();
 
-export const DEFAULT_MODEL_PROVIDER_LIST = [SMAIProvider, NewAPIProvider, OpenAIProvider];
+export const DEFAULT_MODEL_PROVIDER_LIST = [SMAIProvider, NewAPIProvider];
 
 export const filterEnabledModels = (provider: ModelProviderCard) => {
   return provider.chatModels.filter((v) => v.enabled).map((m) => m.id);

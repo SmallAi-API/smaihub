@@ -583,37 +583,6 @@ export const openaiChatModels: AIChatModelCard[] = [
       functionCall: true,
       reasoning: true,
       search: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    contextWindowTokens: 400_000,
-    description:
-      'GPT-5.2-Codex is an upgraded GPT-5.2 variant optimized for long-horizon, agentic coding tasks.',
-    displayName: 'GPT-5.2 Codex',
-    family: 'gpt',
-    generation: 'gpt-5.2',
-    id: 'gpt-5.2-codex',
-    knowledgeCutoff: '2025-08',
-    maxOutput: 128_000,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 1.75, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textInput_cacheRead', rate: 0.175, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 14, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-12-18',
-    settings: {
-      extendParams: ['codexMaxReasoningEffort'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
       vision: true,
     },
     contextWindowTokens: 400_000,
@@ -691,121 +660,6 @@ export const openaiChatModels: AIChatModelCard[] = [
     },
     type: 'chat',
   },
-
-  {
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    contextWindowTokens: 400_000,
-    description:
-      'GPT-5.1 — 针对编码和 agent 任务优化的旗舰模型，支持可配置的推理强度与更长上下文。',
-    displayName: 'GPT-5.1 Chat',
-    family: 'gpt',
-    generation: 'gpt-5.1',
-    id: 'gpt-5.1-chat-latest',
-    knowledgeCutoff: '2024-09',
-    maxOutput: 16_384,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textInput_cacheRead', rate: 0.125, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-11-13',
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    contextWindowTokens: 400_000,
-    description:
-      "GPT-5.1 Codex Max: OpenAI's most intelligent coding model, optimized for long-horizon agentic coding tasks, supports reasoning tokens.",
-    displayName: 'GPT-5.1 Codex Max',
-    family: 'gpt',
-    generation: 'gpt-5.1',
-    id: 'gpt-5.1-codex-max',
-    knowledgeCutoff: '2024-09',
-    maxOutput: 128_000,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textInput_cacheRead', rate: 0.125, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-12-04',
-    settings: {
-      extendParams: ['codexMaxReasoningEffort'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    contextWindowTokens: 400_000,
-    description:
-      'GPT-5.1 Codex: a GPT-5.1 variant optimized for agentic coding tasks, for complex code/agent workflows in the Responses API.',
-    displayName: 'GPT-5.1 Codex',
-    family: 'gpt',
-    generation: 'gpt-5.1',
-    id: 'gpt-5.1-codex',
-    knowledgeCutoff: '2024-09',
-    maxOutput: 128_000,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textInput_cacheRead', rate: 0.125, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-11-13',
-    settings: {
-      extendParams: ['reasoningEffort'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    contextWindowTokens: 400_000,
-    description:
-      'GPT-5.1 Codex mini: a smaller, lower-cost Codex variant optimized for agentic coding tasks.',
-    displayName: 'GPT-5.1 Codex mini',
-    family: 'gpt',
-    generation: 'gpt-5.1',
-    id: 'gpt-5.1-codex-mini',
-    knowledgeCutoff: '2024-09',
-    maxOutput: 128_000,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 0.25, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textInput_cacheRead', rate: 0.025, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-11-13',
-    settings: {
-      extendParams: ['reasoningEffort'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
   {
     abilities: {
       functionCall: true,
@@ -831,58 +685,6 @@ export const openaiChatModels: AIChatModelCard[] = [
     releasedAt: '2025-10-06',
     settings: {
       extendParams: ['textVerbosity'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    contextWindowTokens: 400_000,
-    description:
-      'GPT-5 Codex is a GPT-5 variant optimized for agentic coding tasks in Codex-like environments.',
-    displayName: 'GPT-5 Codex',
-    family: 'gpt',
-    generation: 'gpt-5',
-    id: 'gpt-5-codex',
-    knowledgeCutoff: '2024-09',
-    maxOutput: 128_000,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-11-28',
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    contextWindowTokens: 400_000,
-    description:
-      'GPT-5.1 Thinking all：针对 agentic 编码任务优化的 GPT-5.1 版本，可在 Responses API 中用于更复杂的代码/代理工作流',
-    displayName: 'GPT-5.1 Thinking all',
-    enabled: true,
-    id: 'gpt-5.1-thinking-all',
-    maxOutput: 128_000,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-11-28',
-    settings: {
-      extendParams: ['gpt5_1ReasoningEffort'],
       searchImpl: 'params',
     },
     type: 'chat',
@@ -1078,29 +880,6 @@ export const openaiChatModels: AIChatModelCard[] = [
   },
   {
     abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    contextWindowTokens: 400_000,
-    description:
-      'ChatGPT 中使用的 GPT-5 模型。结合了强大的语言理解与生成能力，适合对话式交互应用。',
-    displayName: 'GPT-5 Chat',
-    family: 'gpt',
-    generation: 'gpt-5',
-    id: 'gpt-5-chat-latest',
-    knowledgeCutoff: '2024-09',
-    maxOutput: 128_000,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-08-07',
-    type: 'chat',
-  },
-  {
-    abilities: {
       functionCall: true,
       reasoning: true,
       search: true,
@@ -1122,35 +901,6 @@ export const openaiChatModels: AIChatModelCard[] = [
       ],
     },
     releasedAt: '2025-04-17',
-    settings: {
-      extendParams: ['reasoningEffort'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    contextWindowTokens: 200_000,
-    description:
-      'o4-mini-deep-research 是我们更快速、更实惠的深度研究模型——非常适合处理复杂的多步骤研究任务。它可以从互联网上搜索和综合信息，也可以通过 MCP 连接器访问并利用你的自有数据。',
-    displayName: 'o4-mini Deep Research',
-    family: 'o-series',
-    generation: 'o4',
-    id: 'o4-mini-deep-research',
-    knowledgeCutoff: '2024-06',
-    maxOutput: 100_000,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 1.8, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 7.2, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-06-26',
     settings: {
       extendParams: ['reasoningEffort'],
       searchImpl: 'params',
@@ -1209,35 +959,6 @@ export const openaiChatModels: AIChatModelCard[] = [
       ],
     },
     releasedAt: '2025-04-16',
-    settings: {
-      extendParams: ['reasoningEffort'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    contextWindowTokens: 200_000,
-    description:
-      'o3-deep-research 是我们最先进的深度研究模型，专为处理复杂的多步骤研究任务而设计。它可以从互联网上搜索和综合信息，也可以通过 MCP 连接器访问并利用你的自有数据。',
-    displayName: 'o3 Deep Research',
-    family: 'o-series',
-    generation: 'o3',
-    id: 'o3-deep-research',
-    knowledgeCutoff: '2024-06',
-    maxOutput: 100_000,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 36, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-06-26',
     settings: {
       extendParams: ['reasoningEffort'],
       searchImpl: 'params',
@@ -1449,55 +1170,6 @@ export const openaiChatModels: AIChatModelCard[] = [
   },
   {
     abilities: {
-      search: true,
-    },
-    contextWindowTokens: 128_000,
-    description:
-      'GPT-4o mini 搜索预览版是一个专门训练用于理解和执行网页搜索查询的模型，使用的是 Chat Completions API。除了令牌费用之外，网页搜索查询还会按每次工具调用收取费用。',
-    displayName: 'GPT-4o mini Search Preview',
-    family: 'gpt',
-    generation: 'gpt-4o',
-    id: 'gpt-4o-mini-search-preview',
-    knowledgeCutoff: '2023-10',
-    maxOutput: 16_384,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 0.135, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 0.54, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-03-11',
-    settings: {
-      searchImpl: 'internal',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      //search: true,
-    },
-    contextWindowTokens: 128_000,
-    description: 'GPT-4o mini Audio 模型，支持音频输入输出',
-    displayName: 'GPT-4o mini Audio',
-    id: 'gpt-4o-mini-audio-preview',
-    maxOutput: 16_384,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 1.35, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 5.4, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2024-12-17',
-    /*
-    settings: {
-      searchImpl: 'params',
-    },
-    */
-    type: 'chat',
-  },
-  {
-    abilities: {
       functionCall: true,
       search: true,
       vision: true,
@@ -1519,31 +1191,6 @@ export const openaiChatModels: AIChatModelCard[] = [
     releasedAt: '2024-05-13',
     settings: {
       searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      search: true,
-    },
-    contextWindowTokens: 128_000,
-    description:
-      'GPT-4o 搜索预览版是一个专门训练用于理解和执行网页搜索查询的模型，使用的是 Chat Completions API。除了令牌费用之外，网页搜索查询还会按每次工具调用收取费用。',
-    displayName: 'GPT-4o Search Preview',
-    family: 'gpt',
-    generation: 'gpt-4o',
-    id: 'gpt-4o-search-preview',
-    knowledgeCutoff: '2023-10',
-    maxOutput: 16_384,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 2.25, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-03-11',
-    settings: {
-      searchImpl: 'internal',
     },
     type: 'chat',
   },
@@ -1787,48 +1434,6 @@ export const openaiChatModels: AIChatModelCard[] = [
         { name: 'textOutput', rate: 1.8, strategy: 'fixed', unit: 'millionTokens' },
       ],
     },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    contextWindowTokens: 131_072,
-    description:
-      'computer-use-preview is a specialized model for the "computer use tool," trained to understand and execute computer-related tasks.',
-    displayName: 'Computer Use Preview',
-    family: 'gpt',
-    id: 'computer-use-preview',
-    knowledgeCutoff: '2023-10',
-    maxOutput: 1024,
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 0.99, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 3.96, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-08-06',
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    contextWindowTokens: 131_072,
-    description:
-      'GPT-OSS 20B 是一款拥有 200 亿参数的顶尖语言模型，内置浏览器搜索和代码执行功能，并具备推理能力。',
-    displayName: 'GPT OSS 20B',
-    enabled: true,
-    id: 'gpt-oss-20b',
-    pricing: {
-      units: [
-        { name: 'textInput', rate: 0.18, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 0.72, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2025-08-06',
     type: 'chat',
   },
 ];
