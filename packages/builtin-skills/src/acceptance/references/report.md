@@ -22,11 +22,11 @@ two ways to own a round, and both are first-class (the server records them as
 
 ```bash
 # A. one directory, one command — preferred when you have assets on disk
-lh acceptance run ingest <report-dir> --subject topic:tpc_xxx --json
+lh acceptance run ingest topic:tpc_xxx --json < report-dir > --subject
 
 # B. create the round first, then submit into it with --run
 RUN=$(lh acceptance run create --title "…" --goal "…" --json | jq -r .id)
-lh acceptance run result submit --run "$RUN" --item <checkItemId> …
+lh acceptance run result submit --run "$RUN" --item < checkItemId > …
 ```
 
 Prefer **A**: per-criterion submits without a plan produce checks with no
