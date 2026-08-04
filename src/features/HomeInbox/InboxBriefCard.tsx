@@ -1,11 +1,11 @@
 import { DEFAULT_AVATAR, INBOX_SESSION_ID } from '@lobechat/const';
-import { Block, Flexbox, Text } from '@lobehub/ui';
+import { agentDisplayName } from '@lobechat/types';
+import { Avatar, Block, Flexbox, Text } from '@lobehub/ui';
 import { createStaticStyles, cssVar, cx } from 'antd-style';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DEFAULT_INBOX_AVATAR } from '@/const/meta';
-import AgentAvatar from '@/features/AgentAvatar';
 import { taskDetailPath } from '@/features/AgentTasks/shared/taskDetailPath';
 import BriefCardActions from '@/features/DailyBrief/BriefCardActions';
 import BriefCardArtifacts from '@/features/DailyBrief/BriefCardArtifacts';
@@ -101,15 +101,16 @@ const InboxBriefCard = memo<InboxBriefCardProps>(({ bare, brief }) => {
 
       <Flexbox horizontal align={'flex-start'} gap={10}>
         {agent && (
-          <AgentAvatar
+          <Avatar
             avatar={agent.avatar || (isInbox ? DEFAULT_INBOX_AVATAR : DEFAULT_AVATAR)}
             background={agent.backgroundColor || cssVar.colorBgContainer}
             shape={'circle'}
             size={28}
             style={{ flex: 'none' }}
-            title={
-              agent.title || (isInbox ? t('inbox.title', { ns: 'chat' }) : t('defaultSession'))
-            }
+            title={agentDisplayName(
+              agent,
+              isInbox ? t('inbox.title', { ns: 'chat' }) : t('defaultSession'),
+            )}
           />
         )}
         <Flexbox flex={1} gap={6} style={{ minWidth: 0 }}>

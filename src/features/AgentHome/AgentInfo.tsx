@@ -1,12 +1,12 @@
 'use client';
 
-import { Flexbox, Markdown, Skeleton, Text } from '@lobehub/ui';
+import { agentDisplayName } from '@lobechat/types';
+import { Avatar, Flexbox, Markdown, Skeleton, Text } from '@lobehub/ui';
 import isEqual from 'fast-deep-equal';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DEFAULT_AVATAR, DEFAULT_INBOX_AVATAR } from '@/const/meta';
-import AgentAvatar from '@/features/AgentAvatar';
 import { contextSelectors, useConversationStore } from '@/features/Conversation/store';
 import { useAgentStore } from '@/store/agent';
 import { agentByIdSelectors, agentSelectors, builtinAgentSelectors } from '@/store/agent/selectors';
@@ -30,8 +30,8 @@ const AgentInfo = memo(() => {
   const fontSize = useUserStore(userGeneralSettingsSelectors.fontSize);
 
   const displayTitle = isInbox
-    ? meta.title || 'smai'
-    : meta.title || t('defaultSession', { ns: 'common' });
+    ? agentDisplayName(meta, 'smai.ai')
+    : agentDisplayName(meta, t('defaultSession', { ns: 'common' }));
 
   const message = useMemo(() => {
     if (openingMessage) return openingMessage;
@@ -54,7 +54,7 @@ const AgentInfo = memo(() => {
 
   return (
     <Flexbox gap={12}>
-      <AgentAvatar
+      <Avatar
         avatar={isInbox ? meta.avatar || DEFAULT_INBOX_AVATAR : meta.avatar || DEFAULT_AVATAR}
         background={meta.backgroundColor}
         shape={'square'}
