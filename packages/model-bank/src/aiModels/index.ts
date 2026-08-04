@@ -2,7 +2,6 @@ import { getModelKnowledgeCutoff } from '../const/knowledgeCutoff';
 import type { ModelProvider } from '../const/modelProvider';
 import { type AiFullModelCard, type LobeDefaultAiModelListItem } from '../types/aiModel';
 import { default as newapi } from './newapi';
-import { default as openai } from './openai';
 import { default as smai } from './smai';
 
 type ModelProviderLoader = () => Promise<AiFullModelCard[]>;
@@ -32,7 +31,6 @@ const buildDefaultModelList = (map: ModelsMap): LobeDefaultAiModelListItem[] => 
 
 const staticModelMap: ModelsMap = {
   newapi,
-  openai,
   smai,
 };
 
