@@ -13,12 +13,13 @@ import { agentService } from '@/services/agent';
 import { discoverService } from '@/services/discover';
 import { getAgentStoreState } from '@/store/agent';
 
-import {
-  type GetAvailableModelsParams,
-  type InstallPluginParams,
-  type SearchMarketToolsParams,
-  type UpdateAgentConfigParams,
-  type UpdatePromptParams,
+import { normalizeUpdateConfigParams } from './normalizeUpdateConfigParams';
+import type {
+  GetAvailableModelsParams,
+  InstallPluginParams,
+  SearchMarketToolsParams,
+  UpdateAgentConfigParams,
+  UpdatePromptParams,
 } from './types';
 import { AgentBuilderApiName, AgentBuilderIdentifier } from './types';
 
@@ -67,7 +68,7 @@ class AgentBuilderExecutor extends BaseExecutor<typeof AgentBuilderApiName> {
       };
     }
 
-    return runtime.updateAgentConfig(agentId, params);
+    return runtime.updateAgentConfig(agentId, normalizeUpdateConfigParams(params));
   };
 
   updatePrompt = async (
