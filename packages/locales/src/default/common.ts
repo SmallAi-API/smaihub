@@ -617,6 +617,7 @@ export default {
   'upgradeVersion.hasNew': 'Update available',
   'upgradeVersion.newVersion': 'Update available: {{version}}',
   'upgradeVersion.serverVersion': 'Server: {{version}}',
+  'userPanel.accountSetting': 'Account Settings',
   'userPanel.anonymousNickName': 'Anonymous User',
   'userPanel.billing': 'Billing',
   'userPanel.cloud': 'Launch {{name}}',
