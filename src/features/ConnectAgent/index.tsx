@@ -8,20 +8,12 @@ import type {
 } from '@lobechat/heterogeneous-agents';
 import { isRemoteHeterogeneousType } from '@lobechat/heterogeneous-agents';
 import type { DeviceListItem } from '@lobechat/types';
-import { Alert, CopyButton, Flexbox, Icon, Input, Text, TextArea, Tooltip } from '@lobehub/ui';
+import { Alert, Flexbox, Icon, Input, Text, TextArea, Tooltip } from '@lobehub/ui';
 import { Button, createModal, type ModalInstance, useModalContext } from '@lobehub/ui/base-ui';
 import { Checkbox, Typography } from 'antd';
 import { createStaticStyles, cssVar } from 'antd-style';
 import { t as i18nT } from 'i18next';
-import {
-  ArrowLeft,
-  CheckCircle2,
-  Download,
-  LaptopIcon,
-  RefreshCw,
-  ScanSearch,
-  TerminalIcon,
-} from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Download, LaptopIcon, RefreshCw, ScanSearch } from 'lucide-react';
 import { memo, type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -82,45 +74,23 @@ const styles = createStaticStyles(({ css }) => ({
   `,
   emptyOption: css`
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;
+    gap: 14px;
+    align-items: center;
 
     min-width: 0;
-    min-height: 152px;
     padding: 18px;
 
     background: ${cssVar.colorBgContainer};
   `,
   emptyOptionAction: css`
     display: flex;
+    flex: none;
     align-items: center;
-
-    width: 100%;
     min-height: 28px;
-    margin-block-start: auto;
-
-    > a {
-      width: 100%;
-    }
-  `,
-  emptyOptionCode: css`
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    justify-content: space-between;
-
-    box-sizing: border-box;
-    width: 100%;
-    height: 32px;
-    padding-inline: 10px 4px;
-    border-radius: ${cssVar.borderRadius};
-
-    background: ${cssVar.colorFillTertiary};
   `,
   emptyOptions: css`
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 1px;
 
     border-block-start: 1px solid ${cssVar.colorBorderSecondary};
@@ -655,7 +625,7 @@ const ConnectAgentContent = memo<ConnectAgentContentProps>(
                   <span className={styles.emptyOptionIcon}>
                     <Icon icon={Download} size={20} />
                   </span>
-                  <Flexbox gap={3}>
+                  <Flexbox flex={1} gap={3} style={{ minWidth: 0 }}>
                     <Text weight={500}>{t('connectAgent.create.downloadDesktop')}</Text>
                     <Text fontSize={12} type={'secondary'}>
                       {t('connectAgent.create.noDevicesDesktopHint')}
@@ -663,31 +633,10 @@ const ConnectAgentContent = memo<ConnectAgentContentProps>(
                   </Flexbox>
                   <div className={styles.emptyOptionAction}>
                     <a href={DOWNLOAD_URL.default} rel={'noreferrer'} target={'_blank'}>
-                      <Button
-                        icon={<Icon icon={Download} size={14} />}
-                        style={{ width: '100%' }}
-                        type={'primary'}
-                      >
+                      <Button icon={<Icon icon={Download} size={14} />} type={'primary'}>
                         {t('connectAgent.create.download')}
                       </Button>
                     </a>
-                  </div>
-                </div>
-                <div className={styles.emptyOption}>
-                  <span className={styles.emptyOptionIcon}>
-                    <Icon icon={TerminalIcon} size={20} />
-                  </span>
-                  <Flexbox gap={3}>
-                    <Text weight={500}>{t('connectAgent.create.connectCli')}</Text>
-                    <Text fontSize={12} type={'secondary'}>
-                      {t('connectAgent.create.noDevicesCliHint')}
-                    </Text>
-                  </Flexbox>
-                  <div className={styles.emptyOptionAction}>
-                    <div className={styles.emptyOptionCode}>
-                      <code>{t('connectAgent.create.noDevicesCmd')}</code>
-                      <CopyButton content={t('connectAgent.create.noDevicesCmd')} size={'small'} />
-                    </div>
                   </div>
                 </div>
               </div>
