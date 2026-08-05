@@ -50,7 +50,10 @@ const NANO_BANANA_MODEL_ALIASES = new Set([
 
 // These models need the explicit image/web searchTypes payload when googleSearch is enabled.
 // Other search-capable models use the plain `{ googleSearch: {} }` shape.
-const IMAGE_SEARCH_TYPES_MODELS = new Set(['gemini-3.1-flash-image-preview']);
+const IMAGE_SEARCH_TYPES_MODELS = new Set([
+  'gemini-3.1-flash-image',
+  'gemini-3.1-flash-image-preview',
+]);
 
 // Gemini 3.6 Flash and Gemini 3.5 Flash-Lite reject the legacy sampling
 // parameters in newer API versions. Keep this guard centralized so Google and
