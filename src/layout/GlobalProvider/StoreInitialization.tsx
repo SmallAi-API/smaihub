@@ -18,6 +18,7 @@ import {
   getBroadcastSourceId,
 } from '@/utils/client/broadcast';
 
+import ElectronAppStateSync from './ElectronAppStateSync';
 import { useUserStateRedirect } from './useUserStateRedirect';
 
 const DeferredStoreInitialization = lazy(() => import('./DeferredStoreInitialization'));
@@ -104,9 +105,12 @@ const StoreInitialization = memo(() => {
   }, [refreshAiProviderRuntimeState]);
 
   return (
-    <Suspense>
-      <DeferredStoreInitialization isLogin={isLoginOnInit} />
-    </Suspense>
+    <>
+      <ElectronAppStateSync />
+      <Suspense>
+        <DeferredStoreInitialization isLogin={isLoginOnInit} />
+      </Suspense>
+    </>
   );
 });
 
