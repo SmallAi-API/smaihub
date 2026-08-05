@@ -3128,8 +3128,8 @@ When I am ___, I need ___
   'tools.builtins.lobe-agent-management.description': 'Create, manage, and orchestrate AI agents',
   'tools.builtins.lobe-agent-management.title': 'Agent Management',
   'tools.builtins.lobe-agent.description':
-    'Built-in Agent capabilities: plan and todo management, sub-agent dispatch, and visual media analysis',
-  'tools.builtins.lobe-agent.title': 'Agent',
+    'Built-in smai.ai Agent capabilities: plan and todo management, sub-agent dispatch, and multimodal media analysis',
+  'tools.builtins.lobe-agent.title': 'smai.ai Agent',
   'tools.builtins.lobe-brief.description':
     'Report progress, deliver results, and request user decisions',
   'tools.builtins.lobe-brief.title': 'Brief Tools',
