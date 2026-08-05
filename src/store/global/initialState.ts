@@ -207,6 +207,7 @@ export interface SystemStatus {
    * Group Agent Builder panel width
    */
   groupAgentBuilderPanelWidth?: number;
+  hiddenHomeWidgets?: string[];
   /**
    * Hidden sidebar sections
    */
@@ -214,11 +215,13 @@ export interface SystemStatus {
   hidePWAInstaller?: boolean;
   hideThreadLimitAlert?: boolean;
   hideTopicSharePrivacyWarning?: boolean;
+  homeRecentsCount?: number;
   /**
    * Agent picked from the home AgentSelect dropdown. When unset the home page
    * falls back to the inbox agent. Persisted so the choice survives reloads.
    */
   homeSelectedAgentId?: string;
+  homeTaskCount?: number;
   imagePanelWidth: number;
   imageTopicPanelWidth?: number;
   imageTopicViewMode?: 'grid' | 'list';
@@ -299,6 +302,7 @@ export interface SystemStatus {
   showAgentBuilderPanel?: boolean;
   showCommandMenu?: boolean;
   showFilePanel?: boolean;
+  showHomePortrait?: boolean;
   /**
    * Visibility of the Home dashboard's activity and recommendations rail.
    * Independent from `showRightPanel` so Home preferences do not affect chat pages.
@@ -514,10 +518,12 @@ export const INITIAL_STATUS = {
   fileManagerViewMode: 'list' as const,
   filePanelWidth: 320,
   groupAgentBuilderPanelWidth: 360,
-
+  hiddenHomeWidgets: [],
   hidePWAInstaller: false,
   hideThreadLimitAlert: false,
   hideTopicSharePrivacyWarning: false,
+  homeRecentsCount: 8,
+  homeTaskCount: 8,
   imagePanelWidth: 320,
   imageTopicViewMode: 'grid' as const,
   imageTopicPanelWidth: 80,
@@ -536,6 +542,7 @@ export const INITIAL_STATUS = {
   resourceManagerColumnWidths: DEFAULT_RESOURCE_MANAGER_COLUMN_WIDTHS,
   showCommandMenu: false,
   showFilePanel: true,
+  showHomePortrait: true,
   showHotkeyHelper: false,
   showHomeRail: true,
   showImagePanel: true,
@@ -577,10 +584,17 @@ export const createInitialSystemStatus = (): SystemStatus => {
 
   return {
     ...INITIAL_STATUS,
+    hiddenHomeWidgets: Array.isArray(persistedStatus.hiddenHomeWidgets)
+      ? persistedStatus.hiddenHomeWidgets
+      : INITIAL_STATUS.hiddenHomeWidgets,
     leftPanelWidth:
       typeof persistedStatus.leftPanelWidth === 'number'
         ? persistedStatus.leftPanelWidth
         : INITIAL_STATUS.leftPanelWidth,
+    showHomePortrait:
+      typeof persistedStatus.showHomePortrait === 'boolean'
+        ? persistedStatus.showHomePortrait
+        : INITIAL_STATUS.showHomePortrait,
     showHomeRail:
       typeof persistedStatus.showHomeRail === 'boolean'
         ? persistedStatus.showHomeRail
