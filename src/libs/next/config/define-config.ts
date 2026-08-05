@@ -2,8 +2,6 @@ import { codeInspectorPlugin } from 'code-inspector-plugin';
 import { type NextConfig } from 'next';
 import { type Header, type Redirect } from 'next/dist/lib/load-custom-routes';
 
-import { dockerCanvasTracingIncludes } from './dockerCanvasTracingIncludes';
-
 const LANDING_SITEMAP_URL = 'https://www.smallai.asia/sitemap.xml';
 
 interface CustomNextConfig {
@@ -43,10 +41,6 @@ export function defineConfig(config: CustomNextConfig) {
               'dist/mobile/**',
 
               'packages/database/migrations/**',
-              // Ensure native bindings are included in standalone output.
-              // `@napi-rs/canvas` is loaded via dynamic `require()` (see packages/file-loaders),
-              // which may not be picked up by Next.js output tracing.
-              ...dockerCanvasTracingIncludes,
             ]
           : []),
       ],
@@ -351,14 +345,11 @@ export function defineConfig(config: CustomNextConfig) {
       ...(config.redirects ?? []),
     ],
     // when external packages in dev mode with turbopack, this config will lead to bundle error
-    // @napi-rs/canvas is a native module that can't be bundled by Turbopack
-    // pdfjs-dist uses @napi-rs/canvas for DOMMatrix polyfill in Node.js environment
     serverExternalPackages: config.serverExternalPackages ?? [
       // oidc-provider relies on constructor.name for model adapter lookup.
       // Keeping it external avoids potential name mangling during server bundling.
       'oidc-provider',
       'pdfkit',
-      '@napi-rs/canvas',
       '@lobehub/editor',
       'discord.js',
       'ffmpeg-static',
