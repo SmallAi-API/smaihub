@@ -23,9 +23,12 @@ const genGlobalStyle = ({ token }: { prefixCls: string; token: Theme }) => css`
   }
 
   body {
-    /* 提高合成层级，强制硬件加速，否则会有渲染黑边出现 */
+    /* Own stacking context, otherwise render black edges will appear. Must NOT
+       be a transform-based hack: a transform on body rebases every position:
+       fixed descendant onto body, and a drawer panel mid slide-in then overflows
+       body horizontally — focusing it scrolls the whole page sideways. */
     will-change: opacity;
-    transform: translateZ(0);
+    isolation: isolate;
   }
 
   * {
