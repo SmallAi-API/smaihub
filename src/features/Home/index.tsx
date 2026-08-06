@@ -265,7 +265,10 @@ const Home = memo(() => {
   const isLogin = useUserStore(authSelectors.isLogin);
   const showHomeRail = useGlobalStore(systemStatusSelectors.showHomeRail);
   const hiddenWidgets = useGlobalStore(systemStatusSelectors.hiddenHomeWidgets);
-  const minimal = isHomeMinimalLayout({ hiddenWidgets, showPortrait: showHomePortrait });
+  const minimal = isHomeMinimalLayout({
+    hiddenWidgets,
+    showPortrait: false,
+  });
   const [mode, setMode] = useState<HomeMode>('chat');
   const [inputValue, setInputValue] = useState('');
 
