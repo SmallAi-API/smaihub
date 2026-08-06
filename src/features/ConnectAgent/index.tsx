@@ -774,7 +774,6 @@ const ConnectAgentContent = memo<ConnectAgentContentProps>(
               <Text style={{ textAlign: 'center' }} type={'secondary'}>
                 {t('connectAgent.create.noneDetectedHint')}
               </Text>
-              <span className={styles.cmd}>npm install -g @anthropic-ai/claude-code</span>
               <Button
                 icon={<Icon icon={RefreshCw} size={13} />}
                 size={'small'}
