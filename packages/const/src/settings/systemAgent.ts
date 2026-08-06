@@ -41,8 +41,8 @@ export const DEFAULT_FOLLOW_UP_ACTION_SYSTEM_AGENT_ITEM: SystemAgentItem = {
 
 export const DEFAULT_TOPIC_AUTO_SUMMARY_SYSTEM_AGENT_ITEM: SystemAgentItem = {
   enabled: true,
-  model: 'deepseek-v4-flash',
-  provider: 'deepseek',
+  model: 'gpt-5.6-luna',
+  provider: 'smai',
 };
 
 export const DEFAULT_USER_MEMORY_EMBEDDING_SYSTEM_AGENT_ITEM: SystemAgentItem = {
