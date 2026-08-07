@@ -10,17 +10,12 @@ import Layout from './index';
 vi.mock('@lobehub/ui', () => ({
   Flexbox: ({
     children,
-    direction,
     ...props
   }: {
     children?: ReactNode;
     direction?: 'horizontal' | 'vertical';
     [key: string]: unknown;
-  }) => (
-    <div {...props} style={{ flexDirection: direction === 'vertical' ? 'column' : direction }}>
-      {children}
-    </div>
-  ),
+  }) => <div {...props}>{children}</div>,
   ShikiLobeTheme: {},
 }));
 
