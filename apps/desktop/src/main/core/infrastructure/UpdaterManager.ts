@@ -115,7 +115,6 @@ export class UpdaterManager {
 
     autoUpdater.autoDownload = false;
     autoUpdater.autoInstallOnAppQuit = false;
-    autoUpdater.allowDowngrade = false;
 
     if (isWindows) {
       // Use full NSIS package updates to avoid stale blockmap lookups from previous providers.
@@ -143,6 +142,10 @@ export class UpdaterManager {
       this.updateProviderConfigured = this.configureUpdateProvider();
     }
 
+    // Keep every release channel rollback-capable. Assign this after configuring the provider because
+    // electron-updater's channel setter mutates allowDowngrade as a side effect.
+    autoUpdater.allowDowngrade = true;
+
     this.registerEvents();
 
     if (updaterConfig.app.autoCheckUpdate) {
@@ -163,14 +166,13 @@ export class UpdaterManager {
   public switchChannel = (channel: UpdateChannel) => {
     logger.info(`Switching update channel: ${this.currentChannel} -> ${channel}`);
 
-    const isDowngrade = this.currentChannel === 'canary' && channel === 'stable';
-
     this.currentChannel = channel;
-    autoUpdater.allowDowngrade = isDowngrade;
-    logger.info(`allowDowngrade=${isDowngrade}`);
-
     autoUpdater.allowPrerelease = channel !== 'stable';
     this.updateProviderConfigured = this.configureUpdateProvider();
+
+    // Reapply after configureUpdateProvider for the same channel-setter side effect as initialize.
+    autoUpdater.allowDowngrade = true;
+    logger.info('allowDowngrade=true');
 
     this.installLaterVersion = null;
 
