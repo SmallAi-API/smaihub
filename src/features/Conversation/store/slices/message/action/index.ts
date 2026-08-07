@@ -5,7 +5,8 @@ import type { StateCreator } from 'zustand';
 
 import { getEffectiveConversationModel } from '@/features/Conversation/store/utils/effectiveModel';
 
-import { type Store as ConversationStore } from '../../../action';
+import type { Store as ConversationStore } from '../../../action';
+import { isSameConversationContext } from '../../../utils/contextGuard';
 import { type MessageCRUDAction, messageCRUDSlice } from './crud';
 import { type MessageReactionAction, messageReactionSlice } from './reaction';
 import { sendMessage } from './sendMessage';
@@ -71,6 +72,7 @@ export const messageSlice: StateCreator<
       threadId: threadId ?? undefined,
       topicId: topicId ?? undefined,
     });
+    if (!isSameConversationContext(context, get().context)) return undefined;
 
     if (id) {
       // ===== Hook: onMessageCreated =====
@@ -116,6 +118,7 @@ export const messageSlice: StateCreator<
       threadId: threadId ?? undefined,
       topicId: topicId ?? undefined,
     });
+    if (!isSameConversationContext(context, get().context)) return undefined;
 
     if (id) {
       // ===== Hook: onMessageCreated =====
