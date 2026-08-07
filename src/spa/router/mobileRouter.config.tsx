@@ -627,6 +627,23 @@ export const mobileRoutes: RouteObject[] = [
     path: '/verify-im',
   },
 
+  // Desktop app download landing — brings its own chrome, so it sits outside
+  // the main layout rather than under `/` (where `:workspaceSlug` would claim it).
+  {
+    children: [
+      {
+        element: dynamicElement(() => import('@/routes/(download)/download'), 'Mobile > Download'),
+        index: true,
+      },
+    ],
+    element: dynamicLayout(
+      () => import('@/routes/(download)/download/_layout/RouteLayout'),
+      'Mobile > Download > Layout',
+    ),
+    errorElement: <ErrorBoundary />,
+    path: '/download',
+  },
+
   // Verify report workspace — standalone master-detail (outside main layout)
   {
     children: [

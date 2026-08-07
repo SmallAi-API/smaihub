@@ -10,7 +10,7 @@ import {
 import { sharePageRouteMeta } from '@/routes/share/page/[id]/routeMeta';
 import { shareTopicRouteMeta } from '@/routes/share/t/[id]/routeMeta';
 import { loadRouteWithBuiltinToolSurfaces } from '@/spa/initialize/toolSurfaces';
-import { dynamicElement, ErrorBoundary } from '@/utils/router';
+import { dynamicElement, dynamicLayout, ErrorBoundary } from '@/utils/router';
 
 import { createMainAreaRouteFactory, createSharedDesktopRoutes } from './desktopRouter.shared';
 
@@ -60,6 +60,23 @@ const webOnlyRoutes: RouteObject[] = [
     element: dynamicElement(() => import('@/routes/verify-im'), 'Desktop > VerifyIm'),
     errorElement: <ErrorBoundary />,
     path: '/verify-im',
+  },
+
+  // Desktop app download landing — brings its own chrome, so it sits outside
+  // the main layout rather than under `/` (where `:workspaceSlug` would claim it).
+  {
+    children: [
+      {
+        element: dynamicElement(() => import('@/routes/(download)/download'), 'Desktop > Download'),
+        index: true,
+      },
+    ],
+    element: dynamicLayout(
+      () => import('@/routes/(download)/download/_layout/RouteLayout'),
+      'Desktop > Download > Layout',
+    ),
+    errorElement: <ErrorBoundary />,
+    path: '/download',
   },
 
   // Verify report workspace — standalone master-detail (outside main layout)
