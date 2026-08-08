@@ -549,6 +549,7 @@
   "userPanel.workspaceSetting": "工作区设置",
   "userPanel.workspaceUsage": "工作区使用情况",
   "version": "版本",
+  "viewExecutionDetails": "查看执行详情",
   "visibilityConfirm.irreversible": "（不可逆）",
   "visibilityConfirm.makePrivate.itemAccess": "其他工作区成员将立即失去访问权限",
   "visibilityConfirm.makePrivate.itemLoaded": "其他人已加载的内容无法撤回",
