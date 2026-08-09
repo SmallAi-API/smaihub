@@ -8,9 +8,16 @@ import { app, BrowserWindow, ipcMain, screen, session as electronSession, shell 
 
 import { preloadDir, resourcesDir } from '@/const/dir';
 import { DESKTOP_EXTERNAL_NAVIGATION_HOSTS, isMac } from '@/const/env';
+import { isFileProxyUrl, isSameOrigin, OIDC_AUTH_HEADER } from '@/const/protocol';
 import RemoteServerConfigCtr from '@/controllers/RemoteServerConfigCtr';
 import { backendProxyProtocolManager } from '@/core/infrastructure/BackendProxyProtocolManager';
-import { appendVercelCookie, setResponseHeader } from '@/utils/http-headers';
+import {
+  appendVercelCookie,
+  deleteRequestHeader,
+  hasRequestHeader,
+  setRequestHeader,
+  setResponseHeader,
+} from '@/utils/http-headers';
 import { createLogger } from '@/utils/logger';
 import { getSystemLanguage, resolveUILocale } from '@/utils/system-language';
 import { SYSTEM_LANGUAGE_ARG_PREFIX } from '~common/systemLanguage';
@@ -691,7 +698,10 @@ export default class Browser {
     const session = browserWindow.webContents.session;
     const originMap = new Map<number, string>();
 
-    session.webRequest.onBeforeSendHeaders((details, callback) => {
+    // NOTE: Electron allows only ONE `onBeforeSendHeaders` listener per session —
+    // registering a second one silently replaces this. File-proxy auth injection
+    // therefore lives inside this callback rather than in its own listener.
+    session.webRequest.onBeforeSendHeaders(async (details, callback) => {
       const requestHeaders = { ...details.requestHeaders };
 
       if (requestHeaders['Origin']) {
@@ -701,6 +711,8 @@ export default class Browser {
       }
 
       appendVercelCookie(requestHeaders);
+
+      await this.applyFileProxyAuthHeader(details.url, requestHeaders);
 
       callback({ requestHeaders });
     });
@@ -731,6 +743,54 @@ export default class Browser {
     });
 
     logger.debug(`[${this.identifier}] CORS bypass setup completed`);
+  }
+
+  /**
+   * Attach `Oidc-Auth` to uploaded-file-proxy requests aimed at the remote
+   * backend, and strip it from anything else.
+   *
+   * The `app://` interceptor only sees renderer-origin requests. Message image
+   * URLs are minted server-side as absolute `${APP_URL}/f/:id`, so an `<img src>`
+   * for one is a plain cross-origin network hit that never reaches the proxy —
+   * the auth-guarded `/f/:id` route then 401s for want of credentials (the
+   * desktop app holds an OIDC token, not a session cookie for that origin).
+   *
+   * Stripping matters just as much: `/f/:id` 302s to a third-party presigned
+   * storage URL, and Chromium replays custom headers across redirects. Dropping
+   * the header on any non-remote origin keeps the token from leaking to the
+   * storage provider. Main-process `net.fetch` calls also pass through here, so
+   * the same-origin check is what preserves the token the backend proxy injects.
+   */
+  private async applyFileProxyAuthHeader(
+    url: string,
+    requestHeaders: Record<string, string>,
+  ): Promise<void> {
+    const carriesAuthHeader = hasRequestHeader(requestHeaders, OIDC_AUTH_HEADER);
+
+    // Fast path: nothing to inject and nothing to strip. Keeps the common
+    // request off the async remote-config lookup below.
+    if (!carriesAuthHeader && !isFileProxyUrl(url)) return;
+
+    const remoteServerConfigCtr = this.app.getController(RemoteServerConfigCtr);
+    const remoteServerUrl = await remoteServerConfigCtr.getRemoteServerUrl();
+
+    if (!remoteServerUrl || !isSameOrigin(url, remoteServerUrl)) {
+      // Cross-origin (typically the presigned-storage redirect hop).
+      if (deleteRequestHeader(requestHeaders, OIDC_AUTH_HEADER)) {
+        logger.debug(`[${this.identifier}] Stripped ${OIDC_AUTH_HEADER} for cross-origin: ${url}`);
+      }
+      return;
+    }
+
+    // Same-origin request that already carries the header (e.g. the backend
+    // proxy's own `net.fetch`) — leave it untouched.
+    if (carriesAuthHeader) return;
+
+    const token = await remoteServerConfigCtr.getAccessToken();
+    if (!token) return;
+
+    setRequestHeader(requestHeaders, OIDC_AUTH_HEADER, token);
+    logger.debug(`[${this.identifier}] Injected ${OIDC_AUTH_HEADER} for file proxy: ${url}`);
   }
 
   /**

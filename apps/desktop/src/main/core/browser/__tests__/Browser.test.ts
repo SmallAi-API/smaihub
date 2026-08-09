@@ -344,7 +344,6 @@ describe('Browser', () => {
 
       // Create new browser to trigger initialization with saved state
       const _newBrowser = new Browser(defaultOptions, mockApp);
-      const _newBrowser = new Browser(defaultOptions, mockApp);
 
       expect(MockBrowserWindow).toHaveBeenCalledWith(
         expect.objectContaining({
