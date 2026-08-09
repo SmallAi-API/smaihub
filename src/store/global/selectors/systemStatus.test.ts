@@ -281,9 +281,10 @@ describe('systemStatusSelectors', () => {
       expect(items[spacerIdx - 1]).toBe('recents');
       // missing top-group defaults slot in just before the accordion
       expect(items.indexOf('tasks')).toBeLessThan(spacerIdx - 2);
-      expect(items.indexOf('pages')).toBeLessThan(spacerIdx - 2);
+      expect(items.indexOf('resource')).toBeLessThan(spacerIdx - 2);
       // missing bottom-group defaults sit after the spacer
       expect(items.indexOf('image')).toBeGreaterThan(spacerIdx);
+      expect(items.indexOf('pages')).toBeGreaterThan(spacerIdx);
     });
 
     it('should migrate legacy `sidebarSectionOrder` accordion order into the default layout', () => {
@@ -295,7 +296,7 @@ describe('systemStatusSelectors', () => {
       // the legacy state was saved) is backfilled at the head of the block.
       expect(items).toEqual([
         'tasks',
-        'pages',
+        'resource',
         'api',
         'private',
         'agent',
@@ -303,7 +304,7 @@ describe('systemStatusSelectors', () => {
         SIDEBAR_SPACER_ID,
         'image',
         'community',
-        'resource',
+        'pages',
         'docs',
         'support',
         'memory',
@@ -319,14 +320,14 @@ describe('systemStatusSelectors', () => {
       // backfilled at the head of the block; recents/agent keep legacy order.
       expect(items).toEqual([
         'tasks',
-        'pages',
+        'resource',
         'private',
         'recents',
         'agent',
         SIDEBAR_SPACER_ID,
         'image',
         'community',
-        'resource',
+        'pages',
         'memory',
       ]);
     });
