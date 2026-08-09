@@ -19,6 +19,7 @@ import RoleTagCloud from './features/RoleTagCloud';
 
 const Home: FC = () => {
   const useFetchTags = useUserMemoryStore((s) => s.useFetchTags);
+  const useFetchPersona = useUserMemoryStore((s) => s.useFetchPersona);
   const roles = useUserMemoryStore((s) => s.roles);
   const persona = useUserMemoryStore((s) => s.persona);
 
@@ -94,7 +95,3 @@ const Home: FC = () => {
 };
 
 export default Home;
-// eslint-disable-next-line @eslint-react/no-unnecessary-use-prefix
-function useFetchPersona(): { isLoading: any; error: any; mutate: any } {
-  throw new Error('Function not implemented.');
-}

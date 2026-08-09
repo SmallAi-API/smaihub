@@ -536,6 +536,10 @@ export default {
   'devices.visibilityTabs.private': 'Private',
   'devices.visibilityTabs.workspace': 'Workspace',
   'devices.workingDirectory': 'Working dir: {{path}}',
+  'downloads.apiKey.cta': 'Get an API Key',
+  'downloads.apiKey.desc':
+    'An API Key gives you access to AI models on the smai.ai platform or on any AI agent platform. It is the most basic credential for using smai.ai.',
+  'downloads.apiKey.title': 'Get an API Key',
   'downloads.desktop.cta': 'Download desktop app',
   'downloads.desktop.desc':
     'Use the native desktop app for local files, system tools, and focused work on your computer.',
@@ -543,14 +547,9 @@ export default {
   'downloads.messenger.cta': 'Open Messenger settings',
   'downloads.messenger.desc':
     'Connect smai.ai to the messaging platforms you already use, with quick setup or your own bot configuration.',
-  'downloads.messenger.quickSetup': 'Quick setup',
-  'downloads.messenger.quickSetupTooltip':
-    'You can chat with the official smai.ai account on this platform or manually set up your own.',
   'downloads.messenger.title': 'Messenger integration',
-  'downloads.mobile.cta': 'Get Mobile App',
-  'downloads.mobile.desc':
-    'Start conversations from your phone and keep smai.ai available when you are away from the desk.',
-  'downloads.mobile.title': 'Mobile App',
+  'downloads.pixelGrid.badge': 'Integrated agents',
+  'downloads.pixelGrid.title': 'Works seamlessly with the AI agent platforms you already use',
   'downloads.title': 'Discover more ways to use smai.ai',
   'checkingPermissions': 'Checking permissions...',
   'danger.reset.action': 'Reset Now',

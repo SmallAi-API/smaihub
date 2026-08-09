@@ -1,25 +1,35 @@
 'use client';
 
+import { ClaudeCode, Codex, HermesAgent, OpenClaw, Pi } from '@lobehub/icons';
 import { ActionIcon, Flexbox, Icon } from '@lobehub/ui';
 import { createStaticStyles } from 'antd-style';
-import { MessageCircleIcon, X } from 'lucide-react';
-import type { FC } from 'react';
-import React, { memo, useCallback, useMemo } from 'react';
+import { Sparkles, X } from 'lucide-react';
+import React, { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
-import { getPlatformIcon } from '@/routes/(main)/agent/channel/const';
 import { useGlobalStore } from '@/store/global';
 
 // Bump this id when the banner content changes so dismissing the old
 // variant does not hide the new one.
-export const MESSENGER_BANNER_ID = 'messenger-v1';
+export const MESSENGER_BANNER_ID = 'messenger-v2';
 
 const ICON_SIZE = 16;
 const AVATAR_SIZE = 24;
 
-// Platforms supported by the Messenger feature (see src/features/Messenger/constants.tsx).
-const BANNER_PLATFORM_NAMES = ['Discord', 'Slack', 'Telegram', 'WeChat'] as const;
+/**
+ * Coding agents shown in the avatar stack. ClaudeCode / Codex / OpenClaw ship
+ * `Color` art; HermesAgent and Pi are mono-only — their `colorPrimary` is
+ * `#fff` / `#000`, which would disappear against the white avatar — so those
+ * two render as the bare Mono export and pick up `currentColor`.
+ */
+const BANNER_AGENTS = [
+  { Icon: ClaudeCode.Color, key: 'ClaudeCode' },
+  { Icon: Codex.Color, key: 'Codex' },
+  { Icon: HermesAgent, key: 'HermesAgent' },
+  { Icon: OpenClaw.Color, key: 'OpenClaw' },
+  { Icon: Pi, key: 'Pi' },
+] as const;
 
 const styles = createStaticStyles(({ css, cssVar }) => ({
   avatar: css`
@@ -31,6 +41,9 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
     width: ${AVATAR_SIZE}px;
     height: ${AVATAR_SIZE}px;
     border-radius: 50%;
+
+    /* Mono-only marks (Hermes, Pi) draw with currentColor. */
+    color: ${cssVar.colorText};
 
     background: ${cssVar.colorBgContainer};
     box-shadow:
@@ -77,24 +90,8 @@ const MessengerBanner = memo(() => {
 
   const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
 
-  const platformIcons = useMemo(() => {
-    const icons: Array<{ Icon: FC<any>; key: string }> = [];
-
-    for (const name of BANNER_PLATFORM_NAMES) {
-      const PlatformIcon = getPlatformIcon(name);
-      if (!PlatformIcon) continue;
-      const ColorIcon =
-        'Color' in PlatformIcon
-          ? ((PlatformIcon as any).Color as FC<any>)
-          : (PlatformIcon as FC<any>);
-      icons.push({ Icon: ColorIcon, key: name });
-    }
-
-    return icons;
-  }, []);
-
-  const handleNavigateToMessenger = useCallback(() => {
-    navigate('/settings/messenger');
+  const handleNavigateToDownloads = useCallback(() => {
+    navigate('/downloads');
   }, [navigate]);
 
   const handleDismiss = useCallback(
@@ -113,26 +110,24 @@ const MessengerBanner = memo(() => {
     <div
       className={styles.banner}
       data-testid="messenger-banner"
-      onClick={handleNavigateToMessenger}
+      onClick={handleNavigateToDownloads}
     >
       <Flexbox horizontal align="center" gap={8}>
-        <Icon className={styles.icon} icon={MessageCircleIcon} size={18} />
+        <Icon className={styles.icon} icon={Sparkles} size={18} />
         <span className={styles.text}>{t('messengerBanner.title')}</span>
       </Flexbox>
       <Flexbox horizontal align="center" gap={8}>
-        {platformIcons.length > 0 && (
-          <div className={styles.iconGroup}>
-            {platformIcons.map(({ Icon: PlatformIcon, key }, index) => (
-              <div
-                className={styles.avatar}
-                key={key}
-                style={{ marginLeft: index === 0 ? 0 : -6, zIndex: index }}
-              >
-                <PlatformIcon size={ICON_SIZE} />
-              </div>
-            ))}
-          </div>
-        )}
+        <div className={styles.iconGroup}>
+          {BANNER_AGENTS.map(({ Icon: AgentIcon, key }, index) => (
+            <div
+              className={styles.avatar}
+              key={key}
+              style={{ marginLeft: index === 0 ? 0 : -6, zIndex: index }}
+            >
+              <AgentIcon size={ICON_SIZE} />
+            </div>
+          ))}
+        </div>
         <ActionIcon
           icon={X}
           size="small"

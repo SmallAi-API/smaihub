@@ -53,7 +53,7 @@ export default {
   'batchDelete': 'Batch Delete',
   'blog': 'Product Blog',
   'messengerBanner.dismiss': 'Dismiss',
-  'messengerBanner.title': 'Talk to smai.ai on your favorite messaging apps.',
+  'messengerBanner.title': 'Discover more ways to use smai.ai',
   'branching': 'Create Subtopic',
   'branchingDisable':
     'The "Sub-topic" feature is unavailable in the current mode. To use this feature, please switch to Postgres/Pglite DB mode or use smai.ai',

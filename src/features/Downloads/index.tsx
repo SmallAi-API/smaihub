@@ -3,7 +3,7 @@
 import { DOWNLOAD_URL, USAGE_DOCUMENTS } from '@lobechat/const';
 import { Block, Flexbox, Icon, Text } from '@lobehub/ui';
 import { Button } from '@lobehub/ui/base-ui';
-import { Lark, Line, QQ, WeChat } from '@lobehub/ui/icons';
+import { Lark, Line, QQ } from '@lobehub/ui/icons';
 import { createStaticStyles, cx } from 'antd-style';
 import { ChevronRight, Download, MessageCircle, Monitor } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -11,8 +11,16 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
+import { ProductLogo } from '@/components/Branding/ProductLogo';
 import { PlatformBrandIcon, SUPPORTED_MESSENGER_PLATFORMS } from '@/features/Messenger/constants';
 
+import PixelLogoGrid from './PixelLogoGrid';
+
+/**
+ * The smai.ai provider console — this key authenticates LLM calls against the
+ * smai.ai service, which is unrelated to the platform's own `/settings/apikey`.
+ */
+const API_PLATFORM_URL = 'https://api.smai.ai';
 const CHANNEL_DOCS_URL = `${USAGE_DOCUMENTS}/channels`;
 const MANUAL_MESSENGER_PLATFORMS = [
   {
@@ -22,12 +30,6 @@ const MANUAL_MESSENGER_PLATFORMS = [
     name: 'Feishu / Lark',
   },
   { docsUrl: `${CHANNEL_DOCS_URL}/line`, icon: Line.Color, id: 'line', name: 'LINE' },
-  {
-    docsUrl: `https://docs.smai.ai/docs/smai-app/channels/wechat`,
-    icon: WeChat.Color,
-    id: 'wechat',
-    name: 'WeChat',
-  },
   { docsUrl: `https://docs.smai.ai/docs/smai-app`, icon: QQ.Color, id: 'qq', name: 'QQ' },
 ] as const;
 
@@ -37,7 +39,7 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
     margin-block-start: auto;
   `,
   card: css`
-    min-height: 260px;
+    min-height: 220px;
     padding: 24px;
     border: 1px solid ${cssVar.colorBorderSecondary};
     border-radius: ${cssVar.borderRadiusLG};
@@ -56,10 +58,14 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
       padding-inline: 16px;
     }
   `,
+  /**
+   * Left column stacks two cards; the messenger card spans both rows so its
+   * platform grid has the room it needs and both columns end flush.
+   */
   bentoGrid: css`
     display: grid;
     grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
-    grid-template-rows: minmax(260px, auto);
+    grid-template-rows: repeat(2, minmax(220px, auto));
     gap: 16px;
 
     @media (width <= 860px) {
@@ -147,14 +153,6 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
     text-overflow: ellipsis;
     white-space: nowrap;
   `,
-  platformVerified: css`
-    display: inline-flex;
-    flex-shrink: 0;
-    align-items: center;
-
-    line-height: 0;
-    color: ${cssVar.colorSuccess};
-  `,
   desktopCard: css`
     grid-column: 1;
     grid-row: 1;
@@ -164,9 +162,18 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
       grid-row: auto;
     }
   `,
+  apiKeyCard: css`
+    grid-column: 1;
+    grid-row: 2;
+
+    @media (width <= 860px) {
+      grid-column: auto;
+      grid-row: auto;
+    }
+  `,
   messengerCard: css`
     grid-column: 2;
-    grid-row: 1;
+    grid-row: 1 / 3;
 
     @media (width <= 860px) {
       grid-column: auto;
@@ -264,6 +271,28 @@ const DownloadsPage = memo(() => {
             </Flexbox>
           </Block>
 
+          <Block className={cx(styles.card, styles.apiKeyCard)}>
+            <Flexbox gap={18} height="100%">
+              <Flexbox align="center" className={styles.iconBox} justify="center">
+                <ProductLogo size={24} />
+              </Flexbox>
+              <Flexbox gap={8}>
+                <Text as="h2" style={{ fontSize: 20 }} weight={700}>
+                  {t('downloads.apiKey.title')}
+                </Text>
+                <Text type="secondary">{t('downloads.apiKey.desc')}</Text>
+              </Flexbox>
+              <Flexbox horizontal className={styles.actionRow} gap={10}>
+                <Button
+                  icon={<Icon icon={ChevronRight} />}
+                  onClick={() => openExternal(API_PLATFORM_URL)}
+                >
+                  {t('downloads.apiKey.cta')}
+                </Button>
+              </Flexbox>
+            </Flexbox>
+          </Block>
+
           <Block className={cx(styles.card, styles.messengerCard)}>
             <Flexbox gap={18} height="100%">
               <Flexbox align="center" className={styles.iconBox} justify="center">
@@ -287,6 +316,8 @@ const DownloadsPage = memo(() => {
             </Flexbox>
           </Block>
         </div>
+
+        <PixelLogoGrid />
       </main>
     </div>
   );
