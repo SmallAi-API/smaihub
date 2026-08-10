@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
-import type { KnowledgeBaseItem } from '@/database/schemas';
-
+import type { PublicKnowledgeBase } from '../helpers/public-fields';
 import type { IPaginationQuery, PaginationQueryResponse } from './common.type';
 import { PaginationQuerySchema } from './common.type';
 
@@ -85,8 +84,8 @@ export interface MoveKnowledgeBaseFilesResponse {
  */
 export type KnowledgeBaseAccessType = 'owner' | 'userGrant' | 'roleGrant' | 'public';
 
-export interface KnowledgeBaseListItem extends KnowledgeBaseItem {
-  /** 当前用户对该知识库的访问来源类型 */
+export interface KnowledgeBaseListItem extends PublicKnowledgeBase {
+  /** The access source type for the current user on this knowledge base */
   accessType?: KnowledgeBaseAccessType;
 }
 
@@ -129,8 +128,8 @@ export const CreateKnowledgeBaseSchema = z.object({
  * 创建知识库响应类型
  */
 export interface CreateKnowledgeBaseResponse {
-  /** 知识库信息 */
-  knowledgeBase: KnowledgeBaseItem;
+  /** Knowledge base info */
+  knowledgeBase: PublicKnowledgeBase;
 }
 
 /**
@@ -159,8 +158,8 @@ export const UpdateKnowledgeBaseSchema = z.object({
  * 知识库详情响应类型
  */
 export interface KnowledgeBaseDetailResponse {
-  /** 知识库信息 */
-  knowledgeBase: KnowledgeBaseItem;
+  /** Knowledge base info */
+  knowledgeBase: PublicKnowledgeBase;
 }
 
 /**

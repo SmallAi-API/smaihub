@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
-import type { RoleItem, UserItem, UserRoleItem } from '@/database/schemas';
+import type { UserRoleItem } from '@/database/schemas';
 
+import type { PublicRole, PublicUser } from '../helpers/public-fields';
 import type { IPaginationQuery, PaginationQueryResponse } from './common.type';
 
 // ==================== User Base Types ====================
@@ -17,9 +18,9 @@ export interface GetUsersRequest {
 /**
  * 扩展的用户信息类型，包含角色信息
  */
-export type UserWithRoles = UserItem & {
+export type UserWithRoles = PublicUser & {
   messageCount?: number;
-  roles?: RoleItem[];
+  roles?: PublicRole[];
 };
 
 // ==================== User CRUD Types ====================
@@ -153,7 +154,7 @@ export const UpdateUserRolesRequestSchema = z
  * 用户角色详情，包含角色信息和关联信息
  */
 export interface UserRoleDetail extends UserRoleItem {
-  role: RoleItem;
+  role: PublicRole;
 }
 
 /**

@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
-import type { SessionGroupItem } from '@/database/schemas';
-
+import type { PublicAgentGroup } from '../helpers/public-fields';
 // ==================== Agent Group CRUD Types ====================
 // 助理分类（使用 sessionGroups 表存储）相关类型定义
 
@@ -44,7 +43,7 @@ export interface DeleteAgentGroupRequest {
 /**
  * 助理分类列表响应类型
  */
-export type AgentGroupListResponse = SessionGroupItem[];
+export type AgentGroupListResponse = PublicAgentGroup[];
 
 // ==================== Common Schemas ====================
 

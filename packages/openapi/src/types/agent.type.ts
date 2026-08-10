@@ -2,8 +2,7 @@ import type { LobeAgentChatConfig } from '@lobechat/types';
 import { ReasoningGraphSchema } from '@lobechat/types';
 import { z } from 'zod';
 
-import type { AgentItem } from '@/database/schemas';
-
+import type { PublicAgent, PublicFile, PublicKnowledgeBase } from '../helpers/public-fields';
 import type { IPaginationQuery, PaginationQueryResponse } from './common.type';
 
 // ==================== Agent CRUD Types ====================
@@ -160,37 +159,15 @@ export interface AgentSessionRelation {
  * Agent 列表响应类型
  */
 export type AgentListResponse = PaginationQueryResponse<{
-  agents: AgentItem[];
+  agents: PublicAgent[];
 }>;
 
 /**
  * Agent 详情响应类型，包含完整的配置信息
  */
-export interface AgentDetailResponse extends AgentItem {
-  agentsFiles?: Array<{
-    file: {
-      fileType: string;
-      id: string;
-      name: string;
-      size: number;
-    };
-  }>;
-  agentsKnowledgeBases?: Array<{
-    knowledgeBase: {
-      description: string | null;
-      id: string;
-      name: string;
-    };
-  }>;
-  agentsToSessions?: Array<{
-    session: {
-      avatar: string | null;
-      description: string | null;
-      id: string;
-      title: string | null;
-      updatedAt: Date;
-    };
-  }>;
+export interface AgentDetailResponse extends PublicAgent {
+  files?: Array<PublicFile & { enabled?: boolean | null }>;
+  knowledgeBases?: Array<PublicKnowledgeBase & { enabled?: boolean | null }>;
 }
 
 // ==================== Common Schemas ====================

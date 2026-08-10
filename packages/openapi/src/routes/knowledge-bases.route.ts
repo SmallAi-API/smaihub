@@ -152,8 +152,8 @@ app.delete(
  * - fileType: string (optional) - 文件类型过滤
  * - keyword: string (optional) - 搜索关键词（匹配文件名）
  *
- * 说明：
- * - 未提供 page 和 pageSize 时，不进行分页，返回全部数据
+ * Notes:
+ * - When page/pageSize are omitted, defaults to page 1 with 20 items
  */
 app.get(
   '/:id/files',

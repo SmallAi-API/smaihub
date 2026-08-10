@@ -54,13 +54,13 @@ app.get(
  * Content-Type: multipart/form-data
  *
  * Form fields:
- * - file: File (required) - 要上传的文件
- * - knowledgeBaseId: string (optional) - 知识库ID
- * - agentId: string (optional) - Agent ID，优先解析为 sessionId 并关联文件
- * - sessionId: string (optional) - 会话ID，如果提供则创建文件和会话的关联关系
- * - skipCheckFileType: boolean (optional) - 是否跳过文件类型检查
- * - directory: string (optional) - 上传目录
- * - skipExist: boolean (optional) - 是否跳过已存在的解析结果，默认false
+ * - file: File (required) - The file to upload
+ * - knowledgeBaseId: string (optional) - Knowledge base ID
+ * - agentId: string (optional) - Agent ID; resolved to sessionId first for file association
+ * - sessionId: string (optional) - Session ID; if provided, creates a file-session association
+ * - skipCheckFileType: boolean (optional) - Whether to skip file type check
+ * - directory: string (optional) - Upload directory
+ * - skipDeduplication: boolean (optional) - Whether to skip content deduplication
  */
 app.post(
   '/',
@@ -76,7 +76,7 @@ app.post(
               knowledgeBaseId: { type: 'string' },
               sessionId: { type: 'string' },
               skipCheckFileType: { type: 'boolean' },
-              skipExist: { type: 'boolean' },
+              skipDeduplication: { type: 'boolean' },
             },
             required: ['file'],
             type: 'object',
@@ -201,7 +201,6 @@ app.delete(
  * - id: string (required) - 文件ID
  *
  * Query parameters:
- * - skipExist: boolean (optional) - 是否跳过已存在的解析结果，默认false
  *
  * 功能：
  * - 解析文档文件的文本内容（PDF、Word、Excel等）
@@ -299,11 +298,15 @@ app.post(
             properties: {
               agentId: { type: 'string' },
               directory: { type: 'string' },
-              files: { items: { format: 'binary', type: 'string' }, type: 'array' },
+              files: {
+                items: { format: 'binary', type: 'string' },
+                maxItems: 20,
+                minItems: 1,
+                type: 'array',
+              },
               knowledgeBaseId: { type: 'string' },
               sessionId: { type: 'string' },
               skipCheckFileType: { type: 'boolean' },
-              skipExist: { type: 'boolean' },
             },
             required: ['files'],
             type: 'object',

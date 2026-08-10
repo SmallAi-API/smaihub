@@ -1,8 +1,11 @@
-import type { DBMessageItem, FileItem } from '@lobechat/types';
 import { z } from 'zod';
 
-import type { SessionItem, TopicItem } from '@/database/schemas';
-
+import type {
+  PublicFile,
+  PublicMessage,
+  PublicSession,
+  PublicTopic,
+} from '../helpers/public-fields';
 import type { IPaginationQuery, PaginationQueryResponse } from './common.type';
 import { PaginationQuerySchema } from './common.type';
 
@@ -201,16 +204,16 @@ export interface MessageIdParam {
   id: string;
 }
 
-// 从数据库联表查询出来的消息类型，包含关联的 session 和 topic 信息
-export interface MessageResponseFromDatabase extends DBMessageItem {
-  filesToMessages: { file: FileItem; messageId: string }[] | null;
-  session: SessionItem | null;
-  topic: TopicItem | null;
+// Message type queried from database join, includes associated session and topic info
+export interface MessageResponseFromDatabase extends PublicMessage {
+  filesToMessages: { file: PublicFile; messageId: string }[] | null;
+  session: PublicSession | null;
+  topic: PublicTopic | null;
 }
 
 // 消息查询时的返回类型，包含关联的 session 和 topic 信息
 export interface MessageResponse extends Omit<MessageResponseFromDatabase, 'filesToMessages'> {
-  files: FileItem[] | null;
+  files: PublicFile[] | null;
 }
 
 export type MessageListResponse = PaginationQueryResponse<{

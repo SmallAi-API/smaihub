@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
-import type { FileItem, KnowledgeBaseItem } from '@/database/schemas';
-
+import type { PublicFile, PublicKnowledgeBase } from '../helpers/public-fields';
 import type { IPaginationQuery, PaginationQueryResponse } from './common.type';
 import { PaginationQuerySchema } from './common.type';
 
@@ -19,9 +18,7 @@ export interface FileUploadRequest {
   file: File;
   /** 知识库ID（可选） */
   knowledgeBaseId?: string;
-  /** 自定义路径（可选） */
-  pathname?: string;
-  /** 会话ID（可选） */
+  /** Session ID (optional) */
   sessionId?: string;
   /** 是否跳过文件类型检查 */
   skipCheckFileType?: boolean;
@@ -54,6 +51,31 @@ export interface PublicFileUploadRequest {
   /** 是否跳过去重检查 */
   skipDeduplication?: boolean;
 }
+
+const MultipartOptionalIdSchema = z.string().trim().min(1).max(255).optional();
+const MultipartOptionalPathSchema = z.string().trim().min(1).max(1024).optional();
+const MultipartBooleanSchema = z
+  .enum(['true', 'false'])
+  .transform((value) => value === 'true')
+  .optional();
+
+export const FileUploadFormFieldsSchema = z
+  .object({
+    agentId: MultipartOptionalIdSchema,
+    directory: MultipartOptionalPathSchema,
+    knowledgeBaseId: MultipartOptionalIdSchema,
+    sessionId: MultipartOptionalIdSchema,
+    skipCheckFileType: MultipartBooleanSchema,
+    skipDeduplication: MultipartBooleanSchema,
+  })
+  .strict();
+
+export const BatchFileUploadFormFieldsSchema = FileUploadFormFieldsSchema.omit({
+  skipDeduplication: true,
+});
+
+export type FileUploadFormFields = z.infer<typeof FileUploadFormFieldsSchema>;
+export type BatchFileUploadFormFields = z.infer<typeof BatchFileUploadFormFieldsSchema>;
 
 // ==================== File Management Types ====================
 
@@ -298,14 +320,14 @@ export interface FileUserItem {
 /**
  * 文件列表项（包含可选的分块状态信息）
  */
-export interface FileListItem extends Partial<FileItem> {
-  /** 分块任务信息（包含基础异步任务信息与分块数量） */
+export interface FileListItem extends Partial<PublicFile> {
+  /** Chunking task info (includes basic async task info and chunk count) */
   chunking?: FileAsyncTaskResponse | null;
   /** 嵌入任务信息（包含基础异步任务信息） */
   embedding?: FileAsyncTaskResponse | null;
-  /** 关联的知识库列表 */
-  knowledgeBases?: Array<KnowledgeBaseItem>;
-  /** 关联的用户列表（相同 fileHash 的所有用户） */
+  /** Associated knowledge base list */
+  knowledgeBases?: Array<PublicKnowledgeBase>;
+  /** Associated user list (all users with the same fileHash) */
   users?: Array<FileUserItem>;
 }
 
