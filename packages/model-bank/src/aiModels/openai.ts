@@ -1249,6 +1249,7 @@ export const openaiChatModels: AIChatModelCard[] = [
   },
   {
     abilities: {
+      audio: true,
       functionCall: true,
       //search: true,
     },
