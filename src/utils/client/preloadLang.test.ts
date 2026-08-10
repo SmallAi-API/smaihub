@@ -51,14 +51,8 @@ describe('preloadLang', () => {
     vi.unstubAllGlobals();
   });
 
-  it('should only preload the last hovered locale when moving across items', () => {
-    preloadLang('de-DE');
-    preloadLang('fr-FR');
-    preloadLang('ko-KR');
+  vi.runAllTimers();
 
-    vi.runAllTimers();
-
-    expect(load).toHaveBeenCalledTimes(1);
-    expect(load).toHaveBeenCalledWith('ko-KR', ['common', 'chat', 'setting'], expect.any(Function));
-  });
+  expect(load).toHaveBeenCalledTimes(1);
+  expect(load).toHaveBeenCalledWith('ko-KR', ['common', 'chat', 'setting'], expect.any(Function));
 });

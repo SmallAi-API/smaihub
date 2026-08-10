@@ -1808,7 +1808,6 @@ const smaiChatModels: AIChatModelCard[] = [
     contextWindowTokens: 204_800,
     description: 'Same performance as M2.7 with significantly faster inference (~100 tps).',
     displayName: 'MiniMax M2.7 Highspeed',
-    enabled: true,
     id: 'MiniMax-M2.7-highspeed',
     maxOutput: 131_072,
     releasedAt: '2026-03-18',
@@ -1836,6 +1835,24 @@ const smaiChatModels: AIChatModelCard[] = [
       // K3 fixes sampling params server-side (temperature=1, top_p=0.95, penalties=0)
       // and the API docs advise against sending them
       disabledParams: ['frequency_penalty', 'presence_penalty', 'temperature', 'top_p'],
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+    },
+    contextWindowTokens: 1_048_576,
+    description:
+      "GLM-5.2 is Z.ai's latest flagship model designed for long-horizon task scenarios, offering significant improvements in long-horizon task capabilities compared to GLM-5.1. This 753B MoE model supports a stable 1M-token context window, features stronger programming capabilities, and supports multiple thinking effort levels for a flexible balance between performance and latency.",
+    displayName: 'GLM-5.2',
+    family: 'glm',
+    generation: 'glm-5.2',
+    id: 'glm-5.2',
+    releasedAt: '2026-08-10',
+    settings: {
+      extendParams: ['deepseekV4ReasoningEffort', 'reasoningBudgetToken'],
     },
     type: 'chat',
   },
