@@ -14,6 +14,16 @@ export interface BillboardItemLocaleFields {
  * Billboard 轮播项（Home sidebar 左下角运营卡片的单条内容）
  */
 export interface BillboardItem {
+  /**
+   * In-app action enum configured on the platform. When set to a value the app
+   * recognizes, the CTA runs the corresponding in-app logic instead of opening
+   * `linkUrl`. Allowed values (defined app-side in `src/features/Billboard/actions.ts`):
+   * `openChangelog` (open the changelog modal), `openFeedback` (open the feedback modal),
+   * `resetOnboarding` (web only — reset onboarding progress and re-enter the flow;
+   * desktop clients ignore it and fall back to `linkUrl`).
+   * Unrecognized values are ignored by the client and fall back to `linkUrl`.
+   */
+  action?: string | null;
   cover?: string | null;
   description: string;
   /**
