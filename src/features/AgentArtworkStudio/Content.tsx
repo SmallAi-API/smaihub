@@ -6,7 +6,7 @@ import {
   type AgentArtworkStyle,
   DEFAULT_AGENT_ARTWORK_STYLE,
 } from '@lobechat/prompts';
-import { Alert, Avatar, Center, Flexbox, Icon, Tag, Text } from '@lobehub/ui';
+import { Alert, Avatar, Center, Flexbox, Icon, Text } from '@lobehub/ui';
 import { Button, toast, useModalContext } from '@lobehub/ui/base-ui';
 import { createStaticStyles, cssVar } from 'antd-style';
 import { Check, SettingsIcon, UploadIcon, WandSparkles } from 'lucide-react';
@@ -26,10 +26,7 @@ import { useAiInfraStore } from '@/store/aiInfra';
 import { aiProviderSelectors } from '@/store/aiInfra/selectors';
 import { useFileStore } from '@/store/file';
 
-import {
-  LOBE_STYLE_REFERENCE_IMAGE_URLS,
-  styleReferencesForArtworkStyle,
-} from './lobeStyleReferences';
+import { styleReferencesForArtworkStyle } from './lobeStyleReferences';
 
 const MAX_AVATAR_SIZE = 1024 * 1024;
 
@@ -301,40 +298,6 @@ const AgentArtworkStudioContent = memo<AgentArtworkStudioContentProps>(({ agentI
 
         {canGenerate ? (
           <>
-            <Flexbox
-              horizontal
-              align={'center'}
-              className={`${styles.lobeCard} ${style === 'lobe' ? styles.lobeCardActive : ''}`}
-              gap={12}
-              padding={12}
-              role={'button'}
-              tabIndex={0}
-              onClick={() => selectStyle('lobe')}
-              onKeyDown={keySelect('lobe')}
-            >
-              <Flexbox horizontal flex={'none'} gap={4}>
-                {LOBE_STYLE_REFERENCE_IMAGE_URLS.map((url) => (
-                  <Avatar avatar={url} key={url} shape={'square'} size={40} />
-                ))}
-              </Flexbox>
-              <Flexbox flex={1} gap={2} style={{ minWidth: 0 }}>
-                <Flexbox horizontal align={'center'} gap={8}>
-                  <Text className={styles.sectionTitle}>
-                    {t('settingAgent.artwork.studio.lobeStyle')}
-                  </Text>
-                  <Tag color={'processing'} size={'small'}>
-                    {t('settingAgent.artwork.studio.recommended')}
-                  </Tag>
-                </Flexbox>
-                <Text ellipsis className={styles.hint}>
-                  {t('settingAgent.artwork.style.lobe')}
-                </Text>
-              </Flexbox>
-              {style === 'lobe' ? (
-                <Icon color={cssVar.colorPrimary} icon={Check} size={18} style={{ flex: 'none' }} />
-              ) : null}
-            </Flexbox>
-
             <Flexbox gap={8}>
               <Text className={styles.hint}>{t('settingAgent.artwork.studio.moreStyles')}</Text>
               <div className={styles.galleryGrid}>

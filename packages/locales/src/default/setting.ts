@@ -820,8 +820,8 @@ export default {
   'settingAgent.artwork.studio.generateHint':
     "Pick a style and we'll create an avatar from this Agent's profile.",
   'settingAgent.artwork.studio.generateTitle': 'Generate with AI',
-  'settingAgent.artwork.studio.lobeStyle': 'Lobe official style',
-  'settingAgent.artwork.studio.moreStyles': 'More styles',
+  'settingAgent.artwork.studio.lobeStyle': 'smai.ai official style',
+  'settingAgent.artwork.studio.moreStyles': 'styles',
   'settingAgent.artwork.studio.noModel':
     'Enable an image generation model to use one-click generation.',
   'settingAgent.artwork.studio.open': 'Customize appearance',
