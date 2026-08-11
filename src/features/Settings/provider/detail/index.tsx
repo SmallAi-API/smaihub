@@ -6,7 +6,7 @@ const NewAPI = dynamic(() => import('./newapi'), {
   ssr: false,
 });
 const SMAI = dynamic(() => import('./smai'), {
-  loading: () => <Loading debugId="Provider > SMAI" />,
+  loading: () => <SurfaceSkeleton header={false} variant={'form'} />,
   ssr: false,
 });
 const OpenAI = dynamic(() => import('./openai'), {
