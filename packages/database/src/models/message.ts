@@ -78,7 +78,7 @@ import {
   users,
 } from '../schemas';
 import type { LobeChatDatabase, Transaction } from '../type';
-import { sanitizeBm25Query } from '../utils/bm25';
+import { buildBm25MatchAny } from '../utils/bm25';
 import { notCopiedTranscript } from '../utils/copiedTranscript';
 import { genEndDateWhere, genRangeWhere, genStartDateWhere, genWhere } from '../utils/genWhere';
 import { idGenerator } from '../utils/idGenerator';
@@ -1985,11 +1985,10 @@ export class MessageModel {
   queryByKeyword = async (keyword: string) => {
     if (!keyword.trim()) return [];
 
-    const bm25Query = sanitizeBm25Query(keyword);
     const result = await this.db
       .select()
       .from(messages)
-      .where(and(this.ownership(), sql`${messages.content} @@@ ${bm25Query}`))
+      .where(and(this.ownership(), buildBm25MatchAny(messages.id, ['content'], keyword)))
       .orderBy(desc(messages.createdAt));
 
     return result as DBMessageItem[];

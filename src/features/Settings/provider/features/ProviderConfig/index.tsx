@@ -10,7 +10,7 @@ import { Form as AntdForm } from 'antd';
 import { createStaticStyles, cssVar, cx, responsive } from 'antd-style';
 import { InfoIcon, Loader2Icon, LockIcon } from 'lucide-react';
 import { AiProviderBaseURLSchema } from 'model-bank/aiProvider';
-import { type ReactNode } from 'react';
+import { type MouseEvent, type ReactNode } from 'react';
 import { memo, useCallback, useLayoutEffect, useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 

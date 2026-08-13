@@ -78,6 +78,12 @@ export const useCommandMenu = () => {
       });
     },
     {
+      // A rejected search falls through to `searchResults: []` below, which the
+      // palette renders exactly like "no matches". Log it so a backend failure
+      // is at least distinguishable from an empty result set.
+      onError: (error) => {
+        console.error('[CommandMenu] search failed', error);
+      },
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
     },

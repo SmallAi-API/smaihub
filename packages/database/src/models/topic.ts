@@ -43,7 +43,7 @@ import {
   topics,
 } from '../schemas';
 import type { LobeChatDatabase } from '../type';
-import { sanitizeBm25Query } from '../utils/bm25';
+import { buildBm25MatchAny } from '../utils/bm25';
 import { COPIED_TOPIC_USAGE_RESET } from '../utils/copiedTranscript';
 import { markCopiedMessageMetadata } from '../utils/copyMessagesInDatabase';
 import { genEndDateWhere, genRangeWhere, genStartDateWhere, genWhere } from '../utils/genWhere';
@@ -810,15 +810,15 @@ export class TopicModel {
       scope && typeof scope === 'object' ? scope : { containerId: scope ?? null };
     const scopeCondition = this.matchKeywordScope(scopeOptions);
 
-    const bm25Query = sanitizeBm25Query(keyword);
-
     // Run title and message content searches in parallel
     const [topicsByTitle, topicIdsByMessages] = await Promise.all([
       // Query topics matching by title (BM25)
       this.db
         .select()
         .from(topics)
-        .where(and(this.ownership(), scopeCondition, sql`${topics.title} @@@ ${bm25Query}`))
+        .where(
+          and(this.ownership(), scopeCondition, buildBm25MatchAny(topics.id, ['title'], keyword)),
+        )
         .orderBy(desc(topics.updatedAt)),
       // Query topic IDs matching by message content (BM25)
       this.db
@@ -828,7 +828,7 @@ export class TopicModel {
         .where(
           and(
             this.messageOwnership(),
-            sql`${messages.content} @@@ ${bm25Query}`,
+            buildBm25MatchAny(messages.id, ['content'], keyword),
             this.ownership(),
             scopeCondition,
           ),

@@ -5,7 +5,7 @@ import type {
   LobeAgentSession,
   LobeGroupSession,
 } from '@lobechat/types';
-import { and, asc, count, desc, eq, inArray, not, or, sql } from 'drizzle-orm';
+import { and, asc, count, desc, eq, inArray, not, or } from 'drizzle-orm';
 import type { PartialDeep } from 'type-fest';
 
 import { merge } from '@/utils/merge';
@@ -13,7 +13,7 @@ import { merge } from '@/utils/merge';
 import type { AgentItem, NewAgent, NewSession, SessionItem } from '../schemas';
 import { agents, agentsToSessions, sessionGroups, sessions } from '../schemas';
 import type { LobeChatDatabase } from '../type';
-import { sanitizeBm25Query } from '../utils/bm25';
+import { buildBm25MatchAny } from '../utils/bm25';
 import { genEndDateWhere, genRangeWhere, genStartDateWhere, genWhere } from '../utils/genWhere';
 import { idGenerator } from '../utils/idGenerator';
 import { buildWorkspacePayload, buildWorkspaceWhere } from '../utils/workspace';
@@ -606,8 +606,6 @@ export class SessionModel {
     const offset = current * pageSize;
 
     try {
-      const bm25Query = sanitizeBm25Query(keyword);
-
       const results = await this.db.query.agents.findMany({
         limit: pageSize,
         offset,
@@ -615,7 +613,7 @@ export class SessionModel {
         orderBy: [asc(agents.id)],
         where: and(
           this.agentsOwnership(),
-          sql`(${agents.title} @@@ ${bm25Query} OR ${agents.description} @@@ ${bm25Query})`,
+          buildBm25MatchAny(agents.id, ['title', 'description'], keyword),
         ),
         with: { agentsToSessions: { columns: {}, with: { session: true } } },
       });

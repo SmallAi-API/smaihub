@@ -27,7 +27,7 @@ import {
   userMemories,
 } from '../../schemas';
 import type { LobeChatDatabase } from '../../type';
-import { sanitizeBm25Query } from '../../utils/bm25';
+import { buildBm25MatchAny } from '../../utils/bm25';
 import { normalizeInboxAgentMeta, normalizeInboxAgentTitle } from '../../utils/inboxAgent';
 import { buildWorkspaceWhere } from '../../utils/workspace';
 
@@ -551,8 +551,6 @@ export class SearchRepo {
    * Search agents by title, description, slug, tags (BM25)
    */
   private async searchAgents(query: string, limit: number): Promise<AgentSearchResult[]> {
-    const bm25Query = sanitizeBm25Query(query);
-
     const hits = this.db
       .select({
         avatar: agents.avatar,
@@ -572,7 +570,11 @@ export class SearchRepo {
       .where(
         and(
           this.scanScopeWhere(agents),
-          sql`(${agents.title} @@@ ${bm25Query} OR ${agents.description} @@@ ${bm25Query} OR ${agents.slug} @@@ ${bm25Query} OR ${agents.tags} @@@ ${bm25Query} OR ${agents.systemRole} @@@ ${bm25Query})`,
+          buildBm25MatchAny(
+            agents.id,
+            ['title', 'description', 'slug', 'tags', 'system_role'],
+            query,
+          ),
         ),
       )
       .orderBy(sql`paradedb.score(${agents.id}) DESC`)
@@ -627,8 +629,6 @@ export class SearchRepo {
     limit: number,
     agentId?: string,
   ): Promise<TopicSearchResult[]> {
-    const bm25Query = sanitizeBm25Query(query);
-
     const candidateLimit = limit * RECENCY_CANDIDATE_MULTIPLIER;
 
     const hits = this.db
@@ -650,7 +650,7 @@ export class SearchRepo {
         and(
           this.scanScopeWhere(topics),
           agentId && !this.liftsAgentFilter ? eq(topics.agentId, agentId) : undefined,
-          sql`(${topics.title} @@@ ${bm25Query} OR ${topics.content} @@@ ${bm25Query} OR ${topics.description} @@@ ${bm25Query})`,
+          buildBm25MatchAny(topics.id, ['title', 'content', 'description'], query),
         ),
       )
       .orderBy(sql`paradedb.score(${topics.id}) DESC`)
@@ -737,8 +737,6 @@ export class SearchRepo {
     limit: number,
     agentId?: string,
   ): Promise<MessageSearchResult[]> {
-    const bm25Query = sanitizeBm25Query(query);
-
     const candidateLimit = limit * RECENCY_CANDIDATE_MULTIPLIER;
 
     const hits = this.db
@@ -761,7 +759,7 @@ export class SearchRepo {
           this.scanScopeWhere(messages),
           ne(messages.role, 'tool'),
           agentId && !this.liftsAgentFilter ? eq(messages.agentId, agentId) : undefined,
-          sql`${messages.content} @@@ ${bm25Query}`,
+          buildBm25MatchAny(messages.id, ['content'], query),
         ),
       )
       .orderBy(sql`paradedb.score(${messages.id}) DESC`)
@@ -831,8 +829,6 @@ export class SearchRepo {
    * so partial searches like "component" won't match. Full words or prefixes work fine.
    */
   private async searchFiles(query: string, limit: number): Promise<FileSearchResult[]> {
-    const bm25Query = sanitizeBm25Query(query);
-
     const hits = this.db
       .select({
         createdAt: files.createdAt,
@@ -854,7 +850,7 @@ export class SearchRepo {
           // of search too — otherwise a query for "execution" returns hundreds
           // of artifacts the user can't find anywhere else in the UI.
           or(isNull(files.source), notInArray(files.source, LIBRARY_HIDDEN_FILE_SOURCES)),
-          sql`${files.name} @@@ ${bm25Query}`,
+          buildBm25MatchAny(files.id, ['name'], query),
         ),
       )
       .orderBy(sql`paradedb.score(${files.id}) DESC`)
@@ -901,8 +897,6 @@ export class SearchRepo {
    * Search folders (documents with file_type=DOCUMENT_FOLDER_TYPE) (BM25)
    */
   private async searchFolders(query: string, limit: number): Promise<FolderSearchResult[]> {
-    const bm25Query = sanitizeBm25Query(query);
-
     const hits = this.db
       .select({
         createdAt: documents.createdAt,
@@ -921,7 +915,7 @@ export class SearchRepo {
         and(
           this.scanScopeWhere(documents),
           eq(documents.fileType, DOCUMENT_FOLDER_TYPE),
-          sql`(${documents.title} @@@ ${bm25Query} OR ${documents.slug} @@@ ${bm25Query} OR ${documents.description} @@@ ${bm25Query})`,
+          buildBm25MatchAny(documents.id, ['title', 'slug', 'description'], query),
         ),
       )
       .orderBy(sql`paradedb.score(${documents.id}) DESC`)
@@ -965,8 +959,6 @@ export class SearchRepo {
    * Search pages (documents with file_type='custom/document') (BM25)
    */
   private async searchPages(query: string, limit: number): Promise<PageSearchResult[]> {
-    const bm25Query = sanitizeBm25Query(query);
-
     const hits = this.db
       .select({
         createdAt: documents.createdAt,
@@ -982,7 +974,7 @@ export class SearchRepo {
         and(
           this.scanScopeWhere(documents),
           eq(documents.fileType, 'custom/document'),
-          sql`(${documents.title} @@@ ${bm25Query} OR ${documents.slug} @@@ ${bm25Query} OR ${documents.content} @@@ ${bm25Query})`,
+          buildBm25MatchAny(documents.id, ['title', 'slug', 'content'], query),
         ),
       )
       .orderBy(sql`paradedb.score(${documents.id}) DESC`)
@@ -1046,9 +1038,7 @@ export class SearchRepo {
     if (!query || query.trim() === '') return [];
     if (!knowledgeBaseIds || knowledgeBaseIds.length === 0) return [];
 
-    const bm25Query = sanitizeBm25Query(query);
-
-    const matchClause = sql`(${documents.title} @@@ ${bm25Query} OR ${documents.slug} @@@ ${bm25Query} OR ${documents.content} @@@ ${bm25Query})`;
+    const matchClause = buildBm25MatchAny(documents.id, ['title', 'slug', 'content'], query);
     const folderClause = ne(documents.fileType, DOCUMENT_FOLDER_TYPE);
     const userClause = buildWorkspaceWhere(this.scope, documents);
 
@@ -1132,8 +1122,6 @@ export class SearchRepo {
    * already runs as TopN — no subquery isolation needed.
    */
   private async searchMemories(query: string, limit: number): Promise<MemorySearchResult[]> {
-    const bm25Query = sanitizeBm25Query(query);
-
     const rows = await this.db
       .select({
         createdAt: userMemories.createdAt,
@@ -1148,7 +1136,7 @@ export class SearchRepo {
       .where(
         and(
           eq(userMemories.userId, this.userId),
-          sql`(${userMemories.title} @@@ ${bm25Query} OR ${userMemories.summary} @@@ ${bm25Query} OR ${userMemories.details} @@@ ${bm25Query})`,
+          buildBm25MatchAny(userMemories.id, ['title', 'summary', 'details'], query),
         ),
       )
       .orderBy(sql`paradedb.score(${userMemories.id}) DESC`)
@@ -1170,8 +1158,6 @@ export class SearchRepo {
    * Search chat groups by title and description (BM25)
    */
   private async searchChatGroups(query: string, limit: number): Promise<ChatGroupSearchResult[]> {
-    const bm25Query = sanitizeBm25Query(query);
-
     const hits = this.db
       .select({
         avatar: chatGroups.avatar,
@@ -1188,7 +1174,7 @@ export class SearchRepo {
       .where(
         and(
           this.scanScopeWhere(chatGroups),
-          sql`(${chatGroups.title} @@@ ${bm25Query} OR ${chatGroups.description} @@@ ${bm25Query})`,
+          buildBm25MatchAny(chatGroups.id, ['title', 'description'], query),
         ),
       )
       .orderBy(sql`paradedb.score(${chatGroups.id}) DESC`)
@@ -1231,8 +1217,6 @@ export class SearchRepo {
     query: string,
     limit: number,
   ): Promise<KnowledgeBaseSearchResult[]> {
-    const bm25Query = sanitizeBm25Query(query);
-
     const hits = this.db
       .select({
         avatar: knowledgeBases.avatar,
@@ -1248,7 +1232,7 @@ export class SearchRepo {
       .where(
         and(
           this.scanScopeWhere(knowledgeBases),
-          sql`(${knowledgeBases.name} @@@ ${bm25Query} OR ${knowledgeBases.description} @@@ ${bm25Query})`,
+          buildBm25MatchAny(knowledgeBases.id, ['name', 'description'], query),
         ),
       )
       .orderBy(sql`paradedb.score(${knowledgeBases.id}) DESC`)

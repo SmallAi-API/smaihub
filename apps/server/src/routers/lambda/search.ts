@@ -121,7 +121,20 @@ export const searchRouter = router({
           'knowledgeBase',
         ].includes(type)
       ) {
-        searchPromises.push(ctx.searchRepo.search(input));
+        // Deliberately rethrown, not swallowed into `[]`: the client renders an
+        // empty aggregate response identically to "no matches", so a silently
+        // caught DB failure is indistinguishable from a genuinely empty result.
+        // The log is what makes that failure diagnosable at all.
+        searchPromises.push(
+          ctx.searchRepo.search(input).catch((error) => {
+            console.error('[search:database]', { error, query, type });
+            throw new TRPCError({
+              cause: error,
+              code: 'INTERNAL_SERVER_ERROR',
+              message: 'Search is currently unavailable',
+            });
+          }),
+        );
       }
 
       // Marketplace searches: see `includeMarketplace` on the input schema —

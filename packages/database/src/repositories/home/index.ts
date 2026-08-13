@@ -19,7 +19,7 @@ import {
   topics,
 } from '../../schemas';
 import { type LobeChatDatabase } from '../../type';
-import { sanitizeBm25Query } from '../../utils/bm25';
+import { buildBm25MatchAny } from '../../utils/bm25';
 import { normalizeInboxAgentMeta } from '../../utils/inboxAgent';
 import { buildWorkspaceWhere } from '../../utils/workspace';
 
@@ -465,8 +465,6 @@ export class HomeRepository {
   async searchAgents(keyword: string): Promise<SidebarAgentItem[]> {
     if (!keyword.trim()) return [];
 
-    const bm25Query = sanitizeBm25Query(keyword);
-
     // Run agent and chat group searches in parallel
     const [agentResults, chatGroupResults] = await Promise.all([
       // 1. Search agents by title or description (BM25)
@@ -493,7 +491,7 @@ export class HomeRepository {
           and(
             buildWorkspaceWhere(this.scope, agents),
             not(eq(agents.virtual, true)),
-            sql`(${agents.title} @@@ ${bm25Query} OR ${agents.description} @@@ ${bm25Query})`,
+            buildBm25MatchAny(agents.id, ['title', 'description'], keyword),
           ),
         )
         .orderBy(desc(agents.updatedAt)),
@@ -514,7 +512,7 @@ export class HomeRepository {
         .where(
           and(
             buildWorkspaceWhere(this.scope, chatGroups),
-            sql`(${chatGroups.title} @@@ ${bm25Query} OR ${chatGroups.description} @@@ ${bm25Query})`,
+            buildBm25MatchAny(chatGroups.id, ['title', 'description'], keyword),
           ),
         )
         .orderBy(desc(chatGroups.updatedAt)),
