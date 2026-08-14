@@ -72,6 +72,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
   { icon: KeyRound, id: 'api', labelKey: 'tab.apiAccess' },
   { id: 'pages', labelKey: 'tab.pages', routeId: 'page' },
   { id: 'recents', labelKey: 'recents' },
+  { id: 'project', labelKey: 'project:sidebar.title' },
   { id: 'private', labelKey: 'navPanel.privateAgents' },
   { alwaysVisible: true, id: 'agent', labelKey: 'navPanel.agent' },
   { id: 'image', labelKey: 'tab.generation', routeId: 'image' },
