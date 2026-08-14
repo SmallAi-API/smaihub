@@ -570,11 +570,13 @@ export class SearchRepo {
       .where(
         and(
           this.scanScopeWhere(agents),
-          buildBm25MatchAny(
-            agents.id,
-            ['title', 'description', 'slug', 'tags', 'system_role'],
-            query,
-          ),
+          // NOTICE: `tags` is deliberately absent. It is a `json_fields` entry in
+          // `agents_bm25_idx` (migration 0093), and `paradedb.match` addresses
+          // JSON fields by path (`tags.foo`), not by the bare field name — passing
+          // 'tags' here makes the whole statement error out, taking every agent
+          // search with it. Every other `paradedb.match` call site in this repo
+          // passes plain `text_fields` only.
+          buildBm25MatchAny(agents.id, ['title', 'description', 'slug', 'system_role'], query),
         ),
       )
       .orderBy(sql`paradedb.score(${agents.id}) DESC`)
