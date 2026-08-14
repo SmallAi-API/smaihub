@@ -1,9 +1,6 @@
-import {
-  type BuiltinRenderProps,
-  type SearchQuery,
-  type UniformSearchResponse,
-} from '@lobechat/types';
-import { Alert, Flexbox, Highlighter } from '@lobehub/ui';
+import type { BuiltinRenderProps, SearchQuery, UniformSearchResponse } from '@lobechat/types';
+import { Flexbox, Highlighter } from '@lobehub/ui';
+import { Alert } from '@lobehub/ui/base-ui';
 import { memo, useState } from 'react';
 
 import ConfigForm from './ConfigForm';
