@@ -7,6 +7,8 @@ import { router } from '@/libs/trpc/lambda';
 import { resolveMarketUserContext, serverDatabase } from '@/libs/trpc/lambda/middleware';
 import { DiscoverService } from '@/server/services/discover';
 
+import { getRestrictedKnowledgeBaseIds } from './_helpers/knowledgeBaseAccess';
+
 const MARKETPLACE_SEARCH_TYPES = new Set(['communityAgent', 'mcp', 'plugin']);
 
 /**
@@ -121,20 +123,17 @@ export const searchRouter = router({
           'knowledgeBase',
         ].includes(type)
       ) {
-        // Deliberately rethrown, not swallowed into `[]`: the client renders an
-        // empty aggregate response identically to "no matches", so a silently
-        // caught DB failure is indistinguishable from a genuinely empty result.
-        // The log is what makes that failure diagnosable at all.
-        searchPromises.push(
-          ctx.searchRepo.search(input).catch((error) => {
-            console.error('[search:database]', { error, query, type });
-            throw new TRPCError({
-              cause: error,
-              code: 'INTERNAL_SERVER_ERROR',
-              message: 'Search is currently unavailable',
-            });
-          }),
-        );
+        // Restricted (member No-access) KBs and their linked files/folders/
+        // pages must not be discoverable through unified search either —
+        // mirror the library-list filter. Only the KB-adjacent types consume
+        // the exclusion, so other typed searches skip the extra lookups on
+        // this debounced search-as-you-type path.
+        const needsKbExclusion =
+          !type || ['file', 'folder', 'knowledgeBase', 'page'].includes(type);
+        const excludeKnowledgeBaseIds = needsKbExclusion
+          ? await getRestrictedKnowledgeBaseIds(ctx)
+          : [];
+        searchPromises.push(ctx.searchRepo.search({ ...input, excludeKnowledgeBaseIds }));
       }
 
       // Marketplace searches: see `includeMarketplace` on the input schema —
