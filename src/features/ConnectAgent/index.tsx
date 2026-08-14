@@ -12,12 +12,13 @@ import { agentDisplayName } from '@lobechat/types';
 import { Alert, Flexbox, Icon, Input, Text, TextArea, Tooltip } from '@lobehub/ui';
 import {
   Button,
+  Checkbox,
   createModal,
   type ModalInstance,
   ScrollArea,
   useModalContext,
 } from '@lobehub/ui/base-ui';
-import { Checkbox, Typography } from 'antd';
+import { Typography } from 'antd';
 import { createStaticStyles, cssVar } from 'antd-style';
 import { t as i18nT } from 'i18next';
 import { ArrowLeft, CheckCircle2, Download, LaptopIcon, RefreshCw, ScanSearch } from 'lucide-react';
