@@ -6,11 +6,11 @@ import {
   FilePenIcon,
   FilesIcon,
   FileText,
+  HomeIcon,
   Image,
   ImageIcon,
   LayoutPanelTopIcon,
   LibraryBigIcon,
-  MessageSquarePlus,
   Mic2,
   Settings,
   ShapesIcon,
@@ -1254,7 +1254,7 @@ const createMainAreaChildrenDefinition = (options: MainAreaRouteOptions = {}): R
     element: deferPlatformElement(options.createHomeElement),
     handle: {
       meta: routeMeta({
-        icon: MessageSquarePlus,
+        icon: HomeIcon,
         tabTitleKey: 'navigation.home',
         titleKey: 'navigation.home',
       }),
