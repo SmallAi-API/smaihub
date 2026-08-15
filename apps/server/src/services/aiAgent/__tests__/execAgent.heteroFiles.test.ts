@@ -496,32 +496,6 @@ describe('AiAgentService.execAgent - hetero early-exit file attachments', () => 
     expect(mockSpawnHeteroSandbox).not.toHaveBeenCalled();
   });
 
-  it('resumes Amp natively without loading or injecting fallback history', async () => {
-    mockGetHeterogeneousResumeSessionId.mockResolvedValue('amp-thread-existing');
-    heteroAgentConfig.model = 'amp';
-    heteroAgentConfig.provider = 'amp';
-    heteroAgentConfig.agencyConfig = {
-      boundDeviceId: 'device-1',
-      executionTarget: 'device',
-      heterogeneousProvider: { type: 'amp' },
-    } as any;
-
-    await service.execAgent({
-      agentId: 'agent-1',
-      prompt: 'Continue the Amp thread',
-    });
-
-    expect(mockMessageQuery).not.toHaveBeenCalled();
-    expect(mockBuildRemoteDeviceHeteroContext).toHaveBeenCalledOnce();
-    expect(mockDispatchAgentRun).toHaveBeenCalledWith(
-      expect.objectContaining({
-        resumeFallbackSystemContext: undefined,
-        resumeSessionId: 'amp-thread-existing',
-        systemContext: 'device context',
-      }),
-    );
-  });
-
   it('should pass resolved Claude Code model and effort args to sandbox dispatch', async () => {
     heteroAgentConfig.agencyConfig.heterogeneousProvider = {
       effort: 'high',

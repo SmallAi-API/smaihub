@@ -1,8 +1,10 @@
 import type {
+  HeterogeneousAgentMode,
   HeterogeneousProviderConfig,
   HeterogeneousReasoningEffort,
   HeterogeneousSpeedMode,
   HeteroSelection,
+  HeteroSelectorCapability,
   ListHeterogeneousAgentModelsParams,
 } from '@lobechat/types';
 import {
@@ -19,12 +21,11 @@ import { useTranslation } from 'react-i18next';
 import { buildSelectorSubmenu } from '../../components/buildSelectorSubmenu';
 import Trigger from '../../components/SelectorTrigger';
 import { ModelCatalogSelector } from './ModelCatalogSelector';
-import type { ModelCapability } from './selectorView';
 import { buildSelectorView, resolveModelSwitchSelection } from './selectorView';
 
 interface SelectorMenuProps {
   agentId?: string;
-  capability: ModelCapability;
+  capability: HeteroSelectorCapability;
   patch: (selection: HeteroSelection) => Promise<void>;
   permissionReason?: string;
   provider: HeterogeneousProviderConfig;
@@ -44,18 +45,17 @@ const SelectorMenu = memo<SelectorMenuProps>(
         if (key === 'model' && capability.model)
           return void patch(
             resolveModelSwitchSelection({
-              capability,
+              capability: { ...capability, model: capability.model },
               effort: capability.effort?.resolve(provider),
               isFastSpeed: view.isFastSpeed,
               value,
             }),
           );
 
-        void patch(
-          key === 'speed'
-            ? { speed: value as HeterogeneousSpeedMode }
-            : { effort: value as HeterogeneousReasoningEffort },
-        );
+        if (key === 'mode') return void patch({ mode: value as HeterogeneousAgentMode });
+        if (key === 'speed') return void patch({ speed: value as HeterogeneousSpeedMode });
+
+        void patch({ effort: value as HeterogeneousReasoningEffort });
       },
       [capability, patch, provider, view.isFastSpeed],
     );
