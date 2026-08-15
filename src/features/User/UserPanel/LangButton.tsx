@@ -1,7 +1,8 @@
 import { type DropdownMenuCheckboxItem, type DropdownMenuProps } from '@lobehub/ui';
-import { ActionIcon, DropdownMenu, Flexbox, Icon, Text } from '@lobehub/ui';
+import { DropdownMenu, Flexbox, Icon, Text } from '@lobehub/ui';
+import { Button } from '@lobehub/ui/base-ui';
 import { cssVar } from 'antd-style';
-import { ChevronRight, Languages } from 'lucide-react';
+import { ChevronRight, GlobeIcon } from 'lucide-react';
 import { memo, type ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -11,14 +12,22 @@ import { globalGeneralSelectors } from '@/store/global/selectors';
 import { electronStylish } from '@/styles/electron';
 import { preloadLang } from '@/utils/client/preloadLang';
 
-const LangButton = memo<{ placement?: DropdownMenuProps['placement']; size?: number }>(
-  ({ placement, size }) => {
-    const [language, switchLocale] = useGlobalStore((s) => [
+import { getLanguageDisplayLabel } from './getLanguageDisplayLabel';
+
+const LangButton = memo<{ compact?: boolean; placement?: DropdownMenuProps['placement'] }>(
+  ({ compact, placement }) => {
+    const [language, currentLanguage, switchLocale] = useGlobalStore((s) => [
       globalGeneralSelectors.language(s),
+      globalGeneralSelectors.currentLanguage(s),
       s.switchLocale,
     ]);
 
     const { t } = useTranslation(['setting', 'common']);
+    const currentLabel = getLanguageDisplayLabel(
+      language,
+      currentLanguage,
+      t('settingCommon.lang.autoMode'),
+    );
 
     const items = useMemo<DropdownMenuCheckboxItem[]>(() => {
       const autoItem: DropdownMenuCheckboxItem = {
@@ -65,8 +74,21 @@ const LangButton = memo<{ placement?: DropdownMenuProps['placement']; size?: num
     }, [language, switchLocale, t]);
     let trigger: ReactNode;
 
-    if (size) {
-      trigger = <ActionIcon icon={Languages} size={size} />;
+    if (compact) {
+      trigger = (
+        <Button
+          icon={GlobeIcon}
+          iconPosition="end"
+          size="small"
+          type="text"
+          style={{
+            height: 32,
+            paddingInline: 8,
+          }}
+        >
+          <Text fontSize={12}>{currentLabel}</Text>
+        </Button>
+      );
     } else {
       trigger = (
         <Flexbox
@@ -89,8 +111,8 @@ const LangButton = memo<{ placement?: DropdownMenuProps['placement']; size?: num
             e.currentTarget.style.background = 'transparent';
           }}
         >
-          <Icon icon={Languages} size={'small'} style={{ color: cssVar.colorTextSecondary }} />
-          <Flexbox flex={1}>{t('settingCommon.lang.title')}</Flexbox>
+          <Flexbox flex={1}>{currentLabel}</Flexbox>
+          <Icon icon={GlobeIcon} size={'small'} style={{ color: cssVar.colorTextSecondary }} />
           <Icon icon={ChevronRight} size={'small'} style={{ color: cssVar.colorTextSecondary }} />
         </Flexbox>
       );
