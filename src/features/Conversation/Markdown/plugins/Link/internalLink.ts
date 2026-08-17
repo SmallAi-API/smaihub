@@ -10,7 +10,7 @@ const SPA_ROUTE_ROOTS = new Set([
   'agent',
   'acceptance',
   'community',
-  'downloads',
+  'apps',
   'eval',
   'group',
   'image',

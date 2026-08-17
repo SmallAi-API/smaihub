@@ -230,10 +230,10 @@ const PixelLogoGrid = memo(() => {
     <section className={styles.grid}>
       <div className={styles.panel}>
         <Text className={styles.badge} type="secondary">
-          {t('downloads.pixelGrid.badge')}
+          {t('apps.pixelGrid.badge')}
         </Text>
         <Text as="h2" className={styles.heading} weight={700}>
-          {t('downloads.pixelGrid.title')}
+          {t('apps.pixelGrid.title')}
         </Text>
       </div>
       {AGENT_TILES.map((tile) => (

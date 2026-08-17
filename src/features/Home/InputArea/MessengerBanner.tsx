@@ -90,8 +90,8 @@ const MessengerBanner = memo(() => {
 
   const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
 
-  const handleNavigateToDownloads = useCallback(() => {
-    navigate('/downloads');
+  const handleNavigateToApps = useCallback(() => {
+    navigate('/apps');
   }, [navigate]);
 
   const handleDismiss = useCallback(
@@ -107,11 +107,7 @@ const MessengerBanner = memo(() => {
   );
 
   return (
-    <div
-      className={styles.banner}
-      data-testid="messenger-banner"
-      onClick={handleNavigateToDownloads}
-    >
+    <div className={styles.banner} data-testid="messenger-banner" onClick={handleNavigateToApps}>
       <Flexbox horizontal align="center" gap={8}>
         <Icon className={styles.icon} icon={Sparkles} size={18} />
         <span className={styles.text}>{t('messengerBanner.title')}</span>

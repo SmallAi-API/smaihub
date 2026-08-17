@@ -357,6 +357,21 @@ export default {
   'analytics.telemetry.desc': 'Help us improve {{appName}} with anonymous usage data',
   'analytics.telemetry.title': 'Send Anonymous Usage Data',
   'analytics.title': 'Analytics',
+  'apps.apiKey.cta': 'Get an API Key',
+  'apps.apiKey.desc':
+    'An API Key gives you access to AI models on the smai.ai platform or on any AI agent platform. It is the most basic credential for using smai.ai.',
+  'apps.apiKey.title': 'Get an API Key',
+  'apps.desktop.cta': 'Download desktop app',
+  'apps.desktop.desc':
+    'Use the native desktop app for local files, system tools, and focused work on your computer.',
+  'apps.desktop.title': 'Desktop App',
+  'apps.messenger.cta': 'Open Messenger settings',
+  'apps.messenger.desc':
+    'Connect smai.ai to the messaging platforms you already use, with quick setup or your own bot configuration.',
+  'apps.messenger.title': 'Messenger integration',
+  'apps.pixelGrid.badge': 'Integrated agents',
+  'apps.pixelGrid.title': 'Works seamlessly with the AI agent platforms you already use',
+  'apps.title': 'Discover more ways to use smai.ai',
 
   // Heterogeneous agent CLI status (shown on agent profile page in integration mode)
   'heterogeneousStatus.account.label': 'Account',
@@ -603,21 +618,6 @@ export default {
   'devices.visibilityTabs.private': 'Private',
   'devices.visibilityTabs.workspace': 'Workspace',
   'devices.workingDirectory': 'Working dir: {{path}}',
-  'downloads.apiKey.cta': 'Get an API Key',
-  'downloads.apiKey.desc':
-    'An API Key gives you access to AI models on the smai.ai platform or on any AI agent platform. It is the most basic credential for using smai.ai.',
-  'downloads.apiKey.title': 'Get an API Key',
-  'downloads.desktop.cta': 'Download desktop app',
-  'downloads.desktop.desc':
-    'Use the native desktop app for local files, system tools, and focused work on your computer.',
-  'downloads.desktop.title': 'Desktop App',
-  'downloads.messenger.cta': 'Open Messenger settings',
-  'downloads.messenger.desc':
-    'Connect smai.ai to the messaging platforms you already use, with quick setup or your own bot configuration.',
-  'downloads.messenger.title': 'Messenger integration',
-  'downloads.pixelGrid.badge': 'Integrated agents',
-  'downloads.pixelGrid.title': 'Works seamlessly with the AI agent platforms you already use',
-  'downloads.title': 'Discover more ways to use smai.ai',
   'checkingPermissions': 'Checking permissions...',
   'danger.reset.action': 'Reset Now',
   'danger.reset.confirm': 'Reset all settings?',

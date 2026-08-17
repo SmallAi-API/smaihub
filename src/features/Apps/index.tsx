@@ -4,7 +4,7 @@ import { DOWNLOAD_URL, USAGE_DOCUMENTS } from '@lobechat/const';
 import { Block, Flexbox, Icon, Text } from '@lobehub/ui';
 import { Button } from '@lobehub/ui/base-ui';
 import { Lark, Line, QQ } from '@lobehub/ui/icons';
-import { createStaticStyles, cx } from 'antd-style';
+import { cx } from 'antd-style';
 import { ChevronRight, Download, MessageCircle, Monitor } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { memo } from 'react';
@@ -15,6 +15,7 @@ import { ProductLogo } from '@/components/Branding/ProductLogo';
 import { PlatformBrandIcon, SUPPORTED_MESSENGER_PLATFORMS } from '@/features/Messenger/constants';
 
 import PixelLogoGrid from './PixelLogoGrid';
+import { styles } from './style';
 
 /**
  * The smai.ai provider console — this key authenticates LLM calls against the
@@ -33,160 +34,11 @@ const MANUAL_MESSENGER_PLATFORMS = [
   { docsUrl: `https://docs.smai.ai/docs/smai-app`, icon: QQ.Color, id: 'qq', name: 'QQ' },
 ] as const;
 
-const styles = createStaticStyles(({ css, cssVar }) => ({
-  actionRow: css`
-    flex-wrap: wrap;
-    margin-block-start: auto;
-  `,
-  card: css`
-    min-height: 220px;
-    padding: 24px;
-    border: 1px solid ${cssVar.colorBorderSecondary};
-    border-radius: ${cssVar.borderRadiusLG};
-
-    background: ${cssVar.colorBgContainer};
-  `,
-  content: css`
-    width: min(100%, 1120px);
-    margin-block: 0;
-    margin-inline: auto;
-    padding-block: 32px 96px;
-    padding-inline: 24px;
-
-    @media (width <= 760px) {
-      padding-block-start: 16px;
-      padding-inline: 16px;
-    }
-  `,
-  /**
-   * Left column stacks two cards; the messenger card spans both rows so its
-   * platform grid has the room it needs and both columns end flush.
-   */
-  bentoGrid: css`
-    display: grid;
-    grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
-    grid-template-rows: repeat(2, minmax(220px, auto));
-    gap: 16px;
-
-    @media (width <= 860px) {
-      grid-template-columns: 1fr;
-      grid-template-rows: none;
-    }
-  `,
-  iconBox: css`
-    width: 44px;
-    height: 44px;
-    border: 1px solid ${cssVar.colorBorderSecondary};
-    border-radius: 12px;
-
-    color: ${cssVar.colorText};
-
-    background: ${cssVar.colorFillQuaternary};
-  `,
-  page: css`
-    overflow-y: auto;
-    height: 100%;
-    min-height: 100%;
-    background: ${cssVar.colorBgLayout};
-  `,
-  pageHeader: css`
-    margin-block-end: 24px;
-    text-align: start;
-  `,
-  pageTitle: css`
-    margin: 0;
-    font-size: 30px;
-    line-height: 1.2;
-    letter-spacing: 0;
-  `,
-  platformGrid: css`
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    margin-block: 22px;
-
-    @media (width <= 520px) {
-      grid-template-columns: 1fr;
-    }
-  `,
-  platformItem: css`
-    cursor: pointer;
-
-    justify-content: flex-start;
-
-    width: 100%;
-    min-height: 44px;
-    padding-inline: 12px;
-    border-radius: 10px;
-
-    color: ${cssVar.colorText};
-    text-align: start;
-
-    background: ${cssVar.colorFillQuaternary};
-
-    &:hover {
-      border-color: ${cssVar.colorBorder};
-      background: ${cssVar.colorFillTertiary};
-    }
-  `,
-  platformChevron: css`
-    flex-shrink: 0;
-    color: ${cssVar.colorTextTertiary};
-  `,
-  platformIcon: css`
-    display: inline-flex;
-    flex-shrink: 0;
-    align-items: center;
-    line-height: 0;
-  `,
-  platformLabel: css`
-    display: inline-flex;
-    flex: 1;
-    gap: 6px;
-    align-items: center;
-
-    min-width: 0;
-  `,
-  platformName: css`
-    overflow: hidden;
-    min-width: 0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  `,
-  desktopCard: css`
-    grid-column: 1;
-    grid-row: 1;
-
-    @media (width <= 860px) {
-      grid-column: auto;
-      grid-row: auto;
-    }
-  `,
-  apiKeyCard: css`
-    grid-column: 1;
-    grid-row: 2;
-
-    @media (width <= 860px) {
-      grid-column: auto;
-      grid-row: auto;
-    }
-  `,
-  messengerCard: css`
-    grid-column: 2;
-    grid-row: 1 / 3;
-
-    @media (width <= 860px) {
-      grid-column: auto;
-      grid-row: auto;
-    }
-  `,
-}));
-
 const openExternal = (url: string) => {
   window.open(url, '_blank', 'noopener,noreferrer');
 };
 
-const DownloadsPage = memo(() => {
+const AppsPage = memo(() => {
   const { t } = useTranslation('setting');
   const navigate = useNavigate();
 
@@ -243,7 +95,7 @@ const DownloadsPage = memo(() => {
       <main className={styles.content}>
         <header className={styles.pageHeader}>
           <Text as="h1" className={styles.pageTitle} weight={700}>
-            {t('downloads.title')}
+            {t('apps.title')}
           </Text>
         </header>
 
@@ -255,9 +107,9 @@ const DownloadsPage = memo(() => {
               </Flexbox>
               <Flexbox gap={8}>
                 <Text as="h2" style={{ fontSize: 20 }} weight={700}>
-                  {t('downloads.desktop.title')}
+                  {t('apps.desktop.title')}
                 </Text>
-                <Text type="secondary">{t('downloads.desktop.desc')}</Text>
+                <Text type="secondary">{t('apps.desktop.desc')}</Text>
               </Flexbox>
               <Flexbox horizontal className={styles.actionRow} gap={10}>
                 <Button
@@ -265,7 +117,7 @@ const DownloadsPage = memo(() => {
                   type="primary"
                   onClick={() => openExternal(DOWNLOAD_URL.default)}
                 >
-                  {t('downloads.desktop.cta')}
+                  {t('apps.desktop.cta')}
                 </Button>
               </Flexbox>
             </Flexbox>
@@ -278,16 +130,16 @@ const DownloadsPage = memo(() => {
               </Flexbox>
               <Flexbox gap={8}>
                 <Text as="h2" style={{ fontSize: 20 }} weight={700}>
-                  {t('downloads.apiKey.title')}
+                  {t('apps.apiKey.title')}
                 </Text>
-                <Text type="secondary">{t('downloads.apiKey.desc')}</Text>
+                <Text type="secondary">{t('apps.apiKey.desc')}</Text>
               </Flexbox>
               <Flexbox horizontal className={styles.actionRow} gap={10}>
                 <Button
                   icon={<Icon icon={ChevronRight} />}
                   onClick={() => openExternal(API_PLATFORM_URL)}
                 >
-                  {t('downloads.apiKey.cta')}
+                  {t('apps.apiKey.cta')}
                 </Button>
               </Flexbox>
             </Flexbox>
@@ -300,9 +152,9 @@ const DownloadsPage = memo(() => {
               </Flexbox>
               <Flexbox gap={8}>
                 <Text as="h2" style={{ fontSize: 20 }} weight={700}>
-                  {t('downloads.messenger.title')}
+                  {t('apps.messenger.title')}
                 </Text>
-                <Text type="secondary">{t('downloads.messenger.desc')}</Text>
+                <Text type="secondary">{t('apps.messenger.desc')}</Text>
               </Flexbox>
               <div className={styles.platformGrid}>{renderMessengerPlatformGrid()}</div>
               <Flexbox horizontal className={styles.actionRow} gap={10}>
@@ -310,7 +162,7 @@ const DownloadsPage = memo(() => {
                   icon={<Icon icon={ChevronRight} />}
                   onClick={() => navigate('/settings/messenger')}
                 >
-                  {t('downloads.messenger.cta')}
+                  {t('apps.messenger.cta')}
                 </Button>
               </Flexbox>
             </Flexbox>
@@ -323,6 +175,6 @@ const DownloadsPage = memo(() => {
   );
 });
 
-DownloadsPage.displayName = 'DownloadsPage';
+AppsPage.displayName = 'AppsPage';
 
-export default DownloadsPage;
+export default AppsPage;
