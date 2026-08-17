@@ -2,7 +2,7 @@
 
 import { toast } from '@lobehub/ui/base-ui';
 import { type ReactNode } from 'react';
-import { createContext, use, useCallback, useEffect, useState } from 'react';
+import { createContext, use, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mutate as globalMutate } from 'swr';
 
@@ -20,6 +20,7 @@ import MarketAuthConfirmModal from './MarketAuthConfirmModal';
 import { MarketOIDC } from './oidc';
 import ProfileSetupModal from './ProfileSetupModal';
 import type { MarketAuthScene } from './scenes';
+import { createSingleFlight } from './singleFlight';
 import {
   type MarketAuthContextType,
   type MarketAuthSession,
@@ -55,7 +56,7 @@ const fetchUserInfo = async (accessToken?: string): Promise<MarketUserInfo | nul
 };
 
 /**
- * 从 DB 获取 market tokens
+ * Get market tokens from DB
  */
 const getMarketTokensFromDB = () => {
   const settings = settingsSelectors.currentSettings(useUserStore.getState());
@@ -63,7 +64,7 @@ const getMarketTokensFromDB = () => {
 };
 
 /**
- * 存储 market tokens 到 DB
+ * Store market tokens to DB
  */
 const saveMarketTokensToDB = async (
   accessToken: string,
@@ -84,10 +85,10 @@ const saveMarketTokensToDB = async (
 };
 
 /**
- * 清除 DB 中的 market tokens
+ * Clear market tokens from DB
  */
 const clearMarketTokensFromDB = async () => {
-  // 如果已经没有 tokens，不需要调用 setSettings
+  // If there are no tokens, no need to call setSettings
   const currentTokens = getMarketTokensFromDB();
   if (!currentTokens?.accessToken && !currentTokens?.refreshToken && !currentTokens?.expiresAt) {
     return;
@@ -103,10 +104,10 @@ const clearMarketTokensFromDB = async () => {
 };
 
 /**
- * 获取 refresh token（优先从 DB 获取）
+ * Get refresh token (prioritize DB)
  */
 const getRefreshToken = (): string | null => {
-  // 优先从 DB 获取
+  // Prioritize fetching from DB
   const dbTokens = getMarketTokensFromDB();
   if (dbTokens?.refreshToken) {
     return dbTokens.refreshToken;
@@ -116,7 +117,7 @@ const getRefreshToken = (): string | null => {
 };
 
 /**
- * 检查用户是否需要设置用户名（首次登录）
+ * Check if the user needs to set up a username (first-time login)
  */
 const checkNeedsProfileSetup = async (username: string): Promise<boolean> => {
   try {
@@ -130,7 +131,7 @@ const checkNeedsProfileSetup = async (username: string): Promise<boolean> => {
 };
 
 /**
- * Market 授权上下文提供者
+ * Market authorization context provider
  */
 export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderProps) => {
   const { t } = useTranslation('marketAuth');
@@ -157,21 +158,25 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
     (() => void) | null
   >(null);
 
-  // 订阅 user store 的初始化状态，当 isUserStateInit 为 true 时，settings 数据已加载完成
+  // Shared in-flight token refresh, so concurrent callers never replay a
+  // single-use refresh token against each other (see `runTokenRefresh`).
+  const refreshSingleFlightRef = useRef(createSingleFlight<boolean>());
+
+  // Subscribe to user store init state; when isUserStateInit is true, settings data is fully loaded
   const isUserStateInit = useUserStore((s) => s.isUserStateInit);
 
-  // 检查是否启用了 Market Trusted Client 认证
+  // Check if Market Trusted Client authentication is enabled
   const enableMarketTrustedClient = useServerConfigStore(
     serverConfigSelectors.enableMarketTrustedClient,
   );
 
-  // 初始化 OIDC 客户端（仅在客户端）
+  // Initialize OIDC client (client-side only)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const baseUrl = process.env.NEXT_PUBLIC_MARKET_BASE_URL || 'https://market.lobehub.com';
       const desktopRedirectUri = new URL(MARKET_OIDC_ENDPOINTS.desktopCallback, baseUrl).toString();
 
-      // 桌面端使用 Market 手动维护的 Web 回调，Web 端使用当前域名
+      // Desktop uses Market's manually maintained Web callback; Web uses the current domain
       const redirectUri = isDesktop
         ? desktopRedirectUri
         : `${window.location.origin}/market-auth-callback`;
@@ -187,64 +192,129 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
   }, [isDesktop]);
 
   /**
+   * Run a token refresh, collapsing concurrent callers onto one in-flight request.
+   *
+   * Market rotates refresh tokens, so a refresh token is single-use. Refreshes
+   * are triggered from several independent places — the pre-expiry timer, the
+   * `market-unauthorized` listener, `handleUnauthorized`, and session init — so
+   * two of them overlapping is routine rather than exotic. Without this guard
+   * they race: the first rotates the token and stores the new pair, the second
+   * replays the now-consumed token and fails. Sharing one promise means the
+   * second caller observes the first one's success instead of a phantom failure.
+   */
+  const runTokenRefresh = useCallback(
+    (refreshTokenValue: string): Promise<boolean> =>
+      refreshSingleFlightRef.current(async (): Promise<boolean> => {
+        try {
+          const clientId = isDesktop ? 'lobehub-desktop' : 'lobechat-com';
+
+          const response = await lambdaClient.market.oidc.refreshToken.mutate({
+            clientId,
+            refreshToken: refreshTokenValue,
+          });
+
+          // Calculate new expiration time (default to 1 hour if not provided)
+          const expiresIn = response.expiresIn ?? 3600;
+          const expiresAt = Date.now() + expiresIn * 1000;
+
+          // Save new tokens to DB
+          await saveMarketTokensToDB(response.accessToken, response.refreshToken, expiresAt);
+
+          // Fetch user info with new token
+          const userInfo = await fetchUserInfo(response.accessToken);
+
+          // Update session state
+          const newSession: MarketAuthSession = {
+            accessToken: response.accessToken,
+            expiresAt,
+            expiresIn,
+            scope: response.scope || 'openid profile email',
+            tokenType: 'Bearer',
+            userInfo: userInfo || undefined,
+          };
+
+          setSession(newSession);
+          setStatus('authenticated');
+
+          console.info('[MarketAuth] Token refreshed successfully');
+          return true;
+        } catch (error) {
+          console.error('[MarketAuth] Failed to refresh token:', error);
+          return false;
+        }
+      }),
+    [isDesktop],
+  );
+
+  /**
+   * Whether another refresh has already replaced the token we just tried to use.
+   *
+   * The in-flight guard above only covers one JS context; a second tab (or the
+   * desktop app alongside the web app) shares the same stored credentials and
+   * can rotate them underneath us. Losing that race is not an auth failure —
+   * working credentials are sitting in the store — so callers must not treat it
+   * as one and wipe them.
+   */
+  const wasRotatedByAnotherRefresh = (usedRefreshToken: string): boolean => {
+    const latest = getMarketTokensFromDB();
+    return Boolean(latest?.refreshToken) && latest?.refreshToken !== usedRefreshToken;
+  };
+
+  /**
+   * Adopt credentials another refresh stored, publishing them as our session.
+   *
+   * Detecting that we lost the race is only half the job: this context never ran
+   * the success path, so without adopting the result the caller would report
+   * success while `status` stayed `loading` and no session was ever set.
+   */
+  const adoptRotatedSession = async (): Promise<boolean> => {
+    const latest = getMarketTokensFromDB();
+    if (!latest?.accessToken || !latest.expiresAt || latest.expiresAt <= Date.now()) return false;
+
+    const userInfo = await fetchUserInfo(latest.accessToken);
+    if (!userInfo) return false;
+
+    setSession({
+      accessToken: latest.accessToken,
+      expiresAt: latest.expiresAt,
+      expiresIn: Math.floor((latest.expiresAt - Date.now()) / 1000),
+      scope: 'openid profile email',
+      tokenType: 'Bearer',
+      userInfo,
+    });
+    setStatus('authenticated');
+
+    console.info('[MarketAuth] Adopted tokens refreshed by a concurrent refresh');
+    return true;
+  };
+
+  /**
    * Try to refresh the access token using a refresh token
    * This is used during initialization when the access token is expired or invalid
    */
   const tryRefreshToken = async (refreshTokenValue: string): Promise<boolean> => {
-    try {
-      const clientId = isDesktop ? 'lobehub-desktop' : 'lobechat-com';
+    const refreshed = await runTokenRefresh(refreshTokenValue);
+    if (refreshed) return true;
 
-      const response = await lambdaClient.market.oidc.refreshToken.mutate({
-        clientId,
-        refreshToken: refreshTokenValue,
-      });
-
-      // Calculate new expiration time (default to 1 hour if not provided)
-      const expiresIn = response.expiresIn ?? 3600;
-      const expiresAt = Date.now() + expiresIn * 1000;
-
-      // Save new tokens to DB
-      await saveMarketTokensToDB(response.accessToken, response.refreshToken, expiresAt);
-
-      // Fetch user info with new token
-      const userInfo = await fetchUserInfo(response.accessToken);
-
-      // Update session state
-      const newSession: MarketAuthSession = {
-        accessToken: response.accessToken,
-        expiresAt,
-        expiresIn,
-        scope: response.scope || 'openid profile email',
-        tokenType: 'Bearer',
-        userInfo: userInfo || undefined,
-      };
-
-      setSession(newSession);
-      setStatus('authenticated');
-
-      console.info('[MarketAuth] Token refreshed successfully during initialization');
-      return true;
-    } catch (error) {
-      console.error('[MarketAuth] Failed to refresh token during initialization:', error);
-      return false;
-    }
+    if (!wasRotatedByAnotherRefresh(refreshTokenValue)) return false;
+    return adoptRotatedSession();
   };
 
   /**
-   * 初始化：检查并恢复会话，获取用户信息
+   * Initialize: check and restore session, fetch user info
    */
   const initializeSession = async () => {
     setStatus('loading');
 
-    // 如果启用了 Trusted Client 认证，直接通过后端获取用户信息（不传 token）
+    // If Trusted Client authentication is enabled, fetch user info directly from backend (without token)
     if (enableMarketTrustedClient) {
       const userInfo = await fetchUserInfo();
 
       if (userInfo) {
-        // 使用 Trusted Client 时，创建一个虚拟的 session（无需真实 token）
+        // When using Trusted Client, create a virtual session (no real token needed)
         const trustedSession: MarketAuthSession = {
-          accessToken: '', // Trusted Client 不需要前端 token
-          expiresAt: Number.MAX_SAFE_INTEGER, // 不过期
+          accessToken: '', // Trusted Client does not require a frontend token
+          expiresAt: Number.MAX_SAFE_INTEGER, // never expires
           expiresIn: Number.MAX_SAFE_INTEGER,
           scope: 'openid profile email',
           tokenType: 'Bearer',
@@ -256,21 +326,21 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
         return;
       }
 
-      // 如果获取失败，设置为未认证状态
+      // If fetch fails, set to unauthenticated
       setStatus('unauthenticated');
       return;
     }
 
-    // 原有的 OIDC token 认证流程
+    // Original OIDC token authentication flow
     const dbTokens = getMarketTokensFromDB();
 
-    // 检查 DB 中是否有 token
+    // Check if token exists in DB
     if (!dbTokens?.accessToken) {
       setStatus('unauthenticated');
       return;
     }
 
-    // 检查 token 是否过期
+    // Check if token is expired
     if (!dbTokens.expiresAt || dbTokens.expiresAt <= Date.now()) {
       // Try to refresh the token if refresh token is available
       if (dbTokens.refreshToken) {
@@ -287,7 +357,7 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
       return;
     }
 
-    // 获取用户信息
+    // Fetch user info
     const userInfo = await fetchUserInfo(dbTokens.accessToken);
 
     if (!userInfo) {
@@ -320,7 +390,7 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
   };
 
   /**
-   * 实际执行登录的方法（内部使用）
+   * The actual sign-in method (internal use)
    */
   const handleActualSignIn = async (): Promise<number | null> => {
     if (!oidcClient) {
@@ -331,16 +401,16 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
     try {
       setStatus('loading');
 
-      // 启动 OIDC 授权流程并获取授权码
+      // Start OIDC authorization flow and get authorization code
       const authResult = await oidcClient.startAuthorization();
 
-      // 用授权码换取访问令牌
+      // Exchange authorization code for access token
       const tokenResponse = await oidcClient.exchangeCodeForToken(
         authResult.code,
         authResult.state,
       );
 
-      // 获取用户信息
+      // Fetch user info
       const userInfo = await fetchUserInfo(tokenResponse.accessToken);
 
       // Create session object
@@ -355,7 +425,7 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
         userInfo: userInfo || undefined,
       };
 
-      // 存储 tokens 到 DB
+      // Store tokens to DB
       await saveMarketTokensToDB(tokenResponse.accessToken, tokenResponse.refreshToken, expiresAt);
 
       setSession(newSession);
@@ -378,7 +448,7 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
     } catch (error) {
       setStatus('unauthenticated');
 
-      // 根据错误类型显示不同的错误消息
+      // Display different error messages based on error type
       if (error instanceof MarketAuthError) {
         toast.error(t(`errors.${error.code}`) || t('errors.general'));
       } else {
@@ -390,11 +460,11 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
   };
 
   /**
-   * 登录方法（会先弹出确认对话框）
+   * Sign-in method (shows confirmation dialog first)
    */
   const signIn = useCallback(async (scene: MarketAuthScene = 'default'): Promise<number | null> => {
     if (!useUserStore.getState().isSignedIn) {
-      throw new Error('session required');
+      throw new Error('LobeChat session required');
     }
     setAuthScene(scene);
     return new Promise<number | null>((resolve, reject) => {
@@ -405,12 +475,12 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
   }, []);
 
   /**
-   * 处理确认授权
+   * Handle authorization confirmation
    */
   const handleConfirmAuth = async () => {
     setShowConfirmModal(false);
 
-    // 如果是 trustedClient 模式，直接打开 ProfileSetupModal 完善资料
+    // If in trustedClient mode, open ProfileSetupModal directly to complete profile
     if (enableMarketTrustedClient) {
       setIsFirstTimeSetup(true);
       setShowProfileSetupModal(true);
@@ -422,7 +492,7 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
       return;
     }
 
-    // 原有的 OIDC 流程
+    // Original OIDC flow
     try {
       const result = await handleActualSignIn();
       if (pendingSignInResolve) {
@@ -440,7 +510,7 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
   };
 
   /**
-   * 处理取消授权
+   * Handle authorization cancellation
    */
   const handleCancelAuth = () => {
     setShowConfirmModal(false);
@@ -452,7 +522,7 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
   };
 
   /**
-   * 登出方法
+   * Sign-out method
    */
   const signOut = async () => {
     setSession(null);
@@ -461,28 +531,28 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
   };
 
   /**
-   * 获取当前用户信息
+   * Get current user info
    */
   const getCurrentUserInfo = (): MarketUserInfo | null => {
     return session?.userInfo ?? null;
   };
 
   /**
-   * 获取 access token（优先从 session 获取，否则从 DB 获取）
+   * Get access token (prioritize session, fallback to DB)
    */
   const getAccessToken = (): string | null => {
-    // 优先从 session 获取（内存中的状态）
+    // Prioritize fetching from session (in-memory state)
     if (session?.accessToken) {
       return session.accessToken;
     }
 
-    // 备选从 DB 获取
+    // Fallback to fetching from DB
     const dbTokens = getMarketTokensFromDB();
     return dbTokens?.accessToken ?? null;
   };
 
   /**
-   * 打开个人资料设置模态框（用于用户手动编辑）
+   * Open profile setup modal (for manual user editing)
    */
   const openProfileSetup = useCallback((onSuccess?: (profile: MarketUserProfile) => void) => {
     setIsFirstTimeSetup(false);
@@ -491,7 +561,7 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
   }, []);
 
   /**
-   * 关闭个人资料设置模态框
+   * Close profile setup modal
    */
   const handleCloseProfileSetup = useCallback(() => {
     setShowProfileSetupModal(false);
@@ -587,48 +657,22 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
       return false;
     }
 
-    try {
-      const clientId = isDesktop ? 'lobehub-desktop' : 'lobechat-com';
+    const usedRefreshToken = dbTokens.refreshToken;
+    if (await runTokenRefresh(usedRefreshToken)) return true;
 
-      const response = await lambdaClient.market.oidc.refreshToken.mutate({
-        clientId,
-        refreshToken: dbTokens.refreshToken,
-      });
+    // Losing a rotation race is not an auth failure — a concurrent refresh has
+    // already stored working credentials. Clearing here would throw those away,
+    // which is precisely how one transient failure used to strand the user
+    // signed out: the wipe leaves no refresh token, so every later recovery
+    // attempt has nothing to retry with and the session can never heal itself.
+    if (wasRotatedByAnotherRefresh(usedRefreshToken) && (await adoptRotatedSession())) return true;
 
-      // Calculate new expiration time (default to 1 hour if not provided)
-      const expiresIn = response.expiresIn ?? 3600;
-      const expiresAt = Date.now() + expiresIn * 1000;
-
-      // Save new tokens to DB
-      await saveMarketTokensToDB(response.accessToken, response.refreshToken, expiresAt);
-
-      // Fetch user info with new token
-      const userInfo = await fetchUserInfo(response.accessToken);
-
-      // Update session state
-      const newSession: MarketAuthSession = {
-        accessToken: response.accessToken,
-        expiresAt,
-        expiresIn,
-        scope: response.scope || 'openid profile email',
-        tokenType: 'Bearer',
-        userInfo: userInfo || undefined,
-      };
-
-      setSession(newSession);
-      setStatus('authenticated');
-
-      console.info('[MarketAuth] Token refreshed successfully');
-      return true;
-    } catch (error) {
-      console.error('[MarketAuth] Failed to refresh token:', error);
-      // Clear invalid tokens
-      await clearMarketTokensFromDB();
-      setSession(null);
-      setStatus('unauthenticated');
-      return false;
-    }
-  }, [isDesktop]);
+    // The refresh token is genuinely spent — drop it so we stop replaying it.
+    await clearMarketTokensFromDB();
+    setSession(null);
+    setStatus('unauthenticated');
+    return false;
+  }, [runTokenRefresh]);
 
   /**
    * Handle unauthorized (401) error from Market API
@@ -664,8 +708,8 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
   );
 
   /**
-   * 初始化时恢复会话并获取用户信息
-   * 等待 isUserStateInit 为 true，此时 useInitUserState 的 SWR 请求已完成，settings 数据已加载
+   * Restore session and fetch user info on initialization
+   * Wait for isUserStateInit to be true, at which point the SWR request from useInitUserState is complete and settings data is loaded
    */
   useEffect(() => {
     if (isUserStateInit) {
@@ -811,7 +855,7 @@ export const MarketAuthProvider = ({ children, isDesktop }: MarketAuthProviderPr
 };
 
 /**
- * 使用 Market 授权的 Hook
+ * Hook for using Market authorization
  */
 export const useMarketAuth = (): MarketAuthContextType => {
   const context = use(MarketAuthContext);
