@@ -15,7 +15,7 @@ export const DEFAULT_EMBEDDING_MODEL = 'text-embedding-3-small';
  * its own official provider) moves the sub-agent along with the main model
  * instead of leaving it pointed at a provider that build doesn't serve.
  */
-export const DEFAULT_SUB_AGENT_MODEL = 'gpt-5.6-luna';
+export const DEFAULT_SUB_AGENT_MODEL = 'gpt-5.6-terra';
 
 /**
  * Resolve the model a sub-agent runs on, in precedence order:
