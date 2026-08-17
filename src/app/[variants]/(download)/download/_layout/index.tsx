@@ -40,7 +40,7 @@ const DownloadContainer: FC<PropsWithChildren> = ({ children }) => {
             </Flexbox>
           </Link>
           <Flexbox horizontal align={'center'}>
-            <LangButton placement={'bottomRight'} size={18} />
+            <LangButton placement={'bottomRight'} />
             <Divider className={styles.divider} orientation={'vertical'} />
             <ThemeButton placement={'bottomRight'} size={18} />
           </Flexbox>

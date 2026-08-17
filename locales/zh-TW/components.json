@@ -38,7 +38,7 @@
   "FileManager.actions.moveError": "移動檔案失敗",
   "FileManager.actions.moveHere": "移動到此處",
   "FileManager.actions.moveSuccess": "檔案移動成功",
-  "FileManager.actions.moveToFolder": "移動到...",
+  "FileManager.actions.moveToFolder": "移動到…",
   "FileManager.actions.moveToOtherLibrary": "移至其他資料庫",
   "FileManager.actions.moveToRoot": "移動到根目錄",
   "FileManager.actions.moving": "正在移動...",

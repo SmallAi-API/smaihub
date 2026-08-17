@@ -296,7 +296,7 @@
   "transfer.confirm.plugins": "自定義插件在目標工作區中可能不可用",
   "transfer.confirm.title": "移動代理",
   "transfer.confirm.warning": "某些連結無法移動：",
-  "transfer.copyTo": "複製到...",
+  "transfer.copyTo": "複製到…",
   "transfer.desc": "將此代理移動到另一個工作區或您的個人帳戶。",
   "transfer.error": "移動代理失敗",
   "transfer.personalAccount": "個人帳戶",
@@ -304,5 +304,5 @@
   "transfer.selectTarget": "將代理移動到",
   "transfer.success": "代理成功移動",
   "transfer.title": "移動",
-  "transfer.transferTo": "移動到..."
+  "transfer.transferTo": "移動到…"
 }
