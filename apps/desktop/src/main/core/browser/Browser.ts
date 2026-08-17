@@ -78,6 +78,7 @@ export interface BrowserWindowOpts extends BrowserWindowConstructorOptions {
   keepAlive?: boolean;
   parentIdentifier?: string;
   path: string;
+  restoreWindowState?: boolean;
   showOnInit?: boolean;
   title?: string;
   width?: number;
@@ -168,6 +169,7 @@ export default class Browser {
       title,
       width,
       height,
+      restoreWindowState = true,
       // Strip platform visual effect props — these are managed exclusively
       // by WindowThemeManager.getPlatformConfig() to prevent config leaking
       // from appBrowsers/windowTemplates into the BrowserWindow constructor.
@@ -177,7 +179,9 @@ export default class Browser {
       ...rest
     } = this.options;
 
-    const resolvedState = this.stateManager.resolveState({ height, width });
+    const resolvedState = restoreWindowState
+      ? this.stateManager.resolveState({ height, width })
+      : { height, width };
     logger.info(`Creating new BrowserWindow instance: ${this.identifier}`);
     logger.debug(`[${this.identifier}] Resolved window state: ${JSON.stringify(resolvedState)}`);
 
