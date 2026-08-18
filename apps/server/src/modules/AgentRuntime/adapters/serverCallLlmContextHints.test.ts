@@ -252,6 +252,48 @@ describe('resolveServerCallLlmContextHints - model-instance reasoning config', (
     expect(hints.shouldReplayAssistantReasoning).toBe(true);
   });
 
+  /**
+   * Claude 5+ returns signature-only thinking blocks (`display: 'omitted'`), so a
+   * stripped history makes the model answer inside the thinking block with both
+   * content and visible reasoning empty — a terminal ModelEmptyError that salvage
+   * cannot rescue. Replay is forced regardless of the card's `preserveThinking`.
+   */
+  it('should force reasoning replay for Claude thinking-with-tool models', async () => {
+    const hints = await resolveServerCallLlmContextHints({
+      ctx: createCtx({ chatConfig: {} }),
+      llmPayload,
+      model: 'claude-opus-5',
+      provider: 'smai',
+    });
+
+    expect(hints.shouldReplayAssistantReasoning).toBe(true);
+    // `preserveThinking` is a Qwen/Zhipu/Moonshot payload flag the Anthropic
+    // factory never reads — forcing replay must not start sending it.
+    expect(hints.preserveThinkingForPayload).toBeUndefined();
+  });
+
+  it('should keep Claude reasoning replay when adaptive thinking is turned off', async () => {
+    const hints = await resolveServerCallLlmContextHints({
+      ctx: createCtx({ chatConfig: { enableAdaptiveThinking: false } }),
+      llmPayload,
+      model: 'claude-opus-5',
+      provider: 'smai',
+    });
+
+    expect(hints.shouldReplayAssistantReasoning).toBe(true);
+  });
+
+  it('should not force reasoning replay for pre-Claude-3.7 models', async () => {
+    const hints = await resolveServerCallLlmContextHints({
+      ctx: createCtx({ chatConfig: {} }),
+      llmPayload,
+      model: 'claude-3-haiku',
+      provider: 'anthropic',
+    });
+
+    expect(hints.shouldReplayAssistantReasoning).toBe(false);
+  });
+
   it('should not read the instance config when the ctx has no user scope', async () => {
     const ctx = createCtx({ chatConfig: {} });
     ctx.userId = undefined;

@@ -5,6 +5,7 @@ import {
   isDeepSeekThinkingEligibleModel,
   isDeepSeekV4FamilyModel,
   isKimiAlwaysPreserveThinkingModel,
+  isThinkingWithToolClaudeModel,
   type ModelExtendParams,
   resolveEffectiveReasoningChatConfig,
 } from '@lobechat/model-runtime';
@@ -191,8 +192,20 @@ export const resolveServerCallLlmContextHints = async ({
     modelSupportsPreserveThinkingFromCard ||
     (!modelCard && providerSupportsPreserveThinkingFallback);
 
+  // Claude thinking-with-tool models (Claude 5 and later) default
+  // `thinking.display` to `omitted`, so their thinking blocks carry a signature
+  // but no visible text. Stripping reasoning from history degrades the replay
+  // the same way it does for DeepSeek above, and the answer lands *inside* the
+  // thinking block — but here the visible reasoning is empty too, so content
+  // and reasoning are both blank and `assertNonEmptyCompletion` throws a
+  // terminal ModelEmptyError instead of salvaging the answer. Replay is not
+  // opt-in for these models; the client transport has always replayed
+  // unconditionally, and this keeps the server path consistent with it.
+  const claudeForcesPreserveThinking = isThinkingWithToolClaudeModel(model);
+
   const shouldReplayAssistantReasoning =
-    (modelForcesPreserveThinking || preserveThinkingRequested) && modelSupportsPreserveThinking;
+    claudeForcesPreserveThinking ||
+    ((modelForcesPreserveThinking || preserveThinkingRequested) && modelSupportsPreserveThinking);
   const preserveThinkingForPayload = modelForcesPreserveThinking
     ? true
     : modelSupportsPreserveThinking && typeof preserveThinkingConfigured === 'boolean'

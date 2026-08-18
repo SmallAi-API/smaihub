@@ -34,7 +34,7 @@ export const BRANDING_EMAIL = {
   support: 'wasskayyy@gmail.com',
 };
 
-export const BRANDING_PROVIDER = 'smai';
+export const BRANDING_PROVIDER = '';
 
 export const APPLE_APP_STORE_ID = '';
 
