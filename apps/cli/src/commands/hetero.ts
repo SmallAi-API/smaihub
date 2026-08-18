@@ -130,32 +130,38 @@ const buildExtraArgs = (
   options: Pick<ExecOptions, 'agentArg' | 'effort' | 'model' | 'speed' | 'type'>,
 ): string[] | undefined => {
   const selectorArgs =
-    options.type === 'amp' || options.type === 'trae'
-      ? []
-      : options.type === 'codex'
-        ? [
-            ...(options.model ? ['--model', options.model] : []),
-            ...(options.effort
-              ? ['-c', `${CODEX_REASONING_EFFORT_CONFIG_KEY}="${options.effort}"`]
-              : []),
-            ...(options.speed ? ['-c', `${CODEX_SERVICE_TIER_CONFIG_KEY}="${options.speed}"`] : []),
-          ]
-        : options.type === 'claude-code' || options.type === 'codebuddy'
+    options.type === 'amp'
+      ? [...(options.mode ? ['--mode', options.mode] : [])]
+      : options.type === 'trae'
+        ? []
+        : options.type === 'codex'
           ? [
               ...(options.model ? ['--model', options.model] : []),
-              ...(options.effort ? ['--effort', options.effort] : []),
+              ...(options.effort
+                ? ['-c', `${CODEX_REASONING_EFFORT_CONFIG_KEY}="${options.effort}"`]
+                : []),
+              ...(options.speed
+                ? ['-c', `${CODEX_SERVICE_TIER_CONFIG_KEY}="${options.speed}"`]
+                : []),
             ]
-          : options.type === 'cursor' ||
-              options.type === 'kimi-code' ||
-              options.type === 'opencode' ||
-              options.type === 'pi'
-            ? [...(options.model ? ['--model', options.model] : [])]
-            : options.type === 'qoder'
-              ? [
-                  ...(options.model ? ['--model', options.model] : []),
-                  ...(options.effort ? ['--reasoning-effort', options.effort] : []),
-                ]
-              : [];
+          : options.type === 'claude-code' ||
+              options.type === 'codebuddy' ||
+              options.type === 'grok-build'
+            ? [
+                ...(options.model ? ['--model', options.model] : []),
+                ...(options.effort ? ['--effort', options.effort] : []),
+              ]
+            : options.type === 'cursor' ||
+                options.type === 'kimi-code' ||
+                options.type === 'opencode' ||
+                options.type === 'pi'
+              ? [...(options.model ? ['--model', options.model] : [])]
+              : options.type === 'qoder'
+                ? [
+                    ...(options.model ? ['--model', options.model] : []),
+                    ...(options.effort ? ['--reasoning-effort', options.effort] : []),
+                  ]
+                : [];
   const extraArgs = [...(options.agentArg ?? []), ...selectorArgs];
 
   return extraArgs.length > 0 ? extraArgs : undefined;
