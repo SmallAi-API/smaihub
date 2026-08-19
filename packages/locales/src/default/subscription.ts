@@ -381,6 +381,11 @@ export default {
   'navPanelUpgrade.desc': 'Upgrade to unlock extended capabilities',
   'navPanelUpgrade.dismiss': 'Hide for now',
   'payDiffPrice': 'Pay Difference',
+  'payDiffPriceApprox': 'Approx.',
+  'payDiffPriceTip': 'Actual amount subject to payment page',
+  'payment.downgradeFailed.desc':
+    'Failed to schedule your downgrade. Please try again later, or contact us via email if the problem persists',
+  'payment.downgradeFailed.title': 'Downgrade Failed',
   'payment.error.actions.billing': 'Billing Management',
   'payment.error.actions.home': 'Back to Home',
   'payment.error.desc':
