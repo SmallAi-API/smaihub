@@ -304,7 +304,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'GPT-5.4 is the frontier model for complex professional work with highest reasoning capability.',
     displayName: 'GPT-5.4',
-    enabled: true,
     id: 'gpt-5.4',
     maxOutput: 128_000,
     releasedAt: '2026-03-05',
@@ -640,7 +639,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       '更快、更经济高效的 GPT-5 版本，适用于明确定义的任务。在保持高质量输出的同时，提供更快的响应速度。',
     displayName: 'GPT-5 mini',
-    enabled: true,
     id: 'gpt-5-mini',
     maxOutput: 128_000,
     releasedAt: '2025-08-07',
@@ -847,7 +845,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'GPT-4o mini是OpenAI在GPT-4 Omni之后推出的最新模型，支持图文输入并输出文本。作为他们最先进的小型模型，它比其他近期的前沿模型便宜很多，并且比GPT-3.5 Turbo便宜超过60%。它保持了最先进的智能，同时具有显著的性价比。GPT-4o mini在MMLU测试中获得了 82% 的得分，目前在聊天偏好上排名高于 GPT-4。',
     displayName: 'GPT-4o mini',
-    enabled: true,
     id: 'gpt-4o-mini',
     maxOutput: 16_384,
     releasedAt: '2024-07-18',
@@ -1195,9 +1192,40 @@ const smaiChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 1_048_576 + 65_536,
     description:
+      'Gemini 3.7 Flash is the next iteration in the Gemini 3 series of highly-capable, natively multimodal, reasoning models, with support for computer use and file search.',
+    displayName: 'Gemini 3.7 Flash',
+    enabled: true,
+    family: 'gemini',
+    generation: 'gemini-3.7',
+    id: 'gemini-3.7-flash',
+    knowledgeCutoff: '2026-03',
+    maxOutput: 65_536,
+    // Introductory pricing, in effect through 2026-12-31. From 2027-01-01 standard rates apply:
+    // input 1.5 / output 7.5 / cacheRead 0.15 / cacheWrite lookup { '1h': 1 } (per million tokens).
+    // See https://ai.google.dev/gemini-api/docs/pricing
+    releasedAt: '2026-08-19',
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['thinkingLevel3', 'urlContext'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      audio: true,
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_048_576 + 65_536,
+    description:
       'Gemini 3.6 Flash balances speed with intelligence for agentic and multimodal tasks, with lower output cost than 3.5 Flash.',
     displayName: 'Gemini 3.6 Flash',
-    enabled: true,
     family: 'gemini',
     generation: 'gemini-3.6',
     id: 'gemini-3.6-flash',
@@ -1263,7 +1291,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 3.1 Flash Image (Nano Banana 2) delivers Pro-level image quality at Flash speed with multimodal chat support.',
     displayName: 'Nano Banana 2',
-    enabled: true,
     id: 'gemini-3.1-flash-image-preview',
     maxOutput: 32_768,
     releasedAt: '2026-02-27',
@@ -1621,6 +1648,52 @@ const smaiChatModels: AIChatModelCard[] = [
   {
     abilities: {
       functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 500_000,
+    description:
+      "SpaceXAI's flagship model for agentic tasks and knowledge work — remarkably fast, with coding ability on par with Claude Opus.",
+    displayName: 'Grok 4.6',
+    enabled: true,
+    family: 'grok',
+    generation: 'grok-4.6',
+    id: 'grok-4.6',
+    releasedAt: '2026-08-19',
+    settings: {
+      extendParams: ['grok4_5ReasoningEffort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 500_000,
+    description:
+      "SpaceXAI's flagship model for agentic tasks and knowledge work — remarkably fast, with coding ability on par with Claude Opus.",
+    displayName: 'Grok 4.5',
+    enabled: true,
+    family: 'grok',
+    generation: 'grok-4.5',
+    id: 'grok-4.5',
+    releasedAt: '2026-07-08',
+    settings: {
+      extendParams: ['grok4_5ReasoningEffort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
       search: true,
       structuredOutput: true,
       vision: true,
@@ -1629,7 +1702,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'Grok 最新最强大的旗舰模型，在自然语言处理、数学计算和推理方面表现卓越，是一款完美的全能型选手。',
     displayName: 'Grok 4.2 Beta',
-    enabled: true,
     id: 'grok-4.20-beta-0309-reasoning',
     releasedAt: '2025-11-18',
     settings: {
@@ -1650,7 +1722,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'Grok 最新最强大的旗舰模型，在自然语言处理、数学计算和推理方面表现卓越，是一款完美的全能型选手。',
     displayName: 'Grok 4.1',
-    enabled: true,
     id: 'grok-4.1',
     releasedAt: '2025-11-18',
     settings: {
@@ -1767,7 +1838,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       "MiMo-V2.5-Pro is Xiaomi's most capable flagship model to date, delivering significant improvements in general agentic capabilities, complex software engineering, and long-horizon tasks. It retains the 1T total / 42B active hybrid-attention architecture with a 1M context window, and can sustain complex long-horizon tasks spanning more than a thousand tool calls. Performance on demanding agentic benchmarks (ClawEval, GDPVal, SWE-bench Pro) is comparable to Claude Opus 4.6.",
     displayName: 'MiMo-V2.5 Pro',
-    enabled: true,
     id: 'mimo-v2.5-pro',
     maxOutput: 131_072,
     releasedAt: '2026-05-27',
@@ -1790,7 +1860,6 @@ const smaiChatModels: AIChatModelCard[] = [
     description:
       'MiMo-V2.5 is a native omni-modal Agent foundation model that understands images, video, audio, and text in a unified architecture, with a 1M context window. It delivers Pro-level agentic performance at roughly half the inference cost of MiMo-V2.5-Pro, with improved multimodal perception over MiMo-V2-Omni. Its built-in agentic capabilities (browsing, understanding, reasoning, execution) and faster inference make it well-suited to latency-sensitive and multi-step agent frameworks such as OpenClaw.',
     displayName: 'MiMo-V2.5',
-    enabled: true,
     id: 'mimo-v2.5',
     maxOutput: 131_072,
     releasedAt: '2026-05-27',
@@ -1835,6 +1904,29 @@ const smaiChatModels: AIChatModelCard[] = [
       // K3 fixes sampling params server-side (temperature=1, top_p=0.95, penalties=0)
       // and the API docs advise against sending them
       disabledParams: ['frequency_penalty', 'presence_penalty', 'temperature', 'top_p'],
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+    },
+    contextWindowTokens: 1_048_576,
+    description:
+      'Zhipu’s latest flagship model. Built on the same base as GLM-5.2, it scales post-training with tens of times more long-horizon task environments and substantially longer training cycles. Coding experience improves by about 50% over the previous generation, ranking first among open-source models on Terminal Bench 3.0. It also shows strong cybersecurity capability, approaching Mythos 5 on white-box code review and vulnerability discovery.',
+    displayName: 'GLM-5.3',
+    enabled: true,
+    family: 'glm',
+    generation: 'glm-5.3',
+    id: 'glm-5.3',
+    maxOutput: 131_072,
+    releasedAt: '2026-08-19',
+    settings: {
+      extendParams: ['glm5_3ReasoningEffort'],
+      searchImpl: 'params',
     },
     type: 'chat',
   },
@@ -2001,7 +2093,6 @@ export const smaiTTSModels: AITTSModelCard[] = [
     description:
       'Xiaomi MiMo-V2-TTS 是小米自主研发的语音合成大模型。它基于自研 Audio Tokenizer 和多码本语音-文本联合建模架构，经过上亿小时语音数据的大规模预训练与多维度强化学习，实现了高度可控的多粒度语音风格控制。MiMo-V2-TTS 支持从整体风格定调到局部情绪表达的精准调节，能在同一句话内完成语气转折和情感递变；真实还原人类说话的自然韵律；在唱歌时，也能准确表达音高和节奏，自然且富有表现力。',
     displayName: 'MiMo-V2.5-TTS',
-    enabled: true,
     id: 'mimo-v2.5-tts',
     releasedAt: '2026-5-27',
     type: 'tts',
