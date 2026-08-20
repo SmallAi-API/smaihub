@@ -246,6 +246,7 @@ export const ModelInfoTags = memo<ModelInfoTagsProps>(
 
 interface ModelItemRenderProps extends ChatModelCard, Partial<Omit<FlexboxProps, 'id' | 'title'>> {
   abilities?: ModelAbilities;
+  audio?: boolean;
   newBadgeLabel?: string;
   proBadgeLabel?: string;
   showInfoTag?: boolean;
@@ -255,6 +256,7 @@ export const ModelItemRender = memo<ModelItemRenderProps>(
   ({
     showInfoTag = true,
     abilities,
+    audio,
     contextWindowTokens,
     files,
     functionCall,
@@ -314,6 +316,7 @@ export const ModelItemRender = memo<ModelItemRenderProps>(
         </Flexbox>
         {showInfoTag && (
           <ModelInfoTags
+            audio={audio ?? abilities?.audio}
             contextWindowTokens={contextWindowTokens}
             files={files ?? abilities?.files}
             functionCall={functionCall ?? abilities?.functionCall}
