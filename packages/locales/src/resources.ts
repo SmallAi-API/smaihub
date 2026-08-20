@@ -8,8 +8,8 @@ export type DefaultResources = typeof resources;
 export type NS = keyof DefaultResources;
 export type Locales = (typeof locales)[number];
 
-export const normalizeLocale = (locale?: string): Locales => {
-  if (!locale) return DEFAULT_LANG;
+export const matchLocale = (locale?: string): Locales | undefined => {
+  if (!locale) return undefined;
 
   const lowerLocale = locale.toLowerCase();
 
@@ -17,14 +17,10 @@ export const normalizeLocale = (locale?: string): Locales => {
   if (lowerLocale.startsWith('zh-hans')) return 'zh-CN';
   if (lowerLocale.startsWith('zh-hant')) return 'zh-TW';
 
-  for (const l of locales) {
-    if (l.startsWith(locale)) {
-      return l;
-    }
-  }
-
-  return DEFAULT_LANG;
+  return locales.find((l) => l.startsWith(locale));
 };
+
+export const normalizeLocale = (locale?: string): Locales => matchLocale(locale) ?? DEFAULT_LANG;
 
 type LocaleOptions = {
   label: string;
