@@ -6,7 +6,7 @@ import {
   type AgentArtworkStyle,
   DEFAULT_AGENT_ARTWORK_STYLE,
 } from '@lobechat/prompts';
-import { Avatar, Center, Flexbox, Icon, Tag, Text } from '@lobehub/ui';
+import { Avatar, Center, Flexbox, Icon, Text } from '@lobehub/ui';
 import { Alert, Button, useModalContext } from '@lobehub/ui/base-ui';
 import { createStaticStyles, cssVar } from 'antd-style';
 import { Check, SettingsIcon, UploadIcon, WandSparkles } from 'lucide-react';
@@ -18,8 +18,6 @@ import { avatarRemountKey, openFilePicker } from '@/features/AgentProfileArtwork
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
 import { useAiInfraStore } from '@/store/aiInfra';
 import { aiProviderSelectors } from '@/store/aiInfra/selectors';
-
-import { LOBE_STYLE_REFERENCE_IMAGE_URLS } from './styleReferences';
 
 const GALLERY_STYLES = AGENT_ARTWORK_STYLES.filter((item) => item !== 'lobe');
 
@@ -255,43 +253,6 @@ const ArtworkStudioContent = memo<ArtworkStudioContentProps>(
 
           {canGenerate ? (
             <>
-              <Flexbox
-                horizontal
-                align={'center'}
-                className={`${styles.lobeCard} ${style === 'lobe' ? styles.lobeCardActive : ''}`}
-                gap={12}
-                padding={12}
-                role={'button'}
-                tabIndex={0}
-                onClick={() => selectStyle('lobe')}
-                onKeyDown={keySelect('lobe')}
-              >
-                <Flexbox horizontal flex={'none'} gap={4}>
-                  {LOBE_STYLE_REFERENCE_IMAGE_URLS.map((url) => (
-                    <Avatar avatar={url} key={url} shape={'square'} size={40} />
-                  ))}
-                </Flexbox>
-                <Flexbox flex={1} gap={2} style={{ minWidth: 0 }}>
-                  <Flexbox horizontal align={'center'} gap={8}>
-                    <Text className={styles.sectionTitle}>{t('artworkStudio.lobeStyle')}</Text>
-                    <Tag color={'processing'} size={'small'}>
-                      {t('artworkStudio.recommended')}
-                    </Tag>
-                  </Flexbox>
-                  <Text ellipsis className={styles.hint}>
-                    {t('artworkStudio.style.lobe')}
-                  </Text>
-                </Flexbox>
-                {style === 'lobe' ? (
-                  <Icon
-                    color={cssVar.colorPrimary}
-                    icon={Check}
-                    size={18}
-                    style={{ flex: 'none' }}
-                  />
-                ) : null}
-              </Flexbox>
-
               <Flexbox gap={8}>
                 <Text className={styles.hint}>{t('artworkStudio.moreStyles')}</Text>
                 <div className={styles.galleryGrid}>

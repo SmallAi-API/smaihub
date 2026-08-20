@@ -2089,14 +2089,6 @@ export const smaiTTSModels: AITTSModelCard[] = [
     releasedAt: '2024-12-17',
     type: 'tts',
   },
-  {
-    description:
-      'Xiaomi MiMo-V2-TTS 是小米自主研发的语音合成大模型。它基于自研 Audio Tokenizer 和多码本语音-文本联合建模架构，经过上亿小时语音数据的大规模预训练与多维度强化学习，实现了高度可控的多粒度语音风格控制。MiMo-V2-TTS 支持从整体风格定调到局部情绪表达的精准调节，能在同一句话内完成语气转折和情感递变；真实还原人类说话的自然韵律；在唱歌时，也能准确表达音高和节奏，自然且富有表现力。',
-    displayName: 'MiMo-V2.5-TTS',
-    id: 'mimo-v2.5-tts',
-    releasedAt: '2026-5-27',
-    type: 'tts',
-  },
 ];
 
 // 语音识别模型
@@ -2115,6 +2107,16 @@ export const smaiImageModels: AIImageModelCard[] = [
   // https://platform.openai.com/docs/models/gpt-image-1
   {
     description:
+      "OpenAI's next-generation multimodal image model with native reasoning, up to 4K resolution, near-perfect text rendering, and high-fidelity multilingual support.",
+    displayName: 'GPT Image 2',
+    enabled: true,
+    id: 'gpt-image-2',
+    parameters: gptImage2Schema,
+    releasedAt: '2026-04-22',
+    type: 'image',
+  },
+  {
+    description:
       'Gemini 3.1 Flash Image（Nano Banana Pro 2）是 Google 在2026年2月份推出的图像生成模型。',
     displayName: 'Nano Banana 2',
     enabled: true,
@@ -2131,16 +2133,6 @@ export const smaiImageModels: AIImageModelCard[] = [
     id: 'gemini-3-pro-image-preview:image',
     parameters: nanoBananaProParameters,
     releasedAt: '2025-11-20',
-    type: 'image',
-  },
-  {
-    description:
-      "OpenAI's next-generation multimodal image model with native reasoning, up to 4K resolution, near-perfect text rendering, and high-fidelity multilingual support.",
-    displayName: 'GPT Image 2',
-    enabled: true,
-    id: 'gpt-image-2',
-    parameters: gptImage2Schema,
-    releasedAt: '2026-04-22',
     type: 'image',
   },
   {

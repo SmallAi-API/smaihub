@@ -149,6 +149,81 @@ const newapiChatModels: AIChatModelCard[] = [
       vision: true,
     },
     contextWindowTokens: 1_050_000,
+    description:
+      "GPT-5.6 Sol is OpenAI's frontier model for complex reasoning, coding, and long-horizon agentic work. The gpt-5.6 alias routes to Sol.",
+    displayName: 'GPT-5.6 Sol',
+    enabled: true,
+    family: 'gpt',
+    generation: 'gpt-5.6',
+    id: 'gpt-5.6-sol',
+    knowledgeCutoff: '2026-02',
+    maxOutput: 128_000,
+    releasedAt: '2026-07-09',
+    settings: {
+      extendParams: ['reasoningMode', 'gpt5_6ReasoningEffort', 'textVerbosity'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_050_000,
+    description:
+      'GPT-5.6 Terra balances intelligence and cost for everyday professional work, competitive with GPT-5.5 at about half the price.',
+    displayName: 'GPT-5.6 Terra',
+    enabled: true,
+    family: 'gpt',
+    generation: 'gpt-5.6',
+    id: 'gpt-5.6-terra',
+    knowledgeCutoff: '2026-02',
+    maxOutput: 128_000,
+    releasedAt: '2026-07-09',
+    settings: {
+      extendParams: ['reasoningMode', 'gpt5_6ReasoningEffort', 'textVerbosity'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_050_000,
+    description:
+      'GPT-5.6 Luna is optimized for cost-sensitive, high-volume workloads with the lowest price in the GPT-5.6 family.',
+    displayName: 'GPT-5.6 Luna',
+    enabled: true,
+    family: 'gpt',
+    generation: 'gpt-5.6',
+    id: 'gpt-5.6-luna',
+    knowledgeCutoff: '2026-02',
+    maxOutput: 128_000,
+    releasedAt: '2026-07-09',
+    settings: {
+      extendParams: ['reasoningMode', 'gpt5_6ReasoningEffort', 'textVerbosity'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_050_000,
     description: 'GPT-5.5 is our newest frontier model for the most complex professional work.',
     displayName: 'GPT-5.5',
     enabled: true,
@@ -173,7 +248,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       'GPT-5.4 is the frontier model for complex professional work with highest reasoning capability.',
     displayName: 'GPT-5.4',
-    enabled: true,
     id: 'gpt-5.4',
     maxOutput: 128_000,
     releasedAt: '2026-03-05',
@@ -509,7 +583,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       '更快、更经济高效的 GPT-5 版本，适用于明确定义的任务。在保持高质量输出的同时，提供更快的响应速度。',
     displayName: 'GPT-5 mini',
-    enabled: true,
     id: 'gpt-5-mini',
     maxOutput: 128_000,
     releasedAt: '2025-08-07',
@@ -716,7 +789,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       'GPT-4o mini是OpenAI在GPT-4 Omni之后推出的最新模型，支持图文输入并输出文本。作为他们最先进的小型模型，它比其他近期的前沿模型便宜很多，并且比GPT-3.5 Turbo便宜超过60%。它保持了最先进的智能，同时具有显著的性价比。GPT-4o mini在MMLU测试中获得了 82% 的得分，目前在聊天偏好上排名高于 GPT-4。',
     displayName: 'GPT-4o mini',
-    enabled: true,
     id: 'gpt-4o-mini',
     maxOutput: 16_384,
     releasedAt: '2024-07-18',
@@ -787,31 +859,32 @@ const newapiChatModels: AIChatModelCard[] = [
     releasedAt: '2024-12-17',
     type: 'chat',
   },
-  // {
-  //   abilities: {
-  //     functionCall: true,
-  //     reasoning: true,
-  //     search: true,
-  //     structuredOutput: true,
-  //     vision: true,
-  //   },
-  //   contextWindowTokens: 1_000_000,
-  //   description:
-  //     "Claude Fable 5 is Anthropic's most capable model — a new tier above Opus for the most demanding reasoning and long-horizon agentic work.",
-  //   displayName: 'Claude Fable 5',
-  //   enabled: true,
-  //   family: 'claude-mythos',
-  //   generation: 'mythos-5',
-  //   id: 'claude-fable-5',
-  //   maxOutput: 128_000,
-  //   releasedAt: '2026-06-09',
-  //   settings: {
-  //     disabledParams: ['temperature', 'top_p'],
-  //     extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
-  //     searchImpl: 'params',
-  //   },
-  //   type: 'chat',
-  // },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_000_000,
+    description:
+      "Claude Opus 5 is Anthropic's strongest Opus model, built for deep reasoning, agentic coding, and long-horizon professional work.",
+    displayName: 'Claude Opus 5',
+    enabled: true,
+    family: 'claude-opus',
+    generation: 'claude-5',
+    id: 'claude-opus-5',
+    knowledgeCutoff: '2026-05',
+    maxOutput: 128_000,
+    releasedAt: '2026-07-24',
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
   {
     abilities: {
       functionCall: true,
@@ -824,7 +897,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       "Claude Opus 4.8 is Anthropic's most capable model, building on Opus 4.7 with improvements across reasoning, agentic coding, and tool use.",
     displayName: 'Claude Opus 4.8',
-    enabled: true,
     id: 'claude-opus-4-8',
     maxOutput: 128_000,
     releasedAt: '2026-05-29',
@@ -1029,6 +1101,66 @@ const newapiChatModels: AIChatModelCard[] = [
   },
   {
     abilities: {
+      audio: true,
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_048_576 + 65_536,
+    description:
+      'Gemini 3.7 Flash is the next iteration in the Gemini 3 series of highly-capable, natively multimodal, reasoning models, with support for computer use and file search.',
+    displayName: 'Gemini 3.7 Flash',
+    enabled: true,
+    family: 'gemini',
+    generation: 'gemini-3.7',
+    id: 'gemini-3.7-flash',
+    knowledgeCutoff: '2026-03',
+    maxOutput: 65_536,
+    // Introductory pricing, in effect through 2026-12-31. From 2027-01-01 standard rates apply:
+    // input 1.5 / output 7.5 / cacheRead 0.15 / cacheWrite lookup { '1h': 1 } (per million tokens).
+    // See https://ai.google.dev/gemini-api/docs/pricing
+    releasedAt: '2026-08-19',
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['thinkingLevel3', 'urlContext'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      audio: true,
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_048_576 + 65_536,
+    description:
+      'Gemini 3.6 Flash balances speed with intelligence for agentic and multimodal tasks, with lower output cost than 3.5 Flash.',
+    displayName: 'Gemini 3.6 Flash',
+    family: 'gemini',
+    generation: 'gemini-3.6',
+    id: 'gemini-3.6-flash',
+    knowledgeCutoff: '2026-03',
+    maxOutput: 65_536,
+    releasedAt: '2026-07-21',
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['thinkingLevel', 'urlContext'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
       functionCall: true,
       reasoning: true,
       video: true,
@@ -1038,7 +1170,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       "Gemini's most intelligent model built for speed, combining frontier intelligence with superior search and grounding.",
     displayName: 'Gemini 3.5 Flash',
-    enabled: true,
     id: 'gemini-3.5-flash',
     maxOutput: 65_536,
     releasedAt: '2026-05-20',
@@ -1079,7 +1210,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       'Gemini 3.1 Flash Image (Nano Banana 2) delivers Pro-level image quality at Flash speed with multimodal chat support.',
     displayName: 'Nano Banana 2',
-    enabled: true,
     id: 'gemini-3.1-flash-image-preview',
     maxOutput: 32_768,
     releasedAt: '2026-02-27',
@@ -1437,20 +1567,45 @@ const newapiChatModels: AIChatModelCard[] = [
   {
     abilities: {
       functionCall: true,
+      reasoning: true,
       search: true,
       structuredOutput: true,
       vision: true,
     },
-    contextWindowTokens: 256_000,
+    contextWindowTokens: 500_000,
     description:
-      'Grok 最新最强大的旗舰模型，在自然语言处理、数学计算和推理方面表现卓越，是一款完美的全能型选手。',
-    displayName: 'Grok 4.2 Beta',
+      "SpaceXAI's flagship model for agentic tasks and knowledge work — remarkably fast, with coding ability on par with Claude Opus.",
+    displayName: 'Grok 4.6',
     enabled: true,
-    id: 'grok-4.20-beta-0309-reasoning',
-    releasedAt: '2025-11-18',
+    family: 'grok',
+    generation: 'grok-4.6',
+    id: 'grok-4.6',
+    releasedAt: '2026-08-19',
     settings: {
-      // reasoning_effort is not supported by grok-4. Specifying reasoning_effort parameter will get an error response.
-      // extendParams: ['reasoningEffort'],
+      extendParams: ['grok4_5ReasoningEffort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 500_000,
+    description:
+      "SpaceXAI's flagship model for agentic tasks and knowledge work — remarkably fast, with coding ability on par with Claude Opus.",
+    displayName: 'Grok 4.5',
+    enabled: true,
+    family: 'grok',
+    generation: 'grok-4.5',
+    id: 'grok-4.5',
+    releasedAt: '2026-07-08',
+    settings: {
+      extendParams: ['grok4_5ReasoningEffort'],
       searchImpl: 'params',
     },
     type: 'chat',
@@ -1466,7 +1621,6 @@ const newapiChatModels: AIChatModelCard[] = [
     description:
       'Grok 最新最强大的旗舰模型，在自然语言处理、数学计算和推理方面表现卓越，是一款完美的全能型选手。',
     displayName: 'Grok 4.1',
-    enabled: true,
     id: 'grok-4.1',
     releasedAt: '2025-11-18',
     settings: {
@@ -1494,240 +1648,6 @@ const newapiChatModels: AIChatModelCard[] = [
       // extendParams: ['reasoningEffort'],
       searchImpl: 'params',
     },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      search: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    contextWindowTokens: 256_000,
-    description: 'Grok 前沿多模态模型，专门针对高性能代理工具调用进行优化。',
-    displayName: 'Grok 4.1 Fast Thinking',
-    id: 'grok-4-1-fast-reasoning',
-    releasedAt: '2025-11-18',
-    settings: {
-      // reasoning_effort is not supported by grok-4. Specifying reasoning_effort parameter will get an error response.
-      // extendParams: ['reasoningEffort'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    contextWindowTokens: 256_000,
-    description:
-      '我们最新最强大的旗舰模型，在自然语言处理、数学计算和推理方面表现卓越 —— 是一款完美的全能型选手。',
-    displayName: 'Grok 4',
-    id: 'grok-4-0709',
-    releasedAt: '2025-07-09',
-    settings: {
-      // reasoning_effort is not supported by grok-4. Specifying reasoning_effort parameter will get an error response.
-      // extendParams: ['reasoningEffort'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      video: true,
-      vision: true,
-    },
-    contextWindowTokens: 1_000_000,
-    description:
-      'Frontier coding model with native multimodal input, 1M context, and strong agent capabilities.',
-    displayName: 'MiniMax M3',
-    enabled: true,
-    family: 'minimax',
-    generation: 'minimax-m3',
-    id: 'MiniMax-M3',
-    maxOutput: 524_288,
-    releasedAt: '2026-06-01',
-    settings: {
-      extendParams: ['enableReasoning'],
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    contextWindowTokens: 204_800,
-    description:
-      'First self-evolving model with top-tier coding and agentic performance (~60 tps).',
-    displayName: 'MiniMax M2.7',
-    id: 'MiniMax-M2.7',
-    maxOutput: 131_072,
-    releasedAt: '2026-03-18',
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      structuredOutput: true,
-    },
-    contextWindowTokens: 1_000_000,
-    description:
-      "MiMo-V2.5-Pro is Xiaomi's most capable flagship model to date, delivering significant improvements in general agentic capabilities, complex software engineering, and long-horizon tasks. It retains the 1T total / 42B active hybrid-attention architecture with a 1M context window, and can sustain complex long-horizon tasks spanning more than a thousand tool calls. Performance on demanding agentic benchmarks (ClawEval, GDPVal, SWE-bench Pro) is comparable to Claude Opus 4.6.",
-    displayName: 'MiMo-V2.5 Pro',
-    enabled: true,
-    id: 'mimo-v2.5-pro',
-    maxOutput: 131_072,
-    releasedAt: '2026-05-27',
-    settings: {
-      extendParams: ['enableReasoning'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      structuredOutput: true,
-      video: true,
-      vision: true,
-    },
-    contextWindowTokens: 1_000_000,
-    description:
-      'MiMo-V2.5 is a native omni-modal Agent foundation model that understands images, video, audio, and text in a unified architecture, with a 1M context window. It delivers Pro-level agentic performance at roughly half the inference cost of MiMo-V2.5-Pro, with improved multimodal perception over MiMo-V2-Omni. Its built-in agentic capabilities (browsing, understanding, reasoning, execution) and faster inference make it well-suited to latency-sensitive and multi-step agent frameworks such as OpenClaw.',
-    displayName: 'MiMo-V2.5',
-    enabled: true,
-    id: 'mimo-v2.5',
-    maxOutput: 131_072,
-    releasedAt: '2026-05-27',
-    settings: {
-      extendParams: ['enableReasoning'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    contextWindowTokens: 204_800,
-    description: 'Same performance as M2.7 with significantly faster inference (~100 tps).',
-    displayName: 'MiniMax M2.7 Highspeed',
-    enabled: true,
-    id: 'MiniMax-M2.7-highspeed',
-    maxOutput: 131_072,
-    releasedAt: '2026-03-18',
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    contextWindowTokens: 262_144,
-    description:
-      'Kimi K2.5 is Kimi\'s most versatile model to date, featuring a native multimodal architecture that supports both vision and text inputs, "thinking" and "non-thinking" modes, and both conversational and agent tasks.',
-    displayName: 'Kimi K2.5',
-    enabled: true,
-    id: 'kimi-k2.5',
-    maxOutput: 32_768,
-    releasedAt: '2026-02-23',
-    settings: {
-      extendParams: ['enableReasoning'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    contextWindowTokens: 131_072,
-    description:
-      'DeepSeek V4 Flash is the cost-efficient member of the V4 family with a 1M context window and hybrid thinking. Thinking mode is on by default and can be toggled via the `thinking` parameter; non-thinking mode is optimized for latency-sensitive workflows.',
-    displayName: 'DeepSeek V4 Flash',
-    enabled: true,
-    id: 'deepseek-v4-flash',
-    maxOutput: 384_000,
-    releasedAt: '2026-04-24',
-    settings: {
-      extendParams: ['enableReasoning', 'reasoningBudgetToken32k'],
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      structuredOutput: true,
-    },
-    contextWindowTokens: 1_000_000,
-    description:
-      'DeepSeek V4 Pro is the flagship of the V4 family, optimized for high-intensity reasoning, agentic workflows, and long-horizon planning. Thinking mode is on by default and can be toggled via the `thinking` parameter.',
-    displayName: 'DeepSeek V4 Pro',
-    enabled: true,
-    id: 'deepseek-v4-pro',
-    maxOutput: 384_000,
-    releasedAt: '2026-04-24',
-    settings: {
-      extendParams: ['enableReasoning', 'reasoningBudgetToken32k'],
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    contextWindowTokens: 131_072,
-    description:
-      'DeepSeek-V3.2 模型，。作为迈向新一代架构的中间步骤，V3.2 在 V3.1-Terminus 的基础上引入了 DeepSeek Sparse Attention（一种稀疏注意力机制），针对长文本的训练和推理效率进行了探索性的优化和验证。',
-    displayName: 'DeepSeek V3.2',
-    id: 'Deepseek/Deepseek-V3.2',
-    maxOutput: 32_768,
-    releasedAt: '2025-12-03',
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    contextWindowTokens: 131_072,
-    description:
-      'DeepSeek-V3.1 是深度求索全新推出的混合推理模型，支持思考与非思考2种推理模式，较 DeepSeek-R1-0528 思考效率更高。经 Post-Training 优化，Agent 工具使用与智能体任务表现大幅提升。',
-    displayName: 'DeepSeek V3.1',
-    id: 'deepseek-ai/DeepSeek-V3.1',
-    releasedAt: '2025-08-21',
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    contextWindowTokens: 65_536,
-    description:
-      'DeepSeek 推出的推理模型。在输出最终回答之前，模型会先输出一段思维链内容，以提升最终答案的准确性。',
-    displayName: 'DeepSeek R1',
-    id: 'deepseek-ai/DeepSeek-R1',
-    maxOutput: 8192,
-    releasedAt: '2025-05-28',
     type: 'chat',
   },
 ];
