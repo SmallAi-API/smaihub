@@ -983,7 +983,7 @@
   "opencodeInstallGuide.installWithBrew": "其他安装方式",
   "opencodeInstallGuide.installWithNpm": "推荐安装方式",
   "opencodeInstallGuide.menuNotification.title": "未找到 OpenCode CLI",
-  "opencodeInstallGuide.reason": "LobeHub 无法启动 OpenCode：{{message}}",
+  "opencodeInstallGuide.reason": "无法启动 OpenCode：{{message}}",
   "opencodeInstallGuide.title": "安装 OpenCode CLI",
   "operation.contextCompression": "上下文过长，正在压缩历史记录……",
   "operation.execAgentRuntime": "准备响应中",
