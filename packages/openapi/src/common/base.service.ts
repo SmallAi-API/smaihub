@@ -431,16 +431,11 @@ export abstract class BaseService implements IBaseService {
     }
 
     /**
-     * 当用户没有 ALL 权限时，以下场景不允许操作：
-     * 1. 查询的是全量数据
-     * 2. 查询的是指定用户的数据，但目标资源不属于当前用户
+     * Asking for everyone's data. Without ALL permission there is nothing to
+     * fall back to — an owner-scoped grant cannot answer an unscoped question.
      */
-    if (!resourceBelongTo || resourceBelongTo !== this.userId) {
-      this.log(
-        'warn',
-        'Permission denied: current user has no ALL permission, or target resource does not belong to current user',
-        logContext,
-      );
+    if (resourceInfo === ALL_SCOPE) {
+      this.log('warn', 'Permission denied: ALL-scope request without ALL permission', logContext);
       return {
         isPermitted: false,
         message: `no permission,current user has no ALL permission,and resource not belong to current user`,
@@ -448,37 +443,49 @@ export abstract class BaseService implements IBaseService {
     }
 
     /**
-     * 当查询的目标资源属于当前用户时，只要有任意权限就允许操作
-     * 由于 ALL 权限已经在前面校验过，所以这里只需要检查 owner 权限
+     * A named resource owned by somebody else. Owner permission is irrelevant
+     * here — it grants access to your own rows, never to theirs.
      */
-    if (resourceBelongTo === this.userId) {
-      // 检查是否有对应动作的 owner 权限
-      const hasOwnerAccess = await this.hasOwnerPermission(permissionKey);
-
-      if (hasOwnerAccess) {
-        this.log('info', 'Permission granted: current user has owner permission', logContext);
-        return {
-          condition: { userId: resourceBelongTo },
-          isPermitted: true,
-        };
-      }
-
-      this.log(
-        'warn',
-        'Permission denied: target resource belongs to current user, but user has no owner permission for this operation',
-        logContext,
-      );
+    if (resourceBelongTo && resourceBelongTo !== this.userId) {
+      this.log('warn', 'Permission denied: target resource belongs to another user', logContext);
       return {
         isPermitted: false,
-        message: `no permission,resource belong to current user,but current user has no any ${permissionKey} permission`,
+        message: `no permission,current user has no ALL permission,and resource not belong to current user`,
       };
     }
 
-    // If we reach here, apply fallback logic
-    this.log('info', `Fallback: no permission`, logContext);
+    /**
+     * Either the resource is the caller's, or no owner could be resolved for
+     * it. Denying the second case alongside the one above is what made every
+     * `POST /api/v1/chat` answer 403.
+     *
+     * `getResourceBelongTo` returns `undefined` for two unrelated situations:
+     * a row that does not exist, and a row that has no per-user owner at all.
+     * Built-in models are the latter — nobody owns them — so "does this model
+     * belong to you" has no true answer, and treating the absent answer as
+     * "it belongs to someone else" denied every caller holding
+     * `ai_model:invoke:owner`, which is exactly what personal accounts get.
+     *
+     * The owner check below is still the gate, and the returned condition is
+     * pinned to the caller either way, so an unowned resource cannot widen a
+     * query past the caller's own rows. A row that genuinely does not exist
+     * now reaches the service and surfaces as "not found" rather than as a
+     * permission error — also the truthful answer.
+     */
+    const hasOwnerAccess = await this.hasOwnerPermission(permissionKey);
+
+    if (hasOwnerAccess) {
+      this.log('info', 'Permission granted: current user has owner permission', logContext);
+      return {
+        condition: { userId: this.userId },
+        isPermitted: true,
+      };
+    }
+
+    this.log('warn', 'Permission denied: no owner permission for this operation', logContext);
     return {
       isPermitted: false,
-      message: `permission validation error for: ${permissionKey}`,
+      message: `no permission,resource belong to current user,but current user has no any ${permissionKey} permission`,
     };
   }
 
