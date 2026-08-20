@@ -4,6 +4,7 @@ import { Flexbox } from '@lobehub/ui';
 import { createStaticStyles, cx } from 'antd-style';
 import { lazy, memo, Suspense, useCallback, useEffect, useState } from 'react';
 
+import { useHomePromoLine } from '@/business/client/features/useHomePromoLine';
 import HomeInbox from '@/features/HomeInbox';
 import { useChatStore } from '@/store/chat';
 import { chatPortalSelectors } from '@/store/chat/selectors';
@@ -19,6 +20,8 @@ import { isHomeMinimalLayout } from './CustomizeModal/config';
 import HomeHeader from './HomeHeader';
 import HomeModeContent from './HomeModeContent';
 import InputArea from './InputArea';
+import { NewModelShortcuts } from './NewModelShortcuts';
+import PortraitBubble from './PortraitBubble';
 import { RAIL_INBOX_PROPS, resolveRailVisibility } from './railVisibility';
 import type { HomeMode } from './types';
 
@@ -295,6 +298,7 @@ const Home = memo(() => {
   const showHomeRail = useGlobalStore(systemStatusSelectors.showHomeRail);
   const showHomePortrait = useGlobalStore(systemStatusSelectors.showHomePortrait);
   const hiddenWidgets = useGlobalStore(systemStatusSelectors.hiddenHomeWidgets);
+  const promo = useHomePromoLine();
   const minimal = isHomeMinimalLayout({ hiddenWidgets, showPortrait: showHomePortrait });
   const [mode, setMode] = useState<HomeMode>(() =>
     resolveInitialHomeMode(typeof window === 'undefined' ? '' : window.location.search),
@@ -312,6 +316,8 @@ const Home = memo(() => {
   if (acceptancePortalOpen && !acceptanceDrawerMounted) setAcceptanceDrawerMounted(true);
   const railVisible = resolveRailVisibility({ hiddenWidgets, isLogin, showHomeRail });
   const railCollapsed = !railVisible;
+  const portraitVisible = Boolean(isLogin && showHomePortrait);
+  const promoVisible = Boolean(promo);
 
   useEffect(() => {
     clearOnboardingHomeModeParam();
@@ -351,7 +357,16 @@ const Home = memo(() => {
   return (
     <Flexbox className={styles.grid}>
       <div className={cx(styles.header, styles.content, railCollapsed && styles.contentCollapsed)}>
-        <HomeHeader />
+        <HomeHeader promo={promo} />
+        {/* A campaign and the Agent's brief are both sentence-like floating
+            content in the same attention lane. They take turns instead of
+            competing; dismissing or expiring the campaign hands the lane back
+            to the portrait without changing the campaign's Cloud-owned policy. */}
+        {portraitVisible && !promoVisible && (
+          <div className={cx(styles.bubbleSlot, railCollapsed && styles.bubbleSlotCollapsed)}>
+            <PortraitBubble />
+          </div>
+        )}
       </div>
 
       <Flexbox
@@ -359,14 +374,15 @@ const Home = memo(() => {
         data-testid={'home-main'}
         gap={24}
       >
-        <div className={styles.inputArea}>
+        <Flexbox className={styles.inputArea} gap={12}>
           <InputArea
             inputValue={inputValue}
             mode={mode}
             onInputValueChange={handleInputValueChange}
             onModeChange={setMode}
           />
-        </div>
+          {mode === 'chat' && <NewModelShortcuts />}
+        </Flexbox>
         <HomeModeContent
           inlineRail={railCollapsed && isLogin}
           mode={mode}
