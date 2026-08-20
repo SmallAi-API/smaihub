@@ -1,11 +1,11 @@
 import { DEFAULT_AVATAR, DEFAULT_INBOX_AVATAR } from '@lobechat/const';
 import { agentDisplayName } from '@lobechat/types';
-import { Avatar, preventDefault } from '@lobehub/ui';
+import { preventDefault } from '@lobehub/ui';
 import { Command } from 'cmdk';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import AgentAvatar from '@/features/AgentAvatar';
+import Avatar from '@/components/Avatar';
 import { useAgentStore } from '@/store/agent';
 import { builtinAgentSelectors } from '@/store/agent/selectors/builtinAgentSelectors';
 import { useHomeStore } from '@/store/home';
@@ -57,19 +57,20 @@ const AskAgentCommands = memo(() => {
   if (!isAtMention) return null;
 
   // Check if Lobe AI matches the query
-  const showLobeAI = !mentionQuery || 'smai'.includes(mentionQuery);
+  const showLobeAI = !mentionQuery || 'lobe ai'.includes(mentionQuery);
 
   return (
     <Command.Group heading={t('cmdk.mentionAgent')}>
+      {/* @Lobe AI option */}
       {showLobeAI && (
         <Command.Item
-          value="@smai.ai"
+          value="@lobe-ai"
           onMouseDown={preventDefault}
-          onSelect={() => handleAgentSelect(inboxAgentId, 'smai.ai', DEFAULT_INBOX_AVATAR)}
+          onSelect={() => handleAgentSelect(inboxAgentId, 'Lobe AI', DEFAULT_INBOX_AVATAR)}
         >
           <Avatar emojiScaleWithBackground avatar={DEFAULT_INBOX_AVATAR} shape="square" size={18} />
           <div className={styles.itemContent}>
-            <div className={styles.itemLabel}>@smai.ai</div>
+            <div className={styles.itemLabel}>@Lobe AI</div>
           </div>
         </Command.Item>
       )}
@@ -88,9 +89,10 @@ const AskAgentCommands = memo(() => {
             )
           }
         >
-          <AgentAvatar
+          <Avatar
             emojiScaleWithBackground
             avatar={typeof agent.avatar === 'string' ? agent.avatar : DEFAULT_AVATAR}
+            name={agentDisplayName(agent, t('defaultAgent'))}
             shape="square"
             size={18}
           />
