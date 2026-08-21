@@ -1,6 +1,5 @@
 'use client';
 
-import { isDesktop } from '@lobechat/const';
 import { useAnalytics } from '@lobehub/analytics/react';
 import { type MenuProps } from '@lobehub/ui';
 import { ActionIcon, DropdownMenu, Flexbox, Icon } from '@lobehub/ui';
@@ -142,7 +141,7 @@ const Footer = memo(() => {
       {
         type: 'divider',
       },
-      ...(!isDesktop && footer.layout === 'compact'
+      ...(footer.layout === 'compact'
         ? [
             {
               icon: <Icon icon={Download} />,

@@ -1,180 +1,143 @@
 'use client';
 
-import { DOWNLOAD_URL, USAGE_DOCUMENTS } from '@lobechat/const';
-import { Block, Flexbox, Icon, Text } from '@lobehub/ui';
+import { DOWNLOAD_URL, isDesktop } from '@lobechat/const';
+import { Tag, Text } from '@lobehub/ui';
 import { Button } from '@lobehub/ui/base-ui';
-import { Lark, Line, QQ } from '@lobehub/ui/icons';
-import { cx } from 'antd-style';
-import { ChevronRight, Download, MessageCircle, Monitor } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { memo } from 'react';
+import { ArrowUpRight, Check, Copy } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
-import { ProductLogo } from '@/components/Branding/ProductLogo';
-import { PlatformBrandIcon, SUPPORTED_MESSENGER_PLATFORMS } from '@/features/Messenger/constants';
+import { PlatformAvatar, SUPPORTED_MESSENGER_PLATFORMS } from '@/features/Messenger/constants';
 
-import PixelLogoGrid from './PixelLogoGrid';
+import { CLI_INSTALL_COMMAND } from './const';
+import { CliScene, DesktopScene, MobileScene } from './scenes';
 import { styles } from './style';
-
-/**
- * The smai.ai provider console — this key authenticates LLM calls against the
- * smai.ai service, which is unrelated to the platform's own `/settings/apikey`.
- */
-const API_PLATFORM_URL = 'https://api.smai.ai';
-const CHANNEL_DOCS_URL = `${USAGE_DOCUMENTS}/channels`;
-const MANUAL_MESSENGER_PLATFORMS = [
-  {
-    docsUrl: `https://docs.smai.ai/docs/smai-app/channels/feishu`,
-    icon: Lark.Color,
-    id: 'feishu',
-    name: 'Feishu / Lark',
-  },
-  { docsUrl: `${CHANNEL_DOCS_URL}/line`, icon: Line.Color, id: 'line', name: 'LINE' },
-  { docsUrl: `https://docs.smai.ai/docs/smai-app`, icon: QQ.Color, id: 'qq', name: 'QQ' },
-] as const;
 
 const openExternal = (url: string) => {
   window.open(url, '_blank', 'noopener,noreferrer');
 };
 
-const AppsPage = memo(() => {
+const DESKTOP_FEATURES = ['files', 'tools', 'focus'] as const;
+
+const AppsPage = () => {
   const { t } = useTranslation('setting');
   const navigate = useNavigate();
+  const [copied, setCopied] = useState(false);
 
-  const renderMessengerPlatformButton = (
-    id: string,
-    name: string,
-    icon: ReactNode,
-    onClick: () => void,
-  ) => (
-    <Button
-      block
-      className={styles.platformItem}
-      key={id}
-      icon={
-        <span aria-hidden className={styles.platformIcon}>
-          {icon}
-        </span>
-      }
-      onClick={onClick}
-    >
-      <span className={styles.platformLabel}>
-        <span className={styles.platformName}>{name}</span>
-      </span>
-      <ChevronRight aria-hidden className={styles.platformChevron} size={14} />
-    </Button>
-  );
-
-  const renderMessengerPlatformGrid = () => {
-    return (
-      <>
-        {MANUAL_MESSENGER_PLATFORMS.map((platform) => {
-          const PlatformIcon = platform.icon;
-          return renderMessengerPlatformButton(
-            platform.id,
-            platform.name,
-            <PlatformIcon size={18} />,
-            () => openExternal(platform.docsUrl),
-          );
-        })}
-        {SUPPORTED_MESSENGER_PLATFORMS.map((platform) =>
-          renderMessengerPlatformButton(
-            platform.id,
-            platform.name,
-            <PlatformBrandIcon platform={platform.id} size={18} />,
-            () => navigate('/settings/messenger'),
-          ),
-        )}
-      </>
-    );
+  const copyInstallCommand = async () => {
+    try {
+      await navigator.clipboard.writeText(CLI_INSTALL_COMMAND);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch (error) {
+      console.error(error);
+      setCopied(false);
+    }
   };
 
   return (
     <div className={styles.page}>
       <main className={styles.content}>
-        <header className={styles.pageHeader}>
-          <Text as="h1" className={styles.pageTitle} weight={700}>
-            {t('apps.title')}
-          </Text>
-        </header>
+        <h1 className={styles.headline}>{t('apps.title')}</h1>
 
-        <div className={styles.bentoGrid}>
-          <Block className={cx(styles.card, styles.desktopCard)}>
-            <Flexbox gap={18} height="100%">
-              <Flexbox align="center" className={styles.iconBox} justify="center">
-                <Icon icon={Monitor} size={22} />
-              </Flexbox>
-              <Flexbox gap={8}>
-                <Text as="h2" style={{ fontSize: 20 }} weight={700}>
-                  {t('apps.desktop.title')}
+        <div className={styles.grid}>
+          <article className={`${styles.card} ${styles.spanFull}`}>
+            <div className={styles.heroInner}>
+              <div className={styles.cardBody}>
+                <div style={{ alignItems: 'center', display: 'flex', gap: 10 }}>
+                  <h2 className={styles.cardTitle}>{t('apps.desktop.title')}</h2>
+                  {isDesktop && (
+                    <Tag icon={<Check size={12} />} size="small">
+                      {t('apps.desktop.inUse')}
+                    </Tag>
+                  )}
+                </div>
+                <Text style={{ marginTop: 8 }} type="secondary">
+                  {t(isDesktop ? 'apps.desktop.inUseDesc' : 'apps.desktop.desc')}
                 </Text>
-                <Text type="secondary">{t('apps.desktop.desc')}</Text>
-              </Flexbox>
-              <Flexbox horizontal className={styles.actionRow} gap={10}>
-                <Button
-                  icon={<Icon icon={Download} />}
-                  type="primary"
-                  onClick={() => openExternal(DOWNLOAD_URL.default)}
-                >
-                  {t('apps.desktop.cta')}
+                <ul className={styles.bullets}>
+                  {DESKTOP_FEATURES.map((feature) => (
+                    <li key={feature}>
+                      <strong>{t(`apps.desktop.features.${feature}.label`)}</strong>
+                      {' — '}
+                      {t(`apps.desktop.features.${feature}.desc`)}
+                    </li>
+                  ))}
+                </ul>
+                {!isDesktop && (
+                  <div className={styles.ctaRow}>
+                    <Button type="primary" onClick={() => openExternal(DOWNLOAD_URL.default)}>
+                      {t('apps.desktop.cta')}
+                    </Button>
+                  </div>
+                )}
+              </div>
+              <DesktopScene />
+            </div>
+          </article>
+
+          <article className={styles.card}>
+            <div className={styles.cardBody}>
+              <h2 className={styles.cardTitle}>{t('apps.mobile.title')}</h2>
+              <Text style={{ marginTop: 8 }} type="secondary">
+                {t('apps.mobile.desc')}
+              </Text>
+              <div className={styles.ctaRow}>
+                <Button onClick={() => openExternal(DOWNLOAD_URL.mobile)}>
+                  {t('apps.mobile.cta')}
                 </Button>
-              </Flexbox>
-            </Flexbox>
-          </Block>
+              </div>
+            </div>
+            <MobileScene />
+          </article>
 
-          <Block className={cx(styles.card, styles.apiKeyCard)}>
-            <Flexbox gap={18} height="100%">
-              <Flexbox align="center" className={styles.iconBox} justify="center">
-                <ProductLogo size={24} />
-              </Flexbox>
-              <Flexbox gap={8}>
-                <Text as="h2" style={{ fontSize: 20 }} weight={700}>
-                  {t('apps.apiKey.title')}
+          <article className={styles.card}>
+            <div className={styles.cardBody} style={{ paddingBottom: 20 }}>
+              <h2 className={styles.cardTitle}>{t('apps.messenger.title')}</h2>
+              <Text style={{ marginTop: 8 }} type="secondary">
+                {t('apps.messenger.desc')}
+              </Text>
+            </div>
+            {SUPPORTED_MESSENGER_PLATFORMS.map((platform) => (
+              <div className={styles.channelRow} key={platform.id}>
+                <PlatformAvatar platform={platform.id} size={32} />
+                <Text style={{ flex: 1 }} weight={500}>
+                  {platform.name}
                 </Text>
-                <Text type="secondary">{t('apps.apiKey.desc')}</Text>
-              </Flexbox>
-              <Flexbox horizontal className={styles.actionRow} gap={10}>
                 <Button
-                  icon={<Icon icon={ChevronRight} />}
-                  onClick={() => openExternal(API_PLATFORM_URL)}
-                >
-                  {t('apps.apiKey.cta')}
-                </Button>
-              </Flexbox>
-            </Flexbox>
-          </Block>
-
-          <Block className={cx(styles.card, styles.messengerCard)}>
-            <Flexbox gap={18} height="100%">
-              <Flexbox align="center" className={styles.iconBox} justify="center">
-                <Icon icon={MessageCircle} size={22} />
-              </Flexbox>
-              <Flexbox gap={8}>
-                <Text as="h2" style={{ fontSize: 20 }} weight={700}>
-                  {t('apps.messenger.title')}
-                </Text>
-                <Text type="secondary">{t('apps.messenger.desc')}</Text>
-              </Flexbox>
-              <div className={styles.platformGrid}>{renderMessengerPlatformGrid()}</div>
-              <Flexbox horizontal className={styles.actionRow} gap={10}>
-                <Button
-                  icon={<Icon icon={ChevronRight} />}
+                  icon={ArrowUpRight}
+                  iconPosition="end"
+                  size="small"
                   onClick={() => navigate('/settings/messenger')}
                 >
-                  {t('apps.messenger.cta')}
+                  {t('apps.messenger.setup')}
                 </Button>
-              </Flexbox>
-            </Flexbox>
-          </Block>
-        </div>
+              </div>
+            ))}
+          </article>
 
-        <PixelLogoGrid />
+          <article className={`${styles.card} ${styles.spanFull}`}>
+            <div className={styles.cliInner}>
+              <div className={styles.cardBody}>
+                <h2 className={styles.cardTitle}>{t('apps.cli.title')}</h2>
+                <Text style={{ marginTop: 8 }} type="secondary">
+                  {t('apps.cli.desc')}
+                </Text>
+                <div className={styles.command}>
+                  {CLI_INSTALL_COMMAND}
+                  <Button icon={copied ? Check : Copy} size="small" onClick={copyInstallCommand}>
+                    {copied ? t('apps.cli.copied') : t('apps.cli.copy')}
+                  </Button>
+                </div>
+              </div>
+              <CliScene />
+            </div>
+          </article>
+        </div>
       </main>
     </div>
   );
-});
-
-AppsPage.displayName = 'AppsPage';
+};
 
 export default AppsPage;

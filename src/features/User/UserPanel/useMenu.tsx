@@ -114,7 +114,8 @@ export const useMenu = () => {
           },
         ]
       : []),
-    ...(!isDesktop ? getApp : []),
+
+    ...getApp,
   ]
     .filter(Boolean)
     // Remove consecutive dividers to prevent double divider lines
