@@ -37,8 +37,14 @@ const isLocallyResolved = (avatar: string) =>
  *
  * Non-string / emoji / already-absolute (`http(s)://`, `data:`) avatars are
  * returned unchanged.
+ *
+ * `undefined` is only ever returned for an `undefined` input, so callers that
+ * pass a resolved avatar (e.g. one already defaulted to `DEFAULT_USER_AVATAR`)
+ * keep a plain `string` — hence the overloads.
  */
-export const useAvatarUrl = (avatar?: string): string | undefined => {
+export function useAvatarUrl(avatar: string): string;
+export function useAvatarUrl(avatar?: string): string | undefined;
+export function useAvatarUrl(avatar?: string): string | undefined {
   const remoteServerUrl = useElectronStore(electronSyncSelectors.remoteServerUrl);
 
   return useMemo(() => {
@@ -47,4 +53,4 @@ export const useAvatarUrl = (avatar?: string): string | undefined => {
 
     return remoteServerUrl + avatar;
   }, [avatar, remoteServerUrl]);
-};
+}

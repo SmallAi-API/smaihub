@@ -21,7 +21,6 @@ import HomeHeader from './HomeHeader';
 import HomeModeContent from './HomeModeContent';
 import InputArea from './InputArea';
 import { NewModelShortcuts } from './NewModelShortcuts';
-import PortraitBubble from './PortraitBubble';
 import { RAIL_INBOX_PROPS, resolveRailVisibility } from './railVisibility';
 import type { HomeMode } from './types';
 
@@ -358,15 +357,6 @@ const Home = memo(() => {
     <Flexbox className={styles.grid}>
       <div className={cx(styles.header, styles.content, railCollapsed && styles.contentCollapsed)}>
         <HomeHeader promo={promo} />
-        {/* A campaign and the Agent's brief are both sentence-like floating
-            content in the same attention lane. They take turns instead of
-            competing; dismissing or expiring the campaign hands the lane back
-            to the portrait without changing the campaign's Cloud-owned policy. */}
-        {portraitVisible && !promoVisible && (
-          <div className={cx(styles.bubbleSlot, railCollapsed && styles.bubbleSlotCollapsed)}>
-            <PortraitBubble />
-          </div>
-        )}
       </div>
 
       <Flexbox

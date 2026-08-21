@@ -1,4 +1,4 @@
-import { Jimeng, Moonshot, OpenAI, ZAI } from '@lobehub/icons';
+import { Gemini, OpenAI, ZAI } from '@lobehub/icons';
 import { Flexbox, Skeleton, Text } from '@lobehub/ui';
 import { Button } from '@lobehub/ui/base-ui';
 import { App } from 'antd';
@@ -20,7 +20,7 @@ import { agentByIdSelectors } from '@/store/agent/selectors';
 
 import { useResolvedHomeAgentId } from '../AgentSelect/useResolvedHomeAgentId';
 import { trackHomeModelShortcutClicked } from './analytics';
-import { NEW_GLM_MODEL, NEW_IMAGE_MODEL, NEW_KIMI_MODEL, NEW_VIDEO_MODEL } from './starterModels';
+import { NEW_GEMINI_MODEL, NEW_GLM_MODEL, NEW_IMAGE_MODEL } from './starterModels';
 import { useStarterModelDefaults } from './useStarterModelDefaults';
 
 const styles = createStaticStyles(({ css, cssVar }) => ({
@@ -62,8 +62,7 @@ const skeletonWidths = [112, 150, 126, 138];
 const modelIcons: Record<string, ComponentType<{ size: number }>> = {
   [NEW_GLM_MODEL]: ZAI.Avatar,
   [NEW_IMAGE_MODEL]: OpenAI.Avatar,
-  [NEW_KIMI_MODEL]: Moonshot.Avatar,
-  [NEW_VIDEO_MODEL]: Jimeng.Avatar,
+  [NEW_GEMINI_MODEL]: Gemini.Avatar,
 };
 
 export const NewModelShortcuts = () => {
