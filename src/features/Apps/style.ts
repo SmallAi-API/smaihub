@@ -58,6 +58,18 @@ export const styles = createStaticStyles(({ css, cssVar }) => ({
       padding: 24px;
     }
   `,
+  cardIcon: css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+    margin-block-end: 18px;
+    border-radius: 12px;
+
+    background: ${cssVar.colorFillQuaternary};
+  `,
   cardTitle: css`
     margin: 0;
     font-size: ${cssVar.fontSizeXL};
@@ -106,34 +118,6 @@ export const styles = createStaticStyles(({ css, cssVar }) => ({
       padding-inline: 24px;
     }
   `,
-  cliInner: css`
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1px;
-    align-items: stretch;
-
-    background: ${cssVar.colorBorder};
-
-    @media (width <= 860px) {
-      grid-template-columns: 1fr;
-    }
-  `,
-  command: css`
-    display: inline-flex;
-    gap: 10px;
-    align-items: center;
-
-    margin-block-start: 20px;
-    padding-block: 6px;
-    padding-inline: 14px 6px;
-    border: 1px solid ${cssVar.colorBorderSecondary};
-
-    font-family: ${cssVar.fontFamilyCode};
-    font-size: ${cssVar.fontSizeSM};
-    color: ${cssVar.colorText};
-
-    background: ${cssVar.colorFillQuaternary};
-  `,
   content: css`
     width: min(100%, 1080px);
     margin-inline: auto;
@@ -147,16 +131,6 @@ export const styles = createStaticStyles(({ css, cssVar }) => ({
   `,
   ctaRow: css`
     margin-block-start: 24px;
-  `,
-  cliShot: css`
-    display: block;
-
-    width: 100%;
-    height: 100%;
-    min-height: 240px;
-
-    object-fit: cover;
-    background: #101014;
   `,
   darkOnly: css`
     display: none;
@@ -243,47 +217,11 @@ export const styles = createStaticStyles(({ css, cssVar }) => ({
 
     background: ${cssVar.colorFillQuaternary};
   `,
-  mobileStage: css`
-    position: relative;
-    height: 200px;
-    margin-block-start: auto;
-    background: #f3f0ea;
-
-    html[data-theme='dark'] & {
-      background: ${cssVar.colorFillQuaternary};
-    }
-  `,
   page: css`
     overflow-y: auto;
     height: 100%;
     min-height: 100%;
     background: ${cssVar.colorBgLayout};
-  `,
-  phone: css`
-    position: absolute;
-    inset-block-end: -64px;
-    inset-inline-start: 50%;
-    transform: translateX(-50%);
-
-    overflow: hidden;
-
-    width: 216px;
-    height: 260px;
-    border: 6px solid #1c1c1e;
-    border-block-end: none;
-    border-start-start-radius: 32px;
-    border-start-end-radius: 32px;
-
-    background: ${cssVar.colorBgElevated};
-    box-shadow: ${cssVar.boxShadow};
-
-    html[data-theme='dark'] & {
-      border-color: #3a3a40;
-    }
-  `,
-  phoneShot: css`
-    display: block;
-    width: 100%;
   `,
   spanFull: css`
     grid-column: 1 / -1;

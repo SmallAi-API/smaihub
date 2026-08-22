@@ -659,10 +659,10 @@ export default {
   'devices.visibilityTabs.private': 'Private',
   'devices.visibilityTabs.workspace': 'Workspace',
   'devices.workingDirectory': 'Working dir: {{path}}',
-  'apps.cli.copied': 'Copied',
-  'apps.cli.copy': 'Copy',
-  'apps.cli.desc': 'Scripts, cron jobs, and headless agents — the same LobeHub, from any terminal.',
-  'apps.cli.title': 'CLI',
+  'apps.apiKey.cta': 'Get an API Key',
+  'apps.apiKey.desc':
+    'An API Key gives you access to AI models on the smai.ai platform or on any AI agent platform. It is the most basic credential for using smai.ai.',
+  'apps.apiKey.title': 'Get an API Key',
   'apps.desktop.cta': 'Get desktop app',
   'apps.desktop.desc': 'Chat, build, and automate in one app, with full access to this machine:',
   'apps.desktop.features.files.desc': 'read, write, and organize your folders',
@@ -675,15 +675,12 @@ export default {
   'apps.desktop.inUseDesc': "You're already in the desktop app.",
   'apps.desktop.title': 'Desktop',
   'apps.messenger.desc':
-    'Talk to your agents where your team already is — replies land back in LobeHub.',
+    'Talk to your agents where your team already is — replies land back in smai.ai.',
   'apps.messenger.setup': 'Set up',
   'apps.messenger.title': 'Messenger',
-  'apps.mobile.cta': 'Get mobile app',
-  'apps.mobile.desc': 'Pick up where you left off — your chats, agents, and files travel with you.',
-  'apps.mobile.title': 'Mobile',
   'apps.pixelGrid.badge': 'Integrated agents',
   'apps.pixelGrid.title': 'Works seamlessly with the AI agent platforms you already use',
-  'apps.title': 'Do more with LobeHub, everywhere you work',
+  'apps.title': 'Do more with smai.ai where you work',
   'checkingPermissions': 'Checking permissions...',
   'danger.reset.action': 'Reset Now',
   'danger.reset.confirm': 'Reset all settings?',
@@ -825,11 +822,11 @@ export default {
   'notification.email.desc': 'Receive email notifications when important events occur',
   'notification.im.banner.platformUnlinked': '{{platform}} is not linked yet',
   'notification.im.desc':
-    'Deliver notifications to your linked messenger (Telegram, Discord, Slack, or WeChat) via the LobeHub bot',
+    'Deliver notifications to your linked messenger (Telegram, Discord, Slack, or WeChat) via the smai.ai bot',
   'notification.im.linkAccount': 'Link account',
   'notification.im.title': 'Messenger Notifications',
   'notification.im.platform.desc':
-    'Deliver notifications to your {{platform}} DM via the LobeHub bot',
+    'Deliver notifications to your {{platform}} DM via the smai.ai bot',
   'notification.im.platform.enable': 'Enable {{platform}} notifications',
   'notification.im.platform.viewSetup': 'View setup',
   'notification.email.title': 'Email Notifications',
@@ -2237,7 +2234,7 @@ When I am ___, I need ___
   'workspace.apiKey.policy.title': 'API Key creation',
   'workspace.apiKey.policy.updateFailed': 'Failed to update the API Key creation policy',
   'workspace.apiKey.upgrade.benefits.integration.desc':
-    'Call workspace agents and resources from your own systems via the LobeHub API.',
+    'Call workspace agents and resources from your own systems via the smai.ai API.',
   'workspace.apiKey.upgrade.benefits.integration.title': 'Programmatic access',
   'workspace.apiKey.upgrade.benefits.security.desc':
     'Requests stay bound to the workspace and can never exceed the issuer’s current permissions.',
@@ -2858,7 +2855,7 @@ When I am ___, I need ___
   'workspace.waitlistPage.enabledSubtitle': 'Workspace is already enabled for your account.',
   'workspace.waitlistPage.enabledTitle': 'Workspace is ready for you',
   'workspace.waitlistPage.entryCta': 'Join Workspace Beta',
-  'workspace.waitlistPage.goHome': 'Back to LobeHub',
+  'workspace.waitlistPage.goHome': 'Back to smai.ai',
   'workspace.waitlistPage.organizationLabel': 'Organization / Group (optional)',
   'workspace.waitlistPage.organizationPlaceholder': 'Company, school, or family…',
   'workspace.waitlistPage.pendingSubtitle':
@@ -3441,7 +3438,7 @@ When I am ___, I need ___
     'Search the web for current information and crawl web pages to extract content. Supports multiple search engines, categories, and time ranges for comprehensive research.',
   'tools.builtins.lobe-web-browsing.title': 'Web Browsing',
   'tools.builtins.lobe-image-generation.description':
-    'Generate images through LobeHub providers when the current chat model has no native image output.',
+    'Generate images through smai.ai providers when the current chat model has no native image output.',
   'tools.builtins.lobe-image-generation.readme':
     'Opt-in image generation for models without native image output. Pin this tool to enable it in chat or agent mode; leave unpinned to avoid the tool schema cost.',
   'tools.builtins.lobe-image-generation.title': 'Image Generation',

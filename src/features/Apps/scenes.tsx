@@ -17,15 +17,3 @@ export const DesktopScene = () => (
     />
   </div>
 );
-
-export const MobileScene = () => (
-  <div className={styles.mobileStage}>
-    <div className={styles.phone}>
-      <img alt="" className={styles.phoneShot} loading="lazy" src={APP_SHOTS.mobile} />
-    </div>
-  </div>
-);
-
-export const CliScene = () => (
-  <img alt="" className={styles.cliShot} loading="lazy" src={APP_SHOTS.cli} />
-);

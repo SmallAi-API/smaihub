@@ -3,16 +3,25 @@
 import { DOWNLOAD_URL, isDesktop } from '@lobechat/const';
 import { Tag, Text } from '@lobehub/ui';
 import { Button } from '@lobehub/ui/base-ui';
-import { ArrowUpRight, Check, Copy } from 'lucide-react';
-import { useState } from 'react';
+import { Lark, QQ, Telegram, WeChat } from '@lobehub/ui/icons';
+import { ArrowUpRight, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
-import { PlatformAvatar, SUPPORTED_MESSENGER_PLATFORMS } from '@/features/Messenger/constants';
+import { ProductLogo } from '@/components/Branding/ProductLogo';
+import { resolveInboxAgentRouteId } from '@/features/AgentRoute/useResolvedAgentRouteId';
+import { useAgentStore } from '@/store/agent';
+import { builtinAgentSelectors } from '@/store/agent/selectors';
 
-import { CLI_INSTALL_COMMAND } from './const';
-import { CliScene, DesktopScene, MobileScene } from './scenes';
+import PixelLogoGrid from './PixelLogoGrid';
+import { DesktopScene } from './scenes';
 import { styles } from './style';
+
+/**
+ * The smai.ai provider console — this key authenticates LLM calls against the
+ * smai.ai service, which is unrelated to the platform's own `/settings/apikey`.
+ */
+const API_PLATFORM_URL = 'https://api.smai.ai';
 
 const openExternal = (url: string) => {
   window.open(url, '_blank', 'noopener,noreferrer');
@@ -20,21 +29,23 @@ const openExternal = (url: string) => {
 
 const DESKTOP_FEATURES = ['files', 'tools', 'focus'] as const;
 
+/**
+ * Local to this page: `lark` and `qq` are not part of `MessengerPlatform`, so
+ * these rows cannot reuse `SUPPORTED_MESSENGER_PLATFORMS` / `PlatformAvatar`.
+ * All four land on the inbox agent's channel page, where the platform is picked.
+ */
+const CHANNEL_PLATFORMS = [
+  { Avatar: WeChat.Avatar, id: 'wechat', name: 'WeChat' },
+  { Avatar: Lark.Avatar, id: 'lark', name: 'Lark' },
+  { Avatar: QQ.Avatar, id: 'qq', name: 'QQ' },
+  { Avatar: Telegram.Avatar, id: 'telegram', name: 'Telegram' },
+] as const;
+
 const AppsPage = () => {
   const { t } = useTranslation('setting');
   const navigate = useNavigate();
-  const [copied, setCopied] = useState(false);
-
-  const copyInstallCommand = async () => {
-    try {
-      await navigator.clipboard.writeText(CLI_INSTALL_COMMAND);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1600);
-    } catch (error) {
-      console.error(error);
-      setCopied(false);
-    }
-  };
+  const inboxAgentId = useAgentStore(builtinAgentSelectors.inboxAgentId);
+  const channelPath = `/agent/${resolveInboxAgentRouteId(inboxAgentId)}/channel`;
 
   return (
     <div className={styles.page}>
@@ -79,17 +90,23 @@ const AppsPage = () => {
 
           <article className={styles.card}>
             <div className={styles.cardBody}>
-              <h2 className={styles.cardTitle}>{t('apps.mobile.title')}</h2>
+              <div className={styles.cardIcon}>
+                <ProductLogo size={24} />
+              </div>
+              <h2 className={styles.cardTitle}>{t('apps.apiKey.title')}</h2>
               <Text style={{ marginTop: 8 }} type="secondary">
-                {t('apps.mobile.desc')}
+                {t('apps.apiKey.desc')}
               </Text>
               <div className={styles.ctaRow}>
-                <Button onClick={() => openExternal(DOWNLOAD_URL.mobile)}>
-                  {t('apps.mobile.cta')}
+                <Button
+                  icon={ArrowUpRight}
+                  iconPosition="end"
+                  onClick={() => openExternal(API_PLATFORM_URL)}
+                >
+                  {t('apps.apiKey.cta')}
                 </Button>
               </div>
             </div>
-            <MobileScene />
           </article>
 
           <article className={styles.card}>
@@ -99,42 +116,26 @@ const AppsPage = () => {
                 {t('apps.messenger.desc')}
               </Text>
             </div>
-            {SUPPORTED_MESSENGER_PLATFORMS.map((platform) => (
-              <div className={styles.channelRow} key={platform.id}>
-                <PlatformAvatar platform={platform.id} size={32} />
+            {CHANNEL_PLATFORMS.map(({ Avatar, id, name }) => (
+              <div className={styles.channelRow} key={id}>
+                <Avatar size={32} />
                 <Text style={{ flex: 1 }} weight={500}>
-                  {platform.name}
+                  {name}
                 </Text>
                 <Button
                   icon={ArrowUpRight}
                   iconPosition="end"
                   size="small"
-                  onClick={() => navigate('/settings/messenger')}
+                  onClick={() => navigate(channelPath)}
                 >
                   {t('apps.messenger.setup')}
                 </Button>
               </div>
             ))}
           </article>
-
-          <article className={`${styles.card} ${styles.spanFull}`}>
-            <div className={styles.cliInner}>
-              <div className={styles.cardBody}>
-                <h2 className={styles.cardTitle}>{t('apps.cli.title')}</h2>
-                <Text style={{ marginTop: 8 }} type="secondary">
-                  {t('apps.cli.desc')}
-                </Text>
-                <div className={styles.command}>
-                  {CLI_INSTALL_COMMAND}
-                  <Button icon={copied ? Check : Copy} size="small" onClick={copyInstallCommand}>
-                    {copied ? t('apps.cli.copied') : t('apps.cli.copy')}
-                  </Button>
-                </div>
-              </div>
-              <CliScene />
-            </div>
-          </article>
         </div>
+
+        <PixelLogoGrid />
       </main>
     </div>
   );
