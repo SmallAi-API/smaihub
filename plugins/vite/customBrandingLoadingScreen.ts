@@ -24,7 +24,7 @@ export const customBrandingLoadingScreen = (): Plugin => ({
   name: 'custom-branding-loading-screen',
   transformIndexHtml: {
     handler(html) {
-      if (BRANDING_NAME === 'LobeHub') return html;
+      if (BRANDING_NAME === 'smai.ai') return html;
 
       return html.replace(
         LOADING_BRAND_BLOCK,

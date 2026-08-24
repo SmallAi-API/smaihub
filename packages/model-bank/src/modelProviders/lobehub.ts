@@ -8,7 +8,7 @@ import type { ModelProviderCard } from '../types';
  * distributions (BRANDING_NAME override) get their own name and drop the
  * LobeHub marketing copy/links automatically.
  */
-const isCustomBranding = BRANDING_NAME !== 'LobeHub';
+const isCustomBranding = BRANDING_NAME !== 'smai.ai';
 
 const LobeHub: ModelProviderCard = {
   chatModels: [],
