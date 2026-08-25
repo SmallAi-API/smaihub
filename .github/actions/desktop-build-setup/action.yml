@@ -117,9 +117,14 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        if [ "${CLOUD_DESKTOP:-}" = "1" ]; then
-          cd ..
-          npm run install-isolated --prefix=./lobehub/apps/desktop
-        else
-          npm run install-isolated --prefix=./apps/desktop
+        desktop_root="$GITHUB_WORKSPACE/apps/desktop"
+
+        if [ ! -f "$desktop_root/package.json" ]; then
+          echo "::error::Desktop package.json not found at $desktop_root/package.json"
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          echo "CLOUD_DESKTOP=${CLOUD_DESKTOP:-0}"
+          exit 1
         fi
+
+        echo "Installing Desktop dependencies from $desktop_root"
+        npm run install-isolated --prefix="$desktop_root"
