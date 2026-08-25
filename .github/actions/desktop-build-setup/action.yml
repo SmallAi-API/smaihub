@@ -8,7 +8,7 @@ inputs:
   cloud-repository:
     description: Cloud repository to overlay for commercial desktop builds
     required: false
-    default: lobehub/lobehub-cloud
+    default: SmallAi-API/smaihub
   cloud-ref:
     description: Optional Cloud repository ref
     required: false
