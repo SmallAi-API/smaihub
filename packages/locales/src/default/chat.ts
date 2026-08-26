@@ -1365,6 +1365,8 @@ export default {
   'taskSchedule.every': 'Every',
   'taskSchedule.frequency': 'Frequency',
   'taskSchedule.heading': 'Automation',
+  'taskSchedule.memberAssigneeHint':
+    'Enabling automation unassigns the current member — automated tasks run through an agent.',
   'taskSchedule.hours': 'Hours',
   'taskSchedule.intervalLabel': 'Run interval',
   'taskSchedule.intervalSuffix': 'each time',
@@ -1642,6 +1644,8 @@ export default {
   'createTask.visibility.helperPrivate': 'Only you can see this task.',
   'createTask.visibility.helperWorkspace': 'Everyone in this workspace can see this task.',
   'createTask.visibility.label': 'Visibility',
+  'createTask.visibility.memberAssigneeLocked':
+    'A task assigned to a member stays visible to the workspace.',
   'createTask.visibility.privateAgentDisabled':
     'Private agents can only run private tasks. Pick a workspace agent or switch this task to Private.',
   'createTask.visibility.privateAgentLocked': 'Private agents can only run private tasks.',
@@ -1803,9 +1807,11 @@ export default {
   'taskList.scheduled.title': 'Scheduled tasks',
   'taskList.title': 'Tasks',
   'taskList.unassigned': 'Unassigned',
-  'taskList.unassignedHint': 'smai AI will run this task when no assignee is set',
-  'taskList.assigneeSearch.empty': 'No matching agent',
-  'taskList.assigneeSearch.placeholder': 'Search agent...',
+  'taskList.unassignedHint': 'smai.ai will run this task when no assignee is set',
+  'taskList.assigneeSearch.empty': 'No matching assignee',
+  'taskList.assigneeSearch.placeholder': 'Search member or agent...',
+  'taskList.assigneeSelector.agentGroup': 'Agents',
+  'taskList.assigneeSelector.memberGroup': 'Members',
   'taskList.contextMenu.copyConfirm': 'Copy',
   'taskList.contextMenu.copyDescription':
     'You can copy to personal or workspaces that have permission to create a task.',
