@@ -48,6 +48,7 @@ export const MORE_FILE_PREVIEW_REQUEST_URL = 'https://www.smallai.asia';
 export const AGENTS_INDEX_GITHUB = 'https://www.smallaia.sia';
 export const AGENTS_INDEX_GITHUB_ISSUE = 'https://www.smallaia.sia';
 export const AGENTS_OFFICIAL_URL = 'https://www.smallai.asia/agent';
+export const WORKSPACE_OFFICIAL_URL = 'https://www.smallai.asia/workspace';
 
 export const AGENT_CHAT_URL = (agentId: string, mobile?: boolean) => {
   if (mobile) return `/agent/${agentId}`;
