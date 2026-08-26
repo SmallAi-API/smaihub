@@ -1,7 +1,7 @@
 diff --git a/chunk-JYPXGFWX.mjs b/chunk-JYPXGFWX.mjs
 --- a/chunk-JYPXGFWX.mjs
 +++ b/chunk-JYPXGFWX.mjs
-@@ -1525,6 +1525,20 @@ var HttpClient = class {
+@@ -1526,6 +1526,20 @@ var HttpClient = class {
      }
      if (response.status < 200 || response.status >= 300) {
        const body = await response.text();
