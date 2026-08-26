@@ -41,6 +41,11 @@ runs:
         cloud_root="$(cd "$GITHUB_WORKSPACE/.." && pwd)"
         cloud_checkout="$RUNNER_TEMP/lobehub-cloud"
 
+        if [ "$CLOUD_REPOSITORY" = "$GITHUB_REPOSITORY" ]; then
+          echo "::notice::Cloud repository $CLOUD_REPOSITORY is the main repository; skipping Cloud overlay"
+          exit 0
+        fi
+
         rm -rf "$cloud_checkout"
 
         git clone --depth 1 --no-checkout "https://x-access-token:${CLOUD_TOKEN}@github.com/${CLOUD_REPOSITORY}.git" "$cloud_checkout"
