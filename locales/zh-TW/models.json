@@ -147,6 +147,7 @@
   "lobehub.gemini-3.7-flash.description": "Gemini 3.7 Flash 是 Google 最強大的 Flash 型號，專為複雜編碼、主動工作流程和可靠的多步執行而設計。",
   "lobehub.glm-5.1.description": "Zai 最新的旗艦模型，在整體和編碼能力上與 Claude Opus 4.6 對齊。擅長長期任務，具備長達 8 小時的自主工作能力，是自主代理和長期編碼代理的理想基礎。",
   "lobehub.glm-5.2.description": "GLM-5.2 是第一個接近同時期發布的最新一代 Claude Opus 性能的開源模型。",
+  "lobehub.glm-5.3-flash.description": "首款能夠看見的 GLM-5 — 比 GLM-5.2 更強大，編碼接近 Opus 4.8，價格約為旗艦產品的十分之一。",
   "lobehub.glm-5.3.description": "Z.ai 最新的旗艦產品。基於 GLM-5.2 的相同基礎，經過擴展後訓練 — 編碼能力提升 50%，在 Terminal Bench 3.0 上達到開源 SOTA，並在網絡能力上有了大幅提升。思考始終在線。",
   "lobehub.gpt-4-turbo.description": "GPT-4 Turbo 是一個具成本效益的多模態模型，在實時任務中平衡準確性和效率。",
   "lobehub.gpt-4.1-mini.description": "GPT-4.1 mini 在智能、速度和成本之間取得平衡，對於許多用例具有吸引力。",

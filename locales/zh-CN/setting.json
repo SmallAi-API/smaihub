@@ -2826,6 +2826,8 @@
   "workspace.waitlistPage.enabledTitle": "工作区已为您准备好",
   "workspace.waitlistPage.entryCta": "加入工作区测试版",
   "workspace.waitlistPage.goHome": "返回smai.ai",
+  "workspace.waitlistPage.learnMore": "了解更多关于工作区的信息",
+  "workspace.waitlistPage.learnMoreNewTabHint": "在新标签页中打开",
   "workspace.waitlistPage.organizationLabel": "组织 / 群组（可选）",
   "workspace.waitlistPage.organizationPlaceholder": "公司、学校或家庭…",
   "workspace.waitlistPage.pendingSubtitle": "我们将分批开放访问权限，并会通过电子邮件通知您您的访问权限准备就绪。",
