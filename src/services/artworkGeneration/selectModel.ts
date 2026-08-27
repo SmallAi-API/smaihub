@@ -5,7 +5,7 @@ import type { EnabledProviderWithModels } from '@/types/aiProvider';
  * (gpt-image-2 caps `imageUrls` at one) and is the cheapest per image, which
  * is what the one-click brand-style avatar path relies on.
  */
-const PREFERRED_ARTWORK_MODELS = ['gemini-3.1-flash-lite-image', 'gpt-image-2'];
+const PREFERRED_ARTWORK_MODELS = ['gpt-image-2', 'gemini-3.1-flash-lite-image'];
 
 // Image variants of chat models carry an `:image` suffix (e.g.
 // `gemini-3.1-flash-lite-image:image`), standalone image models do not.
