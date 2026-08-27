@@ -1,5 +1,5 @@
-import { Avatar, Center, CopyButton, Flexbox, Icon, Input, Skeleton, Tag, Text } from '@lobehub/ui';
-import { Button } from '@lobehub/ui/base-ui';
+import { Center, CopyButton, Flexbox, Icon, Input, Skeleton } from '@lobehub/ui';
+import { Avatar, Button, Tag, Text } from '@lobehub/ui/base-ui';
 import { createStaticStyles, cssVar } from 'antd-style';
 import { startCase } from 'es-toolkit/compat';
 import { LinkIcon, Share2Icon } from 'lucide-react';
