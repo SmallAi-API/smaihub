@@ -16,6 +16,10 @@ inputs:
     description: Private key used to sign the r0 renderer OTA baseline
     required: false
     default: ''
+  sign-renderer-ota:
+    description: Generate the renderer OTA r0 baseline on this build leg
+    required: false
+    default: 'false'
   update-channel:
     description: Desktop update channel (canary, beta, stable)
     required: false
@@ -30,8 +34,25 @@ runs:
         RENDERER_OTA_PUBLIC_KEY: ${{ inputs.renderer-ota-public-key }}
       run: node apps/desktop/scripts/mainHash.mjs > apps/desktop/release/renderer-mainhash.txt
 
+    - name: Validate renderer OTA signing inputs
+      if: inputs.sign-renderer-ota == 'true' && inputs.update-channel != ''
+      shell: bash
+      env:
+        RENDERER_OTA_PRIVATE_KEY: ${{ inputs.renderer-ota-private-key }}
+        RENDERER_OTA_PUBLIC_KEY: ${{ inputs.renderer-ota-public-key }}
+      run: |
+        set -euo pipefail
+        if [ -z "$RENDERER_OTA_PRIVATE_KEY" ]; then
+          echo "::error::RENDERER_OTA_PRIVATE_KEY is required for the renderer OTA producer"
+          exit 1
+        fi
+        if [ -z "$RENDERER_OTA_PUBLIC_KEY" ]; then
+          echo "::error::RENDERER_OTA_PUBLIC_KEY is required for the renderer OTA producer"
+          exit 1
+        fi
+
     - name: Sign renderer OTA r0 baseline
-      if: runner.os == 'Linux' && inputs.renderer-ota-private-key != '' && inputs.update-channel != ''
+      if: inputs.sign-renderer-ota == 'true' && inputs.update-channel != ''
       shell: bash
       env:
         RENDERER_OTA_PRIVATE_KEY: ${{ inputs.renderer-ota-private-key }}
