@@ -146,7 +146,7 @@ jobs:
     name: Configure Build Matrix
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      include: ${{ steps.set-matrix.outputs.include }}
     steps:
       - name: Generate Matrix
         id: set-matrix
@@ -182,8 +182,16 @@ jobs:
             | map(.value)
           ')
 
-          # 输出
-          echo "matrix={\"include\":$static_matrix}" >> $GITHUB_OUTPUT
+          # Fail early instead of passing an empty value to strategy.matrix.
+          if [[ "$(jq 'length' <<< "$static_matrix")" -eq 0 ]]; then
+            echo "::error::No desktop build targets were selected"
+            exit 1
+          fi
+
+          # Export the include array itself. The consumer builds the matrix
+          # mapping explicitly, which keeps the job-level expression valid.
+          echo "include=$static_matrix" >> "$GITHUB_OUTPUT"
+          echo "Generated desktop build matrix: $static_matrix"
 
   # ============================================
   # 多平台构建
@@ -195,7 +203,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.configure-build.outputs.matrix) }}
+      matrix:
+        include: ${{ fromJSON(needs.configure-build.outputs.include) }}
     steps:
       - uses: actions/checkout@v6
         with:

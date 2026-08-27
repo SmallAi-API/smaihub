@@ -1,6 +1,7 @@
 import type { RenameLocalFileParams } from '@lobechat/electron-client-ipc';
 import type { BuiltinInterventionProps } from '@lobechat/types';
-import { Flexbox, Icon, Text } from '@lobehub/ui';
+import { Flexbox, Icon } from '@lobehub/ui';
+import { Text } from '@lobehub/ui/base-ui';
 import { ArrowRight, ChevronRight } from 'lucide-react';
 import path from 'path-browserify-esm';
 import { memo } from 'react';
@@ -21,7 +22,7 @@ const RenameLocalFile = memo<BuiltinInterventionProps<RenameLocalFileParams>>(({
         <Icon icon={ChevronRight} />
         <LocalFile name={base} path={filePath} />
       </Flexbox>
-      <Flexbox align="center" gap={8} horizontal>
+      <Flexbox horizontal align="center" gap={8}>
         <Text type="secondary">{base}</Text>
         <Icon icon={ArrowRight} />
         <Text>{newName}</Text>

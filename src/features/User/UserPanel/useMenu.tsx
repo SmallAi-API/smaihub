@@ -1,5 +1,6 @@
 import { isDesktop } from '@lobechat/const';
-import { Flexbox, Hotkey, Icon, Tag } from '@lobehub/ui';
+import { Flexbox, Hotkey, Icon } from '@lobehub/ui';
+import { Tag } from '@lobehub/ui/base-ui';
 import { BrainCircuit, Download, HardDriveDownload, LogOut, Settings2 } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
 import { memo } from 'react';

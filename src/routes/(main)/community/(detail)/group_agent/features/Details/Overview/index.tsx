@@ -1,5 +1,6 @@
 import { BRANDING_NAME } from '@lobechat/business-const';
-import { Avatar, Block, Collapse, Flexbox, Grid, Text } from '@lobehub/ui';
+import { Block, Collapse, Flexbox, Grid } from '@lobehub/ui';
+import { Avatar, Text } from '@lobehub/ui/base-ui';
 import { ChatList } from '@lobehub/ui/chat';
 import { createStaticStyles, useTheme } from 'antd-style';
 import { memo } from 'react';
