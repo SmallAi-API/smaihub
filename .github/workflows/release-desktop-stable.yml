@@ -179,7 +179,6 @@ jobs:
           static_matrix=$(echo "$static_matrix" | jq -c '
             to_entries
             | map(.value + {renderer_ota: (.key == 0)})
-            | map(.value)
           ')
 
           # Fail early instead of passing an empty value to strategy.matrix.
