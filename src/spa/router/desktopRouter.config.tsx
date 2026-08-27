@@ -3,7 +3,7 @@
 import type { RouteObject } from 'react-router';
 
 import { acceptanceRouteMeta } from '@/features/Acceptance/routeMeta';
-import { dynamicElement, ErrorBoundary } from '@/utils/router';
+import { dynamicElement, dynamicLayout, ErrorBoundary } from '@/utils/router';
 
 import { createMainAreaRouteFactory, createSharedDesktopRoutes } from './desktopRouter.shared';
 
