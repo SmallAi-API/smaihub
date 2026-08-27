@@ -3,8 +3,8 @@ import type { HomeNewModelItem } from '@/business/client/hooks/useHomeNewModels'
 // Chat
 export const NEW_GPT_MODEL = 'gpt-5.6-sol';
 export const NEW_GPT_MODEL_NAME = 'GPT 5.6 Sol';
-export const NEW_CLAUDE_MODEL = 'claude-opus-4-8';
-export const NEW_CLAUDE_MODEL_NAME = 'Claude Opus 4.8';
+export const NEW_CLAUDE_MODEL = 'claude-opus-5';
+export const NEW_CLAUDE_MODEL_NAME = 'Claude Opus 5';
 export const NEW_GLM_MODEL = 'glm-5.3-flash';
 export const NEW_GLM_MODEL_NAME = 'GLM-5.3 Flash';
 export const NEW_DEEPSEEK_MODEL = 'deepseek-v4-flash-vision-exp';
