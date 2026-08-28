@@ -98,11 +98,14 @@ export interface InternalEditorProps extends EditorCanvasProps {
 const InternalEditor = memo<InternalEditorProps>(
   ({
     contentChangeLockRef,
+    contentStyle,
     disabled,
     editable = true,
     editor,
     extraPlugins,
     floatingToolbar = true,
+    getPopupContainer,
+    mentionOption,
     onContentChange,
     onInit,
     onPressEnter,
@@ -310,6 +313,8 @@ const InternalEditor = memo<InternalEditorProps>(
           content={''}
           editable={editable && !disabled}
           editor={editor}
+          getPopupContainer={getPopupContainer}
+          mentionOption={mentionOption}
           placeholder={finalPlaceholder}
           plugins={plugins}
           slashOption={slashItems ? { items: slashItems } : undefined}
@@ -317,6 +322,7 @@ const InternalEditor = memo<InternalEditorProps>(
           style={{
             paddingBottom: 32,
             ...style,
+            ...contentStyle,
           }}
           {...(onPressEnter ? { onPressEnter } : {})}
         />
