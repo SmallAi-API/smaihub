@@ -500,12 +500,13 @@ const ConnectAgentContent = memo<ConnectAgentContentProps>(
       if (!single) return;
       const profile = isRemoteHeterogeneousType(single.type) ? profiles[single.type] : undefined;
       const productTitle = profile?.title ?? single.title;
-      // Prefill with the same "{owner}'s {product}" default that createAgent
-      // seeds, so the input shows the name the agent would actually get.
-      setName(heteroAgentDefaultName(productTitle) ?? productTitle);
+      setName(
+        heteroAgentDefaultName({ productTitle, visibility, workspaceId: activeWorkspaceId }) ??
+          productTitle,
+      );
       setDescription(profile?.description ?? '');
       setStep(2);
-    }, [profiles, single]);
+    }, [activeWorkspaceId, profiles, single, visibility]);
 
     const buildCreateParams = useCallback(
       (provider: ConnectableProvider, overrides?: { description?: string; name?: string }) => {
@@ -547,7 +548,11 @@ const ConnectAgentContent = memo<ConnectAgentContentProps>(
                 // screen shows the same label the sidebar will.
                 title:
                   params.config.name?.trim() ||
-                  heteroAgentDefaultName(params.config.title) ||
+                  heteroAgentDefaultName({
+                    productTitle: params.config.title,
+                    visibility,
+                    workspaceId: activeWorkspaceId,
+                  }) ||
                   agentDisplayName(params.config, provider.title),
                 version: scanState.agents?.[provider.type]?.version,
               } satisfies CreatedAgent;
@@ -567,6 +572,7 @@ const ConnectAgentContent = memo<ConnectAgentContentProps>(
         }
       },
       [
+        activeWorkspaceId,
         buildCreateParams,
         onTitleChange,
         refreshAgentList,
@@ -577,6 +583,7 @@ const ConnectAgentContent = memo<ConnectAgentContentProps>(
         t,
         target,
         targetLabel,
+        visibility,
       ],
     );
 
