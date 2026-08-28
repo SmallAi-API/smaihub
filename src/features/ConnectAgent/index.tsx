@@ -20,14 +20,22 @@ import {
   Text,
   useModalContext,
 } from '@lobehub/ui/base-ui';
-import { Typography } from 'antd';
 import { createStaticStyles, cssVar } from 'antd-style';
 import { t as i18nT } from 'i18next';
-import { ArrowLeft, CheckCircle2, Download, LaptopIcon, RefreshCw, ScanSearch } from 'lucide-react';
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Download,
+  LaptopIcon,
+  RefreshCw,
+  ScanSearch,
+  TerminalIcon,
+} from 'lucide-react';
 import { memo, type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useActiveWorkspaceId } from '@/business/client/hooks/useActiveWorkspaceId';
+import CommandLine from '@/components/CommandLine';
 import { DOWNLOAD_URL } from '@/const/url';
 import { getDeviceIcon } from '@/features/DeviceManager/getDeviceIcon';
 import { useDeviceList } from '@/features/DeviceManager/useDeviceList';
@@ -38,6 +46,7 @@ import { heteroAgentDefaultName } from '@/store/agent/utils/heteroAgentDefaultNa
 import { useElectronStore } from '@/store/electron';
 import { useHomeStore } from '@/store/home';
 
+import { getDeviceListState } from './deviceListState';
 import type { ConnectableProvider, ConnectAgentProfile } from './providers';
 import { buildConnectAgentConfig, CONNECTABLE_PROVIDERS } from './providers';
 import type { ScanTarget } from './useAgentScan';
@@ -56,17 +65,21 @@ const styles = createStaticStyles(({ css }) => ({
     overscroll-behavior: contain;
     max-height: min(50dvh, 400px);
   `,
-  cmd: css`
-    user-select: all;
+  commandHint: css`
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
 
-    padding-block: 8px;
-    padding-inline: 12px;
-    border-radius: ${cssVar.borderRadiusSM};
+    min-width: 0;
+    padding-inline: 4px;
 
-    font-family: ${cssVar.fontFamilyCode};
-    font-size: 12px;
-
-    background: ${cssVar.colorFillTertiary};
+    > span {
+      overflow: hidden;
+      min-width: 0;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   `,
   dot: css`
     flex: none;
@@ -112,7 +125,14 @@ const styles = createStaticStyles(({ css }) => ({
     display: flex;
     flex: none;
     align-items: center;
+
     min-height: 28px;
+    margin-block-start: auto;
+
+    > a,
+    > div {
+      width: 100%;
+    }
   `,
   emptyOptions: css`
     display: grid;
@@ -231,6 +251,11 @@ const styles = createStaticStyles(({ css }) => ({
 
     animation: lobe-connect-agent-pulse 1.4s ease-in-out infinite;
   `,
+  skeletonSquare: css`
+    width: 36px;
+    height: 36px;
+    border-radius: ${cssVar.borderRadius};
+  `,
 }));
 
 interface CreatedAgent {
@@ -247,9 +272,13 @@ const SectionLabel = memo<{ children: ReactNode }>(({ children }) => (
   </Text>
 ));
 
-const SkeletonRow = memo<{ width: number }>(({ width }) => (
+const SkeletonRow = memo<{ squareIcon?: boolean; width: number }>(({ squareIcon, width }) => (
   <div className={`${styles.row} ${styles.rowStatic}`}>
-    <div className={styles.skeletonCircle} />
+    <div
+      className={
+        squareIcon ? `${styles.skeletonCircle} ${styles.skeletonSquare}` : styles.skeletonCircle
+      }
+    />
     {/* Column height matches a real row's two-line text block so the
         scanning → done swap doesn't shift the modal */}
     <Flexbox flex={1} gap={10} justify={'center'} style={{ height: 42 }}>
@@ -596,6 +625,10 @@ const ConnectAgentContent = memo<ConnectAgentContentProps>(
     // ── Step 1: choose the machine ──
     if (step === 0) {
       const isRefreshing = loadingDevices || fetchingDevices;
+      const deviceListState = getDeviceListState({
+        hasDevices: listedDevices.length > 0,
+        isFetching: isRefreshing,
+      });
       const showEmpty = !isDesktop && !isRefreshing && onlineDevices.length === 0;
 
       return (
@@ -633,6 +666,20 @@ const ConnectAgentContent = memo<ConnectAgentContentProps>(
                     </a>
                   </div>
                 </div>
+                <div className={styles.emptyOption}>
+                  <span className={styles.emptyOptionIcon}>
+                    <Icon icon={TerminalIcon} size={20} />
+                  </span>
+                  <Flexbox gap={3}>
+                    <Text weight={500}>{t('connectAgent.create.connectCli')}</Text>
+                    <Text fontSize={12} type={'secondary'}>
+                      {t('connectAgent.create.noDevicesCliHint')}
+                    </Text>
+                  </Flexbox>
+                  <div className={styles.emptyOptionAction}>
+                    <CommandLine command={t('connectAgent.create.noDevicesCmd')} />
+                  </div>
+                </div>
               </div>
               <Flexbox horizontal justify={'flex-end'} padding={8}>
                 <Button
@@ -662,7 +709,7 @@ const ConnectAgentContent = memo<ConnectAgentContentProps>(
                   </div>
                 </Flexbox>
               )}
-              {listedDevices.length > 0 && (
+              {deviceListState !== 'empty' && (
                 <Flexbox gap={6}>
                   <Flexbox horizontal align={'center'} justify={'space-between'}>
                     <SectionLabel>{t('connectAgent.create.connectedDevices')}</SectionLabel>
@@ -677,31 +724,33 @@ const ConnectAgentContent = memo<ConnectAgentContentProps>(
                     </Button>
                   </Flexbox>
                   <div className={styles.groupList}>
-                    {listedDevices.map((device) => (
-                      <DeviceRow
-                        icon={getDeviceIcon(device.platform, 18)}
-                        key={device.deviceId}
-                        offline={!device.online}
-                        subtitle={device.hostname || device.deviceId}
-                        title={deviceLabel(device)}
-                        statusText={
-                          device.online
-                            ? t('connectAgent.create.online')
-                            : t('connectAgent.create.offline')
-                        }
-                        onClick={() => pickTarget({ device, kind: 'device' })}
-                      />
-                    ))}
+                    {deviceListState === 'loading'
+                      ? [96, 140, 112].map((width) => (
+                          <SkeletonRow squareIcon key={width} width={width} />
+                        ))
+                      : listedDevices.map((device) => (
+                          <DeviceRow
+                            icon={getDeviceIcon(device.platform, 18)}
+                            key={device.deviceId}
+                            offline={!device.online}
+                            subtitle={device.hostname || device.deviceId}
+                            title={deviceLabel(device)}
+                            statusText={
+                              device.online
+                                ? t('connectAgent.create.online')
+                                : t('connectAgent.create.offline')
+                            }
+                            onClick={() => pickTarget({ device, kind: 'device' })}
+                          />
+                        ))}
                   </div>
                 </Flexbox>
               )}
-              {isDesktop && listedDevices.length === 0 && (
-                <Flexbox gap={4}>
-                  <span>{t('connectAgent.create.noDevicesCliHint')}</span>
-                  <Typography.Text code copyable>
-                    {t('connectAgent.create.noDevicesCmd')}
-                  </Typography.Text>
-                </Flexbox>
+              {isDesktop && deviceListState === 'empty' && (
+                <div className={styles.commandHint}>
+                  <Text type={'secondary'}>{t('connectAgent.create.noDevicesCliHint')}</Text>
+                  <CommandLine command={t('connectAgent.create.noDevicesCmd')} />
+                </div>
               )}
             </Flexbox>
           )}
