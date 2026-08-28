@@ -1,7 +1,8 @@
 'use client';
 
+import type { LobehubSkillProviderType } from '@lobechat/const';
 import { LOBEHUB_SKILL_PROVIDERS } from '@lobechat/const';
-import { type BuiltinSkill, type LobeToolMeta } from '@lobechat/types';
+import type { BuiltinSkill, LobeToolMeta } from '@lobechat/types';
 import isEqual from 'fast-deep-equal';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +59,7 @@ export const LobeHubList = memo<LobeHubListProps>(({ keywords }) => {
 
   const filteredItems = useMemo(() => {
     const items: Array<
-      | { provider: (typeof LOBEHUB_SKILL_PROVIDERS)[number]; type: 'lobehub' }
+      | { provider: LobehubSkillProviderType; type: 'lobehub' }
       | { skill: BuiltinSkill; type: 'builtinAgentSkill' }
       | { tool: LobeToolMeta; type: 'builtin' }
     > = [];
@@ -73,7 +74,8 @@ export const LobeHubList = memo<LobeHubListProps>(({ keywords }) => {
       items.push({ tool, type: 'builtin' });
     }
 
-    // Add LobeHub skills
+    // Add LobeHub skills. This tab is source-qualified, so it lists LobeHub
+    // providers only — Composio toolkits live in the BuiltinMCP tab.
     if (isLobehubSkillEnabled) {
       for (const provider of LOBEHUB_SKILL_PROVIDERS) {
         items.push({ provider, type: 'lobehub' });
