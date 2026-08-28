@@ -32,7 +32,8 @@ const mocks = vi.hoisted(() => ({
   windowOpen: vi.fn(),
 }));
 
-vi.mock('@lobehub/ui', () => ({
+vi.mock('@lobehub/ui', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
   Accordion: ({
     children,
     expandedKeys,
@@ -47,22 +48,9 @@ vi.mock('@lobehub/ui', () => ({
       {children}
     </div>
   ),
-  ActionIcon: () => <span />,
-  DropdownMenu: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   Flexbox: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="sidebar-body">{children}</div>
   ),
-  Icon: () => <span />,
-  Popover: ({ children, content }: { children: React.ReactNode; content: React.ReactNode }) => (
-    <div data-testid="popover-wrapper">
-      <div data-testid="popover-content">{content}</div>
-      {children}
-    </div>
-  ),
-}));
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
 }));
 
 vi.mock('react-router', () => ({
