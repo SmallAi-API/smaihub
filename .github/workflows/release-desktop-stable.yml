@@ -121,7 +121,15 @@ jobs:
           CLOUD_TOKEN: ${{ secrets.LOBEHUB_CLOUD_TOKEN }}
         run: |
           set -euo pipefail
-          : "${CLOUD_REPOSITORY:?OVERLAY_REPOSITORY repository variable is not set}"
+          # No business overlay configured (or the overlay is this repo itself): the build is an
+          # OSS-stub build, so the renderer OTA baseline is just this repo's commit. Keep a valid
+          # 40-hex value — desktop-publish-s3 validates cloudRef before writing base.json.
+          if [ -z "${CLOUD_REPOSITORY:-}" ] || [ -z "${CLOUD_TOKEN:-}" ] \
+            || [ "$CLOUD_REPOSITORY" = "$GITHUB_REPOSITORY" ]; then
+            echo "::notice::No business overlay configured; using $GITHUB_SHA as cloud_ref"
+            echo "cloud_ref=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           # checkout persist-credentials extraheader would send GITHUB_TOKEN and 404 the private cloud repo
           cloud_ref=$(git -c http.https://github.com/.extraheader= ls-remote "https://x-access-token:${CLOUD_TOKEN}@github.com/${CLOUD_REPOSITORY}.git" HEAD | cut -f1)
           if [[ ! "$cloud_ref" =~ ^[0-9a-f]{40}$ ]]; then
