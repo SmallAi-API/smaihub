@@ -28,7 +28,10 @@ runs:
         node-version: ${{ inputs.node-version }}
 
     - name: Overlay Cloud repository for desktop build
-      if: inputs.cloud-token != ''
+      # Both must be present. Callers pass `${{ vars.OVERLAY_REPOSITORY }}`, which is an empty
+      # string when the variable is unset — an explicitly-passed empty input does NOT fall back
+      # to this action's `default`, so check it here rather than relying on that default.
+      if: inputs.cloud-token != '' && inputs.cloud-repository != ''
       shell: bash
       env:
         CLOUD_CHECKOUT: ${{ runner.temp }}/lobehub-cloud
