@@ -20,14 +20,6 @@ vi.mock('electron', () => ({
   },
 }));
 
-// 模拟 logger
-vi.mock('@/utils/logger', () => ({
-  createLogger: () => ({
-    debug: vi.fn(),
-    error: vi.fn(),
-  }),
-}));
-
 // 保存原始平台，确保测试结束后能恢复
 const originalPlatform = process.platform;
 

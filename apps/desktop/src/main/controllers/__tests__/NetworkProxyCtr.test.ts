@@ -9,16 +9,6 @@ const { ipcMainHandleMock } = vi.hoisted(() => ({
   ipcMainHandleMock: vi.fn(),
 }));
 
-// 模拟 logger
-vi.mock('@/utils/logger', () => ({
-  createLogger: () => ({
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  }),
-}));
-
 // 模拟 undici - 使用 vi.fn() 直接在 Mock 中创建
 vi.mock('undici', () => ({
   fetch: vi.fn(),
