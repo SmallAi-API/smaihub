@@ -32,6 +32,7 @@ import {
   sql,
 } from 'drizzle-orm';
 
+import type { FtsSearchCandidateSource } from '../repositories/ftsSearch';
 import type { TopicItem } from '../schemas';
 import {
   agentOperations,
@@ -43,11 +44,12 @@ import {
   topics,
 } from '../schemas';
 import type { LobeChatDatabase } from '../type';
-import { buildBm25MatchAny } from '../utils/bm25';
+import { sanitizeBm25Query } from '../utils/bm25';
 import { COPIED_TOPIC_USAGE_RESET } from '../utils/copiedTranscript';
 import { markCopiedMessageMetadata } from '../utils/copyMessagesInDatabase';
 import { genEndDateWhere, genRangeWhere, genStartDateWhere, genWhere } from '../utils/genWhere';
 import { idGenerator } from '../utils/idGenerator';
+import { inJsonStringArray } from '../utils/inJsonStringArray';
 import { buildWorkspacePayload, buildWorkspaceWhere } from '../utils/workspace';
 import { recomputeTopicUsage } from './topicUsage';
 
@@ -289,12 +291,19 @@ const buildTopicOrderBy = (topicActivityAt: SQL, sortBy?: TopicQuerySortBy): SQL
 export class TopicModel {
   private userId: string;
   private db: LobeChatDatabase;
+  private ftsSearchCandidateSource?: FtsSearchCandidateSource;
   private workspaceId?: string;
 
-  constructor(db: LobeChatDatabase, userId: string, workspaceId?: string) {
+  constructor(
+    db: LobeChatDatabase,
+    userId: string,
+    workspaceId?: string,
+    ftsSearchCandidateSource?: FtsSearchCandidateSource,
+  ) {
     this.userId = userId;
     this.db = db;
     this.workspaceId = workspaceId;
+    this.ftsSearchCandidateSource = ftsSearchCandidateSource;
   }
 
   private ownership = () =>
@@ -843,6 +852,26 @@ export class TopicModel {
       scope && typeof scope === 'object' ? scope : { containerId: scope ?? null };
     const scopeCondition = this.matchKeywordScope(scopeOptions);
 
+    const bm25Query = sanitizeBm25Query(keyword);
+    const candidateResults = this.ftsSearchCandidateSource?.ftsSearchCandidateEnabled
+      ? await Promise.all([
+          this.ftsSearchCandidateSource.ftsSearchCandidates({
+            entity: 'topics',
+            filters: { topicScope: scopeOptions },
+            pagination: {},
+            query: { fields: ['title'], text: keyword },
+          }),
+          this.ftsSearchCandidateSource.ftsSearchCandidates({
+            entity: 'messages',
+            filters: { topicScope: scopeOptions },
+            pagination: {},
+            query: { fields: ['content'], text: keyword },
+          }),
+        ])
+      : undefined;
+    const topicCandidateIds = candidateResults?.[0].candidates.map(({ id }) => id);
+    const messageCandidateIds = candidateResults?.[1].candidates.map(({ id }) => id);
+
     // Run title and message content searches in parallel
     const [topicsByTitle, topicIdsByMessages] = await Promise.all([
       // Query topics matching by title (BM25)
@@ -850,7 +879,13 @@ export class TopicModel {
         .select()
         .from(topics)
         .where(
-          and(this.ownership(), scopeCondition, buildBm25MatchAny(topics.id, ['title'], keyword)),
+          and(
+            this.ownership(),
+            scopeCondition,
+            topicCandidateIds
+              ? inJsonStringArray(topics.id, topicCandidateIds)
+              : sql`${topics.title} @@@ ${bm25Query}`,
+          ),
         )
         .orderBy(desc(topics.updatedAt)),
       // Query topic IDs matching by message content (BM25)
@@ -861,7 +896,9 @@ export class TopicModel {
         .where(
           and(
             this.messageOwnership(),
-            buildBm25MatchAny(messages.id, ['content'], keyword),
+            messageCandidateIds
+              ? inJsonStringArray(messages.id, messageCandidateIds)
+              : sql`${messages.content} @@@ ${bm25Query}`,
             this.ownership(),
             scopeCondition,
           ),

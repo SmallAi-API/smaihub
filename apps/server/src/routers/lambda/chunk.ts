@@ -12,7 +12,6 @@ import { EmbeddingModel } from '@/database/models/embedding';
 import { FileModel } from '@/database/models/file';
 import { MessageModel } from '@/database/models/message';
 import { AiInfraRepos } from '@/database/repositories/aiInfra';
-import { SearchRepo } from '@/database/repositories/search';
 import { router } from '@/libs/trpc/lambda';
 import { serverDatabase } from '@/libs/trpc/lambda/middleware';
 import { getServerDefaultFilesConfig, getServerGlobalConfig } from '@/server/globalConfig';
@@ -49,7 +48,6 @@ const chunkProcedure = wsCompatProcedure.use(serverDatabase).use(async (opts) =>
       fileModel: new FileModel(ctx.serverDB, ctx.userId, wsId),
       knowledgeBaseSearchService: new KnowledgeBaseSearchService(ctx.serverDB, ctx.userId, wsId),
       messageModel: new MessageModel(ctx.serverDB, ctx.userId, wsId),
-      searchRepo: new SearchRepo(ctx.serverDB, ctx.userId, wsId),
     },
   });
 });
