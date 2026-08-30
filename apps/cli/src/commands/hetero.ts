@@ -988,6 +988,7 @@ const exec = async (options: ExecOptions): Promise<void> => {
     try {
       await sink.finish({
         error: finishError,
+        resumeSessionInvalidated: first.resumeNotFound || undefined,
         result: runResult,
         sessionId,
       });
