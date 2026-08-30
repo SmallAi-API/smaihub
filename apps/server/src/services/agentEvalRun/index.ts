@@ -361,28 +361,26 @@ export class AgentEvalRunService {
           };
         });
 
-        const messageRows = preparedMessages.map(
-          ({ createdAt, id, message, updatedAt }, index) => ({
-            agentId: null,
-            content: message.content,
-            createdAt: new Date(createdAt),
-            error: message.error ?? null,
-            id,
-            metadata: message.metadata ?? null,
-            model: message.model ?? null,
-            parentId: null,
-            provider: message.provider ?? null,
-            reasoning: message.reasoning ?? null,
-            role: message.role,
-            search: message.search ?? null,
-            tools: message.tools ?? null,
-            topicId,
-            traceId: message.traceId ?? null,
-            updatedAt: new Date(updatedAt),
-            userId: this.userId,
-            workspaceId: this.workspaceId ?? null,
-          }),
-        );
+        const messageRows = preparedMessages.map(({ createdAt, id, message, updatedAt }) => ({
+          agentId: null,
+          content: message.content,
+          createdAt: new Date(createdAt),
+          error: message.error ?? null,
+          id,
+          metadata: message.metadata ?? null,
+          model: message.model ?? null,
+          parentId: null,
+          provider: message.provider ?? null,
+          reasoning: message.reasoning ?? null,
+          role: message.role,
+          search: message.search ?? null,
+          tools: message.tools ?? null,
+          topicId,
+          traceId: message.traceId ?? null,
+          updatedAt: new Date(updatedAt),
+          userId: this.userId,
+          workspaceId: this.workspaceId ?? null,
+        }));
         const pluginRows = preparedMessages.flatMap(({ id, message }) => {
           if (
             !message.plugin &&
@@ -1885,8 +1883,13 @@ export class AgentEvalRunService {
     const dataset = await this.datasetModel.findById(run.datasetId);
     if (!dataset) return { ...baseMeta, error: 'Dataset not found', passed: false, score: 0 };
 
-    const benchmark = await this.benchmarkModel.findById(dataset.benchmarkId);
-    if (!benchmark) return { ...baseMeta, error: 'Benchmark not found', passed: false, score: 0 };
+    // A dataset need not belong to a benchmark; such a dataset simply
+    // contributes no benchmark-level rubrics, and scoring falls back to the
+    // per-case / per-dataset evalMode. Bailing here would leave every case in a
+    // captured dataset permanently unscored.
+    const benchmark = dataset.benchmarkId
+      ? await this.benchmarkModel.findById(dataset.benchmarkId)
+      : null;
 
     const testCase = await this.testCaseModel.findById(testCaseId);
     if (!testCase) return { ...baseMeta, error: 'Test case not found', passed: false, score: 0 };
@@ -1935,7 +1938,7 @@ export class AgentEvalRunService {
         },
       ];
     } else {
-      effectiveRubrics = benchmark.rubrics ?? [];
+      effectiveRubrics = benchmark?.rubrics ?? [];
     }
 
     // Run evaluation
@@ -2486,11 +2489,12 @@ export class AgentEvalRunService {
     const dataset = await this.datasetModel.findById(run.datasetId);
     if (!dataset) return;
 
-    const benchmark = await this.benchmarkModel.findById(dataset.benchmarkId);
-    if (!benchmark) return;
+    const benchmark = dataset.benchmarkId
+      ? await this.benchmarkModel.findById(dataset.benchmarkId)
+      : null;
 
     const passThreshold = (run.config?.passThreshold as number) ?? 0.6;
-    const benchmarkRubrics = benchmark.rubrics;
+    const benchmarkRubrics = benchmark?.rubrics ?? [];
 
     // Get messages for this topic
     const messages = await this.messageModel.query({ topicId: runTopic.topicId });
