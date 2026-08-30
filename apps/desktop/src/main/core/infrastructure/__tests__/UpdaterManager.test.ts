@@ -469,10 +469,10 @@ describe('UpdaterManager', () => {
       registeredEvents.get('update-available')?.({ version });
     };
 
-    it('suppresses re-broadcast of updateDownloaded for the install-later version', () => {
+    it('suppresses re-broadcast of updateReady for the install-later version', () => {
       fireDownloaded('2.2.6');
       expect(mockBroadcast).toHaveBeenCalledWith(
-        'updateDownloaded',
+        'updateReady',
         expect.objectContaining({ version: '2.2.6' }),
       );
 
@@ -481,7 +481,7 @@ describe('UpdaterManager', () => {
       mockBroadcast.mockClear();
       fireDownloaded('2.2.6');
 
-      expect(mockBroadcast).not.toHaveBeenCalledWith('updateDownloaded', expect.anything());
+      expect(mockBroadcast).not.toHaveBeenCalledWith('updateReady', expect.anything());
       expect(mockBroadcast).toHaveBeenCalledWith(
         'updaterStateChanged',
         expect.objectContaining({ stage: 'downloaded' }),
@@ -508,7 +508,7 @@ describe('UpdaterManager', () => {
       fireDownloaded('2.2.7');
 
       expect(mockBroadcast).toHaveBeenCalledWith(
-        'updateDownloaded',
+        'updateReady',
         expect.objectContaining({ version: '2.2.7' }),
       );
     });
@@ -521,7 +521,7 @@ describe('UpdaterManager', () => {
       fireDownloaded('2.2.5');
 
       expect(mockBroadcast).not.toHaveBeenCalledWith(
-        'updateDownloaded',
+        'updateReady',
         expect.objectContaining({ version: '2.2.5' }),
       );
     });
@@ -536,7 +536,7 @@ describe('UpdaterManager', () => {
       fireDownloaded('2.2.6');
 
       expect(mockBroadcast).toHaveBeenCalledWith(
-        'updateDownloaded',
+        'updateReady',
         expect.objectContaining({ version: '2.2.6' }),
       );
     });
@@ -630,14 +630,14 @@ describe('UpdaterManager', () => {
     });
 
     describe('update-downloaded', () => {
-      it('should broadcast updateDownloaded', async () => {
+      it('should broadcast updateReady with the app update info', async () => {
         await updaterManager.initialize();
 
         const info = { version: '2.0.0' };
         const handler = registeredEvents.get('update-downloaded');
         handler?.(info);
 
-        expect(mockBroadcast).toHaveBeenCalledWith('updateDownloaded', info);
+        expect(mockBroadcast).toHaveBeenCalledWith('updateReady', { ...info, kind: 'app' });
       });
     });
 
@@ -701,7 +701,7 @@ describe('UpdaterManager', () => {
       updaterManager.simulateUpdateDownloaded();
 
       expect(mockBroadcast).not.toHaveBeenCalledWith(
-        'updateDownloaded',
+        'updateReady',
         expect.objectContaining({ version: '1.0.0' }),
       );
     });
