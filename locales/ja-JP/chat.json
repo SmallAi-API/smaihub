@@ -199,6 +199,7 @@
   "minimap.previousMessage": "前のメッセージ",
   "minimap.senderAssistant": "アシスタント",
   "minimap.senderUser": "あなた",
+  "modelSelector.model": "モデル",
   "newAgent": "アシスタントを作成",
   "newGroupChat": "グループを作成",
   "newPage": "ドキュメントを作成",

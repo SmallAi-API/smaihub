@@ -199,6 +199,7 @@
   "minimap.previousMessage": "이전 메시지",
   "minimap.senderAssistant": "도우미",
   "minimap.senderUser": "당신",
+  "modelSelector.model": "모델",
   "newAgent": "도우미 만들기",
   "newGroupChat": "그룹 만들기",
   "newPage": "문서 만들기",

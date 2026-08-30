@@ -199,6 +199,7 @@
   "minimap.previousMessage": "Mensaje anterior",
   "minimap.senderAssistant": "Agente",
   "minimap.senderUser": "Tú",
+  "modelSelector.model": "Modelo",
   "newAgent": "Crear agente",
   "newGroupChat": "Crear grupo",
   "newPage": "Crear página",
