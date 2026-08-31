@@ -31,7 +31,10 @@ interface VisibleNode {
 const LibraryHierarchy = memo(() => {
   const { t } = useTranslation('file');
   const { currentFolderSlug } = useFolderPath();
-  const [libraryId] = useResourceManagerStore((s) => [s.libraryId, s.currentViewItemId]);
+  const [libraryId, currentViewItemId] = useResourceManagerStore((s) => [
+    s.libraryId,
+    s.currentViewItemId,
+  ]);
 
   const children = useTreeStore((s) => s.children);
   const expanded = useTreeStore((s) => s.expanded);
