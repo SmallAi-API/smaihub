@@ -3,6 +3,11 @@ import urlJoin from 'url-join';
 
 import { appEnv } from '@/envs/app';
 
+const cloudAppOrigins = ['https://www.smallai.asia'];
+const appUrl = appEnv.APP_URL!;
+const desktopAppOrigins = cloudAppOrigins.includes(new URL(appUrl).origin)
+  ? cloudAppOrigins
+  : [appUrl];
 const marketBaseUrl = new URL(appEnv.MARKET_BASE_URL ?? 'https://market.lobehub.com').origin;
 
 /**
@@ -19,15 +24,14 @@ export const defaultClients: ClientMetadata[] = [
     logo_uri: 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com/logo/smai.ai.png',
 
     post_logout_redirect_uris: [
-      // 动态构建 Web 页面回调 URL
-      urlJoin(appEnv.APP_URL!, '/oauth/logout'),
+      // Keep the legacy subdomain working while Cloud moves to the apex domain.
+      ...desktopAppOrigins.map((origin) => urlJoin(origin, '/oauth/logout')),
       'http://localhost:3210/oauth/logout',
     ],
 
     // 桌面端授权回调 - 改为 Web 页面路径
     redirect_uris: [
-      // 动态构建 Web 页面回调 URL
-      urlJoin(appEnv.APP_URL!, '/oidc/callback/desktop'),
+      ...desktopAppOrigins.map((origin) => urlJoin(origin, '/oidc/callback/desktop')),
       'http://localhost:3210/oidc/callback/desktop',
     ],
 
