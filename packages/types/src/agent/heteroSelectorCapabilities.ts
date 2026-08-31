@@ -376,6 +376,9 @@ export const HETERO_SELECTOR_CAPABILITIES = {
       source: 'catalog',
     },
   },
+  'droid': {
+    model: { encodings: [], resolve: resolvePersistedModel, source: 'catalog' },
+  },
   'grok-build': {
     effort: {
       encodings: [{ flags: GROK_BUILD_REASONING_EFFORT_FLAGS, kind: 'flag' }],
