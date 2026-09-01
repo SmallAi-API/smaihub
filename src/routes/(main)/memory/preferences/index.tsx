@@ -2,9 +2,10 @@ import { Flexbox, Icon } from '@lobehub/ui';
 import { Tag } from '@lobehub/ui/base-ui';
 import { BrainCircuitIcon } from 'lucide-react';
 import { type FC } from 'react';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { MemoryListBoundary, useResetMemoryList } from '@/features/Memory';
 import NavHeader from '@/features/NavHeader';
 import WideScreenContainer from '@/features/WideScreenContainer';
 import WideScreenButton from '@/features/WideScreenContainer/WideScreenButton';
@@ -34,6 +35,7 @@ const PreferencesArea = memo(() => {
   const preferencesPage = useUserMemoryStore((s) => s.preferencesPage);
   const preferencesInit = useUserMemoryStore((s) => s.preferencesInit);
   const preferencesTotal = useUserMemoryStore((s) => s.preferencesTotal);
+  const preferencesSearchError = useUserMemoryStore((s) => s.preferencesSearchError);
   const preferencesSearchLoading = useUserMemoryStore((s) => s.preferencesSearchLoading);
   const useFetchPreferences = useUserMemoryStore((s) => s.useFetchPreferences);
   const resetPreferencesList = useUserMemoryStore((s) => s.resetPreferencesList);
@@ -46,15 +48,15 @@ const PreferencesArea = memo(() => {
   // 转换 sort：capturedAt 转为 undefined（后端默认）
   const apiSort = sortValue === 'capturedAt' ? undefined : (sortValue as 'scorePriority');
 
-  // 当搜索或排序变化时重置列表
-  useEffect(() => {
-    if (!apiSort) return;
-    const sort = viewMode === 'grid' ? apiSort : undefined;
-    resetPreferencesList({ q: searchValue || undefined, sort });
-  }, [searchValue, apiSort, viewMode]);
+  useResetMemoryList({
+    query: searchValue,
+    resetList: resetPreferencesList,
+    sort: apiSort,
+    viewMode,
+  });
 
-  // 调用 SWR hook 获取数据
-  const { isLoading } = useFetchPreferences({
+  // Call SWR hook to fetch data
+  const { data, isLoading, mutate } = useFetchPreferences({
     page: preferencesPage,
     pageSize: 12,
     q: searchValue || undefined,
@@ -75,9 +77,6 @@ const PreferencesArea = memo(() => {
     },
     [setSortValueRaw],
   );
-
-  // 显示 loading：搜索/重置中 或 首次加载中
-  const showLoading = preferencesSearchLoading || !preferencesInit;
 
   return (
     <Flexbox flex={1} height={'100%'}>
@@ -108,11 +107,17 @@ const PreferencesArea = memo(() => {
             onSearch={handleSearch}
             onSortChange={viewMode === 'grid' ? handleSortChange : undefined}
           />
-          {showLoading ? (
-            <Loading viewMode={viewMode} />
-          ) : (
+          <MemoryListBoundary
+            data={data}
+            error={preferencesSearchError}
+            isInitialized={preferencesInit}
+            isLoading={isLoading}
+            isResetting={preferencesSearchLoading}
+            loading={<Loading viewMode={viewMode} />}
+            onRetry={() => void mutate()}
+          >
             <List isLoading={isLoading} searchValue={searchValue} viewMode={viewMode} />
-          )}
+          </MemoryListBoundary>
         </WideScreenContainer>
       </Flexbox>
     </Flexbox>

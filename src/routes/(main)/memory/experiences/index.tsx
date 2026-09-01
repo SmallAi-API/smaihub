@@ -2,9 +2,10 @@ import { Flexbox, Icon } from '@lobehub/ui';
 import { Tag } from '@lobehub/ui/base-ui';
 import { BrainCircuitIcon } from 'lucide-react';
 import { type FC } from 'react';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { MemoryListBoundary, useResetMemoryList } from '@/features/Memory';
 import NavHeader from '@/features/NavHeader';
 import WideScreenContainer from '@/features/WideScreenContainer';
 import WideScreenButton from '@/features/WideScreenContainer/WideScreenButton';
@@ -34,6 +35,7 @@ const ExperiencesArea = memo(() => {
   const experiencesPage = useUserMemoryStore((s) => s.experiencesPage);
   const experiencesInit = useUserMemoryStore((s) => s.experiencesInit);
   const experiencesTotal = useUserMemoryStore((s) => s.experiencesTotal);
+  const experiencesSearchError = useUserMemoryStore((s) => s.experiencesSearchError);
   const experiencesSearchLoading = useUserMemoryStore((s) => s.experiencesSearchLoading);
   const useFetchExperiences = useUserMemoryStore((s) => s.useFetchExperiences);
   const resetExperiencesList = useUserMemoryStore((s) => s.resetExperiencesList);
@@ -46,15 +48,15 @@ const ExperiencesArea = memo(() => {
   // 转换 sort：capturedAt 转为 undefined（后端默认）
   const apiSort = sortValue === 'capturedAt' ? undefined : (sortValue as 'scoreConfidence');
 
-  // 当搜索或排序变化时重置列表
-  useEffect(() => {
-    if (!apiSort) return;
-    const sort = viewMode === 'grid' ? apiSort : undefined;
-    resetExperiencesList({ q: searchValue || undefined, sort });
-  }, [searchValue, apiSort, viewMode]);
+  useResetMemoryList({
+    query: searchValue,
+    resetList: resetExperiencesList,
+    sort: apiSort,
+    viewMode,
+  });
 
-  // 调用 SWR hook 获取数据
-  const { isLoading } = useFetchExperiences({
+  // Call SWR hook to fetch data
+  const { data, isLoading, mutate } = useFetchExperiences({
     page: experiencesPage,
     pageSize: 12,
     q: searchValue || undefined,
@@ -75,9 +77,6 @@ const ExperiencesArea = memo(() => {
     },
     [setSortValueRaw],
   );
-
-  // 显示 loading：搜索/重置中 或 首次加载中
-  const showLoading = experiencesSearchLoading || !experiencesInit;
 
   return (
     <Flexbox flex={1} height={'100%'}>
@@ -108,11 +107,17 @@ const ExperiencesArea = memo(() => {
             onSearch={handleSearch}
             onSortChange={viewMode === 'grid' ? handleSortChange : undefined}
           />
-          {showLoading ? (
-            <Loading viewMode={viewMode} />
-          ) : (
+          <MemoryListBoundary
+            data={data}
+            error={experiencesSearchError}
+            isInitialized={experiencesInit}
+            isLoading={isLoading}
+            isResetting={experiencesSearchLoading}
+            loading={<Loading viewMode={viewMode} />}
+            onRetry={() => void mutate()}
+          >
             <List isLoading={isLoading} searchValue={searchValue} viewMode={viewMode} />
-          )}
+          </MemoryListBoundary>
         </WideScreenContainer>
       </Flexbox>
     </Flexbox>
