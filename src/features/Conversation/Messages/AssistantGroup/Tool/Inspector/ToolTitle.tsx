@@ -99,14 +99,8 @@ const ToolTitle = memo<ToolTitleProps>(
     }, [params.length, remainingCount, t]);
 
     return (
-      <div
-        className={cx(
-          styles.root,
-          isLoading && shinyTextStyles.shinyText,
-          isAborted && styles.aborted,
-        )}
-      >
-        <span>
+      <div className={cx(styles.root, isAborted && styles.aborted)}>
+        <span className={cx(isLoading && shinyTextStyles.shinyText)}>
           {isBuiltinPlugin
             ? t(`builtins.${identifier}.title`, { defaultValue: identifier })
             : pluginTitle}
