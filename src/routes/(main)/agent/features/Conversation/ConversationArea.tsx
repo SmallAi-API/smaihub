@@ -14,6 +14,7 @@ import {
 } from '@/features/AgentTransferMigration';
 import ChatMiniMap from '@/features/ChatMiniMap';
 import { ChatList, ConversationProvider } from '@/features/Conversation';
+import { useMessageDeepLink } from '@/features/Conversation/ChatList/hooks/useMessageDeepLink';
 import ComposerDraftReceiver from '@/features/Conversation/ComposerDraftReceiver';
 import { useChatFollowUp } from '@/features/Conversation/hooks/useChatFollowUp';
 import {
@@ -65,10 +66,11 @@ const styles = createStaticStyles(({ css }) => ({
 const Conversation = memo(() => {
   const { t } = useTranslation('chat');
   const context = useAgentContext();
+  const messageDeepLink = useMessageDeepLink();
 
   // Get raw dbMessages from ChatStore for this context
   // ConversationStore will parse them internally to generate displayMessages
-  const chatKey = useMemo(() => messageMapKey(context), [context]);
+  const chatKey = messageMapKey(context);
   const replaceMessages = useChatStore((s) => s.replaceMessages);
   const messages = useChatStore((s) => s.dbMessagesMap[chatKey]);
 
@@ -154,6 +156,7 @@ const Conversation = memo(() => {
           ) : (
             <ChatList
               headerSlot={<div aria-hidden className={styles.floatingHeaderSpacer} />}
+              messageDeepLink={messageDeepLink}
               welcome={<AgentHome />}
               footerSlot={
                 isSubagentThread ? (
