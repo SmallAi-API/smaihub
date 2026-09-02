@@ -198,6 +198,15 @@ export const documentCommentKeys = {
   ),
 };
 
+// ---- document like ------------------------------------------------------
+export const documentLikeKeys = {
+  summary: def('documentLike:summary', (workspaceId: string | null, documentId: string) => [
+    'documentLike:summary',
+    workspaceId ?? '',
+    documentId,
+  ]),
+};
+
 export const isDocumentCommentKeyForEvent = (
   key: unknown,
   event: { documentId: string; rootCommentId?: string; workspaceId: string },
@@ -1419,6 +1428,7 @@ export const swrKeys = {
   topic: topicKeys,
   topicComment: topicCommentKeys,
   documentComment: documentCommentKeys,
+  documentLike: documentLikeKeys,
   topicAction: topicActionKeys,
   user: userKeys,
   userMemory: userMemoryKeys,
