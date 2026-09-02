@@ -3,7 +3,7 @@ import debug from 'debug';
 import { type NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import { appEnv } from '@/envs/app';
+import { resolveAppOrigin } from '@/libs/oidc-provider/config';
 import { OIDCService } from '@/server/services/oidc';
 
 const log = debug('lobe-oidc:consent');
@@ -115,23 +115,14 @@ export async function POST(request: NextRequest) {
     const internalRedirectUrlString = await oidcService.getInteractionResult(uid, result);
     log('OIDC Provider internal redirect URL string: %s', internalRedirectUrlString);
 
-    // 直接使用 APP_URL 作为基础
-    if (appEnv.APP_URL) {
-      const baseUrl = new URL(appEnv.APP_URL);
-      const internalUrl = new URL(internalRedirectUrlString);
-      baseUrl.pathname = internalUrl.pathname;
-      baseUrl.search = internalUrl.search;
-      baseUrl.hash = internalUrl.hash;
-      const finalRedirectUrl = baseUrl;
-      log('Using APP_URL as base for redirect: %s', finalRedirectUrl.toString());
-      return NextResponse.redirect(finalRedirectUrl, {
-        status: 303,
-      });
-    }
+    const internalUrl = new URL(internalRedirectUrlString);
+    const finalRedirectUrl = new URL(resolveAppOrigin(request.headers));
+    finalRedirectUrl.pathname = internalUrl.pathname;
+    finalRedirectUrl.search = internalUrl.search;
+    finalRedirectUrl.hash = internalUrl.hash;
 
-    // 后备方案：使用原始内部URL
-    log('Using internal redirect URL directly: %s', internalRedirectUrlString);
-    return NextResponse.redirect(new URL(internalRedirectUrlString), {
+    log('Redirecting to: %s', finalRedirectUrl.toString());
+    return NextResponse.redirect(finalRedirectUrl, {
       status: 303,
     });
   } catch (error) {

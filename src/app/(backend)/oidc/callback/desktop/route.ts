@@ -4,33 +4,17 @@ import { after, NextResponse } from 'next/server';
 
 import { OAuthHandoffModel } from '@/database/models/oauthHandoff';
 import { serverDB } from '@/database/server';
-import { appEnv } from '@/envs/app';
+import { resolveAppOrigin } from '@/libs/oidc-provider/config';
 
 const log = debug('lobe-oidc:callback:desktop');
 
 const errorPathname = '/oauth/callback/error';
 
-/**
- * 安全地构建重定向URL - 直接使用 APP_URL 作为目标
- */
 const buildRedirectUrl = (req: NextRequest, pathname: string): URL => {
-  // 使用统一的环境变量管理
-  if (appEnv.APP_URL) {
-    try {
-      const baseUrl = new URL(appEnv.APP_URL);
-      baseUrl.pathname = pathname;
-      log('Using APP_URL for redirect: %s', baseUrl.toString());
-      return baseUrl;
-    } catch (error) {
-      log('Error parsing APP_URL, using fallback: %O', error);
-    }
-  }
-
-  // 后备方案：使用 req.nextUrl
-  log('Warning: APP_URL not configured, using req.nextUrl as fallback');
-  const fallbackUrl = req.nextUrl.clone();
-  fallbackUrl.pathname = pathname;
-  return fallbackUrl;
+  const url = new URL(resolveAppOrigin(req.headers));
+  url.pathname = pathname;
+  log('Redirect target: %s', url.toString());
+  return url;
 };
 
 export const GET = async (req: NextRequest) => {
