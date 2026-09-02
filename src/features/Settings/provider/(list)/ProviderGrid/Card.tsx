@@ -1,5 +1,5 @@
-import { Flexbox, Skeleton } from '@lobehub/ui';
-import { Avatar, Text } from '@lobehub/ui/base-ui';
+import { Flexbox } from '@lobehub/ui';
+import { Avatar, Skeleton, Text } from '@lobehub/ui/base-ui';
 import { Divider } from 'antd';
 import { cx } from 'antd-style';
 import { memo } from 'react';
@@ -28,7 +28,7 @@ const ProviderCard = memo<ProviderCardProps>(
           gap={24}
           padding={16}
         >
-          <Skeleton active />
+          <Skeleton />
         </Flexbox>
       );
 

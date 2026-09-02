@@ -1,7 +1,6 @@
 'use client';
 
-import { Skeleton } from '@lobehub/ui';
-import { Avatar, Button } from '@lobehub/ui/base-ui';
+import { Avatar, Button, Skeleton } from '@lobehub/ui/base-ui';
 import { UserCircleIcon } from 'lucide-react';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -92,7 +91,7 @@ const UserAvatar = memo<UserAvatarProps>(({ avatarOverride }) => {
   }, [isWorkspaceScope, navigate, userProfile?.userName, userProfile?.namespace]);
 
   if (isLoading) {
-    return <Skeleton.Avatar active shape={'square'} size={28} style={{ borderRadius: 6 }} />;
+    return <Skeleton.Avatar shape={'square'} size={28} style={{ borderRadius: 6 }} />;
   }
 
   // 如果启用了 trustedClient，不显示"成为创作者"按钮，直接显示头像
