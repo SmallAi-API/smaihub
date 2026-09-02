@@ -485,9 +485,10 @@ ask() {
 # File list
 SUB_DIR="docker-compose/deploy"
 FILES=(
-  "$SUB_DIR/docker-compose.yml"
-  "$SUB_DIR/searxng-settings.yml"
-  "$SUB_DIR/bucket.config.json"
+    "$SUB_DIR/docker-compose.yml"
+    "$SUB_DIR/searxng-settings.yml"
+    "$SUB_DIR/bucket.config.json"
+    "$SUB_DIR/elasticsearch/Dockerfile"
 )
 ENV_EXAMPLES=(
   "$SUB_DIR/.env.zh-CN.example"
@@ -516,22 +517,25 @@ if [ -z "$LANGUAGE" ]; then
   esac
 fi
 
-section_download_files() {
-  # Download files asynchronously
-  if ! command -v wget &> /dev/null; then
-    echo "wget" $(show_message "tips_no_executable")
-    exit 1
-  fi
-
-  download_file "$SOURCE_URL/${FILES[0]}" "docker-compose.yml"
-  download_file "$SOURCE_URL/${FILES[1]}" "searxng-settings.yml"
-  download_file "$SOURCE_URL/${FILES[2]}" "bucket.config.json"
-  # Download .env.example with the specified language
-  if [ "$LANGUAGE" = "zh_CN" ]; then
-    download_file "$SOURCE_URL/${ENV_EXAMPLES[0]}" ".env"
-  else
-    download_file "$SOURCE_URL/${ENV_EXAMPLES[1]}" ".env"
-  fi
+section_download_files(){
+    # Download files asynchronously
+    if ! command -v wget &> /dev/null ; then
+        echo "wget" $(show_message "tips_no_executable")
+        exit 1
+    fi
+    
+    download_file "$SOURCE_URL/${FILES[0]}" "docker-compose.yml"
+    download_file "$SOURCE_URL/${FILES[1]}" "searxng-settings.yml"
+    download_file "$SOURCE_URL/${FILES[2]}" "bucket.config.json"
+    # Build context of the optional Elasticsearch service (only built when its profile is enabled)
+    mkdir -p elasticsearch
+    download_file "$SOURCE_URL/${FILES[3]}" "elasticsearch/Dockerfile"
+    # Download .env.example with the specified language
+    if [ "$LANGUAGE" = "zh_CN" ]; then
+        download_file "$SOURCE_URL/${ENV_EXAMPLES[0]}" ".env"
+    else
+        download_file "$SOURCE_URL/${ENV_EXAMPLES[1]}" ".env"
+    fi
 }
 # If the folder `data` or `s3_data` exists, warn the user
 if [ -d "data" ] || [ -d "s3_data" ]; then
@@ -551,59 +555,62 @@ section_configurate_host() {
     return 0
   fi
 
-  # Configurate protocol for domain
-  if [[ "$DEPLOY_MODE" == "0" ]]; then
-    # Ask if enable https
-    echo $(show_message "ask_protocol")
-    ask "(y/n)" "y"
-    if [[ "$ask_result" == "y" ]]; then
-      PROTOCOL="https"
-      # Replace all http with https
-      sed "${SED_INPLACE_ARGS[@]}" "s#http://#https://#" .env
+    # Configurate protocol for domain
+    if [[ "$DEPLOY_MODE" == "0" ]]; then
+        # Ask if enable https
+        echo $(show_message "ask_protocol")
+        ask "(y/n)" "y"
+        if [[ "$ask_result" == "y" ]]; then
+            PROTOCOL="https"
+            # Replace http with https on variable assignments only (commented ones
+            # included), so explanatory comments keep their wording, and skip the
+            # in-network Elasticsearch endpoint, which is plain HTTP by design.
+            sed "${SED_INPLACE_ARGS[@]}" '/^#\{0,1\} \{0,1\}[A-Za-z0-9_]*=/{/ES_URL=/!s|http://|https://|;}' .env
+        fi
     fi
-  fi
-
-  # Check if sed is installed
-  if ! command -v sed "${SED_INPLACE_ARGS[@]}" &> /dev/null; then
-    echo "sed" $(show_message "tips_no_executable")
-    exit 1
-  fi
-
-  # If user not specify host, try to get the server ip
-  if [ -z "$HOST" ]; then
-    HOST=$(hostname -I | awk '{print $1}')
-    # If the host is a private ip and the deploy mode is port mode
-    if [[ "$DEPLOY_MODE" == "1" ]] && ([[ "$HOST" == "192.168."* ]] || [[ "$HOST" == "172."* ]] || [[ "$HOST" == "10."* ]]); then
-      echo $(show_message "tips_private_ip_detected")
+    
+    # Check if sed is installed
+    if ! command -v sed "${SED_INPLACE_ARGS[@]}" &> /dev/null ; then
+        echo "sed" $(show_message "tips_no_executable")
+        exit 1
     fi
-  fi
-
-  case $DEPLOY_MODE in
-    0)
-      DEPLOY_MODE="domain"
-      echo "LobeHub" $(show_message "ask_domain" "example.com")
-      ask "(example.com)"
-      LOBE_HOST="$ask_result"
-      # If user use domain mode, ask for the domain of RustFS
-      echo "RustFS S3 API" $(show_message "ask_domain" "s3.example.com")
-      ask "(s3.example.com)"
-      RUSTFS_HOST="$ask_result"
-      ;;
-    1)
-      DEPLOY_MODE="ip"
-      ask $(printf "%s%s" "LobeHub" $(show_message "ask_host")) "$HOST" $(printf "%s" $(show_message "tips_auto_detected"))
-      LOBE_HOST="$ask_result"
-      # If user use ip mode, use ask_result as the host
-      HOST="$ask_result"
-      # If user use ip mode, append the port to the host
-      LOBE_HOST="${HOST}:3210"
-      RUSTFS_HOST="${HOST}:9000"
-      ;;
-    *)
-      echo "Invalid deploy mode: $ask_result"
-      exit 1
-      ;;
-  esac
+    
+    # If user not specify host, try to get the server ip
+    if [ -z "$HOST" ]; then
+        HOST=$(hostname -I | awk '{print $1}')
+        # If the host is a private ip and the deploy mode is port mode
+        if [[ "$DEPLOY_MODE" == "1" ]] && ([[ "$HOST" == "192.168."* ]] || [[ "$HOST" == "172."* ]] || [[ "$HOST" == "10."* ]]); then
+            echo $(show_message "tips_private_ip_detected")
+        fi
+    fi
+    
+   
+    case $DEPLOY_MODE in
+        0)
+            DEPLOY_MODE="domain"
+            echo "LobeHub" $(show_message "ask_domain" "example.com")
+            ask "(example.com)"
+            LOBE_HOST="$ask_result"
+            # If user use domain mode, ask for the domain of RustFS
+            echo "RustFS S3 API" $(show_message "ask_domain" "s3.example.com")
+            ask "(s3.example.com)"
+            RUSTFS_HOST="$ask_result"
+        ;;
+        1)
+            DEPLOY_MODE="ip"
+            ask $(printf "%s%s" "LobeHub" $(show_message "ask_host")) "$HOST" $(printf "%s" $(show_message "tips_auto_detected"))
+            LOBE_HOST="$ask_result"
+            # If user use ip mode, use ask_result as the host
+            HOST="$ask_result"
+            # If user use ip mode, append the port to the host
+            LOBE_HOST="${HOST}:3210"
+            RUSTFS_HOST="${HOST}:9000"
+        ;;
+        *)
+            echo "Invalid deploy mode: $ask_result"
+            exit 1
+        ;;
+    esac
 
   # lobe host
   sed "${SED_INPLACE_ARGS[@]}" "s#^APP_URL=.*#APP_URL=$PROTOCOL://$LOBE_HOST#" .env
