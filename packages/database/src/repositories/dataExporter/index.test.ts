@@ -10,9 +10,11 @@ import {
   globalFiles,
   knowledgeBaseFiles,
   knowledgeBases,
+  messagePlugins,
   messages,
   sessionGroups,
   sessions,
+  threads,
   topics,
   users,
   userSettings,
@@ -277,7 +279,7 @@ describe('DataExporterRepos', () => {
       expect(result.sessions).toHaveLength(1);
     });
 
-   it('should skip relation tables when source tables have no data', async () => {
+    it('should skip relation tables when source tables have no data', async () => {
       // Delete agents and sessions, so agentsToSessions source tables have no data
       await db.delete(agentsToSessions);
       await db.delete(agents);
@@ -285,10 +287,9 @@ describe('DataExporterRepos', () => {
       await db.delete(topics);
       await db.delete(sessions);
 
-    
       const dataExporter = new DataExporterRepos(db, userId);
       const result = await dataExporter.export();
-       // agentsToSessions should be empty because both source tables have no data
+      // agentsToSessions should be empty because both source tables have no data
       expect(result).toHaveProperty('agentsToSessions');
       expect(result.agentsToSessions).toEqual([]);
     });
@@ -306,7 +307,7 @@ describe('DataExporterRepos', () => {
       // userSettings should return empty array due to error handling
       expect(result).toHaveProperty('userSettings');
       expect(result.userSettings).toEqual([]);
-  // Other tables should still export successfully
+      // Other tables should still export successfully
       expect(result.sessions).toHaveLength(1);
     });
 
@@ -326,7 +327,68 @@ describe('DataExporterRepos', () => {
 
       // Base tables should still export successfully
       expect(result.sessions).toHaveLength(1);
+    });
+
+    it('should exclude agent-share visitor rows from the creator export', async () => {
+      // Agent-share visitor conversations are persisted under the creator's
+      // userId with a non-null topics.senderId, so only the senderId marks them
+      // as third-party data.
+      const visitorUserId = 'share-visitor-user-id';
+
+      await db.transaction(async (trx) => {
+        await trx.insert(users).values({
+          email: 'visitor@example.com',
+          id: visitorUserId,
+          username: 'visitor',
+        });
+        await trx.insert(topics).values({
+          id: 'visitor-topic-id',
+          senderId: visitorUserId,
+          sessionId: testIds.sessionId,
+          title: 'Visitor Topic',
+          userId,
+        });
+        await trx.insert(messages).values({
+          content: 'Visitor message',
+          id: 'visitor-message-id',
+          role: 'user',
+          sessionId: testIds.sessionId,
+          topicId: 'visitor-topic-id',
+          userId,
+        });
+        await trx.insert(messagePlugins).values({
+          id: 'visitor-message-id',
+          identifier: 'visitor-plugin',
+          userId,
+        });
+        await trx.insert(threads).values({
+          id: 'visitor-thread-id',
+          title: 'Visitor Thread',
+          topicId: 'visitor-topic-id',
+          type: 'continuation',
+          userId,
+        });
+        await trx.insert(threads).values({
+          id: 'own-thread-id',
+          title: 'Own Thread',
+          topicId: testIds.topicId,
+          type: 'continuation',
+          userId,
+        });
+        await trx.insert(messagePlugins).values({
+          id: testIds.messageId,
+          identifier: 'own-plugin',
+          userId,
+        });
       });
+
+      const result = await new DataExporterRepos(db, userId).export();
+
+      expect(result.topics.map((topic) => topic.id)).toEqual([testIds.topicId]);
+      expect(result.messages.map((message) => message.id)).toEqual([testIds.messageId]);
+      expect(result.threads.map((thread) => thread.id)).toEqual(['own-thread-id']);
+      expect(result.messagePlugins.map((plugin) => plugin.id)).toEqual([testIds.messageId]);
+    });
 
     it('should export data for a different user', async () => {
       // 创建另一个用户
