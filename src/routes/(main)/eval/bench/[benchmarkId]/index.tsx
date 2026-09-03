@@ -1,7 +1,8 @@
 'use client';
 
 import { Flexbox } from '@lobehub/ui';
-import { Card, Skeleton } from 'antd';
+import { Skeleton } from '@lobehub/ui/base-ui';
+import { Card } from 'antd';
 import { createStaticStyles, cssVar } from 'antd-style';
 import {
   Activity,
@@ -123,8 +124,8 @@ const BenchmarkDetail = memo(() => {
               style={{ borderRadius: cssVar.borderRadiusLG }}
             />
             <Flexbox flex={1} gap={8}>
-              <Skeleton.Input style={{ height: 24, width: 200 }} />
-              <Skeleton.Input size="small" style={{ height: 14, width: 320 }} />
+              <Skeleton height={24} width={200} />
+              <Skeleton height={14} width={320} />
             </Flexbox>
           </Flexbox>
         </Flexbox>
@@ -149,11 +150,11 @@ const BenchmarkDetail = memo(() => {
                     size={36}
                     style={{ borderRadius: cssVar.borderRadius }}
                   />
-                  <Skeleton.Input size="small" style={{ height: 14, width: 80 }} />
+                  <Skeleton height={14} width={80} />
                 </Flexbox>
                 <Flexbox gap={4}>
-                  <Skeleton.Input style={{ height: 24, width: 60 }} />
-                  <Skeleton.Input size="small" style={{ height: 12, width: 100 }} />
+                  <Skeleton height={24} width={60} />
+                  <Skeleton height={12} width={100} />
                 </Flexbox>
               </Flexbox>
             </Card>
@@ -161,10 +162,10 @@ const BenchmarkDetail = memo(() => {
         </Flexbox>
 
         {/* Section skeletons */}
-        <Skeleton.Input style={{ height: 16, width: 80 }} />
-        <Skeleton.Input style={{ height: 64, width: '100%' }} />
-        <Skeleton.Input style={{ height: 16, width: 80 }} />
-        <Skeleton.Input style={{ height: 64, width: '100%' }} />
+        <Skeleton height={16} width={80} />
+        <Skeleton height={64} width={'100%'} />
+        <Skeleton height={16} width={80} />
+        <Skeleton height={64} width={'100%'} />
       </Flexbox>
     );
 
