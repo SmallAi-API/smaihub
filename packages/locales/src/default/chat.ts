@@ -2038,6 +2038,7 @@ export default {
   'taskList.subtaskProgress.loadFailed':
     "Couldn't load sub-tasks. Click the progress badge to retry.",
   'taskList.title': 'Tasks',
+  'taskList.truncated': 'Showing the first {{loaded}} of {{total}} tasks',
   'taskList.unassigned': 'Unassigned',
   'taskList.unassignedHint': 'smai.ai will run this task when no assignee is set',
   'taskList.unassignedAgentHint': 'Lobe AI will run this task when no agent is selected',
