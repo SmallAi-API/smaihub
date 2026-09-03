@@ -950,17 +950,21 @@ const smaiChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 1_000_000,
     description:
-      "Claude Fable 5 is Anthropic's most capable model — a new tier above Opus for the most demanding reasoning and long-horizon agentic work.",
+      "Claude Fable 5.1 is Anthropic's most capable generally available model. It outperforms Fable 5 on long-running coding and research at the same base price, with cache reads at a quarter of the cost.",
     displayName: 'Claude Fable 5.1',
     enabled: true,
     family: 'claude-mythos',
-    generation: 'mythos-5',
-    id: 'claude-fable-5.1',
+    generation: 'mythos-5.1',
+    id: 'claude-fable-5-1',
+    knowledgeCutoff: '2026-06',
     maxOutput: 128_000,
     releasedAt: '2026-09-03',
+    // Adaptive thinking is always on and cannot be disabled (400 on `thinking.type: disabled`),
+    // so the `enableAdaptiveThinking` toggle from Fable 5 is intentionally omitted.
+    // https://platform.claude.com/docs/en/models/fable-5-1/migration-guide
     settings: {
       disabledParams: ['temperature', 'top_p'],
-      extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
+      extendParams: ['disableContextCaching', 'opus47Effort'],
       searchImpl: 'params',
     },
     type: 'chat',
