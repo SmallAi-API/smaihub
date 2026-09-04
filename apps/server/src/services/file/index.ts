@@ -67,8 +67,10 @@ export class FileService {
   /**
    * Get file content
    */
-  public async getFileContent(key: string): Promise<string> {
-    return this.impl.getFileContent(key);
+  public async getFileContent(key: string, byteLength?: number): Promise<string> {
+    return byteLength === undefined
+      ? this.impl.getFileContent(key)
+      : this.impl.getFileContent(key, byteLength);
   }
 
   /**
