@@ -21,6 +21,12 @@ export const NEW_IMAGE_MODEL_NAME = 'GPT Image 2';
 
 export const BUSINESS_HOME_NEW_MODELS = [
   {
+    model: NEW_GPT_MODEL,
+    provider: BUSINESS_CHAT_PROVIDER,
+    title: NEW_GPT_MODEL_NAME,
+    type: 'chat',
+  },
+  {
     model: NEW_CLAUDE_MODEL,
     provider: BUSINESS_CHAT_PROVIDER,
     title: NEW_CLAUDE_MODEL_NAME,
@@ -30,12 +36,6 @@ export const BUSINESS_HOME_NEW_MODELS = [
     model: NEW_GEMINI_MODEL,
     provider: BUSINESS_CHAT_PROVIDER,
     title: NEW_GEMINI_MODEL_NAME,
-    type: 'chat',
-  },
-  {
-    model: NEW_GPT_MODEL,
-    provider: BUSINESS_CHAT_PROVIDER,
-    title: NEW_GPT_MODEL_NAME,
     type: 'chat',
   },
   {
@@ -53,6 +53,12 @@ export const BUSINESS_HOME_NEW_MODELS = [
 
 export const OSS_HOME_NEW_MODELS = [
   {
+    model: NEW_GPT_MODEL,
+    provider: OSS_GPT_PROVIDER,
+    title: NEW_GPT_MODEL_NAME,
+    type: 'chat',
+  },
+  {
     model: NEW_CLAUDE_MODEL,
     provider: OSS_CLAUDE_PROVIDER,
     title: NEW_CLAUDE_MODEL_NAME,
@@ -62,12 +68,6 @@ export const OSS_HOME_NEW_MODELS = [
     model: NEW_GEMINI_MODEL,
     provider: OSS_GEMINI_PROVIDER,
     title: NEW_GEMINI_MODEL_NAME,
-    type: 'chat',
-  },
-  {
-    model: NEW_GPT_MODEL,
-    provider: OSS_GPT_PROVIDER,
-    title: NEW_GPT_MODEL_NAME,
     type: 'chat',
   },
   {
