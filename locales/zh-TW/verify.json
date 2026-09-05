@@ -207,6 +207,8 @@
   "acceptance.sharedNotice.reviewableDescription": "您可以瀏覽每個檢查及其證據，並代表您的工作區進行審查。",
   "acceptance.sharedNotice.title": "與您共享",
   "acceptance.sharedNotice.titleWithName": "由 {{name}} 共享",
+  "acceptance.shell.back": "返回",
+  "acceptance.shell.menu": "顯示交付",
   "acceptance.stats.failed": "{{count}} 失敗",
   "acceptance.stats.notExecuted": "{{count}} 未執行",
   "acceptance.stats.passed": "{{count}} 通過",

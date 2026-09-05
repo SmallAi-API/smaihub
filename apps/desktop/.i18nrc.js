@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-const { defineConfig } = require('@smaihub/i18n-cli');
+const { defineConfig } = require('@lobehub/i18n-cli');
 
 module.exports = defineConfig({
   entry: 'resources/locales/en',

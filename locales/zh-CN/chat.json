@@ -1776,6 +1776,7 @@
   "taskList.scheduled.title": "定时任务",
   "taskList.subtaskProgress.loadFailed": "无法加载子任务。点击进度徽章重试。",
   "taskList.title": "任务",
+  "taskList.truncated": "显示{{total}}个任务中的前{{loaded}}个",
   "taskList.unassigned": "未分配",
   "taskList.unassignedAgentHint": "当未选择代理人时，Lobe AI将执行此任务",
   "taskList.unassignedHint": "当没有设置受托人时，smai.ai 将执行此任务",
