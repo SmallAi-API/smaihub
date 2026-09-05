@@ -6,6 +6,7 @@ import { createStaticStyles, keyframes } from 'antd-style';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ProductLogo } from '@/components/Branding';
 import { isDesktop } from '@/const/version';
 import {
   getInnerCssVariables,
@@ -150,9 +151,7 @@ const AppShellSkeleton = memo<AppShellSkeletonProps>(({ id }) => {
           >
             <div className={styles.contentBrand}>
               <div className={styles.brand}>
-                <div className={styles.mark}>
-                  <LobeHub size={40} type={'text'} />
-                </div>
+                <ProductLogo size={56} />
                 {waiting && <LoadingHint />}
               </div>
             </div>
