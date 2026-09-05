@@ -206,6 +206,31 @@ const smaiChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 1_050_000,
     description:
+      "OpenAI's most intelligent and aligned model, state of the art on computer use and 3D work.",
+    displayName: 'GPT-6 Astra',
+    enabled: true,
+    family: 'gpt',
+    generation: 'gpt-6-astra',
+    id: 'gpt-6-astra',
+    knowledgeCutoff: '2026-09',
+    maxOutput: 128_000,
+    releasedAt: '2026-09-05',
+    settings: {
+      extendParams: ['reasoningMode', 'gpt6ReasoningEffort', 'textVerbosity'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_050_000,
+    description:
       "GPT-5.6 Sol is OpenAI's frontier model for complex reasoning, coding, and long-horizon agentic work. The gpt-5.6 alias routes to Sol.",
     displayName: 'GPT-5.6 Sol',
     enabled: true,
