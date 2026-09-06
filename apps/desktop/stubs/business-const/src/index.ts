@@ -7,6 +7,8 @@ export const DEFAULT_MODEL = 'gpt-5.6-terra';
 export const DEFAULT_ONBOARDING_MODEL = 'gpt-5.6-terra';
 export const DEFAULT_ONBOARDING_PROVIDER = 'smai';
 export const DEFAULT_PROVIDER = 'smai';
+export const DEFAULT_VERIFY_MODEL = 'gpt-5.6-terra';
+export const DEFAULT_VERIFY_PROVIDER = 'smai';
 export const ORG_NAME = 'smai.ai';
 // mirrored from packages/business/const — model-bank gates the LobeHub
 // provider entry on this flag; the OSS desktop build keeps it off
