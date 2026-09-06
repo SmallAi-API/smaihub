@@ -3,6 +3,7 @@ import { AsyncTaskStatus, AsyncTaskType } from '@lobechat/types';
 import { and, count, desc, eq, gte, ilike, inArray, lte, sum } from 'drizzle-orm';
 import { sha256 } from 'js-sha256';
 
+import { businessFileUploadCheck } from '@/business/server/lambda-routers/file';
 import type { PERMISSION_ACTIONS } from '@/const/rbac';
 import { ALL_SCOPE } from '@/const/rbac';
 import { AsyncTaskModel } from '@/database/models/asyncTask';
@@ -19,7 +20,7 @@ import {
   knowledgeBases,
   users,
 } from '@/database/schemas';
-import type { LobeChatDatabase } from '@/database/type';
+import type { LobeChatDatabase, Transaction } from '@/database/type';
 import type { S3 } from '@/server/modules/S3';
 import { FileS3 } from '@/server/modules/S3';
 import { DocumentService } from '@/server/services/document';
@@ -657,7 +658,41 @@ export class FileUploadService extends BaseService {
   }
 
   /**
-   * 文件上传
+   * This surface streams the whole payload through the request body rather than
+   * a pre-signed URL, so there is no reservation to hold: the size is known up
+   * front and the server owns the write. Check the quota directly instead, once
+   * per path that actually adds bytes. The transaction is what lets the business
+   * slot lock the owner row, so admission and the row it authorizes cannot
+   * interleave with a concurrent upload.
+   */
+  private async assertStorageQuota(
+    size: number,
+    url: string,
+    transaction?: Transaction,
+  ): Promise<void> {
+    try {
+      await businessFileUploadCheck({
+        actualSize: size,
+        inputSize: size,
+        transaction,
+        url,
+        userId: this.userId,
+        workspaceId: this.workspaceId,
+      });
+    } catch (error) {
+      // The business slot rejects with a tRPC FORBIDDEN. Without this mapping
+      // `handleServiceError` would wrap it as a generic business error and the
+      // caller would see a 500 for an over-quota upload.
+      if ((error as { code?: string })?.code !== 'FORBIDDEN') throw error;
+
+      throw this.createAuthorizationError(
+        error instanceof Error ? error.message : 'File storage is beyond the plan limit',
+      );
+    }
+  }
+
+  /**
+   * File upload
    */
   async uploadFile(file: File, options: PublicFileUploadRequest = {}): Promise<FileDetailResponse> {
     try {
@@ -697,7 +732,9 @@ export class FileUploadService extends BaseService {
           const existingUserFile = await this.findExistingUserFile(hash);
 
           if (existingUserFile) {
-            // 用户已有此文件记录，直接返回
+            // Re-requesting a record the caller already owns adds no bytes, so
+            // the quota gate below is deliberately skipped here.
+            // User already has this file record, return directly
             this.log('info', 'User already has this public file record', {
               fileId: existingUserFile.id,
               name: existingUserFile.name,
@@ -734,7 +771,12 @@ export class FileUploadService extends BaseService {
               userId: this.userId,
             };
 
-            const createResult = await this.fileModel.create(fileRecord, false); // 不插入全局表，因为已存在
+            // Skip inserting into global table since it already exists
+            const createResult = await this.db.transaction(async (tx) => {
+              await this.assertStorageQuota(file.size, existingFileCheck.url || '', tx);
+
+              return this.fileModel.create(fileRecord, false, tx);
+            });
 
             // 如果提供了 sessionId（支持 agentId 解析），创建文件和会话的关联关系
             if (resolvedSessionId) {
@@ -760,10 +802,7 @@ export class FileUploadService extends BaseService {
 
       // 4. 文件不存在，正常上传流程
       const metadata = this.generateFileMetadata(file, options.directory);
-
-      // 5. 上传到 S3
       const fileBuffer = Buffer.from(fileArrayBuffer);
-      await this.s3Service.uploadBuffer(metadata.path, fileBuffer, file.type);
 
       // 7. 保存文件记录到数据库
       const fileRecord = {
@@ -780,9 +819,26 @@ export class FileUploadService extends BaseService {
         userId: this.userId,
       };
 
-      const createResult = await this.fileModel.create(fileRecord, true);
+      // Reject an obviously over-quota upload before spending the transfer. The
+      // authoritative check runs again under the owner lock once the bytes land,
+      // because only that one is atomic with the row it authorizes.
+      await this.assertStorageQuota(file.size, metadata.path);
 
-      // 如果提供了 sessionId（支持 agentId 解析），创建文件和会话的关联关系
+      // 5. Upload to S3
+      await this.s3Service.uploadBuffer(metadata.path, fileBuffer, file.type);
+
+      const createResult = await this.db
+        .transaction(async (tx) => {
+          await this.assertStorageQuota(file.size, metadata.path, tx);
+
+          return this.fileModel.create(fileRecord, true, tx);
+        })
+        .catch(async (error) => {
+          await this.s3Service.deleteFile(metadata.path).catch(() => {});
+          throw error;
+        });
+
+      // If sessionId is provided (supports agentId resolution), create file-session association
       if (resolvedSessionId) {
         await this.createFileSessionRelation(createResult.id, resolvedSessionId);
         this.log('info', 'Public file associated with session', {
