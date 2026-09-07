@@ -1,6 +1,6 @@
 ---
 name: data-fetching-architecture
-description: 'LobeHub data-fetching pipeline guide. Use for service layer, Zustand store, SWR, lambdaClient, useClientDataSWR, useFetchXxx hooks, or migrating useEffect fetches.'
+description: 'LobeHub data-fetching pipeline guide. Use for service layer, Zustand store, SWR, lambdaClient, useClientDataSWR, useFetchXxx hooks, home first-paint flicker, persistent display caches, or migrating useEffect fetches.'
 user-invocable: false
 ---
 
@@ -53,6 +53,12 @@ user-invocable: false
 4. **Never mix data structure patterns** — follow `store-data-structures` skill
 
 ---
+
+## Home First Paint and Persistent Caches
+
+When changing home/sidebar first paint or persisted display data, read
+[`references/home-first-paint.md`](./references/home-first-paint.md). It covers
+avoiding flicker, reusing persistence, and the user `displaySnapshot.ts` boundary.
 
 ## Layer 1: Service Layer
 
@@ -652,6 +658,7 @@ See `store-data-structures` for details.
 - [ ] Detail pages: access `xxxDetailMap[id]`
 - [ ] Use loading states for UI feedback
 - [ ] Infinite-scroll failures persist as a visible tail Retry row, not a silent `catch`
+- [ ] Changes affecting home first paint or persisted display data follow the guidance above
 
 **Mental model:** Types → Service → Reducer → Slice → Component 🎯
 
