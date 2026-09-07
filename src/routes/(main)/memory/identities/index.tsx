@@ -4,6 +4,7 @@ import { BrainCircuitIcon } from 'lucide-react';
 import { type FC } from 'react';
 import { memo, useCallback, useEffect, useState } from 'react';
 
+import { MemoryListBoundary } from '@/features/Memory';
 import NavHeader from '@/features/NavHeader';
 import WideScreenContainer from '@/features/WideScreenContainer';
 import WideScreenButton from '@/features/WideScreenContainer/WideScreenButton';
@@ -45,8 +46,8 @@ const IdentitiesArea = memo(() => {
     resetIdentitiesList({ q: searchValue || undefined, types });
   }, [searchValue, typeFilter]);
 
-  // 调用 SWR hook 获取数据
-  const { isLoading } = useFetchIdentities({
+  // Call SWR hook to fetch data
+  const { data, error, isLoading, mutate } = useFetchIdentities({
     page: identitiesPage,
     pageSize: 12,
     q: searchValue || undefined,
@@ -67,9 +68,6 @@ const IdentitiesArea = memo(() => {
     },
     [setTypeFilterRaw],
   );
-
-  // 显示 loading：搜索/重置中 或 首次加载中
-  const showLoading = identitiesSearchLoading || !identitiesInit;
 
   // Action bar, type tabs and search are controls over nothing on an empty
   // collection, so they only render once there is something to act on.
@@ -110,11 +108,17 @@ const IdentitiesArea = memo(() => {
               <CommonFilterBar searchValue={searchValue} onSearch={handleSearch} />
             </Flexbox>
           )}
-          {showLoading ? (
-            <Loading viewMode={viewMode} />
-          ) : (
+          <MemoryListBoundary
+            data={data}
+            error={error}
+            isInitialized={identitiesInit}
+            isLoading={isLoading}
+            isResetting={identitiesSearchLoading}
+            loading={<Loading viewMode={viewMode} />}
+            onRetry={() => void mutate()}
+          >
             <List isLoading={isLoading} searchValue={searchValue} viewMode={viewMode} />
-          )}
+          </MemoryListBoundary>
         </WideScreenContainer>
       </Flexbox>
     </Flexbox>
