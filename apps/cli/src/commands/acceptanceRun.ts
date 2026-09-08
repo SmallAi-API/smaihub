@@ -18,6 +18,7 @@ import {
   type Decision,
   DECISIONS,
   deriveReportVerdict,
+  evidenceDescriptionForFile,
   evidenceTypeForFile,
   genericContextFromResult,
   inlineTextEvidenceForFile,
@@ -348,7 +349,7 @@ async function submitAction(options: SubmitOptions): Promise<void> {
         {
           capturedBy: options.by as any,
           content: inlineContent,
-          description: options.desc,
+          description: evidenceDescriptionForFile(options.desc, options.file),
           fileId,
           type: options.type as any,
         },
@@ -421,7 +422,7 @@ async function evidenceUploadAction(options: EvidenceUploadOptions): Promise<voi
     capturedBy: options.by as any,
     checkResultId: options.check,
     content: inlineContent,
-    description: options.desc,
+    description: evidenceDescriptionForFile(options.desc, options.file),
     fileId,
     type: options.type as any,
   });
@@ -774,7 +775,7 @@ async function ingestReportAction(reportDir: string, options: IngestReportOption
           // The filename, not the case title — the title already heads the
           // check card, so reusing it here just triples the same text.
           content: inlineContent,
-          description: evidenceInput.description ?? path.basename(abs),
+          description: evidenceDescriptionForFile(evidenceInput.description, abs),
           fileId: file?.id,
           metadata: evidenceInput.comparison ? { comparison: evidenceInput.comparison } : undefined,
           type,
