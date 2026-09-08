@@ -1,58 +1,53 @@
-import { DEFAULT_INBOX_AVATAR } from '@lobechat/const';
 import { createStaticStyles } from 'antd-style';
 import { memo } from 'react';
 
-import { resolveChiefAgentArtwork } from '@/features/ChiefAgent/artwork';
-import { useAgentStore } from '@/store/agent';
-import { agentSelectors } from '@/store/agent/selectors';
-
-import { useResolvedHomeAgentId } from './AgentSelect/useResolvedHomeAgentId';
-import { HOME_PORTRAIT_INSET } from './portraitFraming';
+import AnimatedCharacters from './AnimatedCharacters';
+import { useCharacterMood } from './AnimatedCharacters/useCharacterMood';
+import { CHARACTERS_HEIGHT, CHARACTERS_WIDTH, HOME_PORTRAIT_INSET } from './portraitFraming';
 
 const styles = createStaticStyles(({ css }) => ({
   /**
-   * The speech layout owns image dimensions and overlap. Both sizes reveal
-   * the same fraction used by the artwork studio preview, with the lower
-   * body passing behind the supporting card.
+   * The artwork keeps its authored 550×400 box and the speech layout scales it,
+   * so one set of character offsets serves both size tiers. Anchoring the
+   * origin to the same corner the insets pin means the scaled result sits where
+   * the lane expects it, with the lower bodies passing behind the first card.
    */
-  image: css`
-    pointer-events: none;
+  frame: css`
+    pointer-events: auto;
 
     position: absolute;
     inset-block-end: var(--home-portrait-overlap);
     inset-inline-end: ${HOME_PORTRAIT_INSET}px;
+    transform-origin: bottom right;
+    transform: scale(var(--home-portrait-scale));
 
-    width: var(--home-portrait-width);
-    height: var(--home-portrait-height);
+    width: ${CHARACTERS_WIDTH}px;
+    height: ${CHARACTERS_HEIGHT}px;
 
-    object-fit: contain;
-    object-position: bottom;
+    &:dir(rtl) {
+      transform-origin: bottom left;
+    }
   `,
   root: css`
+    pointer-events: none;
     position: relative;
     height: 100%;
   `,
 }));
 
-const HomePortrait = memo(() => {
-  // The portrait depicts whoever home is addressing, so it follows the same
-  // selection the composer sends to — not the Inbox Agent it defaults to.
-  const { agentId } = useResolvedHomeAgentId();
-  const useFetchAgentConfig = useAgentStore((s) => s.useFetchAgentConfig);
-  // A freshly picked agent may not be in the store yet; without this the
-  // portrait would silently stay on the previous one's artwork.
-  useFetchAgentConfig(true, agentId ?? '');
+interface HomePortraitProps {
+  /** Set while the composer holds a draft, so the characters react to typing. */
+  isTyping?: boolean;
+}
 
-  const meta = useAgentStore(agentSelectors.getAgentMetaById(agentId ?? ''));
-  // An agent that has been through the artwork studio shows its own character;
-  // the built-in catalog covers everyone else.
-  const fullBodyArtwork = useAgentStore(agentSelectors.getAgentFullBodyArtworkById(agentId ?? ''));
-  const artwork = resolveChiefAgentArtwork(meta.avatar || DEFAULT_INBOX_AVATAR);
-  const hero = fullBodyArtwork || artwork.hero;
+const HomePortrait = memo<HomePortraitProps>(({ isTyping }) => {
+  const { mood } = useCharacterMood({ isDrafting: Boolean(isTyping) });
 
   return (
-    <div className={styles.root}>
-      <img aria-hidden alt="" className={styles.image} key={hero} src={hero} />
+    <div aria-hidden className={styles.root}>
+      <div className={styles.frame}>
+        <AnimatedCharacters mood={mood} />
+      </div>
     </div>
   );
 });

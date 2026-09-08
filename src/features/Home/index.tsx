@@ -24,9 +24,9 @@ import HomePortrait from './HomePortrait';
 import InputArea from './InputArea';
 import PortraitBubble from './PortraitBubble';
 import {
-  getHomePortraitOverlap,
+  COMPACT_PORTRAIT_SHRINK,
+  getHomePortraitFrame,
   HOME_PORTRAIT_CARD_GAP,
-  HOME_PORTRAIT_HEIGHT,
   HOME_PORTRAIT_INSET,
   HOME_PORTRAIT_WIDTH,
 } from './portraitFraming';
@@ -81,10 +81,14 @@ const SPEECH_RESERVED_WIDTH =
   COLLAPSED_CONTENT_OFFSET * 2 + SPEECH_GREETING_GAP + SPEECH_BUBBLE_MIN + PORTRAIT_LANE;
 /** Use the tighter rail state so its animation cannot switch rows or rewrap text. */
 const SPEECH_INLINE_MIN = SPEECH_RESERVED_WIDTH + SPEECH_GREETING_MIN;
-const COMPACT_PORTRAIT_HEIGHT = 150;
-const COMPACT_PORTRAIT_WIDTH =
-  HOME_PORTRAIT_WIDTH * (COMPACT_PORTRAIT_HEIGHT / HOME_PORTRAIT_HEIGHT);
-const COMPACT_PORTRAIT_OVERLAP = getHomePortraitOverlap(COMPACT_PORTRAIT_HEIGHT);
+const COMPACT_PORTRAIT_WIDTH = HOME_PORTRAIT_WIDTH * COMPACT_PORTRAIT_SHRINK;
+/**
+ * The artwork is scaled as a whole, so each lane width implies the height the
+ * characters actually occupy — which is what the overlap has to measure, not
+ * the lane's nominal height.
+ */
+const PORTRAIT_FRAME = getHomePortraitFrame(HOME_PORTRAIT_WIDTH);
+const COMPACT_PORTRAIT_FRAME = getHomePortraitFrame(COMPACT_PORTRAIT_WIDTH);
 const MINIMAL_STACK_GAP = 24;
 /**
  * The minimal header stacks the agent switcher (24px avatar + 2px paddings,
@@ -187,8 +191,8 @@ const styles = createStaticStyles(({ css }) => ({
   `,
   speech: css`
     --home-portrait-width: ${COMPACT_PORTRAIT_WIDTH}px;
-    --home-portrait-height: ${COMPACT_PORTRAIT_HEIGHT}px;
-    --home-portrait-overlap: -${COMPACT_PORTRAIT_OVERLAP}px;
+    --home-portrait-scale: ${COMPACT_PORTRAIT_FRAME.scale};
+    --home-portrait-overlap: -${COMPACT_PORTRAIT_FRAME.overlap}px;
 
     display: flex;
     gap: 16px;
@@ -197,7 +201,7 @@ const styles = createStaticStyles(({ css }) => ({
 
     width: max-content;
     max-width: 100%;
-    min-height: ${COMPACT_PORTRAIT_HEIGHT - COMPACT_PORTRAIT_OVERLAP}px;
+    min-height: ${COMPACT_PORTRAIT_FRAME.height - COMPACT_PORTRAIT_FRAME.overlap}px;
 
     transition: transform ${RAIL_TRANSITION_DURATION}ms ease-out;
 
@@ -219,8 +223,8 @@ const styles = createStaticStyles(({ css }) => ({
 
     @container home (width >= ${SPEECH_INLINE_MIN}px) {
       --home-portrait-width: ${HOME_PORTRAIT_WIDTH}px;
-      --home-portrait-height: ${HOME_PORTRAIT_HEIGHT}px;
-      --home-portrait-overlap: -${getHomePortraitOverlap(HOME_PORTRAIT_HEIGHT)}px;
+      --home-portrait-scale: ${PORTRAIT_FRAME.scale};
+      --home-portrait-overlap: -${PORTRAIT_FRAME.overlap}px;
 
       grid-area: 1 / 2;
       align-self: stretch;
@@ -406,7 +410,7 @@ const Home = memo(() => {
               <PortraitBubble promo={promo} />
             </div>
             <div className={styles.portrait}>
-              <HomePortrait />
+              <HomePortrait isTyping={Boolean(inputValue)} />
             </div>
           </div>
         )}
