@@ -26,7 +26,9 @@ import CheckList, {
   userReviewState,
 } from './CheckList';
 import { EMPTY_ID_SET, setAggregateEntry } from './expandState';
+import { checksForTurn } from './turnChecks';
 import { useAcceptanceBundle } from './useAcceptanceBundle';
+import { useAcceptanceTurn } from './useAcceptanceTurn';
 import { canReviewAcceptance } from './visibility';
 
 interface AcceptanceCheckInventoryProps {
@@ -41,7 +43,7 @@ const AcceptanceCheckInventory = ({
   toolbar,
 }: AcceptanceCheckInventoryProps) => {
   const { t } = useTranslation('verify');
-  const { lg = true } = useResponsive();
+  const { lg = true, md = true } = useResponsive();
   const { acceptanceId, embedded } = useAcceptanceScope();
   const compactToolbar = embedded || !lg;
   const { data, mutate } = useAcceptanceBundle(acceptanceId);
@@ -69,7 +71,7 @@ const AcceptanceCheckInventory = ({
       { replace: true },
     );
   };
-  const [roundFilter, setRoundFilter] = useState<number | null>(null);
+  const { turn: roundFilter, setTurn: setRoundFilter } = useAcceptanceTurn(embedded);
   const [expandedById, setExpandedById] = useState<Map<string, Set<string>>>(() => new Map());
   const [collapsedById, setCollapsedById] = useState<Map<string, Set<string>>>(() => new Map());
   const expanded = expandedById.get(acceptanceId) ?? EMPTY_ID_SET;
@@ -95,6 +97,7 @@ const AcceptanceCheckInventory = ({
         data.checks
           .filter(
             (check) =>
+              window.matchMedia('(min-width: 768px)').matches &&
               userReviewState(check) !== 'accepted' &&
               (isException(check) || hasVisualEvidence(check)),
           )
@@ -113,7 +116,7 @@ const AcceptanceCheckInventory = ({
     const defaultFilter: CheckFilter = data.rounds.length > 1 ? 'pending' : 'all';
     if (embedded) {
       setLocalFilter(defaultFilter);
-    } else if (!urlFilterRaw && defaultFilter !== 'all') {
+    } else if (!urlFilterRaw && !roundFilter && defaultFilter !== 'all') {
       setSearchParams(
         (prev) => {
           const params = new URLSearchParams(prev);
@@ -133,12 +136,16 @@ const AcceptanceCheckInventory = ({
     setSearchParams,
     t,
     urlFilterRaw,
+    roundFilter,
+    md,
   ]);
 
   if (!data) return null;
 
-  const canReview = canReviewAcceptance(data);
-  const checks = data.checks;
+  const canReview =
+    canReviewAcceptance(data) &&
+    (roundFilter === null || roundFilter === data.rounds.at(-1)?.run.roundIndex);
+  const checks = checksForTurn(data, roundFilter);
 
   /**
    * Every mutation the checklist fires goes through here.
@@ -183,9 +190,7 @@ const AcceptanceCheckInventory = ({
 
   return (
     <>
-      <Flexbox horizontal align={'center'} gap={8} wrap={compactToolbar ? 'nowrap' : 'wrap'}>
-        {/* The tab above already carries the count; stating it twice on the
-            same screen makes the reader check whether they disagree. */}
+      <Flexbox horizontal align={'center'} gap={8} wrap={'wrap'}>
         <Text strong style={{ fontSize: 14, whiteSpace: 'nowrap' }}>
           {t('acceptance.checks.title')}
         </Text>
@@ -193,7 +198,7 @@ const AcceptanceCheckInventory = ({
         {toolbar}
         <Select
           size={'small'}
-          style={{ height: 34, width: 118 }}
+          style={{ height: compactToolbar ? 44 : 34, width: 118 }}
           value={filter}
           variant={'filled'}
           options={[
@@ -211,10 +216,10 @@ const AcceptanceCheckInventory = ({
           ]}
           onChange={(value) => setFilter(value as CheckFilter)}
         />
-        {data.rounds.length > 1 && canReview && (
+        {data.rounds.length > 1 && (
           <Select
             size={'small'}
-            style={{ height: 34, width: 110 }}
+            style={{ height: compactToolbar ? 44 : 34, width: 110 }}
             value={roundFilter === null ? 'all' : String(roundFilter)}
             variant={'filled'}
             options={[
@@ -252,6 +257,7 @@ const AcceptanceCheckInventory = ({
         reviewPending={false}
         round={roundFilter}
         onOpenTrace={onOpenTrace}
+        onRound={setRoundFilter}
         onDismissProposal={
           canReview
             ? async (input) => {
