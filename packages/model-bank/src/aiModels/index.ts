@@ -99,6 +99,7 @@ export { default as internlm } from './internlm';
 export { default as jina } from './jina';
 export { default as kimicodingplan } from './kimiCodingPlan';
 export { default as lmstudio } from './lmstudio';
+export { default as meta } from './meta';
 export { default as minimax } from './minimax';
 export { default as minimaxcodingplan } from './minimaxCodingPlan';
 export { default as mistral } from './mistral';
