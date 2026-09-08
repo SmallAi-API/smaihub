@@ -9,7 +9,7 @@ interface GroupItemProps extends AiProviderListItem {
   disabled?: boolean;
 }
 
-const GroupItem = memo<GroupItemProps>(({ id, name, source, logo, disabled }) => {
+const GroupItem = memo<GroupItemProps>(({ id, name, disabled }) => {
   return (
     <>
       <Flexbox horizontal gap={8}>
