@@ -1,6 +1,7 @@
 import type { BuiltinSkill } from '@lobechat/types';
 
 import { toResourceMeta } from '../lobehub/helpers';
+import acceptanceChecker from './references/acceptance-checker.md';
 import agentBrowser from './references/agent-browser.md';
 import authWeb from './references/auth-web.md';
 import computerUse from './references/computer-use.md';
@@ -10,7 +11,6 @@ import recordingCdp from './references/recording-cdp.md';
 import recordingIosSimulator from './references/recording-ios-simulator.md';
 import recordingNativeMacos from './references/recording-native-macos.md';
 import report from './references/report.md';
-import testerReview from './references/tester-review.md';
 import content from './SKILL.md';
 import cli from './surfaces/cli.md';
 import electron from './surfaces/electron.md';
@@ -21,15 +21,20 @@ import web from './surfaces/web.md';
 export const AcceptanceIdentifier = 'acceptance';
 
 /**
- * Portable builder-side acceptance skill. Unlike the repo-local `agent-testing`
- * skill (macOS scripts + project-specific working artifacts and probes), this one
- * keeps its acceptance contract independent of repository-local scripts, so any
- * external builder (Claude Code / Codex) can run it from a task's working
- * directory, with or without a LobeHub operation/topic: discover or author the
- * plan → pick a surface → capture evidence per criterion → publish a round →
- * self-check coverage. Surface-specific tools remain explicit: agent-browser for
- * Web/Electron, shell-level native automation for macOS, and an installed
- * Simulator HID/Accessibility CLI plus Xcode/simctl for iOS.
+ * The single builder-side acceptance skill: discover or author the plan → pick a
+ * surface → capture evidence per criterion → publish a round → self-check
+ * coverage. It runs from any task's working directory, with or without a LobeHub
+ * operation/topic, and depends on no repository-local script. Surface-specific
+ * tools stay explicit: agent-browser for Web/Electron, shell-level native
+ * automation for macOS, and an installed Simulator HID/Accessibility CLI plus
+ * Xcode/simctl for iOS.
+ *
+ * Everything a specific repository needs on top — its start/stop commands, its
+ * plan gate and teardown, its own living logs and probe scripts — lives in
+ * that repository's `.agents/acceptance/` project layer, which SKILL.md reads
+ * first. This split replaced the former repo-local `agent-testing` skill: the
+ * contract is here, the repository's process is there, and neither restates the
+ * other.
  *
  * The references carry the shared contracts and surface-scoped operating
  * manuals. Authentication and recording resources are split by runtime so a
@@ -47,6 +52,7 @@ export const AcceptanceSkill: BuiltinSkill = {
   identifier: AcceptanceIdentifier,
   name: 'acceptance',
   resources: toResourceMeta({
+    'references/acceptance-checker.md': acceptanceChecker,
     'references/agent-browser.md': agentBrowser,
     'references/auth-web.md': authWeb,
     'references/computer-use.md': computerUse,
@@ -56,7 +62,6 @@ export const AcceptanceSkill: BuiltinSkill = {
     'references/recording-ios-simulator.md': recordingIosSimulator,
     'references/recording-native-macos.md': recordingNativeMacos,
     'references/report.md': report,
-    'references/tester-review.md': testerReview,
     'surfaces/cli.md': cli,
     'surfaces/electron.md': electron,
     'surfaces/ios-simulator.md': iosSimulator,

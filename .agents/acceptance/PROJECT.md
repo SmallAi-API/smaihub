@@ -4,9 +4,17 @@ This is the LobeHub adapter for the generic `agent-testing` skill. The skill is
 project-agnostic; every LobeHub-specific command, port, service, and probe lives
 here. The skill reads this file — it never guesses LobeHub's commands.
 
-Scripts referenced below live under `.agents/acceptance/scripts/`. The generic skill
-and its own scripts (`report-init.sh`, `cdp-screenshot.sh`, `record-gif.sh`,
-`check-screen-recording.sh`, …) are installed at `.agents/skills/agent-testing/`.
+Its two siblings:
+
+- [`PROCESS.md`](./PROCESS.md) — the run process (plan gate, execution rules,
+  publishing, teardown).
+- `.agents/skills/acceptance/` — the portable skill: what a check, evidence,
+  report, and round are. In this repository that path is a symlink onto the
+  skill's source, `packages/builtin-skills/src/acceptance/`.
+
+Every script referenced below lives under `.agents/acceptance/scripts/`, including
+the generic capture toolchain (`report-init.sh`, `cdp-screenshot.sh`,
+`record-gif.sh`, `check-screen-recording.sh`, …).
 
 ## 1. Project summary
 

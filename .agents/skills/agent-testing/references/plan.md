@@ -1,7 +1,10 @@
 # Phase 1 Plan Feedback
 
-Use this template at the end of Phase 1. Match the user's conversation language.
-Keep it concrete and compact: report observed state, not generic readiness claims.
+Use this template at the end of Phase 1 (see [`../PROCESS.md`](../PROCESS.md)). It
+is written into the round's review notes and handed to the acceptance-checker for plan
+review — not posted to the user for approval. Match the user's conversation
+language. Keep it concrete and compact: report observed state, not generic
+readiness claims.
 
 ## Readiness verdicts
 
@@ -69,81 +72,53 @@ Do not include irrelevant environment rows. Add a row when the run has another h
 prerequisite, such as a native app, gateway, fixture repository, or specific
 external account.
 
-## Case selection gate (hard rule)
+## What a planned case may be
 
-Every planned case MUST be a delivery outcome a person can judge — what the
-user sees, hears, reads, or receives. **Never plan a case whose subject is the
-repo's own programmatic gate**: unit / integration / regression tests, test
-suites, coverage, type-check, lint, format, or a clean build. Run those gates as
-part of your own diligence and report them as one line of narrative in
-`report.md` → Verification — they are preconditions of shipping, not things the
-user accepts, and `lh acceptance run ingest` drops them from the round (a
-gates-only round fails to publish entirely). A plan feedback that lists such a
-case wastes the user's approval on a row that will never reach the page.
+The skill's HARD RULE decides this, and the gate must not propose a case that
+will never reach the page: every case is a delivery outcome a person judges, and
+the repo's own programmatic gates (tests, coverage, type-check, lint, build) are
+never cases — ingest drops them and a gates-only round fails to publish. Run them
+as diligence and report them as one line of narrative.
 
-The gate is about the check's _subject_, not its verifier: a CLI behavior case
-asserted by a command is a good case (`verifier: "program"`); "`bun run test`
-is green" is not.
+Seed a follow-up plan from `lh acceptance view <subject> --json`, not from
+memory: omit accepted checks, repair non-stale rejects under their exact stable
+ids, and carry every `supersedes` chain forward unchanged. For every user-visible
+UI case, plan the screenshot or recording that proves that exact claim — program
+output may supplement visual evidence but never replaces it.
 
-When a check refines or replaces a requirement from an earlier Acceptance round,
-keep the old stable id if it is the same assertion. If the semantic assertion needs
-a new id, declare the replacement explicitly with `supersedes: ['old-check-id']`;
-title similarity is never a merge signal. For every user-visible UI case, plan a
-dedicated screenshot or recording for that exact claim — program output may
-supplement it but cannot replace visual evidence.
+## Gate behavior
 
-On a follow-up round, seed the plan from
-`lh acceptance view <subject> --json` before writing any case:
+The acceptance-checker is the gate, in the first round only. Plan/case feedback
+is capped at two responses total; the second is optional and checks revisions.
+The primary resolves remaining findings itself without requesting a third response.
+Hand the feedback plus the
+draft plan to the acceptance-checker (skill `references/acceptance-checker.md`); on **✅ Ready** / **⚠️ Ready with
+warnings** and an acceptance-checker decision of "ready" (or every material finding
+resolved), enter Execute. The acceptance-checker returns once more for the first round's
+evidence review before publishing, and not again after that. Never ask the
+user to approve the plan, and never present `Start` / `Discuss first` style
+buttons for a routine run.
 
-- Accepted checks are user-settled; omit them from the new plan.
-- Rejected, non-stale checks are the primary repair items. Carry their comments
-  and annotations into the expected outcome, and reuse their exact stable ids.
-- Plan all remaining checks from their current state, again reusing stable ids.
-  A semantic replacement requires a new id plus `supersedes: ['old-id']`.
-- Treat `supersedes` as persistent lineage. When a later round reuses a successor
-  id, copy its complete historical `supersedes` list into the new plan again.
-  Never assume an earlier round made the relationship permanent: the Acceptance
-  union uses the latest plan snapshot for that id, so a later omission can split
-  the successor and replaced check back into parallel rows.
-- Before publish, compare every reused plan id against `acceptance view`. If its
-  latest or historical plan declared `supersedes`, fail the preflight until the
-  new plan carries the same complete list (unless this round deliberately creates
-  another semantic replacement and declares that new chain explicitly).
-
-## Confirmation behavior
-
-For the first run attached to a subject Acceptance, use the runtime structured
-question tool (`request_user_input` / ask-user-question equivalent) after the
-feedback. Do not bury the question inside the template text.
-
-When the verdict is **Ready** or **Ready with warnings**, use:
-
-1. `Start (Recommended)` — approve the displayed environment and plan; enter Execute.
-2. `Discuss first` — revise scope, cases, assumptions, or environment handling.
-
-When the verdict is **Blocked**, do not offer Start. Use:
-
-1. `I'll provide it (Recommended)` — the user will supply or complete the listed
-   user-owned prerequisite.
-2. `Revise the plan` — change the scope or approach to remove the blocker.
-
-Match button labels to the user's language. Wait for the user's response. If the
-user resolves a blocker, re-check the affected environment item and present an
-updated gate; do not rely only on the user's statement that it is fixed.
+When the verdict is **❌ Blocked** on a **user-owned** item, ask the user one
+structured question naming exactly that prerequisite and why it is required,
+then stop. If the user resolves it, re-check the affected environment item; do
+not rely only on the user's statement that it is fixed. Agent-owned blockers
+are never sent to the user.
 
 ### Follow-up rounds
 
-The first approved plan authorizes later repair-and-reverify iterations on the
-same subject Acceptance. For a follow-up triggered by user feedback or an
-iteration request:
+For a follow-up triggered by user feedback or an iteration request:
 
 - read `lh acceptance view <subject> --json`;
 - silently re-check environment and auth;
 - repair and re-run the affected stable check ids;
-- publish a new immutable round to the same Acceptance automatically;
-- do not ask the user to approve another routine plan.
+- publish a new immutable round to the same Acceptance automatically (no
+  acceptance-checker re-review — the acceptance-checker takes part in the first round only);
+- do not ask the user to approve the follow-up plan.
 
-Present a new confirmation gate only when scope, business goal, evidence surface,
-external authority, destructiveness, or a user-owned prerequisite materially
-changes. A code revision, local server restart, fixture update, screenshot
-recapture, retry, or automatic follow-up publication does not reset approval.
+The only reasons to ask the user in a follow-up are a user-owned prerequisite
+(a secret, a device/2FA approval, a permission only they can grant, a
+destructive action) or a product decision that materially changes the plan —
+scope, business goal, evidence surface, or external authority. A code
+revision, local server restart, fixture update, screenshot recapture, retry,
+or automatic follow-up publication is never a reason to ask.
