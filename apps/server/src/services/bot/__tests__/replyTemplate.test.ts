@@ -769,7 +769,7 @@ describe('replyTemplate', () => {
     });
 
     it('falls back to English for locales without a Guest Mode dictionary', () => {
-      expect(renderGuestCopy('guestLinkButton', 'fr-FR')).toBe('Open Bot');
+      expect(renderGuestCopy('guestLinkButton', 'zh-TW')).toBe('Open Bot');
     });
   });
 
