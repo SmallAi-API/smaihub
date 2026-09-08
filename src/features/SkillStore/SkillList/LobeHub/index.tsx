@@ -2,7 +2,7 @@
 
 import type { LobehubSkillProviderType } from '@lobechat/const';
 import { LOBEHUB_SKILL_PROVIDERS } from '@lobechat/const';
-import type { BuiltinSkill, LobeToolMeta } from '@lobechat/types';
+import type { BuiltinSkillManifest, LobeToolMeta } from '@lobechat/types';
 import isEqual from 'fast-deep-equal';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -60,7 +60,7 @@ export const LobeHubList = memo<LobeHubListProps>(({ keywords }) => {
   const filteredItems = useMemo(() => {
     const items: Array<
       | { provider: LobehubSkillProviderType; type: 'lobehub' }
-      | { skill: BuiltinSkill; type: 'builtinAgentSkill' }
+      | { skill: BuiltinSkillManifest; type: 'builtinAgentSkill' }
       | { tool: LobeToolMeta; type: 'builtin' }
     > = [];
 

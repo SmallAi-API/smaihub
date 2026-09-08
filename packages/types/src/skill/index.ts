@@ -63,6 +63,11 @@ export interface BuiltinSkill {
   title?: string;
 }
 
+export type BuiltinSkillManifest = Pick<
+  BuiltinSkill,
+  'avatar' | 'description' | 'identifier' | 'name' | 'source' | 'title'
+>;
+
 // ===== Skill Source =====
 
 export type SkillSource = 'builtin' | 'market' | 'user';
