@@ -3,6 +3,7 @@ import { Avatar } from '@lobehub/ui/base-ui';
 import { SkillsIcon } from '@lobehub/ui/icons';
 import {
   AppWindowIcon,
+  BellIcon,
   Blocks,
   Brain,
   BrainCircuit,
@@ -112,6 +113,11 @@ export const useCategory = () => {
         icon: KeyboardIcon,
         key: SettingsTabs.Hotkey,
         label: t('tab.hotkey'),
+      },
+      (enableBusinessFeatures || isDesktop) && {
+        icon: BellIcon,
+        key: SettingsTabs.Notification,
+        label: t('tab.notification'),
       },
     ].filter(Boolean) as CategoryItem[];
 
