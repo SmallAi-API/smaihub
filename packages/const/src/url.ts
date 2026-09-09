@@ -4,6 +4,8 @@ export const OFFICIAL_URL = 'https://www.smallai.asia';
 export const OFFICIAL_SITE = 'https://www.smallai.asia';
 export const OFFICIAL_DOMAIN = 'https://www.smallai.asia';
 
+export const OFFICIAL_CLOUD_URL = OFFICIAL_SITE;
+
 export const isOfficialCloudServer = (url?: string): boolean => {
   if (!url) return false;
   try {

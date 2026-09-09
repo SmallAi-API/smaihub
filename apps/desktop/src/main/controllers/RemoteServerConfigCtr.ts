@@ -605,7 +605,7 @@ export default class RemoteServerConfigCtr extends ControllerModule {
     const session = electronSession.fromPartition(partition);
 
     session.webRequest.onBeforeSendHeaders(
-      { urls: [`https://*.lobehub.com/*`] },
+      { urls: [`https://lobehub.com/*`, `https://*.lobehub.com/*`] },
       async (details, callback) => {
         const requestHeaders = { ...details.requestHeaders };
 
