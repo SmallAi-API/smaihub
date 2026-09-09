@@ -13,13 +13,15 @@ user-invocable: true
 
 ## Steps
 
-1. **Gather context** (run in parallel):
-   - `git branch --show-current` — current branch name
-   - `git rev-parse --abbrev-ref @{u} 2>/dev/null` — remote tracking status
-   - `git log --oneline origin/canary..HEAD` — unpushed commits
-   - `gh pr list --head "$(git branch --show-current)" --json number,title,state,url` — existing PR
-   - `git log --oneline origin/canary..HEAD` — commit history for PR title
-   - `git diff --stat --stat-count=20 origin/canary..HEAD` — change summary
+### 1. Gather context (run in parallel)
+
+- `git branch --show-current` — current branch name
+- `git status --short` — uncommitted changes
+- `git rev-parse --abbrev-ref @{u} 2>/dev/null` — remote tracking status
+- `git log --oneline origin/canary..HEAD` — unpushed commits
+- `gh pr list --head "$(git branch --show-current)" --json number,title,state,url` — existing PR
+- `git diff --stat --stat-count=20 origin/canary..HEAD` — change summary
+- `env -u LOBEHUB_SERVER -u LOBE_API_KEY -u LOBEHUB_CLI_API_KEY -u LOBEHUB_CLI_HOME lh acceptance run list --json` — the published acceptance round for this branch (match on `branch`)
 
 2. **Push if needed**:
    - No upstream: `git push -u origin $(git branch --show-current)`
@@ -30,14 +32,22 @@ user-invocable: true
    - Only link issues with matching scope (avoid large umbrella issues)
    - Skip if no matching issue found
 
-4. **Create PR** with `gh pr create --base canary`:
-   - Title: `<gitmoji> <type>(<scope>): <description>`
-   - Body: based on PR template (`.github/PULL_REQUEST_TEMPLATE.md`), fill checkboxes
-   - Link related GitHub issues using magic keywords (`Fixes #123`, `Closes #123`)
-   - Link Linear issues if applicable (`Fixes LOBE-xxx`)
-   - Use HEREDOC for body to preserve formatting
+### 5. Acceptance gate
 
-5. **Open in browser**: `gh pr view --web`
+A feature or fix needs a published acceptance round before the PR is opened (AGENTS.md → Acceptance). If step 1 found none for this branch, run the `acceptance` skill first and come back with its `https://app.lobehub.com/acceptance/<id>` link. Pure refactors or tooling changes with no user-visible outcome may skip it — state that in the PR body instead of leaving the line out.
+
+### 6. Create PR with `gh pr create --base canary`
+
+- Title: `<gitmoji> <type>(<scope>): <description>`
+- Body: based on PR template (`.github/PULL_REQUEST_TEMPLATE.md`), fill checkboxes
+- Link related GitHub issues using magic keywords (`Fixes #123`, `Closes #123`)
+- Link Linear issues if applicable (`Fixes LOBE-xxx`)
+- Put the acceptance link (or the explicit skip reason) under **Test**
+- Use HEREDOC for body to preserve formatting
+
+### 7. Open in browser
+
+`gh pr view --web`
 
 ## PR Template
 
@@ -47,6 +57,7 @@ Use `.github/PULL_REQUEST_TEMPLATE.md` as the body structure. Key sections:
 - **Related Issue**: Link GitHub/Linear issues with magic keywords
 - **Description of Change**: Summarize what and why
 - **How to Test**: Describe test approach, check relevant boxes
+- **Acceptance**: the published `https://app.lobehub.com/acceptance/<id>` link, or why the change has no user-visible outcome
 
 ## Notes
 

@@ -32,16 +32,12 @@
 - [ ] Added/updated tests
 - [ ] No tests needed
 
-#### 📸 Screenshots / Videos
+<!-- Acceptance round for user-visible changes (AGENTS.md → Acceptance); or state why none is needed -->
 
-<!-- If this PR includes UI changes, please provide screenshots or videos -->
+- Acceptance: ...
 
-| Before | After |
-| ------ | ----- |
-| ...    | ...   |
+#### 🔗 Related Issue
 
-#### 📝 Additional Information
-
-<!-- Add any other context about the Pull Request here. -->
+<!-- Link to the issue that is fixed by this PR -->
 
 <!-- Breaking changes? Migration guide? Performance impact? -->
