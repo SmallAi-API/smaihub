@@ -137,22 +137,5 @@
   },
   "optionalDependencies": {
     "node-mac-permissions": "^2.5.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "electron",
-      "electron-builder",
-      "node-mac-permissions"
-    ],
-    "overrides": {
-      "@lobehub/ui": "5.32.5",
-      "@types/react": "19.2.13",
-      "@types/react-dom": "19.2.3",
-      "antd": "6.3.5",
-      "node-gyp": "^12.4.0",
-      "react": "19.2.7",
-      "react-dom": "19.2.7",
-      "vitest": "3.2.6"
-    }
   }
 }
