@@ -5,6 +5,8 @@
 export interface ServiceResult {
   error?: { message: string; name?: string };
   result: any;
+  /** The execution workspace was recreated before this call. */
+  sessionExpiredAndRecreated?: boolean;
   success: boolean;
 }
 
@@ -271,12 +273,15 @@ export interface RunCommandState {
    * Undefined when no sandbox was requested.
    */
   sandboxed?: boolean;
+  /** The execution workspace was recreated before this command. */
+  sessionExpiredAndRecreated?: boolean;
   stderr?: string;
   stdout?: string;
   success: boolean;
 }
 
 export interface GetCommandOutputState {
+  durationMs?: number;
   error?: string;
   exitCode?: number;
   outputFiles?: {
@@ -284,6 +289,8 @@ export interface GetCommandOutputState {
     stdout: { path: string; size: number; truncated: boolean };
   };
   running?: boolean;
+  /** The sandbox workspace was recreated before polling this command. */
+  sessionExpiredAndRecreated?: boolean;
   stderr?: string;
   stdout?: string;
   success: boolean;
