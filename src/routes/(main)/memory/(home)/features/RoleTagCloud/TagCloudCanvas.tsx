@@ -8,7 +8,9 @@ import * as THREE from 'three';
 import { type QueryTagsResult } from '@/database/models/userMemory';
 import UserAvatar from '@/features/User/UserAvatar';
 
-// 配置常量
+import { retainActiveConnections } from './retainActiveConnections';
+
+// Configuration constants
 const CONFIG = {
   // 连接线数量系数 (实际数量 = 标签数 * 系数)
   CONNECTION_RATIO: 0.8,
@@ -267,7 +269,8 @@ const ConnectionLine = memo<ConnectionLineProps>(
   },
 );
 
-const CenterAvatar = () => {
+// Connection animation updates must not rerender the DOM avatar mounted through Html.
+const CenterAvatar = memo(() => {
   return (
     <Html
       center
@@ -280,7 +283,7 @@ const CenterAvatar = () => {
       <UserAvatar shape={'circle'} size={80} />
     </Html>
   );
-};
+});
 
 interface CloudProps {
   radius?: number;
@@ -410,8 +413,8 @@ const Cloud = memo<CloudProps>(({ tags, radius = 20 }) => {
       lastUpdateTime.current = time;
 
       setConnections((prev) => {
-        // 过滤掉已经过期的连接
-        const active = prev.filter((conn) => time - conn.birthTime < conn.duration);
+        // Filter out expired connections
+        const active = retainActiveConnections(prev, time);
 
         // 如果连接数量不足，随机添加新连接
         const needed = connectionCount - active.length;
