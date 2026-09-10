@@ -55,9 +55,15 @@ describe('NetworkProxyCtr', () => {
 
     networkProxyCtr = new NetworkProxyCtr(mockApp);
 
-    // 设置 undici mocks 的默认返回值
-    vi.mocked(mockUndici.Agent).mockReturnValue({});
-    vi.mocked(mockUndici.ProxyAgent).mockReturnValue({});
+    // Set default return values for undici mocks
+    // `Agent`/`ProxyAgent` are constructed with `new`, so their implementations must
+    // be constructable (vitest 5 rejects arrow functions / `mockReturnValue` here).
+    vi.mocked(mockUndici.Agent).mockImplementation(function () {
+      return {};
+    });
+    vi.mocked(mockUndici.ProxyAgent).mockImplementation(function () {
+      return {};
+    });
     vi.mocked(mockUndici.getGlobalDispatcher).mockReturnValue({
       destroy: vi.fn().mockResolvedValue(undefined),
     });

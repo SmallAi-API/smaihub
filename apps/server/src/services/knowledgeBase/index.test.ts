@@ -24,7 +24,9 @@ vi.mock('@/server/globalConfig', () => ({
 }));
 vi.mock('@/server/modules/ModelRuntime', () => ({ initModelRuntimeFromDB: vi.fn() }));
 vi.mock('@/database/utils/workspace', () => ({
-  buildWorkspaceWhere: vi.fn(() => 'WORKSPACE_SCOPE'),
+  buildWorkspaceWhere: vi.fn(function () {
+    return 'WORKSPACE_SCOPE';
+  }),
 }));
 
 describe('KnowledgeBaseSearchService', () => {
@@ -53,11 +55,19 @@ describe('KnowledgeBaseSearchService', () => {
       },
     };
 
-    vi.mocked(ChunkModel).mockImplementation(() => chunkModelMock);
-    vi.mocked(DocumentModel).mockImplementation(() => documentModelMock);
-    vi.mocked(FileModel).mockImplementation(() => fileModelMock);
+    vi.mocked(ChunkModel).mockImplementation(function () {
+      return chunkModelMock;
+    });
+    vi.mocked(DocumentModel).mockImplementation(function () {
+      return documentModelMock;
+    });
+    vi.mocked(FileModel).mockImplementation(function () {
+      return fileModelMock;
+    });
     vi.mocked(createFtsSearchRepo).mockResolvedValue(searchRepoMock);
-    vi.mocked(DocumentService).mockImplementation(() => documentServiceMock);
+    vi.mocked(DocumentService).mockImplementation(function () {
+      return documentServiceMock;
+    });
 
     service = new KnowledgeBaseSearchService(serverDB, userId);
   });
