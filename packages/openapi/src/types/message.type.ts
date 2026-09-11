@@ -8,6 +8,7 @@ import type {
 } from '../helpers/public-fields';
 import type { IPaginationQuery, PaginationQueryResponse } from './common.type';
 import { PaginationQuerySchema } from './common.type';
+import { EvalPaginationSchema } from './eval-resource.type';
 
 // ==================== Message Query Types ====================
 
@@ -23,12 +24,16 @@ export const MessagesQueryByTopicRequestSchema = z.object({
  * 消息数量统计查询参数
  */
 export interface MessagesCountQuery {
+  threadId?: string;
+  topicId?: string;
   topicIds?: string[];
   userId?: string;
 }
 
 export const MessagesCountQuerySchema = z.object({
-  // 按话题ID数组统计 (comma-separated string, e.g., "topic1,topic2,topic3")
+  topicId: z.string().min(1).optional(),
+  threadId: z.string().min(1).optional(),
+  // Count by topic ID array (comma-separated string, e.g., "topic1,topic2,topic3")
   topicIds: z.string().nullish(),
   // 按用户ID统计 (仅管理员)
   userId: z.string().nullish(),
@@ -56,19 +61,24 @@ export const CountByUserRequestSchema = z.object({
  * 消息列表查询参数
  */
 export interface MessagesListQuery extends IPaginationQuery {
+  limit?: number;
+  offset?: number;
   role?: 'user' | 'system' | 'assistant' | 'tool';
+  threadId?: string;
   topicId?: string;
   userId?: string;
 }
 
 export const MessagesListQuerySchema = z
   .object({
-    // 过滤参数
+    threadId: z.string().min(1).optional(),
+    // Filter parameters
     topicId: z.string().nullish(),
     userId: z.string().nullish(),
     role: z.enum(['user', 'system', 'assistant', 'tool']).nullish(),
   })
   .extend(PaginationQuerySchema.shape)
+  .extend(EvalPaginationSchema.shape)
   .refine((data) => Boolean(data.topicId || data.userId), {
     message: 'At least one filter parameter must be provided: topicId or userId',
   });

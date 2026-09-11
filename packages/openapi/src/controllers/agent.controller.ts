@@ -14,6 +14,21 @@ import type {
  * 处理 Agent 相关的 HTTP 请求和响应
  */
 export class AgentController extends BaseController {
+  async duplicateAgent(c: Context) {
+    try {
+      const { id } = this.getParams<{ id: string }>(c);
+      const body = await this.getBody<{ title?: string }>(c);
+      const service = new AgentService(
+        await this.getDatabase(),
+        this.getUserId(c)!,
+        this.getWorkspaceId(c),
+      );
+      return this.success(c, await service.duplicateAgent(id, body.title), 'Agent duplicated', 201);
+    } catch (error) {
+      return this.handleError(c, error);
+    }
+  }
+
   /**
    * 获取系统中所有的 Agent 列表
    * GET /api/v1/agents/list
