@@ -144,6 +144,7 @@ runs:
         fi
 
         echo "Installing Desktop dependencies from $desktop_root"
+        echo "DESKTOP_BUILD_ROOT=$desktop_root" >> "$GITHUB_ENV"
         # The root hoisted install creates workspace-package dependency links into the
         # repository root (for example packages/utils/node_modules/es-toolkit). Desktop's
         # mainHash must resolve every bundled dependency from its own locked installation,
@@ -165,3 +166,34 @@ runs:
         done
         cd "$desktop_root"
         pnpm install --frozen-lockfile
+        DESKTOP_BUILD_ROOT="$desktop_root" node <<'NODE'
+        const path = require('node:path');
+        const { createRequire } = require('node:module');
+
+        const desktopRoot = path.resolve(process.env.DESKTOP_BUILD_ROOT);
+        const desktopRequire = createRequire(path.join(desktopRoot, 'package.json'));
+        const utilsRequire = createRequire(
+          path.join(desktopRoot, 'node_modules/@lobechat/utils/package.json'),
+        );
+        const lockedRoot = path.join(desktopRoot, 'node_modules');
+        const isInsideLockedRoot = (file) => {
+          const relative = path.relative(lockedRoot, path.resolve(file));
+          return (
+            relative === '' ||
+            (!relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative))
+          );
+        };
+        const resolutions = {
+          desktop: desktopRequire.resolve('es-toolkit'),
+          utils: utilsRequire.resolve('es-toolkit'),
+        };
+
+        for (const [owner, resolved] of Object.entries(resolutions)) {
+          console.log(`${owner} es-toolkit: ${resolved}`);
+          if (!isInsideLockedRoot(resolved)) {
+            throw new Error(
+              `${owner} es-toolkit resolved outside Desktop installation: ${resolved}`,
+            );
+          }
+        }
+        NODE

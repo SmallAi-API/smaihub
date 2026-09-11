@@ -14,11 +14,16 @@ describe('buildElectron', () => {
       readFile(path.resolve('apps/desktop/package.json'), 'utf8'),
     ]);
     const desktopPackage = JSON.parse(desktopPackageSource) as PackageJson;
-    const referencedScripts = [
-      ...buildElectronSource.matchAll(/npm run ([\w:-]+) --prefix=\.\/apps\/desktop/g),
-    ].map((match) => match[1]);
+    const referencedScripts = [...buildElectronSource.matchAll(/npm run ([\w:-]+)'/g)].map(
+      (match) => match[1],
+    );
 
     expect(referencedScripts).toEqual(['package:mac', 'package:win', 'package:linux']);
+
+    expect(buildElectronSource).toContain(
+      "execSync(buildCommand, { cwd: desktopRoot, stdio: 'inherit' })",
+    );
+    expect(buildElectronSource).toContain('process.env.DESKTOP_BUILD_ROOT');
 
     for (const script of referencedScripts) {
       expect(desktopPackage.scripts, `missing desktop script: ${script}`).toHaveProperty(script);
