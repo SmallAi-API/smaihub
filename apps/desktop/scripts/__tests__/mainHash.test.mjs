@@ -415,6 +415,39 @@ describe('workspace Vite graph', () => {
     await expect(hash({ graph: [graph] })).rejects.toThrow("outside Desktop's locked installation");
   });
 
+  it('resolves package subdependencies from the Desktop installation', async () => {
+    await put(
+      'apps/desktop/node_modules/pkg/package.json',
+      JSON.stringify({ name: 'pkg', type: 'module', main: 'index.js' }),
+    );
+    await put('apps/desktop/node_modules/pkg/index.js', "export { value } from 'nested/utils.js';");
+    await put(
+      'apps/desktop/node_modules/nested/package.json',
+      JSON.stringify({ name: 'nested', type: 'module', main: 'index.js' }),
+    );
+    await put('apps/desktop/node_modules/nested/utils.js', 'export const value = 1;');
+    await put('node_modules/nested/utils.js', 'export const value = 2;');
+    await put(
+      'apps/desktop/src/main/index.ts',
+      "import { value } from 'pkg'; export const result = value;",
+    );
+
+    const graph = await collectViteGraph({
+      configFile: false,
+      root: path.join(root, 'apps/desktop'),
+      build: {
+        lib: { entry: path.join(root, 'apps/desktop/src/main/index.ts'), formats: ['es'] },
+        ssr: true,
+      },
+    });
+    const manifest = await hash({ graph: [graph] });
+
+    expect(manifest.mainHash).toMatch(/^[\da-f]{64}$/);
+    expect(
+      [...graph.nodes.keys()].some((id) => id.includes('nested') && id.endsWith('utils.js')),
+    ).toBe(true);
+  });
+
   it('tracks star forwarding, cycles and CommonJS without dropping runtime dependencies', async () => {
     await put('apps/desktop/src/main/a.ts', 'export const selected = 11;');
     await put('apps/desktop/src/main/b.ts', 'export const selected = 22;');

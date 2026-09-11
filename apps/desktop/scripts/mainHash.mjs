@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { glob, mkdir, readFile, realpath, stat, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -93,14 +94,76 @@ export async function collectViteGraph(options) {
       if (source === 'buffer' || source === 'buffer.js') {
         candidates.push('buffer/', 'buffer/index.js');
       }
+      // Dependencies inside a pnpm package must be resolved from that package's
+      // own directory. Resolving every bare import from Desktop's package.json
+      // loses pnpm's nested dependency edges (for example fs-extra@11 ->
+      // jsonfile@6) and can make Vite fall back to the repository root copy.
+      const importerFile = importer.replace(/^\0/, '').split('?')[0];
+      const importerRequire =
+        importerFile.includes('/node_modules/') || importerFile.includes('\\node_modules\\')
+          ? createRequire(realpathSync(importerFile))
+          : lockedRequire;
+      const resolveLockedPackage = (specifier) => {
+        const packageName = specifier.startsWith('@')
+          ? specifier.split('/').slice(0, 2).join('/')
+          : specifier.split('/')[0];
+        const packageRoot = path.join(lockedRoot, packageName);
+        const packageJsonPath = path.join(packageRoot, 'package.json');
+        if (!existsSync(packageJsonPath)) return undefined;
+        const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+        const subpath = specifier.slice(packageName.length).replace(/^\//, '');
+        const pickExport = (value) => {
+          if (typeof value === 'string') return value;
+          if (Array.isArray(value)) {
+            for (const item of value) {
+              const picked = pickExport(item);
+              if (picked) return picked;
+            }
+            return undefined;
+          }
+          if (!value || typeof value !== 'object') return undefined;
+          for (const condition of ['import', 'node', 'default']) {
+            const picked = pickExport(value[condition]);
+            if (picked) return picked;
+          }
+          return undefined;
+        };
+        let target;
+        if (packageJson.exports) {
+          const exports = packageJson.exports;
+          const key = subpath ? `./${subpath}` : '.';
+          if (typeof exports === 'string' || Array.isArray(exports))
+            target = !subpath ? pickExport(exports) : undefined;
+          else target = pickExport(exports[key]);
+        }
+        target ??= subpath ? `./${subpath}` : (packageJson.module ?? packageJson.main);
+        if (!target || target.startsWith('node:')) return undefined;
+        const base = path.resolve(packageRoot, target);
+        const candidates = [
+          base,
+          `${base}.js`,
+          `${base}.mjs`,
+          `${base}.cjs`,
+          path.join(base, 'index.js'),
+        ];
+        return candidates.find((file) => existsSync(file));
+      };
       let outside;
       for (const candidate of candidates) {
         let resolved;
         try {
-          resolved = lockedRequire.resolve(candidate);
+          resolved = importerRequire.resolve(candidate);
         } catch {
-          continue;
+          // Fall through to the Desktop-root package map below.
         }
+        const lockedResolved = resolveLockedPackage(candidate);
+        if (
+          !resolved ||
+          (slash(resolved).includes('/node_modules/') && !inside(lockedRoot, resolved))
+        ) {
+          resolved = lockedResolved ?? resolved;
+        }
+        if (!resolved) continue;
         if (!slash(resolved).includes('/node_modules/')) continue;
         const relative = path.relative(lockedRoot, resolved);
         if (relative === '' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
@@ -109,7 +172,7 @@ export async function collectViteGraph(options) {
         }
         return resolved;
       }
-      if (outside && !source.endsWith('.js')) {
+      if (outside) {
         throw new Error(
           `Main hash dependency is outside Desktop's locked installation: ${outside}`,
         );
@@ -122,8 +185,8 @@ export async function collectViteGraph(options) {
     build: { ...options.build, minify: false, sourcemap: false, write: false },
     logLevel: 'silent',
     plugins: [
-      ...(options.plugins ?? []),
       desktopDependencyResolver,
+      ...(options.plugins ?? []),
       {
         name: 'renderer-ota-source-inputs',
         configResolved(config) {
