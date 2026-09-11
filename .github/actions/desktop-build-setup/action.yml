@@ -138,4 +138,5 @@ runs:
         fi
 
         echo "Installing Desktop dependencies from $desktop_root"
-        npm run install-isolated --prefix="$desktop_root"
+        cd "$desktop_root"
+        pnpm install --frozen-lockfile

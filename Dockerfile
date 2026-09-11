@@ -83,12 +83,11 @@ RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
         npm config set registry "https://registry.npmmirror.com/"; \
         echo 'canvas_binary_host_mirror=https://npmmirror.com/mirrors/canvas' >> .npmrc; \
     fi && \
-    export COREPACK_NPM_REGISTRY=$(npm config get registry | sed 's/\/$//') && \
-    npm i -g corepack@latest && \
-    corepack enable && \
     PACKAGE_MANAGER=$(sed -n 's/.*"packageManager": "\(.*\)".*/\1/p' package.json) && \
+    PACKAGE_MANAGER_NAME=$(printf '%s' "${PACKAGE_MANAGER}" | cut -d@ -f1) && \
+    PACKAGE_MANAGER_VERSION=$(printf '%s' "${PACKAGE_MANAGER}" | cut -d@ -f2 | cut -d+ -f1) && \
+    npm i -g "${PACKAGE_MANAGER_NAME}@${PACKAGE_MANAGER_VERSION}" && \
     git init -q && \
-    corepack use "${PACKAGE_MANAGER}" && \
     pnpm config set store-dir /root/.local/share/pnpm/store && \
     pnpm config set network-concurrency 4 && \
     pnpm config set child-concurrency 1 && \
