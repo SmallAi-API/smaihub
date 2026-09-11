@@ -44,6 +44,8 @@
   "document_comment_mentioned_title": "您在文档评论中被提及",
   "document_liked": "{{actorLabel}} 赞了你的文档 \"{{documentTitle}}\"。",
   "document_liked_title": "有人赞了你的文档",
+  "document_mentioned": "{{actorLabel}} 在 \"{{documentTitle}}\" 中提到了你。",
+  "document_mentioned_title": "你在一份文档中被提到",
   "email.footer.manage": "管理通知",
   "email.footer.preference": "您收到此电子邮件是因为您在 LobeHub 上的通知设置。",
   "email.footer.system": "这是来自 LobeHub 的重要账户通知。",

@@ -44,6 +44,8 @@
   "document_comment_mentioned_title": "You were mentioned in a document comment",
   "document_liked": "{{actorLabel}} liked your document \"{{documentTitle}}\".",
   "document_liked_title": "Someone liked your document",
+  "document_mentioned": "{{actorLabel}} mentioned you in \"{{documentTitle}}\".",
+  "document_mentioned_title": "You were mentioned in a document",
   "email.footer.manage": "Manage notifications",
   "email.footer.preference": "You received this email because of your notification settings on LobeHub.",
   "email.footer.system": "This is an important account notification from LobeHub.",
