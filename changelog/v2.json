@@ -1,6 +1,13 @@
 [
   {
     "children": {
+      "features": ["relax workspace resource management."]
+    },
+    "date": "2026-09-04",
+    "version": "2.2.16"
+  },
+  {
+    "children": {
       "fixes": [
         "drop legacy task template recommendations.",
         "drop legacy task template recommendations."

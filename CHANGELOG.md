@@ -2,13 +2,17 @@
 
 # Changelog
 
-## [Version 2.1.51](https://github.com/lobehub/lobe-chat/compare/v0.0.0-nightly.pr13850.8503...v2.1.51)
+## [Version 2.2.16](https://github.com/lobehub/lobe-chat/compare/v2.2.16-canary.28...v2.2.16)
 
-<sup>Released on **2026-01-27**</sup>
+<sup>Released on **2026-09-04**</sup>
 
 #### 🐛 Bug Fixes
 
-- **misc**: Tts and translate error.
+- **heterogeneous-agent**: preserve TRAE auth for model bindings.
+
+#### ✨ Features
+
+- **misc**: relax workspace resource management.
 
 <br/>
 
@@ -17,7 +21,11 @@
 
 #### What's fixed
 
-- **misc**: Tts and translate error, closes [#11871](https://github.com/lobehub/lobe-chat/issues/11871) ([b63c791](https://github.com/lobehub/lobe-chat/commit/b63c791))
+- **heterogeneous-agent**: preserve TRAE auth for model bindings, closes [#18932](https://github.com/lobehub/lobe-chat/issues/18932) ([08a22e1](https://github.com/lobehub/lobe-chat/commit/08a22e1))
+
+#### What's improved
+
+- **misc**: relax workspace resource management, closes [#19107](https://github.com/lobehub/lobe-chat/issues/19107) ([29da6a6](https://github.com/lobehub/lobe-chat/commit/29da6a6))
 
 </details>
 
@@ -27,250 +35,22 @@
 
 </div>
 
-## [Version 2.0.0-next.388](https://github.com/lobehub/lobe-chat/compare/v2.0.0-next.387...v2.0.0-next.388)
+## [Version 2.2.11](https://github.com/lobehub/lobe-chat/compare/v2.2.11-canary.67...v2.2.11)
 
-<sup>Released on **2026-01-26**</sup>
-
-#### ✨ Features
-
-- **electron**: Enhance native module handling and improve desktop features.
+<sup>Released on **2026-07-23**</sup>
 
 #### 🐛 Bug Fixes
 
-- **community**: Should be able to switch category with All and Discover.
-- **misc**: Fix page count issue.
-
-<br/>
-
-<details>
-<summary><kbd>Improvements and Fixes</kbd></summary>
-
-#### What's improved
-
-- **electron**: Enhance native module handling and improve desktop features, closes [#11867](https://github.com/lobehub/lobe-chat/issues/11867) ([e3c80d5](https://github.com/lobehub/lobe-chat/commit/e3c80d5))
-
-#### What's fixed
-
-- **community**: Should be able to switch category with All and Discover, closes [#11869](https://github.com/lobehub/lobe-chat/issues/11869) ([ba0fab1](https://github.com/lobehub/lobe-chat/commit/ba0fab1))
-- **misc**: Fix page count issue, closes [#11868](https://github.com/lobehub/lobe-chat/issues/11868) ([89572e4](https://github.com/lobehub/lobe-chat/commit/89572e4))
-
-</details>
-
-<div align="right">
-
-[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
-
-</div>
-
-## [Version 2.0.0-next.387](https://github.com/lobehub/lobe-chat/compare/v2.0.0-next.386...v2.0.0-next.387)
-
-<sup>Released on **2026-01-26**</sup>
-
-#### ✨ Features
-
-- **utils**: Added errorCauseFrom, errorMessageFrom, errorNameFrom.
-
-<br/>
-
-<details>
-<summary><kbd>Improvements and Fixes</kbd></summary>
-
-#### What's improved
-
-- **utils**: Added errorCauseFrom, errorMessageFrom, errorNameFrom, closes [#11864](https://github.com/lobehub/lobe-chat/issues/11864) ([a396ab1](https://github.com/lobehub/lobe-chat/commit/a396ab1))
-
-</details>
-
-<div align="right">
-
-[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
-
-</div>
-
-## [Version 2.0.0-next.386](https://github.com/lobehub/lobe-chat/compare/v2.0.0-next.385...v2.0.0-next.386)
-
-<sup>Released on **2026-01-26**</sup>
-
-#### ✨ Features
-
-- **misc**: Group builder not set true edit data.
-
-#### 🐛 Bug Fixes
-
-- **misc**: Fix resource pages.
-
-<br/>
-
-<details>
-<summary><kbd>Improvements and Fixes</kbd></summary>
-
-#### What's improved
-
-- **misc**: Group builder not set true edit data, closes [#11861](https://github.com/lobehub/lobe-chat/issues/11861) ([37944e7](https://github.com/lobehub/lobe-chat/commit/37944e7))
-
-#### What's fixed
-
-- **misc**: Fix resource pages, closes [#11863](https://github.com/lobehub/lobe-chat/issues/11863) ([7ce31c1](https://github.com/lobehub/lobe-chat/commit/7ce31c1))
-
-</details>
-
-<div align="right">
-
-[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
-
-</div>
-
-## [Version 2.0.0-next.385](https://github.com/lobehub/lobe-chat/compare/v2.0.0-next.384...v2.0.0-next.385)
-
-<sup>Released on **2026-01-26**</sup>
-
-#### ✨ Features
-
-- **misc**: Share page improvements and pg17 docs update.
-
-<br/>
-
-<details>
-<summary><kbd>Improvements and Fixes</kbd></summary>
-
-#### What's improved
-
-- **misc**: Share page improvements and pg17 docs update, closes [#11850](https://github.com/lobehub/lobe-chat/issues/11850) ([5b953b1](https://github.com/lobehub/lobe-chat/commit/5b953b1))
-
-</details>
-
-<div align="right">
-
-[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
-
-</div>
-
-## [Version 2.1.50](https://github.com/lobehub/lobe-chat/compare/v2.1.49...v2.1.50)
-
-<sup>Released on **2026-01-26**</sup>
-
-#### ✨ Features
-
-- **desktop**: Add manual update check entry in About page.
-
-#### 🐛 Bug Fixes
-
-- **model-runtime**: Filter null values from enum for Gemini compatibility.
-- **misc**: Group builder not set true edit data.
-
-<br/>
-
-<details>
-<summary><kbd>Improvements and Fixes</kbd></summary>
-
-#### What's improved
-
-- **desktop**: Add manual update check entry in About page, closes [#11854](https://github.com/lobehub/lobe-chat/issues/11854) ([ec854d7](https://github.com/lobehub/lobe-chat/commit/ec854d7))
-
-#### What's fixed
-
-- **model-runtime**: Filter null values from enum for Gemini compatibility, closes [#11859](https://github.com/lobehub/lobe-chat/issues/11859) ([1163f71](https://github.com/lobehub/lobe-chat/commit/1163f71))
-- **misc**: Group builder not set true edit data, closes [#11858](https://github.com/lobehub/lobe-chat/issues/11858) ([8eba0e6](https://github.com/lobehub/lobe-chat/commit/8eba0e6))
-
-</details>
-
-<div align="right">
-
-[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
-
-</div>
-
-## [Version 2.0.0-next.383](https://github.com/lobehub/lobe-chat/compare/v2.0.0-next.382...v2.0.0-next.383)
-
-<sup>Released on **2026-01-26**</sup>
-
-#### ✨ Features
-
-- **desktop**: Add system save dialog for markdown export.
-- **observability-otel,libs**: Include and propagate Traceparent header to tid.
-- **misc**: Add the fork tag show in community detail page.
-
-#### 🐛 Bug Fixes
-
-- **misc**: Slove the agentbuilder install market tools not work.
-
-<br/>
-
-<details>
-<summary><kbd>Improvements and Fixes</kbd></summary>
-
-#### What's improved
-
-- **desktop**: Add system save dialog for markdown export, closes [#11852](https://github.com/lobehub/lobe-chat/issues/11852) ([8896c06](https://github.com/lobehub/lobe-chat/commit/8896c06))
-- **observability-otel,libs**: Include and propagate Traceparent header to tid, closes [#11845](https://github.com/lobehub/lobe-chat/issues/11845) ([0d101da](https://github.com/lobehub/lobe-chat/commit/0d101da))
-- **misc**: Add the fork tag show in community detail page, closes [#11814](https://github.com/lobehub/lobe-chat/issues/11814) ([cd029eb](https://github.com/lobehub/lobe-chat/commit/cd029eb))
-
-#### What's fixed
-
-- **misc**: Slove the agentbuilder install market tools not work, closes [#11848](https://github.com/lobehub/lobe-chat/issues/11848) ([dbe9011](https://github.com/lobehub/lobe-chat/commit/dbe9011))
-
-</details>
-
-<div align="right">
-
-[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
-
-</div>
-
-## [Version 2.0.0-next.382](https://github.com/lobehub/lobe-chat/compare/v2.0.0-next.381...v2.0.0-next.382)
-
-<sup>Released on **2026-01-26**</sup>
-
-#### ✨ Features
-
-- **memory-user-memory,database,userMemories**: Implemented user memory persona.
-
-<br/>
-
-<details>
-<summary><kbd>Improvements and Fixes</kbd></summary>
-
-#### What's improved
-
-- **memory-user-memory,database,userMemories**: Implemented user memory persona, closes [#11838](https://github.com/lobehub/lobe-chat/issues/11838) ([75ea548](https://github.com/lobehub/lobe-chat/commit/75ea548))
-
-</details>
-
-<div align="right">
-
-[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
-
-</div>
-
-## [Version 2.0.0-next.381](https://github.com/lobehub/lobe-chat/compare/v2.0.0-next.380...v2.0.0-next.381)
-
-<sup>Released on **2026-01-26**</sup>
-
-#### 🐛 Bug Fixes
-
-- **misc**: Fix cron job issue, fix share single message.
-
-<br/>
-
-<details>
-<summary><kbd>Improvements and Fixes</kbd></summary>
-
-#### What's fixed
-
-- **misc**: Fix cron job issue, closes [#11835](https://github.com/lobehub/lobe-chat/issues/11835) ([6d50f80](https://github.com/lobehub/lobe-chat/commit/6d50f80))
-- **misc**: Fix share single message, closes [#11840](https://github.com/lobehub/lobe-chat/issues/11840) ([9433bbb](https://github.com/lobehub/lobe-chat/commit/9433bbb))
-
-</details>
-
-<div align="right">
-
-[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
-
-</div>
-
-## [Version 2.0.0-next.380](https://github.com/lobehub/lobe-chat/compare/v2.0.0-next.379...v2.0.0-next.380)
-
-<sup>Released on **2026-01-26**</sup>
+- **misc**: narrow acceptance empty filter translation key.
+- **verify**: polish recovered acceptance changes.
+- **chat**: prevent mobile input auto-zoom.
+- **minimax**: normalize unsupported image detail "auto".
+- **ProviderConfig**: reset form fields to prevent leaking old values on provider switch.
+- **search**: surface marketplace agent failures.
+- **search**: surface web search provider failures.
+- **misc**: enforce agent step execution deadlines.
+- **model-runtime**: enable prompt cache keys for Grok.
+- **conversation-flow**: iterative message-tree traversal to avoid mobile stack overflow.
 
 #### 💄 Styles
 
@@ -744,7 +524,7 @@
 
 #### 🐛 Bug Fixes
 
-- **misc**: Docker deploy REDIS_URL check, fix sub task issue.
+- **misc**: Docker deploy REDIS\_URL check, fix sub task issue.
 
 <br/>
 
@@ -753,7 +533,7 @@
 
 #### What's fixed
 
-- **misc**: Docker deploy REDIS_URL check, closes [#11773](https://github.com/lobehub/lobe-chat/issues/11773) ([a9702bf](https://github.com/lobehub/lobe-chat/commit/a9702bf))
+- **misc**: Docker deploy REDIS\_URL check, closes [#11773](https://github.com/lobehub/lobe-chat/issues/11773) ([a9702bf](https://github.com/lobehub/lobe-chat/commit/a9702bf))
 - **misc**: Fix sub task issue, closes [#11777](https://github.com/lobehub/lobe-chat/issues/11777) ([8ae3456](https://github.com/lobehub/lobe-chat/commit/8ae3456))
 
 </details>
@@ -1748,7 +1528,7 @@
 
 #### ♻ Code Refactoring
 
-- **auth**: Remove NEXT_PUBLIC_AUTH_URL env variable.
+- **auth**: Remove NEXT\_PUBLIC\_AUTH\_URL env variable.
 
 #### 🐛 Bug Fixes
 
@@ -1761,7 +1541,7 @@
 
 #### Code refactoring
 
-- **auth**: Remove NEXT_PUBLIC_AUTH_URL env variable, closes [#11658](https://github.com/lobehub/lobe-chat/issues/11658) ([c0f9875](https://github.com/lobehub/lobe-chat/commit/c0f9875))
+- **auth**: Remove NEXT\_PUBLIC\_AUTH\_URL env variable, closes [#11658](https://github.com/lobehub/lobe-chat/issues/11658) ([c0f9875](https://github.com/lobehub/lobe-chat/commit/c0f9875))
 
 #### What's fixed
 
@@ -2900,11 +2680,11 @@
 
 #### ♻ Code Refactoring
 
-- **desktop**: Unify TITLE_BAR_HEIGHT constant to desktop-bridge.
+- **desktop**: Unify TITLE\_BAR\_HEIGHT constant to desktop-bridge.
 
 #### 🐛 Bug Fixes
 
-- **desktop**: Return OFFICIAL_URL in cloud mode for remoteServerUrl selector.
+- **desktop**: Return OFFICIAL\_URL in cloud mode for remoteServerUrl selector.
 
 <br/>
 
@@ -2913,11 +2693,11 @@
 
 #### Code refactoring
 
-- **desktop**: Unify TITLE_BAR_HEIGHT constant to desktop-bridge, closes [#11496](https://github.com/lobehub/lobe-chat/issues/11496) ([e7739e5](https://github.com/lobehub/lobe-chat/commit/e7739e5))
+- **desktop**: Unify TITLE\_BAR\_HEIGHT constant to desktop-bridge, closes [#11496](https://github.com/lobehub/lobe-chat/issues/11496) ([e7739e5](https://github.com/lobehub/lobe-chat/commit/e7739e5))
 
 #### What's fixed
 
-- **desktop**: Return OFFICIAL_URL in cloud mode for remoteServerUrl selector, closes [#11502](https://github.com/lobehub/lobe-chat/issues/11502) ([1d11fac](https://github.com/lobehub/lobe-chat/commit/1d11fac))
+- **desktop**: Return OFFICIAL\_URL in cloud mode for remoteServerUrl selector, closes [#11502](https://github.com/lobehub/lobe-chat/issues/11502) ([1d11fac](https://github.com/lobehub/lobe-chat/commit/1d11fac))
 
 </details>
 
@@ -4938,7 +4718,7 @@
 
 #### 🐛 Bug Fixes
 
-- **model-runtime**: Handle Qwen tool_calls without initial arguments.
+- **model-runtime**: Handle Qwen tool\_calls without initial arguments.
 
 <br/>
 
@@ -4947,7 +4727,7 @@
 
 #### What's fixed
 
-- **model-runtime**: Handle Qwen tool_calls without initial arguments, closes [#11211](https://github.com/lobehub/lobe-chat/issues/11211) ([5321d91](https://github.com/lobehub/lobe-chat/commit/5321d91))
+- **model-runtime**: Handle Qwen tool\_calls without initial arguments, closes [#11211](https://github.com/lobehub/lobe-chat/issues/11211) ([5321d91](https://github.com/lobehub/lobe-chat/commit/5321d91))
 
 </details>
 
@@ -5698,7 +5478,7 @@
 - **prebuild**: Correct syntax in partialBuildPages array.
 - **translation**: Add fallback for all English locale variants.
 - **userMemories**: 404/405 issue due to incorrectly used workflow name and mounted catch-all route, missing base memory as part of context, must assign workflow id, should use `context.invoke` for workflow instead of `context.run`, skip to handle WorkflowAbort, use date & time for building context, workflow id build issue.
-- **misc**: Agent profiles update, agent tools config set, editor placeholder, bump charts 3.0.4 to fix import es path, fix anthropic thinking budget, fix async task and improve tool style, fix default waitlist bug, fix delete agent group bug, Fix desktop test cases and refactor translations, Fix desktop test cases and refactor translations, fix gemini 3 model thinking issue, fix gemini 3 pro parallel tool use, fix gemini 3 thinking params, fix identity memory not working, fix supervisor flag, fix thread not working issue, fix when use branch topic,the branch index error problem, fixed the welcome card the create button not work, handle session invalidation on 401 error by logging out signed-in users, improve test infrastructure and mock configurations, locale resolve bug with ESM module loading, page agent editor, prevent redundant login redirect when already on auth pages, redis read json object, remove openapi pkg patch file, slove input editor on pause emit, slove swr mutate not work in Cache Provider, slove the group add member checkbox not work, slove the model select null problem, slove the mutate not work problem, slove when click agentbuilder should clean topic, slove when first call thread, not show ai chat message, support retry error message and fix continueGenerationMessage, update contextMenu in group tools message, update OFFICIAL_URL to app.lobehub.com, update PlanTag link paths for subscription settings, update test snapshots for model description changes, when use agentbuilder the topic id should use new & clear topic….
+- **misc**: Agent profiles update, agent tools config set, editor placeholder, bump charts 3.0.4 to fix import es path, fix anthropic thinking budget, fix async task and improve tool style, fix default waitlist bug, fix delete agent group bug, Fix desktop test cases and refactor translations, Fix desktop test cases and refactor translations, fix gemini 3 model thinking issue, fix gemini 3 pro parallel tool use, fix gemini 3 thinking params, fix identity memory not working, fix supervisor flag, fix thread not working issue, fix when use branch topic,the branch index error problem, fixed the welcome card the create button not work, handle session invalidation on 401 error by logging out signed-in users, improve test infrastructure and mock configurations, locale resolve bug with ESM module loading, page agent editor, prevent redundant login redirect when already on auth pages, redis read json object, remove openapi pkg patch file, slove input editor on pause emit, slove swr mutate not work in Cache Provider, slove the group add member checkbox not work, slove the model select null problem, slove the mutate not work problem, slove when click agentbuilder should clean topic, slove when first call thread, not show ai chat message, support retry error message and fix continueGenerationMessage, update contextMenu in group tools message, update OFFICIAL\_URL to app.lobehub.com, update PlanTag link paths for subscription settings, update test snapshots for model description changes, when use agentbuilder the topic id should use new & clear topic….
 
 #### 💄 Styles
 
@@ -5870,7 +5650,7 @@
 - **misc**: Slove when first call thread, not show ai chat message, closes [#10878](https://github.com/lobehub/lobe-chat/issues/10878) ([5a79cb9](https://github.com/lobehub/lobe-chat/commit/5a79cb9))
 - **misc**: Support retry error message and fix continueGenerationMessage ([8bf85fb](https://github.com/lobehub/lobe-chat/commit/8bf85fb))
 - **misc**: Update contextMenu in group tools message, closes [#11056](https://github.com/lobehub/lobe-chat/issues/11056) ([8b49414](https://github.com/lobehub/lobe-chat/commit/8b49414))
-- **misc**: Update OFFICIAL_URL to app.lobehub.com, closes [#11015](https://github.com/lobehub/lobe-chat/issues/11015) ([f9e11d0](https://github.com/lobehub/lobe-chat/commit/f9e11d0))
+- **misc**: Update OFFICIAL\_URL to app.lobehub.com, closes [#11015](https://github.com/lobehub/lobe-chat/issues/11015) ([f9e11d0](https://github.com/lobehub/lobe-chat/commit/f9e11d0))
 - **misc**: Update PlanTag link paths for subscription settings ([ada71d3](https://github.com/lobehub/lobe-chat/commit/ada71d3))
 - **misc**: Update test snapshots for model description changes, closes [#11008](https://github.com/lobehub/lobe-chat/issues/11008) ([626e808](https://github.com/lobehub/lobe-chat/commit/626e808))
 - **misc**: When use agentbuilder the topic id should use new & clear topic…, closes [#10983](https://github.com/lobehub/lobe-chat/issues/10983) ([0b2b096](https://github.com/lobehub/lobe-chat/commit/0b2b096))
@@ -7019,7 +6799,7 @@
 
 #### 🐛 Bug Fixes
 
-- **misc**: Betterauth public url auto detect from VERCEL_URL.
+- **misc**: Betterauth public url auto detect from VERCEL\_URL.
 
 <br/>
 
@@ -7028,7 +6808,7 @@
 
 #### What's fixed
 
-- **misc**: Betterauth public url auto detect from VERCEL_URL, closes [#10493](https://github.com/lobehub/lobe-chat/issues/10493) ([b5bf8ad](https://github.com/lobehub/lobe-chat/commit/b5bf8ad))
+- **misc**: Betterauth public url auto detect from VERCEL\_URL, closes [#10493](https://github.com/lobehub/lobe-chat/issues/10493) ([b5bf8ad](https://github.com/lobehub/lobe-chat/commit/b5bf8ad))
 
 </details>
 
@@ -10349,7 +10129,7 @@
 
 #### 🐛 Bug Fixes
 
-- **misc**: Hide marketplace link from Plugin List when market disabled, OIDC error when connecting to self-host instance, only include input_fidelity parameter for gpt-image-1..
+- **misc**: Hide marketplace link from Plugin List when market disabled, OIDC error when connecting to self-host instance, only include input\_fidelity parameter for gpt-image-1..
 
 <br/>
 
@@ -10360,7 +10140,7 @@
 
 - **misc**: Hide marketplace link from Plugin List when market disabled, closes [#9929](https://github.com/lobehub/lobe-chat/issues/9929) ([e303979](https://github.com/lobehub/lobe-chat/commit/e303979))
 - **misc**: OIDC error when connecting to self-host instance, closes [#9916](https://github.com/lobehub/lobe-chat/issues/9916) ([7a2ca19](https://github.com/lobehub/lobe-chat/commit/7a2ca19))
-- **misc**: Only include input_fidelity parameter for gpt-image-1., closes [#9920](https://github.com/lobehub/lobe-chat/issues/9920) ([65dbc63](https://github.com/lobehub/lobe-chat/commit/65dbc63))
+- **misc**: Only include input\_fidelity parameter for gpt-image-1., closes [#9920](https://github.com/lobehub/lobe-chat/issues/9920) ([65dbc63](https://github.com/lobehub/lobe-chat/commit/65dbc63))
 
 </details>
 
