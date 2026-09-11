@@ -6,11 +6,14 @@ export const OFFICIAL_DOMAIN = 'https://www.smallai.asia';
 
 export const OFFICIAL_CLOUD_URL = OFFICIAL_SITE;
 
+// OFFICIAL_DOMAIN is a full URL, so compare against its hostname rather than the raw value
+const OFFICIAL_HOSTNAME = new URL(OFFICIAL_DOMAIN).hostname;
+
 export const isOfficialCloudServer = (url?: string): boolean => {
   if (!url) return false;
   try {
     const { hostname } = new URL(url);
-    return hostname === OFFICIAL_DOMAIN || hostname.endsWith(`.${OFFICIAL_DOMAIN}`);
+    return hostname === OFFICIAL_HOSTNAME || hostname.endsWith(`.${OFFICIAL_HOSTNAME}`);
   } catch {
     return false;
   }

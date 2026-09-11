@@ -10,7 +10,7 @@ import { type LobeAgentConfig } from '@/types/agent';
 import { type GlobalRuntimeConfig } from '@/types/serverConfig';
 
 const VERSION_URL = 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com';
-const SERVER_VERSION_URL = '/stable';
+const SERVER_VERSION_URL = '/api/version';
 
 class GlobalService extends BusinessGlobalService {
   /**
