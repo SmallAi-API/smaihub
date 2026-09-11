@@ -1,6 +1,6 @@
 {
   "name": "@wasskayyy/smaihub",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "smai.ai - 新一代智能体Agent对话平台,支持GPT5.2、Claude 4.5 Opus、NanoBanana、Gemini 3 Pro等全球主流Ai大模型服务,内置多个AI Agent完成AI对话,轻松构建 Agent，并实现真正的技能控制。以任务为驱动的工具，构建能随着您一起成长的长期 Agent 队友，加入全球最大的人与 Agent 共生网络。",
   "keywords": [
     "framework",
@@ -203,7 +203,7 @@
     "@chat-adapter/state-ioredis": "~4.38.0",
     "@chat-adapter/telegram": "~4.38.0",
     "@codesandbox/sandpack-react": "^2.20.0",
-    "@composio/core": "^0.17.0",
+    "@composio/core": "^0.18.0",
     "@discordjs/rest": "^2.6.3",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",

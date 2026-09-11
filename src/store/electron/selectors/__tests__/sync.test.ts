@@ -17,10 +17,10 @@ describe('electronSyncSelectors.isOfficialServer', () => {
     ).toBe(true);
   });
 
-  it('is official when self-hosting on a lobehub.com origin', () => {
+  it('is official when self-hosting on an official origin', () => {
     expect(
       electronSyncSelectors.isOfficialServer(
-        withConfig({ remoteServerUrl: 'https://lobehub.com', storageMode: 'selfHost' }),
+        withConfig({ remoteServerUrl: 'https://www.smallai.asia', storageMode: 'selfHost' }),
       ),
     ).toBe(true);
   });
