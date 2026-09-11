@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { glob, mkdir, readFile, realpath, stat, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -71,12 +72,58 @@ export async function collectViteGraph(options) {
   const nodes = new Map();
   const configFiles = new Set();
   let defines;
+  let lockedRequire;
+  let lockedRoot;
+  const desktopDependencyResolver = {
+    enforce: 'pre',
+    name: 'renderer-ota-desktop-dependency-resolver',
+    configResolved(config) {
+      lockedRoot = path.resolve(config.root, 'node_modules');
+      lockedRequire = createRequire(path.join(config.root, 'package.json'));
+      for (const file of config.configFileDependencies) configFiles.add(file);
+      defines = config.define;
+    },
+    resolveId(source, importer) {
+      if (!importer || !source || source.startsWith('.') || path.isAbsolute(source)) return null;
+      const candidates = [source];
+      // Vite's platform shim resolves `buffer.js` to the nearest package named
+      // `buffer`; prefer the Desktop copy before the shim can fall back to the
+      // monorepo root.
+      if (source.endsWith('.js')) candidates.push(source.slice(0, -3));
+      if (source === 'buffer' || source === 'buffer.js') {
+        candidates.push('buffer/', 'buffer/index.js');
+      }
+      let outside;
+      for (const candidate of candidates) {
+        let resolved;
+        try {
+          resolved = lockedRequire.resolve(candidate);
+        } catch {
+          continue;
+        }
+        if (!slash(resolved).includes('/node_modules/')) continue;
+        const relative = path.relative(lockedRoot, resolved);
+        if (relative === '' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+          outside ??= resolved;
+          continue;
+        }
+        return resolved;
+      }
+      if (outside && !source.endsWith('.js')) {
+        throw new Error(
+          `Main hash dependency is outside Desktop's locked installation: ${outside}`,
+        );
+      }
+      return null;
+    },
+  };
   await build({
     ...options,
     build: { ...options.build, minify: false, sourcemap: false, write: false },
     logLevel: 'silent',
     plugins: [
       ...(options.plugins ?? []),
+      desktopDependencyResolver,
       {
         name: 'renderer-ota-source-inputs',
         configResolved(config) {
