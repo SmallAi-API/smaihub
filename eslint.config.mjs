@@ -549,6 +549,15 @@ export default eslint(
       'unicorn/prefer-top-level-await': 0,
     },
   },
+  // Docker entrypoint launcher must stay plain CommonJS `.js` (no build step, run
+  // directly by `node` in the runtime image) and its regexes are pattern-matching only.
+  {
+    files: ['scripts/serverLauncher/startServer.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 0,
+      'regexp/no-unused-capturing-group': 0,
+    },
+  },
   // E2E and test files - allow console.log for debugging
   {
     files: ['e2e/**/*', '**/*.test.ts', '**/*.test.tsx'],
