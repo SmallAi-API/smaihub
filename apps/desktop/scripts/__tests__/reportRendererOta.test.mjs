@@ -43,6 +43,11 @@ describe('renderer OTA diagnostic outcomes', () => {
         base: { outcome: 'success', outputs: { found: 'false', reason: 'base-missing' } },
       }),
     ).toMatchObject({ reason: 'base-missing', requiresFullRelease: true });
+    expect(
+      classifyResult({
+        base: { outcome: 'success', outputs: { found: 'false', reason: 'base-unreachable' } },
+      }),
+    ).toMatchObject({ outcome: 'skipped', reason: 'base-unreachable', requiresFullRelease: false });
   });
 
   it.each([

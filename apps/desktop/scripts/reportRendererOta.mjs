@@ -80,6 +80,7 @@ export function classifyResult(steps, kind = 'patch', jobStatus = '') {
   if (steps.base?.outcome === 'success' && base.found === 'false') {
     if (['base-missing', 'unsupported-base'].includes(base.reason))
       return result('skipped', base.reason, true);
+    if (base.reason === 'base-unreachable') return result('skipped', base.reason);
     return result('failed', 'base-unavailable');
   }
   if (steps.gate?.outcome === 'success' && steps.gate.outputs?.allowed === 'false') {

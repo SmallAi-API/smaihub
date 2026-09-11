@@ -84,9 +84,21 @@ jobs:
           CHANNEL: ${{ inputs.channel }}
         run: |
           set -euo pipefail
-          HTTP_STATUS=$(curl -sS --connect-timeout 10 --max-time 30 \
-            -o "$RUNNER_TEMP/renderer-base.json" -w '%{http_code}' \
-            "$UPDATE_SERVER_BASE_URL/$CHANNEL/base.json")
+          echo "Fetching renderer OTA base from $UPDATE_SERVER_BASE_URL/$CHANNEL/base.json"
+          if ! HTTP_STATUS=$(curl -sS \
+              --connect-timeout 20 \
+              --max-time 60 \
+              --retry 4 \
+              --retry-delay 5 \
+              --retry-max-time 120 \
+              --retry-connrefused \
+              -o "$RUNNER_TEMP/renderer-base.json" -w '%{http_code}' \
+              "$UPDATE_SERVER_BASE_URL/$CHANNEL/base.json"); then
+            echo "::warning::renderer OTA base is unreachable after retries; skipping OTA patch"
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "reason=base-unreachable" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           echo "Renderer base HTTP status: $HTTP_STATUS"
           if [ "$HTTP_STATUS" = "404" ]; then
             echo "::warning::no renderer OTA base metadata found; run a full release first"
