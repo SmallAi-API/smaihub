@@ -5,9 +5,16 @@ set -e
 
 export PATH="node_modules/.bin:$PATH"
 
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT"
+
 BRANCH=$(git branch --show-current)
 if [ "$BRANCH" = "dev" ] || [ "$BRANCH" = "main" ]; then
-  npm run type-check
+  if ! command -v pnpm >/dev/null 2>&1; then
+    echo "pre-commit: pnpm is required to run the type-check" >&2
+    exit 1
+  fi
+  pnpm exec tsgo --noEmit
 fi
 
 lint-staged
