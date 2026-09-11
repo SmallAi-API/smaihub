@@ -158,7 +158,9 @@ jobs:
           UPDATE_SERVER_URL: ${{ secrets.UPDATE_SERVER_URL }}
         run: |
           set -euo pipefail
-          MAIN_HASH=$(node apps/desktop/scripts/mainHash.mjs)
+          pushd "$DESKTOP_BUILD_ROOT" >/dev/null
+          MAIN_HASH=$(node scripts/mainHash.mjs)
+          popd >/dev/null
           echo "main_hash=$MAIN_HASH" >> "$GITHUB_OUTPUT"
           echo "HEAD mainHash: $MAIN_HASH"
           echo "Shipped base mainHash: $BASE_MAIN_HASH"

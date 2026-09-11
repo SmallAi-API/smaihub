@@ -43,8 +43,11 @@ export default defineConfig(async (env) => {
     plugins: [viteOsPlatformResolve()],
     publicDir: false,
     resolve: {
-      alias: mainProcessAlias,
-      dedupe: ['@sentry/electron'],
+      alias: {
+        ...mainProcessAlias,
+        'es-toolkit': path.resolve(__dirname, 'node_modules/es-toolkit'),
+      },
+      dedupe: ['@sentry/electron', 'es-toolkit'],
     },
     root: __dirname,
     ssr: {

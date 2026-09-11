@@ -125,8 +125,14 @@ export default defineConfig(async (env) => {
     plugins: [viteOsPlatformResolve(), zodCompiler(), rendererMainHashArtifact(mainHash)],
     publicDir: false,
     resolve: {
-      alias: mainProcessAlias,
-      dedupe: ['@sentry/electron'],
+      alias: {
+        ...mainProcessAlias,
+        'es-toolkit': path.resolve(__dirname, 'node_modules/es-toolkit'),
+      },
+      // Workspace packages are linked from the Desktop pnpm workspace. Force
+      // es-toolkit to resolve from this Desktop root instead of falling back to
+      // the monorepo's hoisted node_modules during OTA hash collection.
+      dedupe: ['@sentry/electron', 'es-toolkit'],
       conditions: ['node'],
       mainFields: ['module', 'jsnext:main', 'jsnext'],
     },

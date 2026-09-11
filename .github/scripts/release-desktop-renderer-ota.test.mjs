@@ -21,3 +21,9 @@ test('retries transient COS timeouts while loading the renderer OTA base', async
   assert.match(fetchBlock, /base is unreachable after retries/);
   assert.match(fetchBlock, /reason=base-unreachable/);
 });
+
+test('runs the main hash gate from the locked Desktop root', async () => {
+  const source = await readFile(workflowPath, 'utf8');
+  assert.match(source, /pushd "\$DESKTOP_BUILD_ROOT"/);
+  assert.match(source, /MAIN_HASH=\$\(node scripts\/mainHash\.mjs\)/);
+});
