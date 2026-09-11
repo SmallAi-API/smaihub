@@ -128,7 +128,13 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        desktop_root="$GITHUB_WORKSPACE/apps/desktop"
+        workspace_root="$GITHUB_WORKSPACE"
+        if [ "${CLOUD_DESKTOP:-}" = "1" ]; then
+          workspace_root="$GITHUB_WORKSPACE/.."
+          desktop_root="$workspace_root/lobehub/apps/desktop"
+        else
+          desktop_root="$GITHUB_WORKSPACE/apps/desktop"
+        fi
 
         if [ ! -f "$desktop_root/package.json" ]; then
           echo "::error::Desktop package.json not found at $desktop_root/package.json"
@@ -138,5 +144,24 @@ runs:
         fi
 
         echo "Installing Desktop dependencies from $desktop_root"
+        # The root hoisted install creates workspace-package dependency links into the
+        # repository root (for example packages/utils/node_modules/es-toolkit). Desktop's
+        # mainHash must resolve every bundled dependency from its own locked installation,
+        # so remove those stale workspace links before rebuilding the Desktop workspace.
+        for packages_root in \
+          "$workspace_root/packages" \
+          "$GITHUB_WORKSPACE/packages"; do
+          if [ -d "$packages_root" ]; then
+            find "$packages_root" -type d -name node_modules -prune -exec rm -rf {} +
+          fi
+        done
+        for workspace_package in \
+          "$workspace_root/apps/cli" \
+          "$GITHUB_WORKSPACE/apps/cli" \
+          "$desktop_root/stubs/business-const"; do
+          if [ -d "$workspace_package" ]; then
+            rm -rf "$workspace_package/node_modules"
+          fi
+        done
         cd "$desktop_root"
         pnpm install --frozen-lockfile
