@@ -167,5 +167,4 @@ docs/superpowers/
 .auv/
 
 # Amp agent runtime
-.amp/*
-!.amp/settings.json
+.amp/
