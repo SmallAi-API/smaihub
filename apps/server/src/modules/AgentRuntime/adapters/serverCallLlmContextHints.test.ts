@@ -663,7 +663,8 @@ describe('resolveServerCallLlmContextHints - model-instance reasoning config', (
    */
   it('should force reasoning replay for Claude thinking-with-tool models', async () => {
     const hints = await resolveServerCallLlmContextHints({
-      ctx: createCtx({ chatConfig: {} }),
+      ctx: createCtx(),
+      world: { agent: { chatConfig: {} } },
       llmPayload,
       model: 'claude-opus-5',
       provider: 'smai',
@@ -677,7 +678,8 @@ describe('resolveServerCallLlmContextHints - model-instance reasoning config', (
 
   it('should keep Claude reasoning replay when adaptive thinking is turned off', async () => {
     const hints = await resolveServerCallLlmContextHints({
-      ctx: createCtx({ chatConfig: { enableAdaptiveThinking: false } }),
+      ctx: createCtx(),
+      world: { agent: { chatConfig: { enableAdaptiveThinking: false } } },
       llmPayload,
       model: 'claude-opus-5',
       provider: 'smai',
@@ -688,7 +690,8 @@ describe('resolveServerCallLlmContextHints - model-instance reasoning config', (
 
   it('should not force reasoning replay for pre-Claude-3.7 models', async () => {
     const hints = await resolveServerCallLlmContextHints({
-      ctx: createCtx({ chatConfig: {} }),
+      ctx: createCtx(),
+      world: { agent: { chatConfig: {} } },
       llmPayload,
       model: 'claude-3-haiku',
       provider: 'anthropic',
