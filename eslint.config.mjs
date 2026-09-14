@@ -593,6 +593,13 @@ export default eslint(
       'no-console': 0,
     },
   },
+  // Runnable package examples - console output is the primary interface
+  {
+    files: ['packages/*/examples/**/*'],
+    rules: {
+      'no-console': 0,
+    },
+  },
   // Business stubs - keep `use`-prefixed APIs mirroring the cloud implementation,
   // even when the OSS fallback doesn't call any hooks
   {
