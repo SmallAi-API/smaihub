@@ -2,7 +2,7 @@
 import OpenAI from 'openai';
 
 import type { Agent, AgentRuntimeContext, AgentState } from '../src';
-import { AgentRuntime } from '../src';
+import { AgentRuntime, runAgentLoop } from '../src';
 
 // OpenAI 模型运行时
 async function* openaiRuntime(payload: any) {
@@ -247,8 +247,8 @@ async function main() {
   const testMessage = process.argv[2] || 'What time is it? Also calculate 15 * 8 + 7';
   console.log(`💬 用户: ${testMessage}\n`);
 
-  // 创建初始状态
-  let state = AgentRuntime.createInitialState({
+  // Create initial state
+  const state = AgentRuntime.createInitialState({
     maxSteps: 10,
     messages: [{ content: testMessage, role: 'user' }],
     sessionId: 'simple-test',
@@ -256,48 +256,49 @@ async function main() {
 
   console.log('🤖 AI: ');
 
-  // 执行对话循环
-  let nextContext: AgentRuntimeContext | undefined = undefined;
+  // Termination is the loop's job; this only says what one step does and how
+  // its events are rendered.
+  const outcome = await runAgentLoop({
+    state,
+    step: async ({ context, state: currentState }) => {
+      const result = await runtime.step(currentState, context);
 
-  while (state.status !== 'done' && state.status !== 'error') {
-    const result = await runtime.step(state, nextContext);
-
-    // 处理事件
-    for (const event of result.events) {
-      switch (event.type) {
-        case 'llm_stream': {
-          if ((event as any).chunk.content) {
-            process.stdout.write((event as any).chunk.content);
+      // Process events
+      for (const event of result.events) {
+        switch (event.type) {
+          case 'llm_stream': {
+            if ((event as any).chunk.content) {
+              process.stdout.write((event as any).chunk.content);
+            }
+            break;
           }
-          break;
-        }
-        case 'llm_result': {
-          if ((event as any).result.tool_calls) {
-            console.log('\n\n🔧 需要调用工具...');
+          case 'llm_result': {
+            if ((event as any).result.tool_calls) {
+              console.log('\n\n🔧 Calling tools...');
+            }
+            break;
           }
-          break;
-        }
-        case 'tool_result': {
-          console.log(`\n🛠️ 工具执行结果:`, event.result);
-          console.log('\n🤖 AI: ');
-          break;
-        }
-        case 'done': {
-          console.log('\n\n✅ 对话完成');
-          break;
-        }
-        case 'error': {
-          console.error('\n❌ 错误:', event.error);
-          break;
+          case 'tool_result': {
+            console.log(`\n🛠️ Tool execution result:`, event.result);
+            console.log('\n🤖 AI: ');
+            break;
+          }
+          case 'done': {
+            console.log('\n\n✅ Conversation complete');
+            break;
+          }
+          case 'error': {
+            console.error('\n❌ Error:', event.error);
+            break;
+          }
         }
       }
-    }
 
-    state = result.newState;
-    nextContext = result.nextContext; // 使用返回的 nextContext
-  }
+      return { nextContext: result.nextContext, state: result.newState };
+    },
+  });
 
-  console.log(`\n📊 总共执行了 ${state.stepCount} 个步骤`);
+  console.log(`\n📊 Total steps executed: ${outcome.stepCount} (stopped: ${outcome.reason})`);
 }
 
 main().catch(console.error);
