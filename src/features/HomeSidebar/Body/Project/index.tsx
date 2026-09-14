@@ -1,14 +1,15 @@
 'use client';
 
-import { AccordionItem, Flexbox } from '@lobehub/ui';
+// eslint-disable-next-line no-restricted-imports -- the base-ui AccordionItem needs a base-ui Accordion.Root parent; Body/index.tsx still drives these sections through the antd Accordion, so the whole family migrates together
+import { AccordionItem } from '@lobehub/ui';
 import { ActionIcon, Text } from '@lobehub/ui/base-ui';
 import { ArrowRightIcon, PlusIcon } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import AsyncError from '@/components/AsyncError';
-import NeuralNetworkLoading from '@/components/NeuralNetworkLoading';
 import NavItem from '@/features/NavPanel/components/NavItem';
+import SkeletonList from '@/features/NavPanel/components/SkeletonList';
 import { openCreateProjectModal } from '@/features/Projects/CreateProjectModal';
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
 import { useCurrentProjectList, useProjectStore } from '@/store/project';
@@ -52,9 +53,7 @@ const Project = memo<ProjectProps>(({ itemKey }) => {
       {error ? (
         <AsyncError error={error} variant="inline" onRetry={() => mutate()} />
       ) : isLoading ? (
-        <Flexbox align="center" padding={12}>
-          <NeuralNetworkLoading size={18} />
-        </Flexbox>
+        <SkeletonList rows={3} />
       ) : projects.length === 0 ? (
         <NavItem
           icon={PlusIcon}
