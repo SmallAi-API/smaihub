@@ -280,21 +280,19 @@ export const createOIDCProvider = async (db: LobeChatDatabase): Promise<Provider
       required: () => true,
     },
 
-    // 12. 其他配置
+    // 12. Other configuration
+    // Errors the provider will not redirect back to the client with (an
+    // unregistered redirect_uri, an unknown client, malformed parameters) land
+    // on a dedicated page instead of a raw JSON dump. Only the spec-defined
+    // `error` and `error_description` travel along; `state` stays behind.
     renderError: async (ctx, out, error) => {
-      ctx.type = 'html';
-      ctx.body = `
-        <html>
-          <head>
-            <title>smai.ai OIDC Error</title>
-          </head>
-          <body>
-            <h1>smai.ai OIDC Error</h1>
-            <p>${JSON.stringify(error, null, 2)}</p>
-            <p>${JSON.stringify(out, null, 2)}</p>
-          </body>
-        </html>
-      `;
+      logProvider('renderError: %O', error);
+
+      const params = new URLSearchParams();
+      if (out.error) params.set('error', String(out.error));
+      if (out.error_description) params.set('error_description', String(out.error_description));
+
+      ctx.redirect(`/oauth/error?${params.toString()}`);
     },
 
     // 新增：启用 Refresh Token 轮换
