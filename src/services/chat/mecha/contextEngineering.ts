@@ -28,7 +28,6 @@ import {
   agentByIdSelectors,
   agentChatConfigSelectors,
   agentSelectors,
-  agentSelectors,
 } from '@/store/agent/selectors';
 import { getChatGroupStoreState } from '@/store/agentGroup';
 import { agentGroupSelectors } from '@/store/agentGroup/selectors';
