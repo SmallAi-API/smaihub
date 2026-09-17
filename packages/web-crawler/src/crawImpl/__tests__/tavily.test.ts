@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createMockResponse } from '../../test-utils';
 import { NetworkConnectionError, PageNotFoundError, TimeoutError } from '../../utils/errorType';
@@ -14,6 +14,14 @@ describe('tavily crawler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     delete process.env.TAVILY_API_KEY;
+    delete process.env.TAVILY_API_URL;
+    delete process.env.TAVILY_EXTRACT_DEPTH;
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    delete process.env.TAVILY_API_KEY;
+    delete process.env.TAVILY_API_URL;
     delete process.env.TAVILY_EXTRACT_DEPTH;
   });
 
@@ -72,6 +80,35 @@ describe('tavily crawler', () => {
     await tavily('https://example.com', { filterOptions: {} });
 
     expect(withTimeout).toHaveBeenCalledWith(expect.any(Function), 30000);
+  });
+
+  it.each([
+    ['the official API URL by default', undefined, 'https://api.tavily.com/extract'],
+    [
+      'TAVILY_API_URL when configured',
+      'https://tavily-proxy.example.com/api/',
+      'https://tavily-proxy.example.com/api/extract',
+    ],
+  ])('should use %s', async (_, apiUrl, expectedUrl) => {
+    if (apiUrl) process.env.TAVILY_API_URL = apiUrl;
+    const mockResponse = createMockResponse({
+      base_url: apiUrl || 'https://api.tavily.com',
+      response_time: 1,
+      results: [
+        {
+          raw_content: 'Proxy extraction content with enough detail. '.repeat(5),
+          url: 'https://example.com',
+        },
+      ],
+    });
+
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse));
+    const { withTimeout } = await import('../../utils/withTimeout');
+    vi.mocked(withTimeout).mockImplementation((request) => request(new AbortController().signal));
+
+    await tavily('https://example.com', { filterOptions: {} });
+
+    expect(fetch).toHaveBeenCalledWith(expectedUrl, expect.objectContaining({ method: 'POST' }));
   });
 
   it('should handle missing API key', async () => {

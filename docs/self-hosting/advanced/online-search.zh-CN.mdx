@@ -40,7 +40,7 @@ CRAWLER_IMPLS="naive,search1api"
 | `jina`        | 使用 [Jina AI](https://jina.ai/) 的爬虫服务，支持快速提取摘要信息。                 | `JINA_READER_API_KEY`                                                       |
 | `naive`       | 内置简易通用爬虫，适用于标准网页结构。                                              |                                                                             |
 | `search1api`  | 利用 [Search1API](https://www.search1api.com) 提供的页面抓取能力，适合结构化内容提取。 | `SEARCH1API_API_KEY` `SEARCH1API_CRAWL_API_KEY` `SEARCH1API_SEARCH_API_KEY` |
-| `tavily`      | 使用 [Tavily](https://www.tavily.com/) 的网页抓取与摘要 API。               | `TAVILY_API_KEY`                                                            |
+| `tavily`      | 使用 [Tavily](https://www.tavily.com/) 的网页抓取与摘要 API。               | `TAVILY_API_KEY` `TAVILY_API_URL`                                           |
 
 > 💡 设置多个爬虫可提升成功率，系统将根据优先级尝试不同爬虫。
 
@@ -103,7 +103,7 @@ SEARCH_PROVIDERS="searxng"
 | `kagi`       | [Kagi](https://kagi.com/) 提供的高级搜索 API，需订阅 Key。                                        | `KAGI_API_KEY`                                                              |
 | `search1api` | 使用 [Search1API](https://www.search1api.com) 聚合搜索能力。                                   | `SEARCH1API_API_KEY` `SEARCH1API_CRAWL_API_KEY` `SEARCH1API_SEARCH_API_KEY` |
 | `searxng`    | 使用自托管或公共 [SearXNG](https://searx.space/) 实例。                                          | `SEARXNG_URL`                                                               |
-| `tavily`     | [Tavily](https://www.tavily.com/)，快速网页摘要与答案返回。                                        | `TAVILY_API_KEY`                                                            |
+| `tavily`     | [Tavily](https://www.tavily.com/)，快速网页摘要与答案返回。                                        | `TAVILY_API_KEY` `TAVILY_API_URL`                                           |
 
 > ⚠️ 某些搜索提供商需要单独申请 API Key，并在 `.env` 中配置相关凭证。
 
@@ -176,6 +176,18 @@ FIRECRAWL_URL=https://api.firecrawl.dev/v2
 ```
 
 > ⚙️ 一般无需修改，除非你使用的是自托管版本或代理服务。
+
+---
+
+## `TAVILY_API_URL`
+
+配置 Tavily 搜索与网页抓取共用的 API 根地址。默认值如下：
+
+```env
+TAVILY_API_URL=https://api.tavily.com
+```
+
+系统会分别在该地址后追加 `/search` 和 `/extract`。使用代理服务时，请只填写根地址，不要包含这两个端点路径。
 
 ---
 

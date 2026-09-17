@@ -1,3 +1,5 @@
+import urlJoin from 'url-join';
+
 import { type CrawlImpl, type CrawlSuccessResult } from '../type';
 import { PageNotFoundError, toFetchError } from '../utils/errorType';
 import { createHTTPStatusError, parseJSONResponse } from '../utils/response';
@@ -24,13 +26,14 @@ interface TavilyResponse {
 export const tavily: CrawlImpl = async (url) => {
   // Get API key from environment variable
   const apiKey = process.env.TAVILY_API_KEY;
+  const baseUrl = process.env.TAVILY_API_URL || 'https://api.tavily.com';
 
   let res: Response;
 
   try {
     res = await withTimeout(
       (signal) =>
-        fetch('https://api.tavily.com/extract', {
+        fetch(urlJoin(baseUrl, '/extract'), {
           body: JSON.stringify({
             extract_depth: process.env.TAVILY_EXTRACT_DEPTH || 'basic', // basic or advanced
             include_images: false,

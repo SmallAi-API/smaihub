@@ -25,12 +25,14 @@ describe('TavilyImpl', () => {
     impl = new TavilyImpl();
     vi.stubGlobal('fetch', vi.fn());
     process.env.TAVILY_API_KEY = 'test-tavily-api-key';
+    delete process.env.TAVILY_API_URL;
     delete process.env.TAVILY_SEARCH_DEPTH;
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
     delete process.env.TAVILY_API_KEY;
+    delete process.env.TAVILY_API_URL;
     delete process.env.TAVILY_SEARCH_DEPTH;
   });
 
@@ -152,6 +154,22 @@ describe('TavilyImpl', () => {
 
       const body = JSON.parse((vi.mocked(fetch).mock.calls[0][1] as RequestInit).body as string);
       expect(body.search_depth).toBe('advanced');
+    });
+
+    it.each([
+      ['the official API URL by default', undefined, 'https://api.tavily.com/search'],
+      [
+        'TAVILY_API_URL when configured',
+        'https://tavily-proxy.example.com/api/',
+        'https://tavily-proxy.example.com/api/search',
+      ],
+    ])('should use %s', async (_, apiUrl, expectedUrl) => {
+      if (apiUrl) process.env.TAVILY_API_URL = apiUrl;
+      vi.mocked(fetch).mockResolvedValueOnce(createMockResponse(makeTavilyResponse([])));
+
+      await impl.query('test');
+
+      expect(vi.mocked(fetch).mock.calls[0][0]).toBe(expectedUrl);
     });
 
     it('should include Bearer token in authorization header', async () => {
