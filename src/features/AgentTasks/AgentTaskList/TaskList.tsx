@@ -7,7 +7,7 @@ import {
   Text,
 } from '@lobehub/ui/base-ui';
 import { Divider } from 'antd';
-import { cssVar } from 'antd-style';
+import { createStaticStyles, cssVar } from 'antd-style';
 import { ClipboardCheckIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { memo, useCallback, useMemo, useState } from 'react';
@@ -59,6 +59,21 @@ interface TaskListProps {
   routeScope?: TaskItemRouteScope;
 }
 
+/**
+ * base-ui's Accordion only ships `borderless` / `outlined`, so the top-level
+ * group header paints the filled background itself and zeroes the borderless
+ * hover inset that would otherwise bleed that background past the row edges.
+ */
+const styles = createStaticStyles(({ css, cssVar }) => ({
+  filledGroup: css`
+    --accordion-hover-inset: 0px;
+
+    overflow: hidden;
+    border-radius: ${cssVar.borderRadius};
+    background: ${cssVar.colorFillTertiary};
+  `,
+}));
+
 const HIDDEN_COMPLETED_STATUS_SET = new Set<string>(HIDDEN_WHEN_COMPLETED_STATUSES);
 
 /** Row height the window sizes itself by before it has measured real rows. */
@@ -105,9 +120,10 @@ const TaskGroupHeader = memo<{
   return (
     <div style={{ paddingTop: item.first ? 0 : sub ? 6 : 16 }}>
       <AccordionRoot
+        className={sub ? undefined : styles.filledGroup}
         indicatorPlacement={'end'}
         value={item.collapsed ? [] : [item.key]}
-        variant={sub ? 'borderless' : 'filled'}
+        variant={'borderless'}
         onValueChange={() => onToggle(item.key)}
       >
         <AccordionItem value={item.key}>
