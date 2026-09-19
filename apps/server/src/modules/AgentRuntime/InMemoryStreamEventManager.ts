@@ -41,6 +41,11 @@ export class InMemoryStreamEventManager implements IStreamEventManager {
 
     const eventData: StreamEvent = {
       ...event,
+      // Mirror the Redis-backed manager's chokepoint strip so in-memory
+      // event shape stays identical to the production wire format —
+      // tests run against this manager and would otherwise mask
+      // regressions in the strip behaviour.
+      data: stripFinalStateInEventData(event.data, event.type),
       id: eventId,
       operationId,
       timestamp: Date.now(),
