@@ -268,13 +268,16 @@ export class StreamEventManager {
     operationId,
     stepIndex,
     finalState,
+    messagePatchMode,
+    messageRevision,
     reason,
     reasonDetail,
     uiMessages,
   }: PublishAgentRuntimeEndParams): Promise<string> {
     return this.publishStreamEvent(operationId, {
       data: {
-        finalState,
+        ...(!messagePatchMode && { finalState }),
+        ...(messagePatchMode && { messagePatchMode: true, messageRevision }),
         operationId,
         phase: 'execution_complete',
         reason: reason || 'completed',
