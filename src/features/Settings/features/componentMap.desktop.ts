@@ -8,6 +8,7 @@ import { SettingsTabs } from '@/store/global/initialState';
 import About from '../about';
 import Advanced from '../advanced';
 import APIKey from '../apikey';
+import Appearance from '../appearance';
 import Connector from '../connector';
 import Creds from '../creds';
 import Devices from '../devices';
@@ -31,6 +32,7 @@ import SystemTools from '../system-tools';
 export const componentMap = {
   [SettingsTabs.Advanced]: Advanced,
   [SettingsTabs.Labs]: Labs,
+  [SettingsTabs.Appearance]: Appearance,
   [SettingsTabs.Provider]: Provider,
   [SettingsTabs.ServiceModel]: ServiceModel,
   [SettingsTabs.Memory]: Memory,
