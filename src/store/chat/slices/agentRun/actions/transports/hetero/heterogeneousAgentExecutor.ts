@@ -64,6 +64,7 @@ import {
   type MessageQueryContext,
   messageService,
 } from '@/services/message';
+import { hydrateProjectedToolMessages } from '@/services/message/hydrateProjectedTools';
 import { threadService } from '@/services/thread';
 import { workService } from '@/services/work';
 import { topicSelectors } from '@/store/chat/selectors';
@@ -86,7 +87,7 @@ import { getNativeHeteroSessionBindingKey } from './heteroResume';
 import { createMessageWriteBatcher, type ToolMessageUpdateOperation } from './messageWriteBatcher';
 import { createPendingCreateLedger } from './pendingCreateLedger';
 import { resolveQuotaAccountSpawnPlan } from './resolveQuotaAccountEnv';
-import { buildResumeReplayMessages, hydrateProjectedToolMessages } from './resumeReplay';
+import { buildResumeReplayMessages, shouldHydrateResumeReplay } from './resumeReplay';
 import { buildLobeHubSessionEnv } from './sessionEnv';
 
 /** Mirrors `idGenerator('threads', 16)` on the server so sync-allocated ids have the same shape. */
@@ -2483,16 +2484,31 @@ export const executeHeterogeneousAgent = async (
     // it, `--resume <staleId>` dies with "No conversation found with session ID".
     // Raw rows first: the display map collapses history into virtual
     // `assistantGroup` rows, which carry no replayable turn.
+    const replaySource = (get().dbMessagesMap?.[messageMapKey(context)] ??
+      get().messagesMap?.[messageMapKey(context)]) as UIChatMessage[] | undefined;
+
     // Tool bodies the read path projected away are restored first: this
     // transcript is written to disk and resumed from, so an emptied tool result
     // would persist as "this tool returned nothing" for every later turn.
+    //
+    // Only for Claude Code. Main consumes `resumeReplayMessages` in exactly one
+    // place (`HeterogeneousAgentImpl`'s `ensureClaudeCodeResumeTranscript`),
+    // which is gated on `agentType === 'claude-code'` and no-ops when the
+    // transcript is still on disk. Restoring for the other adapters would spend
+    // one authenticated round trip per historical tool, every turn, on a
+    // payload nothing reads.
     const resumeReplayMessages = resumeSessionId
       ? buildResumeReplayMessages(
-          await hydrateProjectedToolMessages(
-            (get().dbMessagesMap?.[messageMapKey(context)] ??
-              get().messagesMap?.[messageMapKey(context)]) as UIChatMessage[] | undefined,
-            messageService.getToolResultPayload,
-          ),
+          shouldHydrateResumeReplay(heterogeneousProvider.type)
+            ? // A degraded transcript still resumes; a thrown error would lose
+              // the prompt, so `missing` is deliberately not acted on here.
+              (
+                await hydrateProjectedToolMessages(
+                  replaySource,
+                  messageService.getToolResultPayloads,
+                )
+              ).messages
+            : replaySource,
           message,
         )
       : undefined;
