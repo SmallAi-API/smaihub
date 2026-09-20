@@ -1060,8 +1060,6 @@ export class AgentRuntimeService {
       const initialState = {
         activatedStepTools,
         createdAt: new Date().toISOString(),
-        enableExpertise,
-        expertise,
         // Store initialContext for executeSync to use
         initialContext,
         lastModified: new Date().toISOString(),
@@ -1140,8 +1138,19 @@ export class AgentRuntimeService {
             shareVisitor: agentShareVisitor,
           },
           audit: { clientIp: appContext?.clientIp, userAgent: appContext?.userAgent },
-          policy: { deviceAccess: deviceAccessPolicy },
+          // What the run may do, decided once here: device access and the
+          // approval mode its tool calls answer to.
+          policy: { deviceAccess: deviceAccessPolicy, userIntervention: userInterventionConfig },
         },
+        // Compat mirrors for a rolling deploy: a worker still running the
+        // pre-slot build reads only these, and a missing approval mode defaults
+        // to `manual` there — which parks a headless run on an approval nobody
+        // can give. Drop them (and the matching entries in
+        // `normalizeAgentState`'s COMPAT_MIRROR_PATHS) once no pre-slot worker
+        // can pick up a step.
+        enableExpertise,
+        expertise,
+        userInterventionConfig,
         // What the model is told about the run's world — frozen from here on;
         // the context engine reads it on every step.
         world: {
@@ -1151,15 +1160,15 @@ export class AgentRuntimeService {
           }),
           connectorOwnershipNote,
           disabledPluginIds,
+          enableExpertise,
           eval: evalContext,
+          expertise,
           group: agentGroup,
           projectInstructions,
           searchDecision,
           userMemory,
           userTimezone,
         },
-        // User intervention config for headless mode in async tasks
-        userInterventionConfig,
       } as Partial<AgentState>;
 
       // Use coordinator to create operation, automatically sends initialization event.

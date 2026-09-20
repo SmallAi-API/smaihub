@@ -259,6 +259,50 @@ describe('normalizeAgentState', () => {
     expect('toolManifestMap' in normalized).toBe(false);
   });
 
+  it('lifts the run policies and the expertise snapshot into their slots', () => {
+    const expertise = { contentHash: 'h', domains: [], renderedContext: '<e/>', schemaVersion: 1 };
+    const state = {
+      ...baseState(),
+      // `false` is a decision, not an absent value.
+      enableExpertise: false,
+      expertise,
+      securityBlacklist: { rules: [{ pattern: 'rm -rf', type: 'command' }] },
+      userInterventionConfig: { approvalMode: 'headless' },
+    } as unknown as AgentState;
+
+    const normalized = normalizeAgentState(state);
+
+    expect(normalized.principal?.policy).toEqual({
+      securityBlacklist: { rules: [{ pattern: 'rm -rf', type: 'command' }] },
+      userIntervention: { approvalMode: 'headless' },
+    });
+    expect(normalized.world?.expertise).toBe(expertise);
+    expect(normalized.world?.enableExpertise).toBe(false);
+    // Kept, not dropped: a worker still running the pre-slot build reads only
+    // the top-level copy, and would park a headless run without it.
+    for (const compat of [
+      'enableExpertise',
+      'expertise',
+      'securityBlacklist',
+      'userInterventionConfig',
+    ]) {
+      expect(compat in normalized).toBe(true);
+    }
+  });
+
+  it('keeps a policy slot decision over the legacy top-level copy', () => {
+    const state = {
+      ...baseState(),
+      principal: { policy: { userIntervention: { approvalMode: 'auto-run' } } },
+      userInterventionConfig: { approvalMode: 'headless' },
+    } as unknown as AgentState;
+
+    const normalized = normalizeAgentState(state);
+
+    expect(normalized.principal?.policy?.userIntervention).toEqual({ approvalMode: 'auto-run' });
+    expect(normalized.userInterventionConfig).toEqual({ approvalMode: 'headless' });
+  });
+
   it('lifts a partial device binding without inventing an id', () => {
     const state = {
       ...baseState(),
