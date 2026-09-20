@@ -33,6 +33,24 @@ omit reconstructible message history and tool-set fields; share-visitor redactio
 always takes precedence. Internal state persistence and local done events are
 unaffected. This option does not change terminal message-patch reconciliation.
 
+### 0.2 Projected `tool_end` results
+
+`tool_end` announces that a tool finished; it is not how the result reaches the
+screen. That arrives with the message, through a read path that already projects
+it, so the event carries a second copy of the largest payload on the connection.
+
+The gateway push runs `result.state` through the same per-tool projectors the read
+path uses, keeping mid-run and settled renders identical, and drops `result.content`
+for the tools vouched for by the `eventBodyUnused` allowlist in
+`@lobechat/tool-view-model`. The allowlist exists because several renderer-side
+`onAfterCall` hooks parse the body for invisible side effects — a shell result tells
+the topic which branch it switched to and which PR it opened — so shell and worktree
+tools keep their body, and any tool not on the list is unchanged.
+
+This is applied in `GatewayStreamNotifier`, the WS transport seam. In-process
+consumers — the OpenAI-compatible Responses endpoint, recorded step events — install
+their own stream manager, never reach this path, and keep the real body.
+
 ### 0.1 Native runtime message reconciliation
 
 For the server-owned native agent harness, protocol v2 avoids repeating the complete
