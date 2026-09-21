@@ -8,3 +8,4 @@ export interface RuntimeItem {
 
 export type { CreateRouterRuntimeOptions, UniformRuntime } from './createRuntime';
 export { createRouterRuntime } from './createRuntime';
+export type { RouteAttemptFinished, RouteAttemptResult } from './routeAttempt';
