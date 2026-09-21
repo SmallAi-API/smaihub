@@ -1,79 +1,110 @@
 ---
 title: Cloud Sandbox
-description: >-
-  Learn how to use scheduled tasks, including creating, editing, and deleting them.
-
+description: Compare cloud sandbox and local execution, including file access, permissions, storage, and export, before running code or file tasks.
 tags:
-  - Scheduled Tasks
-  - Create
-  - Edit
-  - Delete
+  - LobeHub
+  - Cloud Sandbox
+  - Code Execution
+  - File Generation
+  - Data Processing
 ---
 
 # Cloud Sandbox
 
-LobeHub supports the Cloud Sandbox feature, enabling AI assistants to execute code and process files in a securely isolated cloud environment. Instead of merely providing code snippets, the assistant can directly run code, generate documents, and create charts — delivering downloadable results that you can iterate on in real time. Cloud Sandbox breaks the boundaries of traditional conversations, extending AI output from suggestions to actual execution. From data analysis to document generation, from code debugging to file conversion, Cloud Sandbox transforms AI into a true execution assistant.
+Cloud Sandbox lets agents run code, commands, and file operations on a server. Local execution works with real project files on a connected computer. Before each task, check where it will run and which files it will use.
 
-## Understanding Cloud Sandbox
+This page focuses on cloud execution and compares it with local execution. See [Execution Devices](/docs/usage/agent/execution-devices) for connections, selection, and working directories.
 
-Cloud Sandbox is a securely isolated cloud-based execution environment. When you need more than just code snippets and want actual execution results, the assistant will run the code in the Cloud Sandbox and return the output.
+## Cloud Sandbox and Local Execution
 
-## What Can Cloud Sandbox Do?
+| Dimension                 | Cloud sandbox                                                              | Local execution / local sandbox                                                                          |
+| ------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Execution location        | A server-side sandbox environment                                          | A connected computer                                                                                     |
+| File access               | Files present in or transferred to the sandbox                             | Real files that the device tools and process can access                                                  |
+| Permission boundary       | Provider restrictions and LobeHub tool permissions                         | Tool, process, and operating-system permissions. The working directory does not restrict all file access |
+| Runtimes and dependencies | Depend on the provider and image. Check the required runtime and libraries | Depend on the computer. Check for missing dependencies before the task                                   |
+| Package installation      | Depends on the environment, installation permissions, and network access   | Changes the device environment. Specify the installation location and approval first                     |
+| Network access            | Depends on the provider and deployment                                     | Depends on device networking, proxies, and permissions                                                   |
+| File persistence          | Temporary storage. Save important files promptly                           | Follows device filesystem rules. File changes remain after the chat ends                                 |
+| Results                   | Export the result to obtain a download link                                | Find the result at its device path. Use an available upload or export tool to share it                   |
+
+Operations within the cloud sandbox use sandbox files. Separate device tools and local execution can change or delete real files on your computer.
+
+## What Cloud Sandbox Can Do
 
 ### Execute Code
 
-The assistant can run Python, JavaScript, and TypeScript code within the sandbox and return the results. You’ll see real execution output, not just code text.
+Where the necessary runtime is available, the agent can run Python, JavaScript, or TypeScript and return actual output. Examples include dataset statistics and code tests.
+
+Available languages, libraries, and system tools depend on the environment. Ask the agent to check required dependencies before it runs the task.
 
 ### Generate Files
 
-The assistant can create various types of files — PDF documents, Excel spreadsheets, Word documents, images, charts, and more — and provide download links. You can download and use them directly.
+With the necessary tools and dependencies, the agent can create PDFs, spreadsheets, Word documents, images, or charts. After creating a file, the agent needs to export it successfully so you can download it.
 
 ### Process Data
 
-The assistant can read, analyze, and transform data files. Upload CSV, JSON, or other data formats, and the assistant can help clean, summarize, and visualize the data.
+The agent can clean, summarize, and convert CSV, JSON, and other data. After uploading a file in chat, check that the selected execution environment can read it before processing.
 
 ### Run Commands
 
-The assistant can execute shell commands to install dependencies, manipulate files, and perform complex operations.
+The agent can run shell commands that combine scripts, file operations, and system tools. Available commands depend on the environment and permissions. Review command output and exit codes to check the result.
 
-### Enabling Cloud Sandbox
+## Enable Tools and Check Execution Location
 
-Cloud Sandbox is a built-in plugin that must be enabled for the assistant to use its features. You can enable the Cloud Sandbox plugin from the "Assistant Profile" page under the plugin section, or directly within a conversation by checking the plugin option in the chat interface.
+1. Open the tool or connector settings in the agent profile.
+2. Enable the cloud sandbox tool available in your version.
+3. Review the tool's approval settings.
+4. If the interface provides an execution device selector, check the selected location.
+5. Before file changes, ask the agent to report the actual execution location, working directory, and input paths.
 
-### Using Cloud Sandbox
+In older versions, look for **+ Add Skill → Cloud Sandbox**, or the Skill icon below the chat input.
 
-#### Ask the Assistant to Execute Code
+Self-hosted deployments also require a sandbox provider. See [Configuring Cloud Sandbox](/docs/self-hosting/environment-variables/cloud-sandbox) for configuration requirements.
 
-Simply describe the task you want to accomplish, and the assistant will write and run the code in the Cloud Sandbox:
+## Using Cloud Sandbox
 
-- “Write a Python script to calculate the average and standard deviation of this dataset.”
-- “Implement a quicksort algorithm in JavaScript and run a test.”
-- “Run this code for me and show the output.”
+### Ask the Agent to Execute Code
 
-#### Ask the Assistant to Generate Documents
+- “Calculate the average and standard deviation of this dataset in the cloud sandbox.”
+- “Run this JavaScript sorting algorithm and show the test results.”
+- “Read this CSV and show the top five rows by revenue.”
 
-Describe the content you need, and the assistant will generate the document and provide a download link:
+### Ask the Agent to Generate Documents
 
-- “Generate a PDF report with the analysis of this data.”
-- “Convert this content into a Word document.”
-- “Create an Excel spreadsheet to organize this information.”
+- “Generate a PDF with this analysis and export it for download.”
+- “Convert this content to Word and report the file location.”
+- “Create a bar chart from this sales data and export it as PNG.”
 
-#### Ask the Assistant to Process Data
+### Ask the Agent to Process Data
 
-Provide data or files, and the assistant will process and return the results:
+- “Convert this JSON file to CSV and keep the original file.”
+- “Remove duplicate data rows and save the result as a new file.”
+- “Merge these CSV files on the id column and report the input and output paths.”
 
-- “Analyze this sales data and create a trend chart.”
-- “Convert this JSON file to CSV format.”
-- “Clean this dataset by removing duplicates.”
+A local environment with suitable tools can also perform these tasks. It uses the files and runtime environment on that device.
 
-### Understanding the Cloud Sandbox Environment
+## Save and Retrieve Results
 
-The Cloud Sandbox runs in a securely isolated cloud server, completely separate from your local machine. All operations performed by the assistant in the sandbox will not affect your local file system.
+**Cloud results**: Ask the agent to export the file and provide a download link. Open the link and save important files promptly.
 
-### Session-Based File Storage
+**Local results**: Ask for the file path. To share the file, use an upload or export tool that can access the local device.
 
-Files in the Cloud Sandbox are temporary and tied to the current conversation session. If the session ends or remains inactive for a long time, the sandbox files may be cleared. If you need to keep the files, be sure to download them using the export links provided by the assistant.
+**Further work**: The conversation can retain discussion context without retaining files or processes. Before more work, check that the original files and results remain accessible.
 
-### Automatic Export of Results
+## Related Guides and Releases
 
-When the assistant generates files in the Cloud Sandbox, they are automatically exported with download links. No extra steps are needed — you’ll receive documents, charts, data files, and other outputs directly from the code execution.
+- [June 8, 2026: connector tool permissions](/changelog/2026-06-08-connectors)
+- [Cloud sandbox configuration: providers, runtime requirements, and file export](/docs/self-hosting/environment-variables/cloud-sandbox)
+
+{/* Implementation reference: the user-provided documentation review checklist, reviewed September 10, 2026, records local sandbox support and cites v2.2.14. Repository changelogs do not specify the full local sandbox implementation. */}
+
+<Cards>
+  <Card href={'/docs/usage/agent/execution-devices'} title={'Execution Devices'} />
+
+  <Card href={'/docs/usage/agent/connectors#artifacts'} title={'Artifacts'} />
+
+  <Card href={'/docs/usage/getting-started/resource'} title={'Resource Library'} />
+
+  <Card href={'/docs/usage/agent/scheduled-task'} title={'Scheduled Tasks'} />
+</Cards>
