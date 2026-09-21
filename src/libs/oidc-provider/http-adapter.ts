@@ -27,6 +27,9 @@ export const convertHeadersToNodeHeaders = (nextHeaders: Headers): Record<string
  * 创建用于 OIDC Provider 的 Node.js HTTP 请求对象
  * @param req Next.js 请求对象
  */
+const DISCOVERY_PUBLIC_PATH = '/oidc/.well-known/openid-configuration';
+const DISCOVERY_PROVIDER_PATH = '/.well-known/openid-configuration';
+
 export const createNodeRequest = async (req: NextRequest): Promise<IncomingMessage> => {
   // 构建 URL 对象
   const url = new URL(req.url);
@@ -37,6 +40,14 @@ export const createNodeRequest = async (req: NextRequest): Promise<IncomingMessa
   // 确保路径始终以/开头
   if (!providerPath.startsWith('/')) {
     providerPath = '/' + providerPath;
+  }
+
+  // Discovery is the one route oidc-provider hardcodes, so it cannot be moved
+  // under the `/oidc` prefix the way every other route is. The document lives
+  // where clients look for it (`/oidc/.well-known/openid-configuration`, the
+  // issuer plus the well-known suffix) and is translated back here.
+  if (providerPath === DISCOVERY_PUBLIC_PATH) {
+    providerPath = DISCOVERY_PROVIDER_PATH;
   }
 
   log('Creating Node.js request from Next.js request');
