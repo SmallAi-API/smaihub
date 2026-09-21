@@ -38,7 +38,8 @@ gh pr create \
   --body-file changelog.md
 ```
 
-4. **After merge**: auto-tag-release detects `release/*` branch → auto patch +1.
+4. **While the PR is open**: `release-pr-version.yml` commits `package.json` to latest stable tag + patch.
+5. **After merge**: auto-tag-release detects `release/*` branch → tags latest stable tag +1.
 
 ---
 
@@ -59,7 +60,12 @@ git push -u origin hotfix/v{version}-{short-hash}
 
 2. **Create PR to main** with a gitmoji prefix title (e.g. `🐛 fix: description`)
 
-3. **After merge**: auto-tag-release detects `hotfix/*` branch → auto patch +1.
+3. **Write a short hotfix changelog** — See `changelog-example/hotfix.md`. Keep it minimal: scope line, 1-3 fix bullets (symptom + fix in one sentence), upgrade note, owner. No long root-cause section — that lives in the commit message.
+   - **Hotfix owner**: Use the actual PR author (retrieve via `gh pr view <number> --json author --jq '.author.login'`), never hardcode a username.
+
+4. **While the PR is open**: `release-pr-version.yml` commits `package.json` to latest stable tag + patch.
+
+5. **After merge**: auto-tag-release detects `hotfix/*` branch → tags latest stable tag +1.
 
 ### Script
 
@@ -117,4 +123,5 @@ gh pr create \
   --body-file changelog.md
 ```
 
-4. **After merge**: auto-tag-release detects `release/*` branch → auto patch +1.
+4. **While the PR is open**: `release-pr-version.yml` commits `package.json` to latest stable tag + patch.
+5. **After merge**: auto-tag-release detects `release/*` branch → tags latest stable tag +1.
