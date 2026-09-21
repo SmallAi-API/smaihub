@@ -1,6 +1,10 @@
 import debug from 'debug';
 
-import { type StreamChunkData, type StreamEvent } from './StreamEventManager';
+import {
+  type StreamChunkData,
+  type StreamEvent,
+  stripFinalStateInEventData,
+} from './StreamEventManager';
 import { type IStreamEventManager, type PublishAgentRuntimeEndParams } from './types';
 
 const log = debug('lobe-server:agent-runtime:in-memory-stream-event-manager');
