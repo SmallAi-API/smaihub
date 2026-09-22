@@ -241,6 +241,7 @@
   "providerModels.item.modelConfig.extendParams.options.grok4_3ReasoningEffort.hint": "適用於Grok 4.3系列；控制推理強度。",
   "providerModels.item.modelConfig.extendParams.options.grok4_5ReasoningEffort.hint": "適用於 Grok 4.5 系列；控制推理強度（低／中／高，預設為高）。",
   "providerModels.item.modelConfig.extendParams.options.grok4_6ReasoningEffort.hint": "針對 Grok 4.6 系列；控制推理強度（低/中/高/超高，預設為高）。無法禁用推理。",
+  "providerModels.item.modelConfig.extendParams.options.grok4_7ReasoningEffort.hint": "針對 Grok 4.7；控制推理強度（低/中/高/超高，預設為高）。無法禁用推理。",
   "providerModels.item.modelConfig.extendParams.options.hy3ReasoningEffort.hint": "針對 Hy3 模型；控制推理強度。no_think（超快速回應）、low（快速推理）和 high（深度推理）—以適應不同的延遲和深度需求，從高頻互動到複雜的工程任務。",
   "providerModels.item.modelConfig.extendParams.options.imageAspectRatio.hint": "針對 Gemini 圖像生成模型；控制生成圖像的長寬比。",
   "providerModels.item.modelConfig.extendParams.options.imageAspectRatio2.hint": "針對 Nano Banana 2；控制生成圖像的長寬比（支持超寬 1:4, 4:1, 1:8, 8:1）。",

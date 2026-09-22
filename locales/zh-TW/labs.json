@@ -28,6 +28,8 @@
   "features.inAppBrowser.title": "應用內瀏覽器",
   "features.inputMarkdown.desc": "在輸入區即時渲染 Markdown（粗體、程式碼區塊、表格等）。",
   "features.inputMarkdown.title": "輸入框 Markdown 渲染",
+  "features.integrations.desc": "顯示整合設定頁面：連接 GitHub 應用程式，以便合併的拉取請求接受交付，並且失敗的檢查或評審能夠到達開啟它們的代理人。預設為隱藏。",
+  "features.integrations.title": "整合",
   "features.messageTextSelectionActions.desc": "在聊天訊息中選取文字時顯示快速操作，讓選取的文字可以加入下一次對話的內容中。",
   "features.messageTextSelectionActions.title": "訊息文字選取操作",
   "features.oauthApps.desc": "在個人和工作區設置中顯示 OAuth 應用程式管理。此功能預設為隱藏。",
