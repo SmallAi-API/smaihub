@@ -931,6 +931,12 @@ packages:
       react: 19.2.7
       react-dom: 19.2.7
 
+  '@antfu/install-pkg@1.1.0':
+    resolution:
+      {
+        integrity: sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ==,
+      }
+
   '@anthropic-ai/claude-agent-sdk-darwin-arm64@0.3.204':
     resolution:
       {

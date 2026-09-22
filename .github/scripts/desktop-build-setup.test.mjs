@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 
+import YAML from 'yaml';
+
 const actionPath = new URL('../actions/desktop-build-setup/action.yml', import.meta.url);
+const desktopLockfilePath = new URL('../../apps/desktop/pnpm-lock.yaml', import.meta.url);
 
 test('cleans hoisted workspace links before the isolated Desktop install', async () => {
   const source = await readFile(actionPath, 'utf8');
@@ -16,4 +19,17 @@ test('cleans hoisted workspace links before the isolated Desktop install', async
   assert.match(source, /DESKTOP_BUILD_ROOT=\$desktop_root/);
   assert.match(source, /utilsRequire\.resolve\('es-toolkit'\)/);
   assert.match(source, /resolved outside Desktop installation/);
+});
+
+test('Desktop lockfile snapshots have matching package metadata', async () => {
+  const lockfile = YAML.parse(await readFile(desktopLockfilePath, 'utf8'));
+  const packageKeys = Object.keys(lockfile.packages ?? {});
+  const missingMetadata = Object.keys(lockfile.snapshots ?? {}).filter(
+    (snapshotKey) =>
+      !packageKeys.some(
+        (packageKey) => snapshotKey === packageKey || snapshotKey.startsWith(`${packageKey}(`),
+      ),
+  );
+
+  assert.deepEqual(missingMetadata, []);
 });
