@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { resolveServerUrl } from '../settings';
 import type { StoredCredentials } from './credentials';
 import { loadCredentials, saveCredentials } from './credentials';
 import { getValidToken } from './refresh';
@@ -9,16 +10,20 @@ vi.mock('./credentials', () => ({
   saveCredentials: vi.fn(),
 }));
 vi.mock('../settings', () => ({
-  loadSettings: vi.fn().mockReturnValue({ serverUrl: 'https://app.lobehub.com' }),
+  resolveServerUrl: vi.fn().mockReturnValue('https://app.lobehub.com'),
 }));
 
 describe('getValidToken', () => {
   beforeEach(() => {
+    vi.mocked(loadCredentials).mockClear();
+    vi.mocked(saveCredentials).mockClear();
+    vi.mocked(resolveServerUrl).mockClear();
+    vi.mocked(resolveServerUrl).mockReturnValue('https://app.lobehub.com');
     vi.stubGlobal('fetch', vi.fn());
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it('should return null when no credentials stored', async () => {
@@ -194,7 +199,8 @@ describe('getValidToken', () => {
       expiresAt: Math.floor(Date.now() / 1000) - 100,
       refreshToken: 'my-refresh-token',
     };
-    vi.mocked(loadSettings).mockReturnValueOnce({ serverUrl: 'https://my-server.com' });
+    vi.mocked(loadCredentials).mockReturnValue(creds);
+    vi.mocked(resolveServerUrl).mockReturnValueOnce('https://my-server.com');
 
     vi.mocked(fetch).mockResolvedValue({
       json: vi.fn().mockResolvedValue({
