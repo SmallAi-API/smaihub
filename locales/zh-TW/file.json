@@ -243,6 +243,7 @@
   "preview.downloadFile": "下載檔案",
   "preview.raw": "原始",
   "preview.render": "預覽",
+  "preview.tooLarge": "此檔案太大，無法預覽。請下載以查看其內容。",
   "preview.unsupportedFileAndContact": "此檔案格式暫不支援線上預覽，如有預覽需求，歡迎<1>反饋給我們</1>",
   "resource": "資源",
   "resourceList.batchCopyDescription": "您可以複製到有權限創建資源的個人或工作區。",
