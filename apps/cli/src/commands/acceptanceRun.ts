@@ -54,6 +54,7 @@ interface InstallOptions {
   gitignore?: boolean;
   json?: boolean | string;
   skill: string;
+  skillVersion?: string;
 }
 
 const listMaterializedFiles = (directory: string): string[] => {
@@ -67,8 +68,21 @@ const listMaterializedFiles = (directory: string): string[] => {
 
 async function installAction(options: InstallOptions): Promise<void> {
   const client = await getTrpcClient();
-  // Pulled live from the server's deployed builtin-skills — always the latest.
-  const bundle = await client.verify.getSkillBundle.query({ identifier: options.skill });
+  const version = options.skillVersion?.replace(/^v/, '');
+  const bundle = await client.verify.getSkillBundle.query({
+    identifier: options.skill,
+    ...(version === undefined ? {} : { version }),
+  });
+  // Older servers ignore the requested version. A matching version label alone
+  // does not prove that the content was resolved from the requested tag.
+  if (
+    version !== undefined &&
+    (bundle.version !== version || bundle.source?.ref !== `v${version}`)
+  ) {
+    throw new Error(
+      `Requested acceptance skill ${version} from tag v${version}, but the server returned version ${bundle.version ?? 'unknown'} from ${bundle.source?.ref ?? 'an unknown source'}. Update your server to support skill tag selection.`,
+    );
+  }
 
   // The acceptance skeleton lands under `.agents/skills/<id>` — the harness dir
   // the project's own `.agents/acceptance/` adapter sits beside. Invariant: this
@@ -123,6 +137,10 @@ async function installAction(options: InstallOptions): Promise<void> {
     removed,
     skill: bundle.identifier,
     skipped,
+    source: bundle.source,
+    // Recorded so a caller can tell which version now sits on disk; the
+    // installed SKILL.md carries the same value in its frontmatter.
+    version: bundle.version,
     written,
   };
   if (options.json !== undefined) {
@@ -957,6 +975,10 @@ function withInstallOptions(cmd: Command): Command {
   return cmd
     .option('--dir <path>', 'Target working directory (default: current dir)')
     .option('--skill <id>', 'Skill identifier to pull', 'acceptance')
+    .option(
+      '--skill-version <version>',
+      'Install a specific skill tag (default: latest default-branch source)',
+    )
     .option('--force', 'Overwrite existing skill files')
     .option('--no-gitignore', 'Do not record the installed skill in .gitignore')
     .option('--json [fields]', 'Output JSON');
@@ -1068,17 +1090,13 @@ export function attachAcceptanceRunCommands(acceptance: Command): void {
   withInstallOptions(
     acceptance
       .command('install')
-      .description(
-        'Install the acceptance skill skeleton into .agents/skills/acceptance (pulled from the server)',
-      ),
+      .description('Install the latest acceptance skill source into .agents/skills/acceptance'),
   ).action(installAction);
 
   withInstallOptions(
     acceptance
       .command('update')
-      .description(
-        'Re-pull the acceptance skill, replacing its materialized files and re-wiring harnesses',
-      ),
+      .description('Download the latest skill source, replacing its files and re-wiring harnesses'),
   ).action((options: InstallOptions) => installAction({ ...options, force: true }));
 
   const run = acceptance
