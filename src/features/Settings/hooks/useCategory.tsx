@@ -5,6 +5,7 @@ import {
   AppWindowIcon,
   BellIcon,
   Blocks,
+  BlocksIcon,
   Brain,
   BrainCircuit,
   ChartColumnBigIcon,
@@ -77,6 +78,7 @@ export const useCategory = () => {
   ]);
   const remoteServerUrl = useElectronStore(electronSyncSelectors.remoteServerUrl);
   const enableOAuthApps = useUserStore(labPreferSelectors.enableOAuthApps);
+  const enableIntegrations = useUserStore(labPreferSelectors.enableIntegrations);
 
   const avatarUrl = useMemo(() => {
     if (!avatar) return undefined;
@@ -114,6 +116,14 @@ export const useCategory = () => {
         icon: MessageCircleIcon,
         key: SettingsTabs.Messenger,
         label: t('tab.messenger'),
+      },
+      // Third-party integrations (the GitHub App today) are bound to the user
+      // or workspace that connected them, so they sit with the account. Labs
+      // alpha: hidden until the closed loop is ready for everyone.
+      enableIntegrations && {
+        icon: BlocksIcon,
+        key: SettingsTabs.Integrations,
+        label: t('tab.integrations'),
       },
     ].filter(Boolean) as CategoryItem[];
 
@@ -292,6 +302,7 @@ export const useCategory = () => {
     mobile,
     showProvider,
     enableOAuthApps,
+    enableIntegrations,
     avatarUrl,
     username,
   ]);

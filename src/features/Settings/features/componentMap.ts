@@ -29,6 +29,15 @@ export const componentMap = {
   [SettingsTabs.Messenger]: dynamic(() => import('../messenger'), {
     loading: loading('Settings > Messenger'),
   }),
+  [SettingsTabs.Integrations]: dynamic(() => import('../integrations'), {
+    loading: loading('Settings > Integrations'),
+  }),
+  [SettingsTabs.Notification]: dynamic(
+    () => import('@/business/client/BusinessSettingPages/Notification'),
+    {
+      loading: loading('Settings > Notification'),
+    },
+  ),
   [SettingsTabs.About]: dynamic(() => import('../about'), {
     loading: loading('Settings > About'),
   }),
