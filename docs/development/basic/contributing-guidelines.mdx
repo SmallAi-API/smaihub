@@ -75,11 +75,70 @@ Before committing your code, ensure that your commit messages adhere to our stan
 
 ### How to Contribute
 
-1. Fork the project to your account.
-2. Create a new branch for development.
-3. After completing the development, ensure that your code passes the aforementioned code style checks.
-4. Commit your changes and use appropriate gitmoji to label your commit message.
-5. Create a Pull Request to the main branch of the original project.
-6. Await code review and make necessary modifications based on feedback.
+**1. Fork and clone the repository**
+
+Fork [lobehub/lobehub](https://github.com/lobehub/lobehub) on GitHub, then clone your fork locally.
+
+**2. Create a branch**
+
+Use the branch naming format: `username/type/description`
+
+```bash
+git checkout -b feat/add-voice-input
+git checkout -b fix/message-duplication
+git checkout -b docs/update-api-guide
+```
+
+**3. Make changes**
+
+Follow the [code style guidelines](/docs/development/basic/contributing-guidelines#code-style) above. Run linters before committing:
+
+```bash
+pnpm lint:ts       # TypeScript/JavaScript
+pnpm lint:style    # CSS/styles
+bun run type-check # Type checking
+```
+
+**4. Commit with gitmoji**
+
+```bash
+git commit -m "✨ feat: add voice input support"
+git commit -m "🐛 fix: resolve message duplication in group chat"
+git commit -m "📝 docs: update installation guide"
+```
+
+**5. Open a Pull Request**
+
+<Callout type={'warning'}>
+  Always target the **`canary`** branch — not `main`. `canary` is the active development branch. PRs
+  to `main` will be redirected.
+</Callout>
+
+Fill out the PR template in `.github/PULL_REQUEST_TEMPLATE.md`:
+
+- **Human** — what changed, screenshots, how you tested it, the acceptance round, and the related issue (`Fixes #123`, `Fixes LOBE-xxx`)
+- **AI** — delete this section when a person wrote the change. When an agent wrote it, and the author is an outside collaborator or another external contributor, the commented instructions in the template tell that agent to record the harness, the model, the thinking level, and every user prompt from the session, in order. The author reviews that text before it is published, and sensitive content is redacted. An active member of the lobehub organization deletes this section.
+
+**PR titles with `✨ feat:` or `🐛 fix:` automatically trigger a new release.** Use other prefixes for changes that don't need a release.
+
+**6. Code review**
+
+Automated checks run on every PR: ESLint, TypeScript type check, Vitest unit tests, E2E tests, and build. Address review feedback by pushing additional commits to the same branch.
+
+### Syncing Your Fork with Upstream
+
+```bash
+git remote add upstream https://github.com/lobehub/lobehub.git
+git fetch upstream
+git rebase upstream/canary
+```
+
+### Ways to Contribute
+
+- **Features** — Check [issues labeled `good first issue`](https://github.com/lobehub/lobehub/issues?q=is%3Aissue+label%3A%22good+first+issue%22) to find beginner-friendly tasks
+- **Bug fixes** — Search open issues labeled `bug`
+- **Documentation** — Improve docs, fix typos, add examples
+- **Testing** — Add test coverage for uncovered code paths
+- **Translations** — Add missing i18n keys (see [i18n guide](/docs/development/internationalization/internationalization-implementation))
 
 Thank you for following these guidelines, as they help us maintain the quality and consistency of the project. We look forward to your contributions!
