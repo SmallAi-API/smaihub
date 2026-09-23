@@ -12,7 +12,7 @@ import { resolveServerUrl } from '../settings';
 import { ensureAcceptanceDirIgnored, ensureAcceptanceDirIgnoredFor } from '../utils/acceptanceDir';
 import { confirm, outputJson, printTable, timeAgo, truncate } from '../utils/format';
 import { log } from '../utils/logger';
-import type { IgnoreResult, LinkResult } from '../utils/skillWiring';
+import type { LinkResult } from '../utils/skillWiring';
 import { linkHarnessSkills } from '../utils/skillWiring';
 import { uploadLocalFile } from '../utils/uploadLocalFile';
 import {
@@ -125,7 +125,12 @@ async function installAction(options: InstallOptions): Promise<void> {
     }
   }
 
-  const link = linkHarnessSkills(baseDir, bundle.identifier);
+  const links = linkHarnessSkills(baseDir, bundle.identifier);
+  // `link` predates `links` and stays as a compatibility alias for the Claude
+  // result — `install --json link` and `.link.kind` readers keep working.
+  const link: LinkResult = links.find((l) => 'link' in l && l.link.startsWith('.claude')) ?? {
+    kind: 'none',
+  };
   // The skill is committed; its OUTPUT is not. Seed the artifact directory's own
   // self-ignoring file now, so the first run's screenshots never land as
   // untracked noise in a repo that has never heard of us.
@@ -135,6 +140,7 @@ async function installAction(options: InstallOptions): Promise<void> {
     dir: skillDir,
     ignored,
     link,
+    links,
     removed,
     skill: bundle.identifier,
     skipped,
@@ -155,35 +161,33 @@ async function installAction(options: InstallOptions): Promise<void> {
     `  ${written.length} written${skipped.length ? `, ${skipped.length} skipped` : ''}${removed.length ? `, ${removed.length} stale removed` : ''}`,
   );
   if (skipped.length > 0) console.log(pc.dim(`  (skipped existing — pass --force to overwrite)`));
-  printWiring(link, ignored);
+  printWiring(links);
 }
 
-function printWiring(link: LinkResult, ignored: IgnoreResult[]): void {
+function printWiring(links: LinkResult[]): void {
   const arrow = pc.dim('  ↳');
-  switch (link.kind) {
-    case 'linked':
-    case 'linked-single': {
-      console.log(`${arrow} linked ${link.link} → ${pc.dim(link.target)}`);
-      break;
+  for (const link of links) {
+    switch (link.kind) {
+      case 'linked':
+      case 'linked-single': {
+        console.log(`${arrow} linked ${link.link} → ${pc.dim(link.target)}`);
+        break;
+      }
+      case 'already': {
+        console.log(`${arrow} ${pc.dim(`${link.link} already linked`)}`);
+        break;
+      }
+      case 'skipped': {
+        console.log(`${arrow} ${pc.yellow(`skipped ${link.link}: ${link.reason}`)}`);
+        break;
+      }
+      default: {
+        console.log(
+          `${arrow} ${pc.dim('no harness dirs detected — agents that read .agents/skills pick it up automatically')}`,
+        );
+        break;
+      }
     }
-    case 'already': {
-      console.log(`${arrow} ${pc.dim(`${link.link} already linked`)}`);
-      break;
-    }
-    case 'skipped': {
-      console.log(`${arrow} ${pc.yellow(`skipped ${link.link}: ${link.reason}`)}`);
-      break;
-    }
-    default: {
-      break;
-    }
-  }
-
-  for (const entry of ignored) {
-    if (entry.kind !== 'added') continue;
-    console.log(
-      `${arrow} ignored ${entry.entry} in ${pc.dim(path.relative(process.cwd(), entry.file))}`,
-    );
   }
 }
 
@@ -735,8 +739,10 @@ async function ingestReportAction(reportDir: string, options: IngestReportOption
       ...item,
       sourceCriterionId:
         item.sourceCriterionId ??
-        bundle.checks?.find((check) => check.id === item.id || check.planItem?.id === item.id)
-          ?.planItem?.sourceCriterionId ??
+        bundle.checks?.find(
+          (check: { id: string; planItem: { id: string } }) =>
+            check.id === item.id || check.planItem?.id === item.id,
+        )?.planItem?.sourceCriterionId ??
         undefined,
     }));
     subject = {
