@@ -1,4 +1,3 @@
-import { ModelIcon } from '@lobehub/icons';
 import { Button } from '@lobehub/ui/base-ui';
 import { App } from 'antd';
 import { createStaticStyles } from 'antd-style';
@@ -6,6 +5,7 @@ import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useBusinessModelModeConfig } from '@/business/client/hooks/useBusinessAgentMode';
+import { ModelIcon } from '@/components/LobeIcons';
 import { useResolvedHomeAgentId } from '@/features/Home/AgentSelect/useResolvedHomeAgentId';
 import { useStarterModelDefaults } from '@/features/Home/NewModelShortcuts/useStarterModelDefaults';
 import { usePermission } from '@/hooks/usePermission';
@@ -73,7 +73,7 @@ const HomePromoBanner = memo(() => {
   const applyBusinessModelModeConfig = useBusinessModelModeConfig();
   const [loading, setLoading] = useState(false);
 
-  const model = defaultHomeNewModels.find((item) => item.model === 'gpt-6-astra');
+  const model = defaultHomeNewModels.find((item) => item.model === 'gpt-6-sol');
   const provider = model?.provider ?? fallbackChatProvider;
 
   const handleTryNow = useCallback(async () => {
