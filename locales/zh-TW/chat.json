@@ -2057,6 +2057,7 @@
   "tool.intervention.optionApproveRemember": "批准，並且不再對類似操作詢問",
   "tool.intervention.pending": "待處理",
   "tool.intervention.questionSkipped": "您跳過了此問題",
+  "tool.intervention.questionTimedOut": "此問題在回答之前已超時",
   "tool.intervention.reject": "拒絕",
   "tool.intervention.rejectOnly": "拒絕",
   "tool.intervention.rejectReasonPlaceholder": "告訴代理您想要什麼",
