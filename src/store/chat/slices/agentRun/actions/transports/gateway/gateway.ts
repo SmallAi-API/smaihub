@@ -186,15 +186,16 @@ type Setter = StoreSetter<ChatStore>;
 // ─── Types ───
 
 export interface GatewayConnection {
+  /**
+   * Cancellation is deliberately absent: the Gateway never carries a stop. The
+   * op DO ignores an `interrupt` frame on both protocol versions, and a stop
+   * also has to cancel device/hetero processes and settle the operation +
+   * topic rows — work only the server can do. Stopping a run goes through
+   * `cancelOperation`, whose handler calls `aiAgent.interruptTask`.
+   */
   client: Pick<
     AgentStreamClient,
-    | 'connect'
-    | 'disconnect'
-    | 'on'
-    | 'reconnect'
-    | 'sendInterrupt'
-    | 'sendToolResult'
-    | 'updateToken'
+    'connect' | 'disconnect' | 'on' | 'reconnect' | 'sendToolResult' | 'updateToken'
   >;
   status: ConnectionStatus;
 }
@@ -534,16 +535,6 @@ export class GatewayActionImpl {
 
     conn.client.disconnect();
     this.internal_cleanupGatewayConnection(operationId);
-  };
-
-  /**
-   * Send an interrupt command to stop the agent for a specific operation.
-   */
-  interruptGatewayAgent = (operationId: string): void => {
-    const conn = this.#get().gatewayConnections[operationId];
-    if (!conn) return;
-
-    conn.client.sendInterrupt();
   };
 
   /**
@@ -909,6 +900,11 @@ export class GatewayActionImpl {
     }
 
     let hasInterruptedAfterPersistence = false;
+    // Owner-scoped late interrupt, resolved to whether the server confirmed it.
+    let lateInterruptConfirmed: Promise<boolean> | undefined;
+    // The fire-and-forget sidebar refetch below; it may install the server's
+    // `running` row after the interrupt has already been confirmed.
+    let topicRefresh: Promise<void> | undefined;
     const interruptIfCancelledAfterPersistence = () => {
       if (!abortSignal?.aborted) return false;
 
@@ -925,10 +921,16 @@ export class GatewayActionImpl {
               console.error('[Gateway] share interruptTask after cancel failed:', err),
             );
         else
-          interruptGatewayTaskOrThrow({
+          lateInterruptConfirmed = interruptGatewayTaskOrThrow({
             operationId: result.operationId,
             topicId: result.topicId,
-          }).catch((err) => console.error('[Gateway] interruptTask after cancel failed:', err));
+          }).then(
+            () => true,
+            (err) => {
+              console.error('[Gateway] interruptTask after cancel failed:', err);
+              return false;
+            },
+          );
       }
 
       return true;
@@ -1058,7 +1060,7 @@ export class GatewayActionImpl {
       // Share visitors have no owner topic sidebar — their list refreshes via
       // the share feature's own SWR hook, and refreshTopic is owner-scoped.
       if (!agentShareId)
-        this.#get()
+        topicRefresh = this.#get()
           .refreshTopic()
           .catch((err) =>
             console.error('[Gateway] refreshTopic after topic creation failed:', err),
@@ -1079,6 +1081,22 @@ export class GatewayActionImpl {
     cancelledAfterPersistence = interruptIfCancelledAfterPersistence() || cancelledAfterPersistence;
 
     if (cancelledAfterPersistence) {
+      // This path never opens a socket, so no terminal frame will ever retire
+      // the topic row. Settle it once the stop is confirmed AND the sidebar
+      // refetch has landed: settling first would find no marker to clear, and
+      // the refetch would then install a `running` row nobody retires.
+      const { topicId } = result;
+      if (lateInterruptConfirmed && topicId) {
+        void Promise.all([lateInterruptConfirmed, topicRefresh]).then(([confirmed]) => {
+          if (!confirmed) return;
+          this.#settleLocalTopicAfterConfirmedStop({
+            agentId: messageContext.agentId,
+            groupId: messageContext.groupId,
+            operationId: result.operationId,
+            topicId,
+          });
+        });
+      }
       if (parentOperationId) this.#get().completeOperation(parentOperationId);
       return result;
     }
@@ -1175,6 +1193,15 @@ export class GatewayActionImpl {
         operationId: result.operationId,
         topicId: result.topicId,
       });
+
+      if (result.topicId) {
+        this.#settleLocalTopicAfterConfirmedStop({
+          agentId: resolvedMessageContext.agentId,
+          groupId: resolvedMessageContext.groupId,
+          operationId: result.operationId,
+          topicId: result.topicId,
+        });
+      }
     });
 
     const eventHandler = createGatewayEventHandler(this.#get, {
@@ -1424,6 +1451,12 @@ export class GatewayActionImpl {
       }
 
       await interruptGatewayTaskOrThrow({ operationId });
+
+      this.#settleLocalTopicAfterConfirmedStop({
+        agentId: context.agentId,
+        operationId,
+        topicId,
+      });
     });
 
     // Get a fresh JWT token (original expired after 5 min). The server throws
@@ -1666,6 +1699,31 @@ export class GatewayActionImpl {
       ?.runningOperation?.operationId;
 
     return !!owner && owner !== operationId;
+  };
+
+  /**
+   * Retire the local topic row once the server has confirmed a stop.
+   *
+   * The row's `running` status and `runningOperation` marker are otherwise only
+   * cleared by `onSessionComplete`, i.e. by a terminal frame arriving over the
+   * Gateway socket. A stop the server already acknowledged must not depend on
+   * that frame: when it never lands (socket resubscribing, the op DO's event
+   * buffer hibernated away, or a hetero run taking the `preserveExternalProducer`
+   * early return on a resume status), the input is already idle and the message
+   * shows as interrupted, yet the sidebar row keeps spinning and counting.
+   *
+   * Local only: the server settles its own row (device runs inside
+   * `interruptTask`, native runs at the next step boundary). Ownership-guarded
+   * by `clearLocalRunningOperation`, so a newer run's marker is left alone and
+   * a later terminal frame for this run becomes a no-op.
+   */
+  #settleLocalTopicAfterConfirmedStop = (params: {
+    agentId?: string;
+    groupId?: string;
+    operationId: string;
+    topicId: string;
+  }): void => {
+    this.clearLocalRunningOperation({ ...params, status: 'active' });
   };
 
   private clearLocalRunningOperation = (params: {
