@@ -248,7 +248,18 @@ export default class GatewayConnectionCtr extends ControllerModule {
 
   @IpcMethod()
   async getConnectionStatus(): Promise<{ status: GatewayConnectionStatus }> {
-    return { status: this.service.getStatus() };
+    return { status: this.service.getDisplayedStatus() };
+  }
+
+  @IpcMethod()
+  async getKeepAwake(): Promise<{ enabled: boolean }> {
+    return { enabled: this.service.getKeepAwake() };
+  }
+
+  @IpcMethod()
+  async setKeepAwake({ enabled }: { enabled: boolean }): Promise<{ enabled: boolean }> {
+    this.service.setKeepAwake(enabled);
+    return { enabled: this.service.getKeepAwake() };
   }
 
   @IpcMethod()

@@ -32,6 +32,7 @@ export const STORE_DEFAULTS: ElectronMainStore = {
   gatewayDeviceId: '',
   gatewayEnabled: true,
   gatewayUrl: 'https://device-gateway.smai.ai',
+  gatewayKeepAwake: true,
   gatewayWorkspaceEnrollments: [],
   heteroSessionDirPrefs: {},
   heteroTracingEnabled: false,
