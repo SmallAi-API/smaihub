@@ -3,7 +3,7 @@ import createDebug from 'debug';
 import type { CreateVideoOptions } from '../../core/openaiCompatibleFactory';
 import type {
   CreateVideoPayload,
-  CreateVideoResponse,
+  CreateVideoResult,
   PollVideoStatusResult,
 } from '../../types/video';
 
@@ -100,7 +100,7 @@ export async function pollSMAIVideoStatus(
 export async function createSMAIVideo(
   payload: CreateVideoPayload,
   options: CreateVideoOptions,
-): Promise<CreateVideoResponse> {
+): Promise<CreateVideoResult> {
   const { model, params } = payload;
   const { prompt, imageUrl, aspectRatio, duration, generateAudio, seed, resolution, size } = params;
 
