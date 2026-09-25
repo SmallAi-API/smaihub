@@ -27,6 +27,7 @@ import {
   deriveReportVerdict,
   evidenceDescriptionForFile,
   type EvidenceType,
+  findIdenticalLatestRound,
   genericContextFromResult,
   inlineTextEvidenceForFile,
   metadataForReport,
@@ -36,6 +37,7 @@ import {
   printResults,
   pullRequestFromBranch,
   pullRequestFromResult,
+  reuseSourceCriteria,
   scenarioFromResult,
   screenProgrammaticTestChecks,
   subjectFromEnv,
@@ -717,10 +719,20 @@ async function ingestReportAction(reportDir: string, options: IngestReportOption
   }
   const requirement = options.requirement ?? subject?.requirement;
 
+  // The overall conclusion, rendered at the top of the report page. Read up
+  // front so the duplicate check below compares what would land.
+  const conclusion =
+    typeof summary.conclusion === 'string'
+      ? summary.conclusion
+      : typeof summary.note === 'string'
+        ? summary.note
+        : undefined;
+
   const client = await getTrpcClient();
   let acceptance;
+  let bundle;
   if (requestedAcceptanceId) {
-    const bundle = await client.acceptance.getBundle.query({ id: requestedAcceptanceId });
+    bundle = await client.acceptance.getBundle.query({ id: requestedAcceptanceId });
     acceptance = bundle.acceptance;
     // ID-based reads can cross scopes, but creating a run uses the CLI's scope.
     // Reject before any writes instead of leaving an unattachable run behind.
@@ -746,16 +758,6 @@ async function ingestReportAction(reportDir: string, options: IngestReportOption
         );
       }
     }
-    plan = plan?.map((item) => ({
-      ...item,
-      sourceCriterionId:
-        item.sourceCriterionId ??
-        bundle.checks?.find(
-          (check: { id: string; planItem: { id: string } }) =>
-            check.id === item.id || check.planItem?.id === item.id,
-        )?.planItem?.sourceCriterionId ??
-        undefined,
-    }));
     subject = {
       ref: {
         subjectId: acceptance.subjectId,
@@ -771,6 +773,24 @@ async function ingestReportAction(reportDir: string, options: IngestReportOption
         ? { title: title || goal }
         : {}),
     });
+    // A subject's acceptance may already hold rounds; this one has to line up
+    // with them exactly as an explicit `--acceptance` round does.
+    bundle = await client.acceptance.getBundle.query({ id: acceptance.id });
+  }
+  plan = reuseSourceCriteria(plan, bundle?.checks);
+
+  const identicalRound = findIdenticalLatestRound(bundle?.rounds, {
+    plan,
+    report: { content, summary: conclusion },
+  });
+  if (identicalRound) {
+    log.error(
+      `This report is identical to round ${identicalRound.roundIndex ?? '?'} (${identicalRound.id}) — nothing new to publish.`,
+    );
+    log.error(
+      `  To replace that round, delete it first: lh acceptance run delete ${identicalRound.id}`,
+    );
+    process.exit(1);
   }
   // The in-app conversation that ran this harness, if any (env-supplied).
   // Strictly the authoring conversation. `--operation` names the Agent Run
@@ -887,14 +907,8 @@ async function ingestReportAction(reportDir: string, options: IngestReportOption
     log.warn(`${item.id}: not executed; required evidence not published: ${types.join(', ')}.`);
   }
 
-  // 3. Write the report. `summary` is the overall conclusion (rendered at
-  //    the top of the report page); `content` is the full markdown detail.
-  const conclusion =
-    typeof summary.conclusion === 'string'
-      ? summary.conclusion
-      : typeof summary.note === 'string'
-        ? summary.note
-        : undefined;
+  // 3. Write the report. `summary` is the overall conclusion (read above);
+  //    `content` is the full markdown detail.
   // A 0-100 quality score lands on overallConfidence (0-1); the report page
   // surfaces it as the `score` stat.
   const score =
