@@ -10,6 +10,7 @@ const {
   mockCreateVideo,
   mockFindUserById,
   mockGenerationTopicFindById,
+  mockGetVideoAvgLatencies,
   mockIsLobeHubModelAvailable,
   mockProcessBackgroundVideoPolling,
   mockResolveBusinessModelMapping,
@@ -25,6 +26,7 @@ const {
   });
   const mockFindUserById = vi.fn();
   const mockGenerationTopicFindById = vi.fn();
+  const mockGetVideoAvgLatencies = vi.fn();
   const mockIsLobeHubModelAvailable = vi.fn();
   const mockProcessBackgroundVideoPolling = vi.fn().mockResolvedValue(undefined);
   const mockResolveBusinessModelMapping = vi.fn();
@@ -32,6 +34,7 @@ const {
     mockCreateVideo,
     mockFindUserById,
     mockGenerationTopicFindById,
+    mockGetVideoAvgLatencies,
     mockIsLobeHubModelAvailable,
     mockProcessBackgroundVideoPolling,
     mockResolveBusinessModelMapping,
@@ -95,6 +98,11 @@ vi.mock('@/server/utils/scheduleAfterResponse', () => ({
 }));
 vi.mock('@/server/services/generation/videoBackgroundPolling', () => ({
   processBackgroundVideoPolling: mockProcessBackgroundVideoPolling,
+}));
+vi.mock('@/server/services/generation/latency', () => ({
+  getVideoAvgLatencies: mockGetVideoAvgLatencies,
+  getVideoLatencyKey: ({ model, provider }: { model: string; provider: string }) =>
+    `${provider}\0${model}`,
 }));
 vi.mock('@/envs/app', () => ({
   appEnv: { APP_URL: 'https://app.example.com' },
@@ -181,6 +189,7 @@ describe('videoRouter', () => {
     );
     mockFindUserById.mockResolvedValue({ email: 'user@example.com' });
     mockGenerationTopicFindById.mockResolvedValue({ id: 'topic-1' });
+    mockGetVideoAvgLatencies.mockResolvedValue(new Map());
     mockIsLobeHubModelAvailable.mockResolvedValue(true);
   });
 
@@ -389,6 +398,32 @@ describe('videoRouter', () => {
         },
         success: true,
       });
+    });
+  });
+
+  describe('getModelLatencies', () => {
+    it('returns provider-scoped latency once per model pair from a single batched lookup', async () => {
+      mockGetVideoAvgLatencies.mockResolvedValue(
+        new Map([
+          ['provider-1\0model-1', 76_000],
+          ['provider-2\0model-1', null],
+        ]),
+      );
+      const models = [
+        { model: 'model-1', provider: 'provider-1' },
+        { model: 'model-1', provider: 'provider-1' },
+        { model: 'model-1', provider: 'provider-2' },
+      ];
+
+      const caller = videoRouter.createCaller(mockCtx);
+      const result = await caller.getModelLatencies({ models });
+
+      expect(result).toEqual([
+        { avgLatencyMs: 76_000, model: 'model-1', provider: 'provider-1' },
+        { avgLatencyMs: null, model: 'model-1', provider: 'provider-2' },
+      ]);
+      expect(mockGetVideoAvgLatencies).toHaveBeenCalledOnce();
+      expect(mockGetVideoAvgLatencies).toHaveBeenCalledWith(models);
     });
   });
 });

@@ -34,6 +34,7 @@ import { authedProcedure, router } from '@/libs/trpc/lambda';
 import { serverDatabase } from '@/libs/trpc/lambda/middleware';
 import { initModelRuntimeFromDB } from '@/server/modules/ModelRuntime';
 import { FileService } from '@/server/services/file';
+import { getVideoAvgLatencies, getVideoLatencyKey } from '@/server/services/generation/latency';
 import { processBackgroundVideoPolling } from '@/server/services/generation/videoBackgroundPolling';
 import { after } from '@/server/utils/scheduleAfterResponse';
 import { AsyncTaskStatus, AsyncTaskType } from '@/types/asyncTask';
@@ -374,6 +375,27 @@ export const videoRouter = router({
         },
         success: true,
       };
+    }),
+
+  getModelLatencies: authedProcedure
+    .input(
+      z.object({
+        models: z
+          .array(z.object({ model: z.string().min(1), provider: z.string().min(1) }))
+          .max(200),
+      }),
+    )
+    .query(async ({ input }) => {
+      const latencies = await getVideoAvgLatencies(input.models);
+      const uniqueModels = [
+        ...new Map(input.models.map((item) => [getVideoLatencyKey(item), item])).values(),
+      ];
+
+      return uniqueModels.map(({ model, provider }) => ({
+        avgLatencyMs: latencies.get(getVideoLatencyKey({ model, provider })) ?? null,
+        model,
+        provider,
+      }));
     }),
 
   getVideoFreeQuota: authedProcedure
