@@ -7,14 +7,12 @@ import type {
   HeteroSessionImportStatus,
 } from '@lobechat/types';
 import { Flexbox, Icon, ScrollShadow, SearchBar } from '@lobehub/ui';
-import { Button, Checkbox, Text, useModalContext } from '@lobehub/ui/base-ui';
-import { Progress } from 'antd';
+import { Button, Checkbox, Progress, Spin, Text, useModalContext } from '@lobehub/ui/base-ui';
 import { createStaticStyles } from 'antd-style';
 import { Check, FolderSearch, TriangleAlert, X } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import NeuralNetworkLoading from '@/components/NeuralNetworkLoading';
 import { electronHeteroSessionService } from '@/services/electron/heteroSession';
 import { topicService } from '@/services/topic';
 import { useChatStore } from '@/store/chat';
@@ -242,7 +240,7 @@ const Content = memo<ContentProps>(({ agentId }) => {
   if (phase === 'scanning')
     return (
       <Flexbox align="center" gap={16} justify="center" style={{ height: CONTENT_HEIGHT }}>
-        <NeuralNetworkLoading size={48} />
+        <Spin size="large" />
         <Text type="secondary">{t('heteroImport.scanning')}</Text>
       </Flexbox>
     );
