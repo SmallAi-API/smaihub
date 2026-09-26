@@ -366,6 +366,7 @@ interface CreateMessageRelationParams {
   fileChunks?: CreateMessageParams['fileChunks'];
   files?: CreateMessageParams['files'];
   plugin?: CreateMessageParams['plugin'];
+  pluginError?: CreateMessageParams['pluginError'];
   pluginIntervention?: CreateMessageParams['pluginIntervention'];
   pluginState?: CreateMessageParams['pluginState'];
   ragQueryId?: CreateMessageParams['ragQueryId'];
@@ -3282,6 +3283,7 @@ export class MessageModel {
     files,
     model: fromModel,
     plugin,
+    pluginError,
     pluginIntervention,
     pluginState,
     provider: fromProvider,
@@ -3301,6 +3303,7 @@ export class MessageModel {
       fileChunks,
       files,
       plugin,
+      pluginError,
       pluginIntervention,
       pluginState,
       ragQueryId,
@@ -3342,6 +3345,7 @@ export class MessageModel {
       fileChunks,
       files,
       plugin,
+      pluginError,
       pluginIntervention,
       pluginState,
       ragQueryId,
@@ -3357,6 +3361,9 @@ export class MessageModel {
         trx.insert(messagePlugins).values({
           apiName: clampToolIdentifier(plugin?.apiName),
           arguments: sanitizeNullBytes(plugin?.arguments),
+          // A tool that fails on its first write only has pluginError to explain
+          // itself; without it the model reads an empty tool result.
+          error: sanitizeNullBytes(pluginError),
           id,
           identifier: clampToolIdentifier(plugin?.identifier),
           intervention: pluginIntervention,
