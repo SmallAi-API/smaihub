@@ -6,6 +6,7 @@ import { ContextEngine } from '../../pipeline';
 import {
   ActivationResultTrimProcessor,
   AgentCouncilFlattenProcessor,
+  cacheEconomicsForProvider,
   CompressedGroupRoleTransformProcessor,
   DisabledToolCallFilter,
   GroupMessageFlattenProcessor,
@@ -18,6 +19,7 @@ import {
   PlaceholderMessageFilterProcessor,
   PlaceholderVariablesProcessor,
   ReactionFeedbackProcessor,
+  StaleToolResultTrimProcessor,
   SupervisorRoleRestoreProcessor,
   TaskCallbackMessageProcessor,
   TaskMessageProcessor,
@@ -160,6 +162,7 @@ export class MessagesEngine {
       inputTemplate,
       enableAgentMode,
       enableHistoryCount,
+      enableStaleToolResultTrim,
       historyCount,
       forceFinish,
       historySummary,
@@ -564,6 +567,18 @@ export class MessagesEngine {
       new ActivationResultTrimProcessor({
         injectedManifests: injectedToolManifests,
         injectedSkills: injectedActivatedSkills,
+      }),
+      // Stale tool-result trimming — replaces the bodies of superseded tool
+      // results (file reads later overwritten, stale browser snapshots, old
+      // command output) with short placeholders. Rules are monotone so the
+      // trimmed prefix stays byte-stable across requests and the prompt-cache
+      // prefix survives; savings land at the operation boundary where the
+      // cache is cold anyway. Same pipeline position constraints as
+      // ActivationResultTrimProcessor above. Cache economics (TTL, read/write
+      // prices) follow the active provider.
+      new StaleToolResultTrimProcessor({
+        economics: cacheEconomicsForProvider(provider),
+        enabled: enableStaleToolResultTrim !== false,
       }),
       // Placeholder variables processing — MUST run AFTER all flatten / role
       // transform steps. AssistantGroup / Supervisor messages keep their real
