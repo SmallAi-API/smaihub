@@ -24,6 +24,8 @@
   "actions.copyLinkSuccess": "链接已复制",
   "actions.copySessionId": "复制主题 ID",
   "actions.copySessionIdSuccess": "主题 ID 已复制",
+  "actions.copyTopicPrompt": "复制主题提示",
+  "actions.copyTopicPromptSuccess": "主题提示已复制",
   "actions.copyWorkingDirectory": "复制工作目录",
   "actions.copyWorkingDirectorySuccess": "工作目录已复制",
   "actions.diagnose": "检查消息链路",
