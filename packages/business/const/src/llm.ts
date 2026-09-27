@@ -5,6 +5,14 @@ export const DEFAULT_PROVIDER = 'smai';
 export const DEFAULT_MINI_MODEL = 'gpt-5.6-terra';
 export const DEFAULT_MINI_PROVIDER = 'smai';
 
+/**
+ * The speech-to-text model that transcribes voice messages for runtimes that only take text
+ * (heterogeneous agents). It only takes effect once its provider is enabled, so a deployment
+ * without that provider keeps voice input for those agents hidden.
+ */
+export const DEFAULT_ASR_MODEL = 'gpt-4o-mini-transcribe';
+export const DEFAULT_ASR_PROVIDER = 'smai';
+
 export const DEFAULT_ONBOARDING_MODEL = 'gpt-5.6-terra';
 export const DEFAULT_ONBOARDING_PROVIDER = 'smai';
 
