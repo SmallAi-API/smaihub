@@ -258,6 +258,12 @@ export class MacOSMenu extends BaseMenuPlatform implements IMenuPlatform {
           { type: 'separator' },
           {
             click: () => {
+              this.app.browserManager.retrieveByIdentifier('processExplorer').show();
+            },
+            label: t('help.processExplorer'),
+          },
+          {
+            click: () => {
               const logsPath = app.getPath('logs');
               console.info(`[Menu] Opening logs directory: ${logsPath}`);
               shell.openPath(logsPath).catch((err) => {
