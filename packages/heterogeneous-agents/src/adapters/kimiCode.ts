@@ -7,7 +7,6 @@ import type {
   ToolCallPayload,
   ToolResultData,
 } from '../types';
-import { readKimiCodeSessionUsage } from '../utils/kimiCodeUsage';
 
 const KIMI_CODE_IDENTIFIER = 'kimi-code';
 
@@ -110,6 +109,9 @@ export class KimiCodeAdapter implements AgentEventAdapter {
    */
   async collectPostRunUsage(options?: PostRunUsageOptions): Promise<HeterogeneousAgentEvent[]> {
     try {
+      // Lazy: the usage reader needs `node:fs`, and this adapter is reachable
+      // from the package root that the browser bundle imports.
+      const { readKimiCodeSessionUsage } = await import('../utils/kimiCodeUsage');
       const result = await readKimiCodeSessionUsage(this.sessionId, { env: options?.env });
       if (!result) return [];
       return [
