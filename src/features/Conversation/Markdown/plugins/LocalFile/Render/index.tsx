@@ -3,6 +3,7 @@ import React, { memo } from 'react';
 
 import { LocalFile } from '@/features/LocalFile';
 
+import { useStartTopicConversation } from '../../../../hooks/useStartTopicConversation';
 import { useConversationStore } from '../../../../store';
 import { type MarkdownElementProps } from '../../type';
 
@@ -22,6 +23,7 @@ const Render = memo<MarkdownElementProps<LocalFileProps>>(({ node }) => {
   const isSharePage = useConversationStore(
     (s) => !!s.context.topicShareId || !!s.context.agentShareId,
   );
+  const conversation = useStartTopicConversation();
 
   if (!name || !path) {
     // 如果缺少必要属性，可以选择渲染错误提示或 null
@@ -32,7 +34,15 @@ const Render = memo<MarkdownElementProps<LocalFileProps>>(({ node }) => {
   // isDirectory 属性可能为 true (来自插件) 或 undefined，我们需要确保它是 boolean
   const isDir = isDirectory === true;
 
-  return <LocalFile isDirectory={isDir} name={name} path={path} readonly={isSharePage} />;
+  return (
+    <LocalFile
+      conversation={conversation}
+      isDirectory={isDir}
+      name={name}
+      path={path}
+      readonly={isSharePage}
+    />
+  );
 }, isEqual);
 
 export default Render;
