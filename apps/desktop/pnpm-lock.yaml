@@ -307,6 +307,8 @@ importers:
         specifier: 5.0.0
         version: 5.0.0(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(happy-dom@20.10.6)(vite@8.0.14(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.9.0))
 
+  ../../packages/business/const: {}
+
   ../../packages/chat-adapter-imessage:
     dependencies:
       chat:
@@ -330,7 +332,7 @@ importers:
         version: 13.13.0(react@19.2.7)
       '@lobechat/business-const':
         specifier: workspace:*
-        version: link:../../apps/desktop/stubs/business-const
+        version: link:../business/const
       '@lobehub/ui':
         specifier: ^5
         version: 5.32.5(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.13)(antd@6.3.5(date-fns@4.4.0)(luxon@3.7.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(supports-color@9.4.0))(@lobehub/icons@5.18.0)(@shikijs/themes@4.4.3)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.13))(@types/react@19.2.13)(antd@6.3.5(date-fns@4.4.0)(luxon@3.7.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(date-fns@4.4.0)(micromark-util-types@2.0.2)(micromark@4.0.2(supports-color@9.4.0))(motion@12.42.2(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(supports-color@9.4.0)
@@ -592,7 +594,7 @@ importers:
     dependencies:
       '@lobechat/business-const':
         specifier: workspace:*
-        version: link:../../apps/desktop/stubs/business-const
+        version: link:../business/const
       type-fest:
         specifier: ^5.7.0
         version: 5.8.0
@@ -871,8 +873,6 @@ importers:
       vitest:
         specifier: 5.0.0
         version: 5.0.0(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(happy-dom@20.10.6)(vite@8.0.14(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.9.0))
-
-  stubs/business-const: {}
 
 packages:
 
