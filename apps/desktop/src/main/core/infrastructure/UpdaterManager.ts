@@ -191,6 +191,7 @@ export class UpdaterManager {
    * Check for updates
    */
   public checkForUpdates = async ({ manual = false }: { manual?: boolean } = {}) => {
+    if (manual) void this.app.coreUpdateManager.checkForUpdates({ manual: true });
     if (this.checking || this.downloading) return;
     if (!this.updateProviderConfigured) {
       const error = 'Update server is not configured. Set UPDATE_SERVER_URL to enable updates.';
