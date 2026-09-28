@@ -296,7 +296,7 @@ export class UpdaterManager {
     }
   };
 
-  private captureRestoreRoute = () => {
+  captureRestoreRoute = () => {
     try {
       const url = this.mainWindow.webContents?.getURL();
       if (!url) return;

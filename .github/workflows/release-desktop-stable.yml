@@ -138,15 +138,6 @@ jobs:
           fi
           echo "cloud_ref=$cloud_ref" >> "$GITHUB_OUTPUT"
 
-  renderer-ota:
-    name: Publish Renderer OTA
-    needs: [check-stable]
-    if: ${{ needs.check-stable.outputs.is_stable == 'true' && (github.event_name != 'workflow_dispatch' || !inputs.skip_s3_upload) }}
-    uses: ./.github/workflows/release-desktop-renderer-ota.yml
-    with:
-      channel: stable
-    secrets: inherit
-
   # ============================================
   # 配置构建矩阵 (检查自托管 Runner)
   # ============================================
@@ -184,13 +175,6 @@ jobs:
             static_matrix=$(echo "$static_matrix" | jq -c --argjson entry "$intel_entry" '. + [$entry]')
           fi
 
-          # Generate the renderer OTA r0 baseline on exactly one enabled leg.
-          # The matrix currently has Windows/macOS only; do not key this on runner.os.
-          static_matrix=$(echo "$static_matrix" | jq -c '
-            to_entries
-            | map(.value + {renderer_ota: (.key == 0)})
-          ')
-
           # Fail early instead of passing an empty value to strategy.matrix.
           if [[ "$(jq 'length' <<< "$static_matrix")" -eq 0 ]]; then
             echo "::error::No desktop build targets were selected"
@@ -217,6 +201,23 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Without these, the r0 core is silently skipped and publish-s3 fails much later
+      # with "no r0 core artifacts found".
+      - name: Validate core OTA signing inputs
+        env:
+          RENDERER_OTA_PRIVATE_KEY: ${{ secrets.RENDERER_OTA_PRIVATE_KEY }}
+          RENDERER_OTA_PUBLIC_KEY: ${{ secrets.RENDERER_OTA_PUBLIC_KEY }}
+          UPDATE_SERVER_URL: ${{ secrets.UPDATE_SERVER_URL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in RENDERER_OTA_PRIVATE_KEY RENDERER_OTA_PUBLIC_KEY UPDATE_SERVER_URL; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::$name is required to sign and publish the r0 core"
+              exit 1
+            fi
+          done
+
       - name: Setup build environment
         id: setup
         uses: ./.github/actions/desktop-build-setup
@@ -225,6 +226,13 @@ jobs:
           cloud-repository: ${{ vars.OVERLAY_REPOSITORY }}
           cloud-token: ${{ secrets.LOBEHUB_CLOUD_TOKEN }}
           node-version: ${{ env.NODE_VERSION }}
+
+      - name: Resolve core seq
+        id: core_seq
+        uses: ./.github/actions/desktop-core-seq
+        with:
+          channel: stable
+          update-server-url: ${{ secrets.UPDATE_SERVER_URL }}
 
       - name: Set package version
         id: app_version
@@ -257,6 +265,7 @@ jobs:
           UPDATE_CHANNEL: stable
           UPDATE_SERVER_URL: ${{ secrets.UPDATE_SERVER_URL }}
           RENDERER_OTA_PUBLIC_KEY: ${{ secrets.RENDERER_OTA_PUBLIC_KEY }}
+          CORE_SEQ: ${{ steps.core_seq.outputs.seq }}
           RELEASE_NOTES: ${{ needs.check-stable.outputs.release_notes }}
           APP_URL: http://localhost:3015
           DATABASE_URL: 'postgresql://postgres@localhost:5432/postgres'
@@ -282,6 +291,7 @@ jobs:
           UPDATE_CHANNEL: stable
           UPDATE_SERVER_URL: ${{ secrets.UPDATE_SERVER_URL }}
           RENDERER_OTA_PUBLIC_KEY: ${{ secrets.RENDERER_OTA_PUBLIC_KEY }}
+          CORE_SEQ: ${{ steps.core_seq.outputs.seq }}
           RELEASE_NOTES: ${{ needs.check-stable.outputs.release_notes }}
           APP_URL: http://localhost:3015
           DATABASE_URL: 'postgresql://postgres@localhost:5432/postgres'
@@ -352,10 +362,16 @@ jobs:
           }
 
           # 2) Validate packaged app output exists
+          # app.asar only carries the shell; main/preload/renderer ship as the OTA-able core in resources/core.
           $releaseRoot = 'apps/desktop/release'
-          $asarPath = "$releaseRoot/win-unpacked/resources/app.asar"
+          $resourcesRoot = "$releaseRoot/win-unpacked/resources"
+          $asarPath = "$resourcesRoot/app.asar"
           Assert-File $asarPath
-          Assert-MinSize $asarPath 1048576
+          $coreRoot = "$resourcesRoot/core"
+          Assert-File "$coreRoot/manifest.json"
+          Assert-File "$coreRoot/package.json"
+          Assert-Dir "$coreRoot/dist/main"
+          Assert-File "$coreRoot/dist/renderer/apps/desktop/index.html"
 
           # 3) Validate update manifest and installer output
           Assert-File "$releaseRoot/latest.yml"
@@ -369,7 +385,8 @@ jobs:
           }
 
           Write-Host "Renderer files: $rendererFileCount"
-          Write-Host "app.asar size: $((Get-Item -LiteralPath $asarPath).Length)"
+          Write-Host "app.asar (shell) size: $((Get-Item -LiteralPath $asarPath).Length)"
+          Write-Host "Core files: $((Get-ChildItem -Path $coreRoot -Recurse -File | Measure-Object).Count)"
           Write-Host "Installer: $($installer.Name) ($($installer.Length) bytes)"
           Write-Host 'Package integrity verification passed.'
 
@@ -378,10 +395,8 @@ jobs:
         uses: ./.github/actions/desktop-upload-artifacts
         with:
           artifact-name: release-${{ matrix.name }}
-          renderer-ota-private-key: ${{ secrets.RENDERER_OTA_PRIVATE_KEY }}
-          renderer-ota-public-key: ${{ secrets.RENDERER_OTA_PUBLIC_KEY }}
-          sign-renderer-ota: ${{ matrix.renderer_ota }}
-          update-channel: stable
+          update-server-url: ${{ secrets.UPDATE_SERVER_URL }}
+          core-signing-key: ${{ secrets.RENDERER_OTA_PRIVATE_KEY }}
 
       - name: Preserve desktop build diagnostics
         if: always()
@@ -417,17 +432,6 @@ jobs:
           path: release
           pattern: release-*
           merge-multiple: true
-
-      - name: Validate platform renderer hashes
-        env:
-          BUILD_MATRIX_INCLUDE: ${{ needs.configure-build.outputs.include }}
-        run: |
-          node --input-type=module <<'NODE'
-          import { validateReleaseInputs } from './apps/desktop/scripts/validateMainHash.mjs';
-          const expected = JSON.parse(process.env.BUILD_MATRIX_INCLUDE).map(({ name }) => `release-${name}`);
-          const manifest = await validateReleaseInputs('release', expected);
-          console.log(`Validated ${expected.length} platform hashes: ${manifest.mainHash}`);
-          NODE
 
       - name: List downloaded artifacts
         run: ls -R release
