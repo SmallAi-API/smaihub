@@ -1,7 +1,5 @@
 import { type NavigateFunction } from 'react-router';
 
-import { type MigrationSQL, type MigrationTableItem } from '@/types/clientDB';
-import { DatabaseLoadingState } from '@/types/clientDB';
 import { type LocaleMode } from '@/types/locale';
 import { SessionDefaultGroup } from '@/types/session';
 import { type TopicGroupMode } from '@/types/topic';
@@ -236,10 +234,6 @@ export interface SystemStatus {
   imagePanelWidth: number;
   imageTopicPanelWidth?: number;
   imageTopicViewMode?: 'grid' | 'list';
-  /**
-   * 应用初始化时不启用 PGLite，只有当用户手动开启时才启用
-   */
-  isEnablePglite?: boolean;
   isShowCredit?: boolean;
   knowledgeBaseModalViewMode?: 'list' | 'masonry';
   language?: LocaleMode;
@@ -481,18 +475,6 @@ export const createNavigationRef = (): GlobalNavigationRef => ({ current: null }
 
 export interface GlobalState {
   hasNewVersion?: boolean;
-  initClientDBError?: Error;
-  initClientDBMigrations?: {
-    sqls: MigrationSQL[];
-    tableRecords: MigrationTableItem[];
-  };
-
-  initClientDBProcess?: { costTime?: number; phase: 'wasm' | 'dependencies'; progress: number };
-  /**
-   * 客户端数据库初始化状态
-   * 启动时为 Idle，完成为 Ready，报错为 Error
-   */
-  initClientDBStage: DatabaseLoadingState;
   isMobile?: boolean;
   /**
    * 服务端版本过旧，不支持 /api/version 接口
@@ -637,7 +619,6 @@ export const createInitialSystemStatus = (): SystemStatus => {
 };
 
 export const initialState: GlobalState = {
-  initClientDBStage: DatabaseLoadingState.Idle,
   isMobile: false,
   isStatusInit: false,
   navigationRef: createNavigationRef(),
