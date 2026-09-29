@@ -349,6 +349,8 @@
   "builtins.lobe-knowledge-base.apiName.searchKnowledgeBase": "搜尋資源庫",
   "builtins.lobe-knowledge-base.inspector.andMoreFiles": "還有 {{count}} 個檔案",
   "builtins.lobe-knowledge-base.inspector.noResults": "沒有結果",
+  "builtins.lobe-knowledge-base.inspector.noScope": "未啟用的庫",
+  "builtins.lobe-knowledge-base.render.noScope": "此代理未附加任何啟用的庫，因此未進行任何搜索。請附加一個庫，或啟用已附加的庫，以便讓它搜索您的文件。",
   "builtins.lobe-knowledge-base.title": "資源庫",
   "builtins.lobe-local-system.apiName.editFile": "編輯文件",
   "builtins.lobe-local-system.apiName.editLocalFile": "編輯檔案",
