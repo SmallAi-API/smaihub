@@ -363,12 +363,20 @@ jobs:
           }
 
           # 2) Validate packaged app output exists
-          # app.asar only carries the shell; main/preload/renderer ship as the OTA-able core in resources/core.
+          # app.asar only carries the shell; main/preload/renderer ship as the OTA-able core in
+          # resources/core.asar, with the CLI unpacked beside it in resources/core.asar.unpacked.
           $releaseRoot = 'apps/desktop/release'
           $resourcesRoot = "$releaseRoot/win-unpacked/resources"
           $asarPath = "$resourcesRoot/app.asar"
           Assert-File $asarPath
-          $coreRoot = "$resourcesRoot/core"
+          $coreAsarPath = "$resourcesRoot/core.asar"
+          Assert-File $coreAsarPath
+          # The CLI is the only unpacked entry; it must stay a real file to be spawnable.
+          Assert-File "$resourcesRoot/core.asar.unpacked/cli/dist/index.js"
+
+          # core.asar is packed from core-dist, which the OTA upload step reads next.
+          # Verifying the staging dir keeps this check readable and covers the same payload.
+          $coreRoot = 'apps/desktop/core-dist'
           Assert-File "$coreRoot/manifest.json"
           Assert-File "$coreRoot/package.json"
           Assert-Dir "$coreRoot/dist/main"
@@ -388,6 +396,7 @@ jobs:
           Write-Host "Renderer files: $rendererFileCount"
           Write-Host "app.asar (shell) size: $((Get-Item -LiteralPath $asarPath).Length)"
           Write-Host "Core files: $((Get-ChildItem -Path $coreRoot -Recurse -File | Measure-Object).Count)"
+          Write-Host "core.asar size: $((Get-Item -LiteralPath $coreAsarPath).Length)"
           Write-Host "Installer: $($installer.Name) ($($installer.Length) bytes)"
           Write-Host 'Package integrity verification passed.'
 
