@@ -1,8 +1,8 @@
 import type { HomeNewModelItem } from '@/business/client/hooks/useHomeNewModels';
 
 // Chat
-export const NEW_GPT_MODEL = 'gpt-6-sol';
-export const NEW_GPT_MODEL_NAME = 'GPT-6 Sol';
+export const NEW_GPT_MODEL = 'gpt-6.1-sol';
+export const NEW_GPT_MODEL_NAME = 'GPT-6.1 Sol';
 export const NEW_CLAUDE_MODEL = 'claude-opus-5-5';
 export const NEW_CLAUDE_MODEL_NAME = 'Claude Opus 5.5';
 export const NEW_GEMINI_MODEL = 'gemini-3.8-flash';
