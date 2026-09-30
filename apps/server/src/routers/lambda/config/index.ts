@@ -39,6 +39,46 @@ const normalizeBillboard = (raw: unknown): GlobalBillboard | null => {
 };
 
 const getActiveBillboard = async (): Promise<GlobalBillboard | null> => {
+  // TEMP: local Billboard preview, remove before commit
+  if (process.env.NODE_ENV === 'development') {
+    return normalizeBillboard({
+      endAt: '2099-12-31T00:00:00Z',
+      i18n: { 'zh-CN': { title: '平台更新公告' } },
+      id: 1,
+      items: [
+        {
+          action: 'openFeedback',
+          description: 'GPT-6.1 Sol is now available. Try it from the model switcher.',
+          i18n: {
+            'zh-CN': {
+              description: 'GPT-6.1 Sol 现已上线，可在模型切换器中选择使用。',
+              linkLabel: '反馈意见',
+              title: '新模型上线：GPT-6.1 Sol',
+            },
+          },
+          id: 1,
+          title: 'New model: GPT-6.1 Sol',
+        },
+        {
+          description: 'Recharge and plan management improvements.',
+          i18n: {
+            'zh-CN': {
+              description: '充值与套餐管理体验优化，查看详情。',
+              linkLabel: '去看看',
+              title: '平台近期更新',
+            },
+          },
+          id: 2,
+          linkUrl: 'https://api.smai.ai/console/plan',
+          title: 'Platform updates',
+        },
+      ],
+      slug: 'preview-2026-09',
+      startAt: '2020-01-01T00:00:00Z',
+      title: 'Platform announcement',
+    });
+  }
+
   if (!EdgeConfig.isEnabled()) return null;
   try {
     const data = await new EdgeConfig().getBillboards();
