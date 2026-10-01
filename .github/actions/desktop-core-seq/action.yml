@@ -37,10 +37,26 @@ runs:
           */stable|*/nightly|*/canary|*/beta) BASE="${BASE%/*}" ;;
         esac
         [[ "$APP_VERSION" =~ ^[0-9A-Za-z][0-9A-Za-z.+-]*$ ]] || { echo "::error::valid app-version required"; exit 1; }
+        # Retry transient failures (curl error, timeout, 408/429/5xx); 200/404 are final answers
+        fetch_status() {
+          local url=$1 out=$2 status=000 attempt
+          for attempt in 1 2 3 4 5; do
+            if status=$(curl -sS --connect-timeout 10 --max-time 30 -o "$out" -w '%{http_code}' "$url"); then
+              case "$status" in
+                408|429|5??) ;;
+                *) echo "$status"; return 0 ;;
+              esac
+            else
+              status=000
+            fi
+            echo "::warning::fetch $url failed (attempt $attempt, HTTP $status), retrying" >&2
+            sleep $((attempt * 5))
+          done
+          echo "$status"
+        }
         MAX_SEQ=-1
         for p in darwin win32 linux; do
-          HTTP_STATUS=$(curl -sS --connect-timeout 10 --max-time 30 \
-            -o "$RUNNER_TEMP/latest-$p.json" -w '%{http_code}' "$BASE/$CHANNEL/$APP_VERSION/core-v4/$p/latest.json")
+          HTTP_STATUS=$(fetch_status "$BASE/$CHANNEL/$APP_VERSION/core-v4/$p/latest.json" "$RUNNER_TEMP/latest-$p.json")
           case "$HTTP_STATUS" in
             200) SEQ=$(jq -er '.seq | select(type == "number")' "$RUNNER_TEMP/latest-$p.json") ;;
             404) SEQ=-1 ;;
