@@ -1498,7 +1498,7 @@ export default {
   'sharePage.pill.openInApp': 'Open in {{appName}}',
   'sharePage.pill.sharedVia': 'Shared via {{appName}}',
   'sharePageDisclaimer':
-    'This content is shared by a user and does not represent the views of smai.ai, smai.ai is not responsible for any consequences arising from this shared content.',
+    "Shared by a user. The content reflects their views, not {{appName}}'s, and {{appName}} takes no responsibility for it.",
   'signalCallbacks.collapse': 'Hide details',
   'signalCallbacks.empty': 'No callback messages',
   'signalCallbacks.expand': 'Show details',
