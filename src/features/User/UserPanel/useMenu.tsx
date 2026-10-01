@@ -84,6 +84,7 @@ export const useMenu = () => {
         ]
       : []),
   ];
+
   const getApp: MenuProps['items'] = [
     {
       icon: <Icon icon={Download} />,
@@ -98,7 +99,7 @@ export const useMenu = () => {
 
   const mainItems = [
     {
-      type: 'divider',
+      type: 'divider' as const,
     },
 
     ...(isLogin ? settings : []),

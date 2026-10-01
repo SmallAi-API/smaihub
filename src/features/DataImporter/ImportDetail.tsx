@@ -1,8 +1,7 @@
 'use client';
 
 import { Flexbox } from '@lobehub/ui';
-import { Button, Text } from '@lobehub/ui/base-ui';
-import { Table } from 'antd';
+import { Button, Table, type TableColumn, Text } from '@lobehub/ui/base-ui';
 import { createStaticStyles } from 'antd-style';
 import { Info } from 'lucide-react';
 import { useState } from 'react';
@@ -102,8 +101,8 @@ const ImportPreviewModal = ({
   const tables = getNonEmptyTables(importData);
   const totalRecords = getTotalRecords(tables);
 
-  // 表格列定义
-  const columns = [
+  // Table column definitions
+  const columns: TableColumn<{ count: number; name: string }>[] = [
     {
       dataIndex: 'name',
       key: 'name',

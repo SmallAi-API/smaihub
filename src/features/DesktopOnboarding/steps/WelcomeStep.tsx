@@ -3,9 +3,8 @@
 import { type IconProps } from '@lobehub/ui';
 import { Block, Flexbox, Icon } from '@lobehub/ui';
 import { TypewriterEffect } from '@lobehub/ui/awesome';
-import { Button, Text } from '@lobehub/ui/base-ui';
+import { Button, Steps, Text } from '@lobehub/ui/base-ui';
 import { LoadingDots } from '@lobehub/ui/chat';
-import { Steps } from 'antd';
 import { cssVar } from 'antd-style';
 import { BrainIcon, HeartHandshakeIcon, PencilRulerIcon } from 'lucide-react';
 import { memo, useCallback } from 'react';
@@ -69,11 +68,10 @@ const WelcomeStep = memo<WelcomeStepProps>(({ onNext }) => {
         <Text as={'p'}>{t('telemetry.desc')}</Text>
       </Flexbox>
       <Steps
-        current={null as any}
         orientation={'vertical'}
         items={[
           {
-            content: (
+            description: (
               <Text as={'p'} color={cssVar.colorTextSecondary} style={{ marginBottom: 16 }}>
                 {t('telemetry.rows.create.desc')}
               </Text>
@@ -86,7 +84,7 @@ const WelcomeStep = memo<WelcomeStepProps>(({ onNext }) => {
             ),
           },
           {
-            content: (
+            description: (
               <Text as={'p'} color={cssVar.colorTextSecondary} style={{ marginBottom: 16 }}>
                 {t('telemetry.rows.collaborate.desc')}
               </Text>
@@ -99,7 +97,7 @@ const WelcomeStep = memo<WelcomeStepProps>(({ onNext }) => {
             ),
           },
           {
-            content: (
+            description: (
               <Text as={'p'} color={cssVar.colorTextSecondary}>
                 {t('telemetry.rows.evolve.desc')}
               </Text>

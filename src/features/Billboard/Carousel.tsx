@@ -1,22 +1,12 @@
 'use client';
 
 import { Flexbox, Tooltip } from '@lobehub/ui';
-import { ActionIcon, Button } from '@lobehub/ui/base-ui';
-import { Carousel as AntCarousel } from 'antd';
+import { ActionIcon, Button, Carousel } from '@lobehub/ui/base-ui';
 import { createStaticStyles, cssVar } from 'antd-style';
 import { X } from 'lucide-react';
 import { useReducedMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import {
-  type ComponentRef,
-  memo,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useAnalytics } from '@/libs/analytics/client';
@@ -272,7 +262,6 @@ const BillboardCarousel = memo<BillboardCarouselProps>(
     const { t, i18n } = useTranslation('common');
     const [paused, setPaused] = useState(false);
     const [current, setCurrent] = useState(0);
-    const carouselRef = useRef<ComponentRef<typeof AntCarousel>>(null);
     const { analytics } = useAnalytics();
     const reduceMotion = useReducedMotion();
 
@@ -329,20 +318,19 @@ const BillboardCarousel = memo<BillboardCarouselProps>(
         {single ? (
           <ItemContent item={currentItem} />
         ) : (
-          <AntCarousel
+          <Carousel
             adaptiveHeight
-            autoplay={!paused && !reduceMotion}
-            autoplaySpeed={6000}
-            beforeChange={(_: number, next: number) => setCurrent(next)}
+            autoplay={paused || reduceMotion ? false : 6000}
             dots={false}
-            ref={carouselRef}
+            index={currentIndex}
+            onIndexChange={setCurrent}
           >
             {set.items.map((item) => (
               <div key={item.id}>
                 <ItemContent item={item} />
               </div>
             ))}
-          </AntCarousel>
+          </Carousel>
         )}
 
         {showFooter ? (
@@ -362,7 +350,7 @@ const BillboardCarousel = memo<BillboardCarouselProps>(
                     className={`${styles.dot} ${currentIndex === idx ? styles.dotActive : ''}`}
                     key={item.id}
                     type="button"
-                    onClick={() => carouselRef.current?.goTo(idx)}
+                    onClick={() => setCurrent(idx)}
                   />
                 ))}
               </Flexbox>

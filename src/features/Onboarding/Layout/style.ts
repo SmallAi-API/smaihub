@@ -1,12 +1,7 @@
 import { createStaticStyles } from 'antd-style';
 
 export const styles = createStaticStyles(({ css, cssVar }) => ({
-  // Divider 样式
-  divider: css`
-    height: 24px;
-  `,
-
-  // 内层容器 - 深色模式
+  // Inner container - dark mode
   innerContainerDark: css`
     position: relative;
 

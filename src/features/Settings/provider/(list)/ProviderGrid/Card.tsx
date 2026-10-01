@@ -1,6 +1,5 @@
 import { Flexbox } from '@lobehub/ui';
-import { Avatar, Skeleton, Text } from '@lobehub/ui/base-ui';
-import { Divider } from 'antd';
+import { Avatar, Divider, Skeleton, Text } from '@lobehub/ui/base-ui';
 import { cx } from 'antd-style';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';

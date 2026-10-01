@@ -1,8 +1,7 @@
 'use client';
 
 import { FormGroup, Grid } from '@lobehub/ui';
-import { type DatePickerProps } from 'antd';
-import { Divider } from 'antd';
+import { Divider } from '@lobehub/ui/base-ui';
 import dayjs from 'dayjs';
 import { memo, type ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,14 +63,11 @@ const StatsSetting = memo<StatsSettingProps>(
       }
     }, [dateStrings, mutate]);
 
-    const handleDateChange: DatePickerProps['onChange'] = (dates, dateStrings) => {
-      const actualDate = Array.isArray(dates) ? dates[0] : dates;
-      if (actualDate) {
-        setDateRange(actualDate);
-      }
-      if (typeof dateStrings === 'string') {
-        setDateStrings(dateStrings);
-      }
+    const handleDateChange = (date: Date | null) => {
+      if (!date) return;
+      const month = dayjs(date);
+      setDateRange(month);
+      setDateStrings(month.format('YYYY-MM'));
     };
 
     return (
@@ -97,9 +93,9 @@ const StatsSetting = memo<StatsSettingProps>(
             <TotalMessages mobile={mobile} />
             <TotalTokens />
           </Grid>
-          <Divider dashed />
+          <Divider dashed style={{ marginBlock: 24 }} />
           <AiHeatmaps mobile={mobile} />
-          <Divider dashed />
+          <Divider dashed style={{ marginBlock: 24 }} />
           <Grid gap={16} rows={3} style={{ paddingBottom: 12 }}>
             <ModelsRank />
             <AssistantsRank mobile={mobile} />

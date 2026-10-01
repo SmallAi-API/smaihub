@@ -1,8 +1,6 @@
 'use client';
 
-import { Input } from '@lobehub/ui';
-import { ActionIcon, toast } from '@lobehub/ui/base-ui';
-import { type InputRef } from 'antd';
+import { ActionIcon, Input, toast } from '@lobehub/ui/base-ui';
 import { createStaticStyles, cx } from 'antd-style';
 import { type Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
@@ -85,8 +83,8 @@ const EditableCell = memo<EditableCellProps>(
     // 编辑状态管理
     const [isEditing, setIsEditing] = useState(false);
 
-    // 用于Input的ref
-    const inputRef = useRef<InputRef>(null);
+    // Ref for the Input element
+    const inputRef = useRef<HTMLInputElement>(null);
 
     // 格式化显示值
     const formatDisplayValue = (val: string | null) => {
@@ -109,7 +107,7 @@ const EditableCell = memo<EditableCellProps>(
     // 提交编辑
     const handleSubmit = () => {
       if (type === 'text') {
-        const inputValue = inputRef.current?.input?.value;
+        const inputValue = inputRef.current?.value;
 
         if (!inputValue) {
           toast.warning(t('apikey.validation.required'));
@@ -165,18 +163,7 @@ const EditableCell = memo<EditableCellProps>(
         case 'date': {
           const dateValue = value && dayjs(value).isValid() ? dayjs(value) : null;
 
-          return (
-            <ApiKeyDatePicker
-              defaultValue={dateValue}
-              open={true}
-              onChange={handleDatePickerSubmit}
-              onOpenChange={() => {
-                if (isEditing) {
-                  setIsEditing(false);
-                }
-              }}
-            />
-          );
+          return <ApiKeyDatePicker defaultValue={dateValue} onChange={handleDatePickerSubmit} />;
         }
 
         default: {
@@ -200,7 +187,12 @@ const EditableCell = memo<EditableCellProps>(
 
     // 日期类型的编辑模式，展示日期选择器
     if (type === 'date' && isEditing) {
-      return renderEditMode();
+      return (
+        <div className={styles.editingContainer}>
+          {renderEditMode()}
+          <ActionIcon icon={X} size="small" onClick={handleCancel} />
+        </div>
+      );
     }
 
     // 展示模式

@@ -3,8 +3,7 @@
 import { AGENT_CHAT_URL, DEFAULT_INBOX_AVATAR } from '@lobechat/const';
 import { Claude, Cline, Cursor, OpenAI } from '@lobehub/icons';
 import { Block, Flexbox, Highlighter, Icon, Markdown } from '@lobehub/ui';
-import { Button, Select, Tabs, Text } from '@lobehub/ui/base-ui';
-import { Divider } from 'antd';
+import { Button, Divider, Select, Tabs, Text } from '@lobehub/ui/base-ui';
 import { createStaticStyles, cx } from 'antd-style';
 import { BotIcon, UserRoundIcon } from 'lucide-react';
 import { memo, useCallback, useMemo, useState } from 'react';
@@ -300,7 +299,7 @@ const Platform = memo<PlatformProps>(
               {!lite && <Title>{t('skills.details.sidebar.platform.title', { platform })}</Title>}
               <Markdown variant={'chat'}>{steps}</Markdown>
             </Flexbox>
-            {lite && <Divider dashed style={{ margin: 0 }} />}
+            {lite && <Divider dashed />}
             <Highlighter
               fullFeatured
               className={cx(lite && styles.lite)}
@@ -312,7 +311,7 @@ const Platform = memo<PlatformProps>(
             >
               {command}
             </Highlighter>
-            {lite && <Divider dashed style={{ margin: 0 }} />}
+            {lite && <Divider dashed />}
             <Highlighter
               fullFeatured
               className={cx(lite && styles.lite)}
@@ -329,7 +328,7 @@ const Platform = memo<PlatformProps>(
             </Highlighter>
             {downloadUrl && (
               <>
-                <Divider dashed style={{ margin: 0 }} />
+                <Divider dashed />
                 <Flexbox padding={8}>
                   <Button
                     block
