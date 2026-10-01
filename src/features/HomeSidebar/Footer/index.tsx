@@ -233,7 +233,12 @@ const Footer = memo(() => {
             placement="topLeft"
             onOpenChange={handleMenuOpenChange}
           >
-            <ActionIcon aria-label={t('userPanel.help')} icon={CircleHelp} size={16} />
+            <ActionIcon
+              aria-label={t('userPanel.help')}
+              data-billboard-anchor=""
+              icon={CircleHelp}
+              size={16}
+            />
           </DropdownMenu>
           {isDevMode && (
             <WorkspaceLink to="/settings">

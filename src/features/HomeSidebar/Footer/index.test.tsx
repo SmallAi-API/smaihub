@@ -1,6 +1,8 @@
 import type * as LobechatConst from '@lobechat/const';
+import { MotionProvider } from '@lobehub/ui';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import * as m from 'motion/react-m';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -136,12 +138,14 @@ const renderFooter = async ({
   const { default: Footer } = await import('./index');
 
   render(
-    <MemoryRouter initialEntries={['/']}>
-      <Routes>
-        <Route element={<Footer />} path="/" />
-        <Route element={<div>Onboarding route</div>} path="/onboarding" />
-      </Routes>
-    </MemoryRouter>,
+    <MotionProvider motion={m}>
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route element={<Footer />} path="/" />
+          <Route element={<div>Onboarding route</div>} path="/onboarding" />
+        </Routes>
+      </MemoryRouter>
+    </MotionProvider>,
   );
 };
 
@@ -160,6 +164,14 @@ afterEach(() => {
   vi.doUnmock('@/hooks/useNavLayout');
   vi.doUnmock('@/store/serverConfig');
   vi.doUnmock('@/store/user');
+});
+
+describe('Footer billboard anchor', () => {
+  it('marks the help button in compact layout as the billboard dismiss anchor', async () => {
+    await renderFooter({ homeSidebar: true });
+
+    expect(screen.getByRole('button', { name: 'Help' })).toHaveAttribute('data-billboard-anchor');
+  }, 20000);
 });
 
 describe('Footer help menu tracking', () => {
