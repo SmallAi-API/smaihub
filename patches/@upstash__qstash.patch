@@ -1,4 +1,5 @@
 diff --git a/chunk-F7X2AQ7W.mjs b/chunk-F7X2AQ7W.mjs
+index 62b68ef..1e24e58 100644
 --- a/chunk-F7X2AQ7W.mjs
 +++ b/chunk-F7X2AQ7W.mjs
 @@ -1547,6 +1547,20 @@ var HttpClient = class {
@@ -17,7 +18,7 @@ diff --git a/chunk-F7X2AQ7W.mjs b/chunk-F7X2AQ7W.mjs
 +          })
 +        );
 +      } catch {
-+        // ignore logging failures to preserve original throw path
++        // ignore logging failures to preserve original error path
 +      }
        return new QstashError(
          body.length > 0 ? body : `Error: status=${response.status}`,

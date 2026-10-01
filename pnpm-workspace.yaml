@@ -76,6 +76,8 @@ overrides:
   's3rver>fast-xml-parser': 3.21.1
   stylelint-config-clean-order: 7.0.0
   typescript: 6.0.3
+  # patches/@upstash__qstash.patch targets 2.12.0's chunk file names (chunk-F7X2AQ7W.mjs); bump together
+  '@upstash/qstash': 2.12.0
   vitest: 5.0.0
   'zod@^4': 4.5.4
 
