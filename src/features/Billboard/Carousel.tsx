@@ -1,10 +1,10 @@
 'use client';
 
-import { Flexbox, Icon, Tooltip } from '@lobehub/ui';
+import { Flexbox, Tooltip } from '@lobehub/ui';
 import { ActionIcon, Button } from '@lobehub/ui/base-ui';
 import { Carousel as AntCarousel } from 'antd';
 import { createStaticStyles, cssVar } from 'antd-style';
-import { Megaphone, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useReducedMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import {
@@ -322,7 +322,6 @@ const BillboardCarousel = memo<BillboardCarouselProps>(
         }}
       >
         <Flexbox horizontal align="center" className={styles.header} gap={8}>
-          <Icon icon={Megaphone} size={14} />
           <span className={styles.headerTitle}>{resolveBillboardTitle(set, i18n.language)}</span>
           <ActionIcon aria-label={t('close')} icon={X} size={14} onClick={onClose} />
         </Flexbox>
