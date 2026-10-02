@@ -98,7 +98,7 @@
   "gpt-5.description": "跨领域编码和代理任务的最佳模型。GPT-5 在准确性、速度、推理、上下文识别、结构化思维和问题解决方面实现了飞跃。",
   "gpt-6-astra.description": "OpenAI 最智能且最对齐的模型，在计算机使用和 3D 工作方面处于最前沿。",
   "gpt-6-sol.description": "GPT-6 Sol 是为复杂编码和代理工作流程而构建的。",
-  "gpt-6.1-sol.description": "GPT-6.1 Sol 专为复杂编码和代理工作流程而构建。",
+  "gpt-6.1-sol.description": "GPT-6.1 Sol 提供接近 Astra 的性能，适用于复杂编码、计算机使用和专业工作，且成本更低。",
   "gpt-image-1-mini.description": "成本更低的 GPT Image 1 版本，原生支持文本与图像输入并生成图像输出。",
   "gpt-image-1.5.description": "ChatGPT Image 1.5 原生多模态图片生成模型。",
   "gpt-image-1.description": "ChatGPT 原生多模态图片生成模型。",
