@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import dotenv from 'dotenv';
+import { adHocSignAfterPack } from 'electron-sparkle-updater/builder';
 
 import { copyExternalRuntimeModulesToSource } from './external-runtime-deps.config.mjs';
 import { getModuleFilesConfig } from './module-deps.config.mjs';
@@ -207,7 +208,8 @@ const config = {
     await packBuiltinCore(__dirname);
   },
   /**
-   * AfterPack hook for copying Liquid Glass Assets.car on macOS 26+.
+   * AfterPack hook for copying Liquid Glass Assets.car on macOS 26+, then
+   * ad-hoc signing the bundle when Sparkle ships without an Apple certificate.
    *
    * @see https://github.com/electron-userland/electron-builder/issues/9254
    * @see https://github.com/MultiboxLabs/flow-browser/pull/159
@@ -237,6 +239,16 @@ const config = {
       // Non-critical: Assets.car not found or copy failed
       // App will use fallback .icns icon on all macOS versions
       console.info(`⏭️  Skipping Assets.car (not found or copy failed)`);
+    }
+
+    // Staging extraFiles (Sparkle.framework) and asarUnpack (sparkle_bridge.node)
+    // invalidates the bundle's CodeDirectory, and generate_appcast rejects any
+    // archive failing `codesign --verify --deep --strict`. Ad-hoc signing is
+    // enough for Sparkle; a real certificate signs via afterSign instead, so
+    // re-signing here would only discard it. Must run after Assets.car lands.
+    if (useSparkle && !hasAppleCertificate) {
+      await adHocSignAfterPack(context);
+      console.info('✅ Ad-hoc signed the app bundle for Sparkle');
     }
   },
   afterSign: verifyFontListSignature,
