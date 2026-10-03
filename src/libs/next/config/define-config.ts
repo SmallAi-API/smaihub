@@ -366,7 +366,6 @@ export function defineConfig(config: CustomNextConfig) {
       'oidc-provider',
       'pdfkit',
       '@lobehub/editor',
-      'just-bash',
       'discord.js',
       'ffmpeg-static',
       'pdfjs-dist',
