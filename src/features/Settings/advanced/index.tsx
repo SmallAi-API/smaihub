@@ -1,9 +1,7 @@
 'use client';
 import { isDesktop } from '@lobechat/const';
-import { type FormGroupItemType, type FormItemProps } from '@lobehub/ui';
-import { Form } from '@lobehub/ui';
 import { Select, Skeleton, Spin, Switch } from '@lobehub/ui/base-ui';
-import { createStaticStyles } from 'antd-style';
+import { Form, type FormFieldProps, type FormGroupItem, useForm } from '@lobehub/ui/base-ui/form';
 import isEqual from 'fast-deep-equal';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,16 +14,9 @@ import { autoUpdateService } from '@/services/electron/autoUpdate';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
 import { settingsSelectors } from '@/store/user/selectors';
+import { type UserGeneralConfig } from '@/types/user/settings';
 
 type UpdateChannelValue = 'canary' | 'stable';
-
-const styles = createStaticStyles(({ css }) => ({
-  labItem: css`
-    .ant-form-item-row {
-      align-items: center !important;
-    }
-  `,
-}));
 
 const Page = memo(() => {
   const { t } = useTranslation('setting');
@@ -43,6 +34,15 @@ const Page = memo(() => {
       s.refreshUserState,
     ]);
   const [loading, setLoading] = useState(false);
+  const form = useForm({
+    initialValues: general,
+    values: general,
+    onValuesChange: async (v) => {
+      setLoading(true);
+      await setSettings({ general: v });
+      setLoading(false);
+    },
+  });
 
   const enableGatewayMode = useServerConfigStore(serverConfigSelectors.enableGatewayMode);
 
@@ -84,7 +84,7 @@ const Page = memo(() => {
     return <Skeleton.Text rows={5} />;
   }
 
-  const advancedGroup: FormGroupItemType = {
+  const advancedGroup: FormGroupItem<UserGeneralConfig> = {
     children: [
       {
         children: <Switch />,
@@ -96,7 +96,6 @@ const Page = memo(() => {
         ),
         minWidth: undefined,
         name: 'isDevMode',
-        valuePropName: 'checked',
       },
       ...(enableGatewayMode
         ? [
@@ -107,7 +106,6 @@ const Page = memo(() => {
                   onChange={handleGatewayModeChange}
                 />
               ),
-              className: styles.labItem,
               desc: t('tab.advanced.gatewayMode.desc'),
               label: (
                 <SettingsSearchAnchor id={'advanced-gateway-mode'}>
@@ -115,7 +113,7 @@ const Page = memo(() => {
                 </SettingsSearchAnchor>
               ),
               minWidth: undefined,
-            } satisfies FormItemProps,
+            } satisfies FormFieldProps<UserGeneralConfig>,
           ]
         : []),
     ],
@@ -127,7 +125,7 @@ const Page = memo(() => {
     { label: t('tab.advanced.updateChannel.canary'), value: 'canary' as const },
   ];
 
-  const updateChannelGroup: FormGroupItemType = {
+  const updateChannelGroup: FormGroupItem<UserGeneralConfig> = {
     children: [
       {
         children: (
@@ -151,15 +149,10 @@ const Page = memo(() => {
       <SettingHeader title={t('tab.advanced')} />
       <Form
         collapsible={false}
-        initialValues={general}
+        form={form}
         items={items}
         itemsType={'group'}
         variant={'filled'}
-        onValuesChange={async (v) => {
-          setLoading(true);
-          await setSettings({ general: v });
-          setLoading(false);
-        }}
         {...FORM_STYLE}
       />
     </>

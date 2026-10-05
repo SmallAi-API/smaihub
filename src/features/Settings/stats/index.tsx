@@ -1,7 +1,8 @@
 'use client';
 
-import { FormGroup, Grid } from '@lobehub/ui';
+import { Grid } from '@lobehub/ui';
 import { Divider } from '@lobehub/ui/base-ui';
+import { Form } from '@lobehub/ui/base-ui/form';
 import dayjs from 'dayjs';
 import { memo, type ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +22,7 @@ import {
 } from './features/overview';
 import { AssistantsRank, ModelsRank, TopicsRank } from './features/rankings';
 import { AiHeatmaps } from './features/visualization';
-import { GroupBy, type UserDisplayResolver } from './types';
+import { type UserDisplayResolver } from './types';
 
 interface StatsSettingProps {
   /**
@@ -44,67 +45,55 @@ interface StatsSettingProps {
   showSettingHeader?: boolean;
 }
 
-const StatsSetting = memo<StatsSettingProps>(
-  ({ mobile, headerNode, enableUserDimension, resolveUser, showSettingHeader = true }) => {
-    const { t, i18n } = useTranslation('auth');
-    dayjs.locale(i18n.language);
+const StatsSetting = memo<StatsSettingProps>(({ mobile, headerNode, showSettingHeader = true }) => {
+  const { t, i18n } = useTranslation('auth');
+  dayjs.locale(i18n.language);
 
-    const [groupBy, setGroupBy] = useState<GroupBy>(GroupBy.Model);
-    const [dateRange, setDateRange] = useState<dayjs.Dayjs>(dayjs(new Date()));
-    const [dateStrings, setDateStrings] = useState<string>();
+  const [dateStrings] = useState<string>();
 
-    const { data, isLoading, error, mutate } = useClientDataSWR(statsKeys.usageStat(), async () =>
-      usageService.findAndGroupByDay(dateStrings),
-    );
+  const { mutate } = useClientDataSWR(statsKeys.usageStat(), async () =>
+    usageService.findAndGroupByDay(dateStrings),
+  );
 
-    useEffect(() => {
-      if (dateStrings) {
-        mutate();
-      }
-    }, [dateStrings, mutate]);
+  useEffect(() => {
+    if (dateStrings) {
+      mutate();
+    }
+  }, [dateStrings, mutate]);
 
-    const handleDateChange = (date: Date | null) => {
-      if (!date) return;
-      const month = dayjs(date);
-      setDateRange(month);
-      setDateStrings(month.format('YYYY-MM'));
-    };
-
-    return (
-      <>
-        {showSettingHeader && <SettingHeader title={t('tab.stats')} />}
-        {/* ========== Header Section ========== */}
-        <FormGroup
-          collapsible={false}
-          extra={headerNode === undefined ? <ShareButton /> : undefined}
-          gap={16}
-          variant={'filled'}
-          title={
-            headerNode === undefined ? (
-              <Welcome mobile={mobile} />
-            ) : headerNode === false ? undefined : (
-              headerNode
-            )
-          }
-        >
-          <Grid gap={8} maxItemWidth={150} rows={4}>
-            <TotalAssistants mobile={mobile} />
-            <TotalTopics mobile={mobile} />
-            <TotalMessages mobile={mobile} />
-            <TotalTokens />
-          </Grid>
-          <Divider dashed style={{ marginBlock: 24 }} />
-          <AiHeatmaps mobile={mobile} />
-          <Divider dashed style={{ marginBlock: 24 }} />
-          <Grid gap={16} rows={3} style={{ paddingBottom: 12 }}>
-            <ModelsRank />
-            <AssistantsRank mobile={mobile} />
-            <TopicsRank mobile={mobile} />
-          </Grid>
-        </FormGroup>
-      </>
-    );
-  },
-);
+  return (
+    <>
+      {showSettingHeader && <SettingHeader title={t('tab.stats')} />}
+      {/* ========== Header Section ========== */}
+      <Form.Group
+        collapsible={false}
+        extra={headerNode === undefined ? <ShareButton /> : undefined}
+        variant={'filled'}
+        title={
+          headerNode === undefined ? (
+            <Welcome mobile={mobile} />
+          ) : headerNode === false ? undefined : (
+            headerNode
+          )
+        }
+      >
+        <Grid gap={8} maxItemWidth={150} rows={4}>
+          <TotalAssistants mobile={mobile} />
+          <TotalTopics mobile={mobile} />
+          <TotalMessages mobile={mobile} />
+          <TotalTokens />
+        </Grid>
+        <Divider dashed style={{ marginBlock: 24 }} />
+        <AiHeatmaps mobile={mobile} />
+        <Divider dashed style={{ marginBlock: 24 }} />
+        <Grid gap={16} rows={3} style={{ paddingBottom: 12 }}>
+          <ModelsRank />
+          <AssistantsRank mobile={mobile} />
+          <TopicsRank mobile={mobile} />
+        </Grid>
+      </Form.Group>
+    </>
+  );
+});
 
 export default StatsSetting;
