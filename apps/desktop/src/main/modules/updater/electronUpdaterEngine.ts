@@ -56,6 +56,7 @@ export const electronUpdaterEngine: UpdateEngine = {
   installOnQuit: () => {
     autoUpdater.autoInstallOnAppQuit = true;
   },
+  isActive: () => autoUpdater.isUpdaterActive(),
   kind: 'electron-updater',
   on: (event, listener) => {
     autoUpdater.on(event, listener as (...args: any[]) => void);

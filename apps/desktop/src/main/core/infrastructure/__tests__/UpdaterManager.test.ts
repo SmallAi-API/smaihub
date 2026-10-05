@@ -11,12 +11,14 @@ const {
   mockEnv,
   mockGetAllWindows,
   mockLoadSparkleBridge,
+  mockQuit,
   mockReleaseSingleInstanceLock,
   mockUpdateConfig,
 } = vi.hoisted(() => ({
   mockEnv: { isWindows: false },
   mockGetAllWindows: vi.fn().mockReturnValue([]),
   mockLoadSparkleBridge: vi.fn(),
+  mockQuit: vi.fn(),
   mockReleaseSingleInstanceLock: vi.fn(),
   mockUpdateConfig: { serverUrl: 'https://mock.update.server' as string | undefined },
 }));
@@ -68,6 +70,7 @@ vi.mock('electron-updater', () => {
       currentVersion: undefined as any,
       downloadUpdate: vi.fn(),
       forceDevUpdateConfig: false,
+      isUpdaterActive: vi.fn().mockReturnValue(true),
       logger: null as any,
       on: vi.fn(),
       quitAndInstall: vi.fn(),
@@ -85,6 +88,7 @@ vi.mock('electron', () => ({
     getVersion: vi.fn().mockReturnValue('0.0.0'),
     isPackaged: true,
     on: vi.fn(),
+    quit: mockQuit,
     releaseSingleInstanceLock: mockReleaseSingleInstanceLock,
   },
 }));
@@ -147,6 +151,7 @@ describe('UpdaterManager', () => {
     (autoUpdater as any).currentVersion = undefined;
     (autoUpdater as any).disableDifferentialDownload = false;
     (autoUpdater as any).disableWebInstaller = false;
+    vi.mocked((autoUpdater as any).isUpdaterActive).mockReturnValue(true);
 
     // Capture registered events
     registeredEvents = new Map();
@@ -168,6 +173,7 @@ describe('UpdaterManager', () => {
       coreUpdateManager: {
         checkForUpdates: vi.fn().mockResolvedValue(undefined),
       },
+      isInstallingUpdate: false,
       isQuiting: false,
       menuManager: {
         rebuildAppMenu: vi.fn(),
@@ -291,6 +297,17 @@ describe('UpdaterManager', () => {
 
     afterEach(() => {
       Object.defineProperty(process, 'platform', { value: originalPlatform });
+    });
+
+    it('leaves termination to Sparkle when installing now', async () => {
+      await updaterManager.initialize();
+      (updaterManager as any).updateAvailable = true;
+
+      updaterManager.installNow();
+      await vi.advanceTimersByTimeAsync(100 + 60 * 1000);
+
+      expect(bridge.installUpdateNow).toHaveBeenCalled();
+      expect(mockQuit).not.toHaveBeenCalled();
     });
 
     it('drives canary through Sparkle with the arch-specific appcast', async () => {
@@ -433,6 +450,32 @@ describe('UpdaterManager', () => {
     beforeEach(async () => {
       await updaterManager.initialize();
       vi.mocked(autoUpdater.checkForUpdates).mockResolvedValue({} as any);
+    });
+
+    // Regression: a snap / tar.gz install (and an AppImage started without its
+    // runtime) makes electron-updater resolve checkForUpdates() with `null` and
+    // emit nothing at all, which used to strand the UI on the `checking`
+    // spinner forever. Issue #19564.
+    it('should report unsupported instead of hanging when the updater is inactive', async () => {
+      vi.mocked((autoUpdater as any).isUpdaterActive).mockReturnValue(false);
+      mockBroadcast.mockClear();
+
+      await updaterManager.checkForUpdates({ manual: true });
+
+      expect(autoUpdater.checkForUpdates).not.toHaveBeenCalled();
+      expect(mockBroadcast).toHaveBeenCalledWith('updaterStateChanged', { stage: 'unsupported' });
+      expect(updaterManager.getUpdaterState().stage).toBe('unsupported');
+    });
+
+    it('should not get stuck on checking after an inactive-updater check', async () => {
+      vi.mocked((autoUpdater as any).isUpdaterActive).mockReturnValue(false);
+
+      await updaterManager.checkForUpdates({ manual: true });
+
+      const stages = mockBroadcast.mock.calls
+        .filter(([event]) => event === 'updaterStateChanged')
+        .map(([, state]) => state.stage);
+      expect(stages).not.toContain('checking');
     });
 
     it('should call autoUpdater.checkForUpdates', async () => {
@@ -594,16 +637,52 @@ describe('UpdaterManager', () => {
   });
 
   describe('installNow', () => {
-    // Note: installNow uses require('electron') which is difficult to mock in vitest.
-    // These tests are skipped because vi.mock doesn't work with dynamic require().
-    // The functionality should be tested in integration tests or E2E tests.
+    beforeEach(async () => {
+      await updaterManager.initialize();
+      (updaterManager as any).updateAvailable = true;
+    });
 
-    it.skip('should set app.isQuiting to true', () => {
+    // Regression: closing every window makes Electron fire `window-all-closed`,
+    // and App.ts quits the process there on Linux/Windows. That used to kill the
+    // process before the deferred quitAndInstall() ran, so a downloaded update
+    // was never installed on Linux. Issue #19564.
+    it('marks the app as installing before closing any window', () => {
+      const closeOrder: string[] = [];
+      const mockWindow = {
+        close: vi.fn(() =>
+          closeOrder.push(`close:isInstallingUpdate=${mockApp.isInstallingUpdate}`),
+        ),
+        isDestroyed: vi.fn().mockReturnValue(false),
+      };
+      mockGetAllWindows.mockReturnValue([mockWindow]);
+
+      updaterManager.installNow();
+
+      expect(mockApp.isInstallingUpdate).toBe(true);
+      expect(closeOrder).toEqual(['close:isInstallingUpdate=true']);
+    });
+
+    it('quits by itself when quitAndInstall fails to hand off', async () => {
+      updaterManager.installNow();
+
+      await vi.advanceTimersByTimeAsync(100);
+      expect(autoUpdater.quitAndInstall).toHaveBeenCalledWith(true, true);
+      expect(mockQuit).not.toHaveBeenCalled();
+
+      // The failsafe must not fire while a package manager prompt could still
+      // be running, but it has to fire eventually — otherwise the suppressed
+      // window-all-closed quit leaves a window-less zombie process behind.
+      await vi.advanceTimersByTimeAsync(60 * 1000);
+      expect(mockQuit).toHaveBeenCalled();
+      expect(mockApp.isInstallingUpdate).toBe(false);
+    });
+
+    it('should set app.isQuiting to true', () => {
       updaterManager.installNow();
       expect(mockApp.isQuiting).toBe(true);
     });
 
-    it.skip('should close all windows', () => {
+    it('should close all windows', () => {
       const mockWindow1 = { close: vi.fn(), isDestroyed: vi.fn().mockReturnValue(false) };
       const mockWindow2 = { close: vi.fn(), isDestroyed: vi.fn().mockReturnValue(false) };
       mockGetAllWindows.mockReturnValue([mockWindow1, mockWindow2]);
@@ -612,19 +691,19 @@ describe('UpdaterManager', () => {
       expect(mockWindow2.close).toHaveBeenCalled();
     });
 
-    it.skip('should not close destroyed windows', () => {
+    it('should not close destroyed windows', () => {
       const mockWindow = { close: vi.fn(), isDestroyed: vi.fn().mockReturnValue(true) };
       mockGetAllWindows.mockReturnValue([mockWindow]);
       updaterManager.installNow();
       expect(mockWindow.close).not.toHaveBeenCalled();
     });
 
-    it.skip('should release single instance lock', () => {
+    it('should release single instance lock', () => {
       updaterManager.installNow();
       expect(mockReleaseSingleInstanceLock).toHaveBeenCalled();
     });
 
-    it.skip('should call quitAndInstall with correct parameters after delay', async () => {
+    it('should call quitAndInstall with correct parameters after delay', async () => {
       updaterManager.installNow();
       expect(autoUpdater.quitAndInstall).not.toHaveBeenCalled();
       await vi.advanceTimersByTimeAsync(100);

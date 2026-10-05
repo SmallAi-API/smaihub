@@ -1,5 +1,6 @@
 import path from 'node:path';
 
+import { DOWNLOAD_URL } from '@lobechat/const/url';
 import type { TrayNavigationSnapshot } from '@lobechat/electron-client-ipc';
 import type { MenuItemConstructorOptions } from 'electron';
 import { app, clipboard, Menu, shell } from 'electron';
@@ -442,6 +443,13 @@ export class MacOSMenu extends BaseMenuPlatform implements IMenuPlatform {
       }
       case 'latest': {
         return { enabled: false, label: t('common.isLatestVersion') };
+      }
+      // snap / tar.gz / a runtime-less AppImage cannot replace themselves.
+      case 'unsupported': {
+        return {
+          click: () => shell.openExternal(DOWNLOAD_URL.default),
+          label: t('common.updateUnsupported'),
+        };
       }
       default: {
         return {
