@@ -697,7 +697,7 @@ describe('serverMessagesEngine', () => {
     it('should inject Page Editor context when provided', async () => {
       const messages = createBasicMessages();
 
-      const { messages: result } = await serverMessagesEngine({
+      const result = await serverMessagesEngine({
         messages,
         model: 'gpt-4',
         pageContentContext: {
