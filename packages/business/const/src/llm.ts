@@ -43,3 +43,14 @@ export const DEFAULT_REVIEW_PREDICT_PROVIDER = 'smai';
  */
 export const DEFAULT_VERIFY_MODEL = 'gpt-5.6-terra';
 export const DEFAULT_VERIFY_PROVIDER = 'smai';
+
+/**
+ * The model that splits an acceptance requirement into named verify criteria
+ * (run-start plan instantiation and the task "generate criteria" action). A
+ * text-only structured-output call, so it is pinned separately from the
+ * vision-capable judge above: inheriting the verifier's chat model let a
+ * reasoning model burn its budget and return no parsable JSON, which silently
+ * collapsed every checklist to the single holistic fallback row.
+ */
+export const DEFAULT_VERIFY_PLAN_MODEL = 'deepseek-v4.1-flash';
+export const DEFAULT_VERIFY_PLAN_PROVIDER = 'smai';
