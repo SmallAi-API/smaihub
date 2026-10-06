@@ -2,7 +2,7 @@ export default {
   'github.automation.acceptOnMerge.description':
     'When a pull request linked to an acceptance is merged, mark the acceptance as accepted and complete its task.',
   'github.automation.acceptOnMerge.title': 'Accept deliveries on merge',
-  'github.automation.description': 'What LobeHub does on its own when GitHub reports activity.',
+  'github.automation.description': 'What smai.ai does on its own when GitHub reports activity.',
   'github.automation.title': 'Automation',
   'github.automation.wakeOnCiFailure.description':
     'When a check fails, notify the agent that opened the pull request with the failing job log. At most three times per pull request.',
@@ -17,13 +17,13 @@ export default {
     'Off by default: a public thread is not the place for links into your workspace.',
   'github.comments.commentOnPublicRepositories.title': 'Public repositories',
   'github.comments.description':
-    'Leave a comment on pull requests with links back to the LobeHub acceptance and conversation.',
+    'Leave a comment on pull requests with links back to the smai.ai acceptance and conversation.',
   'github.comments.title': 'Comments in GitHub',
   'github.connections.allRepositories': 'All repositories',
   'github.connections.connect': 'Connect account',
   'github.connections.connectedOn': 'Connected {{date}}',
   'github.connections.empty':
-    'No account connected yet. Install the LobeHub app on your GitHub account or organization to get started.',
+    'No account connected yet. Install the smai.ai app on your GitHub account or organization to get started.',
   'github.connections.enabledBy': 'Enabled by {{login}} · {{date}}',
   'github.connections.manageOnGithub': 'Manage on GitHub',
   'github.connections.notConfigured':
@@ -42,7 +42,7 @@ export default {
   'github.installResult.error.exchange_failed':
     'GitHub did not accept the authorization code. Please try connecting again.',
   'github.installResult.error.identity_taken':
-    'This GitHub account is already linked to another LobeHub user.',
+    'This GitHub account is already linked to another smai.ai user.',
   'github.installResult.error.installation_fetch_failed':
     'Could not read the installation from GitHub. Please try again.',
   'github.installResult.error.missing_installation': 'GitHub did not report an installation.',
@@ -53,7 +53,7 @@ export default {
   'github.installResult.updated': 'GitHub installation updated',
   'github.pending.confirm': 'Connect',
   'github.pending.content':
-    'GitHub reports that the LobeHub app was installed on {{account}}. Connect that installation to this account? Its pull requests will be tracked here.',
+    'GitHub reports that the smai.ai app was installed on {{account}}. Connect that installation to this account? Its pull requests will be tracked here.',
   'github.pending.failed':
     'Could not connect the installation. Please try again from Connect account.',
   'github.pending.title': 'Connect GitHub installation',
