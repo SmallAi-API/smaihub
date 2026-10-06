@@ -416,7 +416,6 @@
   "followUpPlaceholder": "跟進。@ 以指派任務給其他代理。",
   "followUpPlaceholderHeterogeneous": "跟進。",
   "gatewayMode.cardTitle": "代理網關模式",
-  "gatewayMode.desc": "透過 smai.ai 的代理閘道在雲端運行代理。即使關閉頁面，任務仍會持續運行。",
   "globalApproval.collapse": "折疊",
   "globalApproval.goToConversation": "打開對話",
   "globalApproval.moreCount_one": "{{count}} 個待處理",

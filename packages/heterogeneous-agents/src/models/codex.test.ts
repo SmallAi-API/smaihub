@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type * as CodexClientModule from '../codex/CodexAppServerClient';
@@ -27,7 +29,7 @@ vi.mock('../codex/CodexAppServerClient', async (importOriginal) => {
 const options = {
   commandPath: '/custom/codex',
   cwd: '/repo',
-  env: { CODEX_HOME: '/custom/config' },
+  env: { ...process.env, CODEX_HOME: '/custom/config' },
   timeoutMs: 100,
 };
 
@@ -96,7 +98,7 @@ describe('Codex model discovery', () => {
           '--enable',
           'feature_name',
         ],
-        cwd: '/repo/subdir',
+        cwd: path.resolve('/repo', 'subdir'),
       }),
     );
   });
@@ -107,7 +109,7 @@ describe('Codex model discovery', () => {
     expect(construct).toHaveBeenCalledWith(
       expect.objectContaining({
         args: ['-c', 'model_provider="custom"'],
-        cwd: '/repo/subdir',
+        cwd: path.resolve('/repo', 'subdir'),
       }),
     );
   });
