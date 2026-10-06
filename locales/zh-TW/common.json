@@ -485,6 +485,8 @@
   "unknownError": "未知錯誤",
   "update": "更新",
   "updateAgent": "更新助理資訊",
+  "updateUnsupported.action": "下載最新版本",
+  "updateUnsupported.desc": "此安裝格式無法自我更新。請下載最新版本以進行升級。",
   "upgradeVersion.action": "升級",
   "upgradeVersion.hasNew": "有可用的更新",
   "upgradeVersion.newVersion": "有可用的更新：{{version}}",
