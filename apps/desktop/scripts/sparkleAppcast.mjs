@@ -49,6 +49,9 @@ const run = (command, args, options = {}) => {
 };
 
 const createS3 = ({ bucket, endpoint }) => {
+  // Tencent COS rejects path-style requests for custom endpoints.
+  // Virtual-hosted addressing also remains compatible with standard S3.
+  run('aws', ['configure', 'set', 'default.s3.addressing_style', 'virtual']);
   const endpointArgs = endpoint ? ['--endpoint-url', endpoint] : [];
   const aws = (args) => run('aws', ['s3', ...args, ...endpointArgs]);
   return {
