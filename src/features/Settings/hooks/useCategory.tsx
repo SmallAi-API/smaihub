@@ -11,6 +11,7 @@ import {
   BrainCircuit,
   ChartColumnBigIcon,
   Coins,
+  ContainerIcon,
   CreditCard,
   Database,
   EllipsisIcon,
@@ -82,6 +83,9 @@ export const useCategory = () => {
   const remoteServerUrl = useElectronStore(electronSyncSelectors.remoteServerUrl);
   const enableOAuthApps = useUserStore(labPreferSelectors.enableOAuthApps);
   const enableIntegrations = useUserStore(labPreferSelectors.enableIntegrations);
+  // Behind the same experiment that gates the persistent sandbox itself: a tab
+  // for environments nothing can run in would be a dead end.
+  const enablePersistentSandbox = useUserStore(labPreferSelectors.enablePersistentSandbox);
 
   const avatarUrl = useMemo(() => {
     if (!avatar) return undefined;
@@ -147,6 +151,11 @@ export const useCategory = () => {
         icon: MonitorSmartphoneIcon,
         key: SettingsTabs.Devices,
         label: t('tab.devices'),
+      },
+      enablePersistentSandbox && {
+        icon: ContainerIcon,
+        key: SettingsTabs.Environments,
+        label: t('tab.environments'),
       },
       (enableBusinessFeatures || isDesktop) && {
         icon: BellIcon,
@@ -316,6 +325,7 @@ export const useCategory = () => {
     showProvider,
     enableOAuthApps,
     enableIntegrations,
+    enablePersistentSandbox,
     avatarUrl,
     username,
   ]);
