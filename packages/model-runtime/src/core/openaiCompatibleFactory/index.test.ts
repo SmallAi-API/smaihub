@@ -2234,7 +2234,6 @@ describe('LobeOpenAICompatibleFactory', () => {
 
         expect(instance['client'].images.generate).toHaveBeenCalledWith({
           model: 'dall-e-3',
-          n: 1,
           prompt: 'A beautiful sunset',
           quality: 'standard',
           response_format: 'b64_json',
@@ -2303,7 +2302,6 @@ describe('LobeOpenAICompatibleFactory', () => {
         // size: 'auto' should be removed from the options
         expect(instance['client'].images.generate).toHaveBeenCalledWith({
           model: 'dall-e-3',
-          n: 1,
           prompt: 'A beautiful sunset',
           response_format: 'b64_json',
         });
@@ -2329,7 +2327,6 @@ describe('LobeOpenAICompatibleFactory', () => {
         // gpt-image-1 model should not include response_format parameter
         expect(instance['client'].images.generate).toHaveBeenCalledWith({
           model: 'gpt-image-1',
-          n: 1,
           prompt: 'A modern digital artwork',
           size: '1024x1024',
         });
@@ -2366,7 +2363,6 @@ describe('LobeOpenAICompatibleFactory', () => {
           image: expect.any(File),
           mask: 'https://example.com/mask.jpg',
           model: 'dall-e-2',
-          n: 1,
           prompt: 'Add a rainbow to this image',
           response_format: 'b64_json',
         });
@@ -2411,7 +2407,6 @@ describe('LobeOpenAICompatibleFactory', () => {
         expect(instance['client'].images.edit).toHaveBeenCalledWith({
           image: [mockFile1, mockFile2],
           model: 'dall-e-2',
-          n: 1,
           prompt: 'Merge these images',
           response_format: 'b64_json',
         });
@@ -2463,7 +2458,6 @@ describe('LobeOpenAICompatibleFactory', () => {
           image: expect.any(File),
           input_fidelity: 'high',
           model: 'gpt-image-1',
-          n: 1,
           prompt: 'Edit this image with gpt-image-1',
         });
 
@@ -2495,7 +2489,6 @@ describe('LobeOpenAICompatibleFactory', () => {
         expect(editArgs).not.toHaveProperty('input_fidelity');
         expect(editArgs).toMatchObject({
           model: 'gpt-image-2',
-          n: 1,
         });
       });
     });
@@ -2600,9 +2593,28 @@ describe('LobeOpenAICompatibleFactory', () => {
           customParam: 'should remain unchanged',
           image: expect.any(File),
           model: 'dall-e-2',
-          n: 1,
           prompt: 'Test prompt',
           response_format: 'b64_json',
+        });
+      });
+
+      it('should not inject `n` that the caller never sent', async () => {
+        // Strict-schema OpenAI-compatible gateways (e.g. a custom provider fronting
+        // flux-1-schnell) reject unknown root properties with
+        // "Additional or unevaluated properties '/n' at '/' not allowed".
+        vi.spyOn(instance['client'].images, 'generate').mockResolvedValue({
+          data: [{ url: 'https://example.com/flux.png' }],
+        } as any);
+
+        await (instance as any).createImage({
+          model: 'flux-1-schnell',
+          params: { prompt: 'A lighthouse at dusk', size: '1024x1024' },
+        });
+
+        expect(instance['client'].images.generate).toHaveBeenCalledWith({
+          model: 'flux-1-schnell',
+          prompt: 'A lighthouse at dusk',
+          size: '1024x1024',
         });
       });
 
@@ -2626,7 +2638,6 @@ describe('LobeOpenAICompatibleFactory', () => {
 
         expect(instance['client'].images.generate).toHaveBeenCalledWith({
           model: 'dall-e-3',
-          n: 1,
           prompt: 'Test prompt',
           quality: 'hd',
           response_format: 'b64_json',
