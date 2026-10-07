@@ -2,6 +2,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { GOAL_BRIEF_TRIGGER } from '@lobechat/const/goal';
+import type { BriefAction } from '@lobechat/types';
 import { and, eq } from 'drizzle-orm';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -93,7 +94,7 @@ describe('goal decision briefs', () => {
       },
     });
     // The advised answer leads, so the obvious click is the recommended one.
-    expect(brief.actions!.map((action: { key: string }) => action.key)).toEqual([
+    expect((brief.actions as BriefAction[]).map((action) => action.key)).toEqual([
       'retry',
       'retire',
       'openGoal',
@@ -169,7 +170,10 @@ describe('machine gate briefs', () => {
     });
 
     const [brief] = await goalBriefs();
-    expect(brief.actions![0]).toMatchObject({ key: 'retry', label: '已修好，重试' });
+    expect((brief.actions as BriefAction[])[0]).toMatchObject({
+      key: 'retry',
+      label: '已修好，重试',
+    });
     expect(brief.summary).toContain('工作目录 /tmp/x');
     expect(brief.summary).toContain('推荐：已修好，重试');
   });
