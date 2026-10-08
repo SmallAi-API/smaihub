@@ -1023,14 +1023,44 @@ const smaiChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 1_000_000,
     description:
-      "Claude Fable 5 is Anthropic's most capable model — a new tier above Opus for the most demanding reasoning and long-horizon agentic work.",
-    displayName: 'Claude Fable 5',
+      "Claude Haiku 5.5 is Anthropic's fastest and most cost-efficient model, built for high-volume, latency-sensitive work such as classification, extraction, routing, and subagent tasks, with adaptive thinking and adjustable effort.",
+    displayName: 'Claude Haiku 5.5',
     enabled: true,
-    family: 'claude-mythos',
-    generation: 'mythos-5',
-    id: 'claude-fable-5',
+    family: 'claude-haiku',
+    generation: 'claude-5.5',
+    id: 'claude-haiku-5-5',
+    knowledgeCutoff: '2026-06',
     maxOutput: 128_000,
-    releasedAt: '2026-06-09',
+    // Priced by prompt length: once a prompt (cache reads and writes included) exceeds 100K
+    // tokens, every unit of the request is billed at the higher tier.
+    // https://platform.claude.com/docs/en/about-claude/pricing#long-context-pricing
+    releasedAt: '2026-10-07',
+    // Unlike Opus 5.5 / Sonnet 5.5, thinking can still be disabled (at effort `high` or below),
+    // so the `enableAdaptiveThinking` toggle stays.
+    // https://platform.claude.com/docs/en/models/haiku-5-5/whats-new-haiku-5-5
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_000_000,
+    description:
+      "Claude Sonnet 5-5 is Anthropic's most capable model, building on Opus 4.8 with improvements across reasoning, agentic coding, and tool use.",
+    displayName: 'Claude Sonnet 5.5',
+    enabled: true,
+    id: 'claude-sonnet-5-5',
+    maxOutput: 128_000,
+    releasedAt: '2026-09-30',
     settings: {
       disabledParams: ['temperature', 'top_p'],
       extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
@@ -1077,6 +1107,30 @@ const smaiChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 1_000_000,
     description:
+      "Claude Fable 5 is Anthropic's most capable model — a new tier above Opus for the most demanding reasoning and long-horizon agentic work.",
+    displayName: 'Claude Fable 5',
+    family: 'claude-mythos',
+    generation: 'mythos-5',
+    id: 'claude-fable-5',
+    maxOutput: 128_000,
+    releasedAt: '2026-06-09',
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_000_000,
+    description:
       "Claude Opus 5 is Anthropic's strongest Opus model, built for deep reasoning, agentic coding, and long-horizon professional work.",
     displayName: 'Claude Opus 5',
     enabled: true,
@@ -1108,29 +1162,6 @@ const smaiChatModels: AIChatModelCard[] = [
     id: 'claude-opus-4-8',
     maxOutput: 128_000,
     releasedAt: '2026-05-29',
-    settings: {
-      disabledParams: ['temperature', 'top_p'],
-      extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
-      searchImpl: 'params',
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    contextWindowTokens: 1_000_000,
-    description:
-      "Claude Sonnet 5-5 is Anthropic's most capable model, building on Opus 4.8 with improvements across reasoning, agentic coding, and tool use.",
-    displayName: 'Claude Sonnet 5.5',
-    enabled: true,
-    id: 'claude-sonnet-5-5',
-    maxOutput: 128_000,
-    releasedAt: '2026-09-30',
     settings: {
       disabledParams: ['temperature', 'top_p'],
       extendParams: ['disableContextCaching', 'enableAdaptiveThinking', 'opus47Effort'],
