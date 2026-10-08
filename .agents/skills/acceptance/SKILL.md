@@ -2,7 +2,7 @@
 name: acceptance
 license: Apache-2.0
 metadata:
-  version: "0.7.0"
+  version: "0.7.2"
 description: >
   Self-evidence for delivery verification in any repository, with or without
   LOBE_OPERATION_ID or a preconfigured verify plan. Discover an existing plan
