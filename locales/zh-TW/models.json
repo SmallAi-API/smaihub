@@ -6,6 +6,7 @@
   "claude-fable-5-1.description": "Claude Fable 5.1 是 Anthropic 最強大的通用可用模型。它在長時間的編碼和研究中超越了 Fable 5，且價格相同，快取讀取成本僅為四分之一。",
   "claude-fable-5.description": "Claude Fable 5 是 Anthropic 最強大的模型——在最苛刻的推理和長期代理工作中，超越 Opus 的新層級。",
   "claude-haiku-4-5-20251001.description": "Claude Haiku 4.5 是 Anthropic 最快且最智能的 Haiku 模型，具有閃電般的速度和擴展思考能力。",
+  "claude-haiku-5-5.description": "Claude Haiku 5.5 是 Anthropic 最快速且最具成本效益的模型，專為高容量、延遲敏感的工作而設計，例如分類、提取、路由和子代理任務，具備自適應思維和可調整的努力程度。",
   "claude-opus-4-5-20251101-thinking.description": "Claude Opus 4.5 是 Anthropic 的旗艦模型，結合了卓越的智能與可擴展性能，適合需要最高質量回應和推理能力的複雜任務。",
   "claude-opus-4-5-20251101.description": "Claude Opus 4.5 是 Anthropic 的旗艦模型，結合了卓越的智能與可擴展性能，適合需要最高質量回應和推理能力的複雜任務。",
   "claude-opus-4-6.description": "Claude Opus 4.6 是 Anthropic 最智能的模型，用於構建代理和編碼。",
