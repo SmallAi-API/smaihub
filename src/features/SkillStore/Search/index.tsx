@@ -32,7 +32,7 @@ export const Search = memo<SearchProps>(
             variant="outlined"
             onSearch={(keywords: string) => {
               if (activeTab === SkillStoreTab.MCP) {
-                useToolStore.setState({ mcpSearchKeywords: keywords, searchLoading: true });
+                useToolStore.setState({ mcpSearchKeywords: keywords });
               } else if (activeTab === SkillStoreTab.Skills) {
                 onSkillSearch(keywords);
               } else if (activeTab === SkillStoreTab.BuiltinMCP) {
