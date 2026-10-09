@@ -756,7 +756,11 @@ describe('DevinAcpSession', () => {
     spawnMock.mockReturnValue(fake.child);
     vi.spyOn(process, 'kill').mockImplementation(() => true);
     const events: AgentStreamEvent[] = [];
-    const options = createSessionOptions({ onEvents: (batch) => events.push(...batch) });
+    const options = createSessionOptions({
+      onEvents: (batch) => {
+        events.push(...batch);
+      },
+    });
     const session = new DevinAcpSession(options);
     const run = session.run();
     await vi.waitFor(() => {
