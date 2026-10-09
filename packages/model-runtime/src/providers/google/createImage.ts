@@ -18,6 +18,7 @@ import { AgentRuntimeError } from '../../utils/createError';
 import { getModelPricing } from '../../utils/getModelPricing';
 import { parseGoogleErrorMessage } from '../../utils/googleErrorParser';
 import { parseDataUri } from '../../utils/uriParser';
+import { isGoogleImageResponseModel, parseGoogleModelId } from './modelId';
 
 // Maximum number of images allowed for processing
 const MAX_IMAGE_COUNT = 10;
@@ -319,8 +320,15 @@ async function generateImageByChatModel(
 
   // Add multiple images for editing if provided
   if (params.imageUrls && Array.isArray(params.imageUrls) && params.imageUrls.length > 0) {
-    if (params.imageUrls.length > MAX_IMAGE_COUNT) {
-      throw new TypeError(`Too many images provided. Maximum ${MAX_IMAGE_COUNT} images allowed`);
+    const parsedModel = parseGoogleModelId(actualModel);
+    const maxImageCount =
+      parsedModel?.family === 'nanoBanana' &&
+      parsedModel.majorVersion === 2 &&
+      parsedModel.minorVersion === 1
+        ? 14
+        : MAX_IMAGE_COUNT;
+    if (params.imageUrls.length > maxImageCount) {
+      throw new TypeError(`Too many images provided. Maximum ${maxImageCount} images allowed`);
     }
 
     const imageParts = await Promise.all(
@@ -385,8 +393,8 @@ export async function createGoogleImage(
   try {
     const routingModel = options?.routingModel ?? payload.model;
 
-    // Handle Gemini 2.5 Flash Image models that use generateContent
-    if (routingModel.endsWith(':image')) {
+    // Native image-response models use generateContent even without the UI-only :image suffix.
+    if (routingModel.endsWith(':image') || isGoogleImageResponseModel(routingModel)) {
       return await generateImageByChatModel(client, payload, provider, options);
     }
 

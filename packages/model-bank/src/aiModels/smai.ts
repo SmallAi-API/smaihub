@@ -114,6 +114,17 @@ export const nanoBanana2Parameters: ModelParamsSchema = {
   },
 };
 
+// https://ai.google.dev/gemini-api/docs/models/gemini-nano-banana-2.1
+export const nanoBanana21Parameters: ModelParamsSchema = {
+  aspectRatio: nanoBanana2Parameters.aspectRatio,
+  imageUrls: { default: [], maxCount: 14 },
+  prompt: { default: '' },
+  resolution: {
+    default: '1K',
+    enum: ['1K', '2K', '4K'],
+  },
+};
+
 export const qwenImageParamsSchema: ModelParamsSchema = {
   cfg: { default: 2.5, max: 20, min: 0, step: 0.1 },
   // 实测 fal 宽高 最大就支持到 1536
@@ -2351,20 +2362,7 @@ export const smaiImageModels: AIImageModelCard[] = [
     enabled: true,
     id: 'gpt-image-2.5-flare',
     parameters: gptImage25Schema,
-    pricing: {
-      // Medium quality at 1024x1024: 439 output tokens * $30/M = $0.013 per image, measured on
-      // both models. The model pages state that token rates match GPT Image 2.
-      // Source: https://developers.openai.com/api/docs/guides/image-generation#calculating-costs
-      approximatePricePerImage: 0.013,
-      units: [
-        { name: 'textInput', rate: 5, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textInput_cacheRead', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'imageInput', rate: 8, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'imageInput_cacheRead', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'imageOutput', rate: 30, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2026-09-08',
+    releasedAt: '2026-10-09',
     type: 'image',
   },
   // https://developers.openai.com/api/docs/models/gpt-image-2.5-sunburst
@@ -2375,20 +2373,17 @@ export const smaiImageModels: AIImageModelCard[] = [
     enabled: true,
     id: 'gpt-image-2.5-sunburst',
     parameters: gptImage25Schema,
-    pricing: {
-      // Medium quality at 1024x1024: 439 output tokens * $30/M = $0.013 per image, measured on
-      // both models. The model pages state that token rates match GPT Image 2.
-      // Source: https://developers.openai.com/api/docs/guides/image-generation#calculating-costs
-      approximatePricePerImage: 0.013,
-      units: [
-        { name: 'textInput', rate: 5, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textInput_cacheRead', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'imageInput', rate: 8, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'imageInput_cacheRead', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'imageOutput', rate: 30, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2026-09-08',
+    releasedAt: '2026-10-09',
+    type: 'image',
+  },
+  {
+    description:
+      'Nano Banana 2.1 generates and edits images at 1K, 2K, and 4K, with improved text rendering, character consistency, and support for up to 14 reference images.',
+    displayName: 'Nano Banana 2.1',
+    enabled: true,
+    id: 'gemini-nano-banana-2.1',
+    parameters: nanoBanana21Parameters,
+    releasedAt: '2026-10-09',
     type: 'image',
   },
   // https://platform.openai.com/docs/models/gpt-image-1
@@ -2412,6 +2407,7 @@ export const smaiImageModels: AIImageModelCard[] = [
     releasedAt: '2026-02-27',
     type: 'image',
   },
+
   {
     description:
       'Gemini 3 Pro Image（Nano Banana Pro）是 Google 的图像生成模型，同时支持多模态对话。',

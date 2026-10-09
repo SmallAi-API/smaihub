@@ -23,9 +23,10 @@ const LEARNLM_MODEL_PATTERN = /^learnlm[-.:]?([a-z0-9]+(?:[-.:][a-z0-9]+)*)?/;
 const NANO_BANANA_MODEL_PATTERN = /^nano-banana[-.:]?([a-z0-9]+(?:[-.:][a-z0-9]+)*)?/;
 // Nano Banana 2.1 dropped the `gemini-<version>-flash-image` shape for `gemini-nano-banana-2.1`.
 // The version is the Nano Banana product version (2 = Gemini 3.1 Flash Image), not a Gemini version.
+// Aggregators can expose the same model as `nanobanana-2.1`.
 // https://ai.google.dev/gemini-api/docs/models/gemini-nano-banana-2.1
 const GEMINI_NANO_BANANA_MODEL_PATTERN =
-  /^gemini-nano-banana(?:[-.:](\d+)(?:\.(\d+))?)?(?:[-.:]([a-z][a-z0-9]*(?:[-.:][a-z0-9]+)*))?/;
+  /^(?:gemini-nano-banana|nanobanana)(?:[-.:](\d+)(?:\.(\d+))?)?(?:[-.:]([a-z][a-z0-9]*(?:[-.:][a-z0-9]+)*))?/;
 
 const SAFETY_OFF_MODELS = new Set(['gemini-2.0-flash-exp']);
 
@@ -105,7 +106,8 @@ const extractGoogleModelId = (model: string): ExtractedGoogleModelId | undefined
     normalized.startsWith('gemini-') ||
     normalized.startsWith('gemma-') ||
     normalized.startsWith('learnlm') ||
-    normalized.startsWith('nano-banana')
+    normalized.startsWith('nano-banana') ||
+    normalized.startsWith('nanobanana')
   ) {
     return { normalizedModelId: normalized, source: 'google' };
   }

@@ -49,14 +49,22 @@ export const MODEL_LIST_CONFIGS = {
     excludeKeywords: ['tts'],
     // Nano Banana ids (`gemini-nano-banana-2.1`, `nano-banana-pro-preview`) lack `-image-` but are
     // native image-output models with thinking and no function calling. Search is limited to the
-    // versioned `gemini-nano-banana-*` ids, the only aliases the runtime sends Google Search for
+    // versioned `gemini-nano-banana-*` ids and their `nanobanana-*` aliases
     // (`supportsGoogleSearchOnImageResponseModel`).
     functionCallKeywords: ['gemini', '!-image-', '!nano-banana', 'gemma-4'],
-    imageOutputKeywords: ['-image-', 'nano-banana'],
-    reasoningKeywords: ['thinking', '-2.5-', '!-image-', '-3-', 'gemma-4', 'nano-banana'],
-    searchKeywords: ['-search', '!-image-', 'gemma-4', 'gemini-nano-banana'],
+    imageOutputKeywords: ['-image-', 'nano-banana', 'nanobanana'],
+    reasoningKeywords: [
+      'thinking',
+      '-2.5-',
+      '!-image-',
+      '-3-',
+      'gemma-4',
+      'nano-banana',
+      'nanobanana',
+    ],
+    searchKeywords: ['-search', '!-image-', 'gemma-4', 'gemini-nano-banana', 'nanobanana'],
     videoKeywords: ['-2.5-', '!-image-', '-3-'],
-    visionKeywords: ['gemini', 'learnlm', 'gemma-4'],
+    visionKeywords: ['gemini', 'learnlm', 'gemma-4', 'nanobanana'],
   },
   inclusionai: {
     functionCallKeywords: ['ling-'],
@@ -177,7 +185,7 @@ export const MODEL_OWNER_DETECTION_CONFIG = {
   anthropic: ['claude'],
   comfyui: ['comfyui/'], // ComfyUI models detection - all ComfyUI models have comfyui/ prefix
   deepseek: ['deepseek'],
-  google: ['gemini', 'imagen', 'gemma'],
+  google: ['gemini', 'imagen', 'gemma', 're:^nanobanana(?:[-.:]|$)'],
   inclusionai: ['ling-', 'ming-', 'ring-'],
   internlm: ['internvl', 'internlm', 'intern-'],
   llama: ['llama', 'llava'],

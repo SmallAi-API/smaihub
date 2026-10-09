@@ -238,9 +238,11 @@ export const params = {
       },
       {
         apiType: 'google',
-        models: LOBE_DEFAULT_MODEL_LIST.map((m) => m.id).filter(
-          (id) => detectModelProvider(id) === 'google' && !id.endsWith(':image'),
-        ),
+        models: resolveProviderRouteModels(
+          'google',
+          LOBE_DEFAULT_MODEL_LIST,
+          runtimeContext?.model,
+        ).filter((id) => !id.endsWith(':image')),
         options: {
           ...options,
           baseURL: userBaseURL,
