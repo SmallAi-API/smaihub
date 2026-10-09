@@ -159,6 +159,8 @@
   "lobehub.gemini-3.6-flash.description": "Gemini 3.6 Flash 在速度與智能之間取得平衡，提供強大的自主、編碼和多模態性能，並提高了令牌效率。",
   "lobehub.gemini-3.7-flash.description": "Gemini 3.7 Flash 是 Google 最強大的 Flash 型號，專為複雜編碼、主動工作流程和可靠的多步執行而設計。",
   "lobehub.gemini-3.8-flash.description": "谷歌最智能的 Flash 模型，針對長期編碼和自主代理進行調整 — 首個標記速度更快，且比 3.7 Flash 更簡潔，價格相同。",
+  "lobehub.gemini-nano-banana-2.1.description": "Nano Banana 2 的繼任者，圖像價格約為一半，具有更清晰的文本渲染和更穩定的多輪角色一致性。",
+  "lobehub.gemini-nano-banana-2.1:image.description": "Nano Banana 2 的繼任者，圖像價格約為一半，具有更清晰的文本渲染和更穩定的多輪角色一致性。",
   "lobehub.glm-5.1.description": "Zai 最新的旗艦模型，在整體和編碼能力上與 Claude Opus 4.6 對齊。擅長長期任務，具備長達 8 小時的自主工作能力，是自主代理和長期編碼代理的理想基礎。",
   "lobehub.glm-5.2.description": "GLM-5.2 是第一個接近同時期發布的最新一代 Claude Opus 性能的開源模型。",
   "lobehub.glm-5.3-flash.description": "首款能夠看見的 GLM-5 — 比 GLM-5.2 更強大，編碼接近 Opus 4.8，價格約為旗艦產品的十分之一。",
