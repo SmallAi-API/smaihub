@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-syntax */
+import { gptImage2Schema, gptImage25Schema } from '../const/imageParameters';
 import { type ModelParamsSchema } from '../standard-parameters';
 import {
   PRESET_VIDEO_ASPECT_RATIOS,
@@ -29,23 +30,7 @@ export const gptImage1ParamsSchema: ModelParamsSchema = {
 // multiples of 16px, aspect ratio ≤ 3:1, pixels between 655,360 and 8,294,400.
 // Until the schema/UI supports free-form W×H input, we expose the official
 // "Popular sizes" list from https://developers.openai.com/docs/guides/image-generation.
-export const gptImage2Schema = {
-  imageUrls: { default: [], maxCount: 1, maxFileSize: 5 * 1024 * 1024 },
-  prompt: { default: '' },
-  size: {
-    default: 'auto',
-    enum: [
-      'auto',
-      '1024x1024',
-      '1536x1024',
-      '1024x1536',
-      '2048x2048',
-      '2048x1152',
-      '3840x2160',
-      '2160x3840',
-    ],
-  },
-};
+
 export const seedance15ProParams: VideoModelParamsSchema = {
   aspectRatio: {
     default: 'adaptive',
@@ -2359,6 +2344,53 @@ export const newapiASRModels: AIASRModelCard[] = [
 
 // 图像生成模型
 export const smaiImageModels: AIImageModelCard[] = [
+  {
+    description:
+      "OpenAI's fastest GPT Image 2.5 model, for high-quality everyday image generation.",
+    displayName: 'GPT Image 2.5 Flare',
+    enabled: true,
+    id: 'gpt-image-2.5-flare',
+    parameters: gptImage25Schema,
+    pricing: {
+      // Medium quality at 1024x1024: 439 output tokens * $30/M = $0.013 per image, measured on
+      // both models. The model pages state that token rates match GPT Image 2.
+      // Source: https://developers.openai.com/api/docs/guides/image-generation#calculating-costs
+      approximatePricePerImage: 0.013,
+      units: [
+        { name: 'textInput', rate: 5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput_cacheRead', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 8, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput_cacheRead', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageOutput', rate: 30, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    releasedAt: '2026-09-08',
+    type: 'image',
+  },
+  // https://developers.openai.com/api/docs/models/gpt-image-2.5-sunburst
+  {
+    description:
+      'The GPT Image 2.5 model for workflows where editing precision matters most, generating and editing images from text and image inputs.',
+    displayName: 'GPT Image 2.5 Sunburst',
+    enabled: true,
+    id: 'gpt-image-2.5-sunburst',
+    parameters: gptImage25Schema,
+    pricing: {
+      // Medium quality at 1024x1024: 439 output tokens * $30/M = $0.013 per image, measured on
+      // both models. The model pages state that token rates match GPT Image 2.
+      // Source: https://developers.openai.com/api/docs/guides/image-generation#calculating-costs
+      approximatePricePerImage: 0.013,
+      units: [
+        { name: 'textInput', rate: 5, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput_cacheRead', rate: 1.25, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 8, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput_cacheRead', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageOutput', rate: 30, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    releasedAt: '2026-09-08',
+    type: 'image',
+  },
   // https://platform.openai.com/docs/models/gpt-image-1
   {
     description:
