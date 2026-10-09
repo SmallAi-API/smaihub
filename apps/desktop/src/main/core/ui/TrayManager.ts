@@ -83,6 +83,7 @@ export class TrayManager {
 
   updateNavigationSnapshot(snapshot: TrayNavigationSnapshot) {
     this.navigationSnapshot = snapshot;
+    this.app.menuManager.updateDockMenu(snapshot);
     const mainTray = this.getMainTray();
     if (mainTray) mainTray.setMenu(this.app.menuManager.buildTrayMenu(snapshot));
   }
