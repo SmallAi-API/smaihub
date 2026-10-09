@@ -276,18 +276,14 @@ export class GenerationBatchActionImpl {
                 ),
               );
 
-              // 如果生成成功且有缩略图，检查当前 topic 是否有 imageUrl
+              // The server fills an empty topic cover before reporting success; refresh to show it
               if (data.status === AsyncTaskStatus.Success && data.generation.asset?.thumbnailUrl) {
                 const currentTopic = generationTopicSelectors.getGenerationTopicById(topicId)(
                   this.#get(),
                 );
 
-                // 如果当前 topic 没有 imageUrl，使用这个 generation 的 thumbnailUrl 更新
                 if (currentTopic && !currentTopic.coverUrl) {
-                  await this.#get().updateGenerationTopicCover(
-                    topicId,
-                    data.generation.asset.thumbnailUrl,
-                  );
+                  await this.#get().refreshGenerationTopics();
                 }
               }
             }
