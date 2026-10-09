@@ -23,6 +23,7 @@ import {
   agentConnectorsResource,
   connectorsResource,
 } from './projection';
+import type { ConnectorTool, ConnectorWithTools } from './types';
 
 vi.mock('@/libs/trpc/client', () => ({
   lambdaClient: {
@@ -47,11 +48,33 @@ const deleteMutation = lambdaClient.connector.delete.mutate as unknown as Return
 const updateToolPermissionMutation = lambdaClient.connector.updateToolPermission
   .mutate as unknown as ReturnType<typeof vi.fn>;
 
-/** A connector with a single tool in it, enough to assert permissions on. */
-const connector = (id: string, permission = 'auto') => ({
+/** A complete connector row with a single tool to assert permissions on. */
+const connector = (
+  id: string,
+  permission: ConnectorTool['permission'] = 'auto',
+): ConnectorWithTools => ({
+  credentials: null,
   id,
   identifier: id,
-  tools: [{ id: `${id}-tool`, permission }],
+  isEnabled: true,
+  mcpConnectionType: null,
+  mcpServerUrl: null,
+  metadata: null,
+  name: id,
+  sourceType: 'custom',
+  status: 'connected',
+  tools: [
+    {
+      crudType: 'read',
+      description: null,
+      displayName: null,
+      id: `${id}-tool`,
+      inputSchema: null,
+      permission,
+      toolName: `${id}-tool`,
+      userConnectorId: id,
+    },
+  ],
 });
 
 /** Never-resolving fetch: what the store holds can only have come from storage. */
@@ -227,17 +250,19 @@ describe('connector slice replica', () => {
     await useToolStore.getState().fetchConnectors();
 
     // The edit form still pre-fills from the in-memory row.
-    const inMemory = useToolStore.getState().connectors[0] as typeof withSecrets;
-    expect(inMemory.mcpStdioConfig.env).toEqual({ API_KEY: 'sk-live-secret' });
-    expect(inMemory.metadata.customHeaders).toEqual({ Authorization: 'Bearer header-secret' });
+    const inMemory = useToolStore.getState().connectors[0];
+    expect(inMemory).toHaveProperty('mcpStdioConfig.env', { API_KEY: 'sk-live-secret' });
+    expect(inMemory.metadata).toHaveProperty('customHeaders', {
+      Authorization: 'Bearer header-secret',
+    });
 
     const persisted = await vi.waitFor(async () => {
       const row = await connectorsResource.storage!.get({ queryKey: LIST_STORAGE_KEY, scope });
       expect(row?.data).toBeDefined();
-      return row!.data as unknown as Array<typeof withSecrets>;
+      return row!.data;
     });
 
-    expect('env' in persisted[0].mcpStdioConfig).toBe(false);
+    expect(persisted[0]).toHaveProperty('mcpStdioConfig', { args: ['-y'], command: 'npx' });
     expect(persisted[0].metadata).toEqual({ description: 'kept' });
   });
 
