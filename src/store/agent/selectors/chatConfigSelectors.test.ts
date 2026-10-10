@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { type AgentStoreState } from '@/store/agent/initialState';
 import { initialAgentSliceState } from '@/store/agent/slices/agent/initialState';
 import { initialAgentArtworkSliceState } from '@/store/agent/slices/artwork/initialState';
+import { initialBotSliceState } from '@/store/agent/slices/bot/initialState';
 import { initialBuiltinAgentSliceState } from '@/store/agent/slices/builtin/initialState';
 
 import { agentChatConfigSelectors } from './chatConfigSelectors';
@@ -18,6 +19,7 @@ const createState = (overrides: Partial<AgentStoreState> = {}): AgentStoreState 
   ...initialAgentArtworkSliceState,
   ...initialAgentSliceState,
   ...initialBuiltinAgentSliceState,
+  ...initialBotSliceState,
   ...overrides,
 });
 

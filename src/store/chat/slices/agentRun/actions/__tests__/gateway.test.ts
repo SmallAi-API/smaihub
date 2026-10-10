@@ -895,21 +895,25 @@ describe('GatewayActionImpl', () => {
         }
       });
 
-      const get = vi.fn(() => ({
-        ...state,
-        associateMessageWithOperation,
-        connectToGateway,
-        internal_dispatchTopic: internalDispatchTopic,
-        internal_replaceTopicId: internalReplaceTopicId,
-        moveQueuedMessages,
-        moveVoiceMessages,
-        onOperationCancel,
-        replaceMessages,
-        refreshTopic,
-        startOperation,
-        switchTopic,
-        updateTopicStatus,
-      })) as any;
+      const get = vi.fn<() => ChatStore>();
+      get.mockImplementation(
+        () =>
+          ({
+            ...state,
+            associateMessageWithOperation,
+            connectToGateway,
+            internal_dispatchTopic: internalDispatchTopic,
+            internal_replaceTopicId: internalReplaceTopicId,
+            moveQueuedMessages,
+            moveVoiceMessages,
+            onOperationCancel,
+            replaceMessages,
+            refreshTopic,
+            startOperation,
+            switchTopic,
+            updateTopicStatus,
+          }) as unknown as ChatStore,
+      );
 
       // Set up window.global_serverConfigStore
       (globalThis as any).window = {
@@ -1018,11 +1022,13 @@ describe('GatewayActionImpl', () => {
         const clients: ReturnType<typeof createMockClient>[] = [];
         action.createClient = vi.fn(() => {
           const client = createMockClient();
-          client.disconnect.mockImplementation(() => client.emitEvent('disconnected'));
+          vi.spyOn(client, 'disconnect').mockImplementation(() => client.emitEvent('disconnected'));
           clients.push(client);
           return client;
         });
-        get.mockImplementation(() => ({
+        (
+          get as unknown as { mockImplementation: (implementation: () => ChatStore) => unknown }
+        ).mockImplementation((() => ({
           ...originalGet(),
           completeOperation,
           connectToGateway: action.connectToGateway,
@@ -1039,7 +1045,7 @@ describe('GatewayActionImpl', () => {
             };
             return { operationId: id };
           },
-        }));
+        })) as unknown as () => ChatStore);
         vi.mocked(topicService.getTopicDetail).mockResolvedValue({
           id: 'topic-1',
           metadata: { runningOperation: { operationId: 'server-op-resumed' } },

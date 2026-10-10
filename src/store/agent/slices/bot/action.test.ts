@@ -132,7 +132,7 @@ describe('bot replicas', () => {
       ...provider('bot-2', 'imessage'),
       credentials: { desktopDeviceId: 'dev-1', webhookSecret: 'shared-secret' },
     };
-    vi.mocked(agentBotProviderService.getByAgentId).mockResolvedValue([imessage]);
+    vi.mocked(agentBotProviderService.getByAgentId).mockResolvedValue([imessage] as never);
 
     renderHook(() => useAgentStore((s) => s.useFetchBotProviders)(AGENT_ID), { wrapper });
 
@@ -169,7 +169,7 @@ describe('bot replicas', () => {
       ...provider('bot-4', 'wechat'),
       credentials: { botId: 'bot-1', botToken: 'real-token', userId: 'user-1' },
     };
-    vi.mocked(agentBotProviderService.getByAgentId).mockResolvedValue([wechat]);
+    vi.mocked(agentBotProviderService.getByAgentId).mockResolvedValue([wechat] as never);
 
     renderHook(() => useAgentStore((s) => s.useFetchBotProviders)(AGENT_ID), { wrapper });
 
@@ -242,7 +242,7 @@ describe('bot replicas', () => {
   });
 
   it('drops the previous identity’s providers before the next paints', async () => {
-    vi.mocked(agentBotProviderService.getByAgentId).mockResolvedValue([provider('bot-1')]);
+    vi.mocked(agentBotProviderService.getByAgentId).mockResolvedValue([provider('bot-1')] as never);
     const sync = renderHook(() => useAgentStore((s) => s.useFetchBotProviders)(AGENT_ID), {
       wrapper,
     });
@@ -260,7 +260,7 @@ describe('bot replicas', () => {
       vi.mocked(agentBotProviderService.getByAgentId).mockResolvedValue([
         provider('bot-1'),
         provider('bot-2'),
-      ]);
+      ] as never);
       renderHook(() => useAgentStore((s) => s.useFetchBotProviders)(AGENT_ID), { wrapper });
       await waitFor(() =>
         expect(useAgentStore.getState().botProvidersMap[AGENT_ID]).toHaveLength(2),
@@ -270,7 +270,9 @@ describe('bot replicas', () => {
     it('revalidates the agent’s providers after a delete', async () => {
       await seed();
       vi.mocked(agentBotProviderService.delete).mockResolvedValue({ success: true } as never);
-      vi.mocked(agentBotProviderService.getByAgentId).mockResolvedValue([provider('bot-2')]);
+      vi.mocked(agentBotProviderService.getByAgentId).mockResolvedValue([
+        provider('bot-2'),
+      ] as never);
 
       await act(() => useAgentStore.getState().deleteBotProvider('bot-1', AGENT_ID));
 
@@ -284,7 +286,9 @@ describe('bot replicas', () => {
     it('refreshes the active agent when no agent id is given', async () => {
       await seed();
       act(() => useAgentStore.setState({ activeAgentId: AGENT_ID }));
-      vi.mocked(agentBotProviderService.getByAgentId).mockResolvedValue([provider('bot-3')]);
+      vi.mocked(agentBotProviderService.getByAgentId).mockResolvedValue([
+        provider('bot-3'),
+      ] as never);
 
       await act(() => useAgentStore.getState().internal_refreshBotProviders());
 

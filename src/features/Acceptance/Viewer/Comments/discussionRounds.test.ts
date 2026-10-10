@@ -7,7 +7,11 @@ import type { DiscussionEntry } from './discussionTimeline';
 const at = (minute: number) => new Date(Date.UTC(2026, 9, 10, 8, minute));
 const message = (minute: number, id = `m${minute}`): DiscussionEntry => ({
   at: at(minute),
-  comment: { createdAt: at(minute).toISOString(), deletedAt: null, id } as AcceptanceCommentItem,
+  comment: {
+    createdAt: at(minute).toISOString(),
+    deletedAt: null,
+    id,
+  } as unknown as AcceptanceCommentItem,
   kind: 'message',
 });
 const round = (minute: number, roundIndex: number): DiscussionEntry => ({
