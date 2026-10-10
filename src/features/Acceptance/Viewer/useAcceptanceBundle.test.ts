@@ -104,11 +104,11 @@ it('never reports loading without an acceptance id', () => {
 /** Wraps a hook in the request-local initial bundle the Workbench loader provides. */
 const initialBundleWrapper = (acceptanceId: string, bundle: unknown) =>
   function Wrapper({ children }: PropsWithChildren) {
-    return createElement(
-      AcceptanceInitialBundle,
-      { acceptanceId, bundle: bundle as never },
+    return createElement(AcceptanceInitialBundle, {
+      acceptanceId,
+      bundle: bundle as never,
       children,
-    );
+    });
   };
 
 it('paints the loader-provided initial bundle on the first render', () => {
@@ -163,12 +163,11 @@ it('mutate revalidates this acceptance and resolves the freshly read value', asy
   seedBundle('acceptance-1', { acceptance: { status: 'verifying' } });
   const { result } = renderHook(() => useAcceptanceBundle('acceptance-1'));
 
-  const syncKey = vi
-    .mocked(swr.useClientDataSWR)
-    .mock.calls.map(([key]) => key)
+  const syncKey = (vi.mocked(swr.useClientDataSWR).mock.calls as unknown as [unknown][])
+    .map(([key]) => key)
     .find(
       (key) => Array.isArray(key) && key[0] === 'replica:sync' && key[1] === 'acceptanceBundle',
-    ) as unknown[];
+    ) as unknown as unknown[];
 
   await act(async () => {
     await result.current.mutate();
