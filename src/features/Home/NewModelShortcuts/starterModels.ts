@@ -16,8 +16,8 @@ export const OSS_GPT_PROVIDER = 'smai';
 export const OSS_CLAUDE_PROVIDER = 'smai';
 export const OSS_DEEPSEEK_PROVIDER = 'smai';
 // Image
-export const NEW_IMAGE_MODEL = 'gpt-image-2';
-export const NEW_IMAGE_MODEL_NAME = 'GPT Image 2';
+export const NEW_IMAGE_MODEL = 'gemini-nano-banana-2.1';
+export const NEW_IMAGE_MODEL_NAME = 'Nano Banana 2.1';
 
 export const BUSINESS_HOME_NEW_MODELS = [
   {
