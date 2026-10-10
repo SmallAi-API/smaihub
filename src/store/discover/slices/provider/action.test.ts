@@ -3,10 +3,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createReplicaState } from '@/libs/replica';
 import { globalHelpers } from '@/store/global/helpers';
-import type { ProviderListResponse } from '@/types/discover';
+import type {
+  DiscoverProviderDetail,
+  IdentifiersResponse,
+  ProviderListResponse,
+} from '@/types/discover';
 
 import { providerSelectors } from '../../selectors';
 import { useDiscoverStore as useStore } from '../../store';
+import type { ProviderSliceState } from './initialState';
 import {
   providerDetailQueryKey,
   providerIdentifiersQueryKey,
@@ -36,19 +41,19 @@ const makeList = (identifier = 'openai'): ProviderListResponse => ({
   totalPages: 1,
 });
 
-const emptyProviderState = () => ({
+const emptyProviderState = (): ProviderSliceState => ({
   providerDetailMap: {},
-  providerDetailReplica: createReplicaState(),
+  providerDetailReplica: createReplicaState<DiscoverProviderDetail>(),
   providerIdentifiersMap: {},
-  providerIdentifiersReplica: createReplicaState(),
+  providerIdentifiersReplica: createReplicaState<IdentifiersResponse>(),
   providerListMap: {},
-  providerListReplica: createReplicaState(),
+  providerListReplica: createReplicaState<ProviderListResponse>(),
 });
 
 beforeEach(() => {
   vi.clearAllMocks();
   vi.spyOn(globalHelpers, 'getCurrentLanguage').mockReturnValue('en-US');
-  useStore.setState(emptyProviderState());
+  useStore.setState((state) => ({ ...state, ...emptyProviderState() }));
 });
 
 /** The replica network syncs registered with the SWR driver, per resource name. */

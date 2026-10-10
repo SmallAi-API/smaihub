@@ -23,6 +23,7 @@ const createMockState = (overrides: Partial<State> = {}): State => ({
   // VirtuaList state
   activeIndex: null,
   atBottom: true,
+  autoScrollDetached: false,
   isScrolling: false,
   virtuaScrollMethods: null,
   visibleItems: new Map(),
