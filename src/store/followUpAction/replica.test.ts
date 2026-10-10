@@ -118,10 +118,10 @@ describe('followUpAction replica', () => {
 
   it('aborts the outgoing identity’s in-flight extraction before dropping its slot', async () => {
     let signal: AbortSignal | undefined;
-    vi.mocked(followUpActionService.extract).mockImplementation(((_input, outgoing) => {
-      signal = outgoing as AbortSignal;
-      return new Promise(() => {}) as never;
-    }) as never);
+    vi.mocked(followUpActionService.extract).mockImplementation((_input, outgoing) => {
+      signal = outgoing;
+      return new Promise(() => {});
+    });
 
     void useFollowUpActionStore.getState().fetchFor(KEY_A, params('topic-a'));
     expect(signal?.aborted).toBe(false);

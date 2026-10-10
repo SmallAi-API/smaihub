@@ -1013,7 +1013,7 @@ describe('Task Router Integration', () => {
       await serverDB
         .update(topics)
         .set({
-          totalCost: '0.125',
+          totalCost: 0.125,
           totalInputTokens: 1200,
           totalOutputTokens: 300,
           totalTokens: 1500,

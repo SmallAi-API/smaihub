@@ -171,6 +171,7 @@ describe('Project topic group item', () => {
       deviceId: 'device-1',
       id: 'binding-1',
       path: '/Users/me/project',
+      projectAvatar: '',
       projectId: 'prj-1',
       projectName: 'LobeHub',
       projectSlug: 'lobehub',

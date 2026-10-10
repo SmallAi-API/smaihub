@@ -129,6 +129,7 @@ describe('topicComment replicas', () => {
       hasMore: true,
       items: [thread('cached-1', 2)],
       nextCursor: 'c1',
+      pageSize: 30,
       total: 5,
     };
     await topicCommentThreadResource.storage!.set(
