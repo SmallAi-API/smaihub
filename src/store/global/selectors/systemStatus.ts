@@ -391,6 +391,8 @@ const homeGoalsCollapsed = (s: GlobalState): boolean => s.status.homeGoalsCollap
 const homeRecentsCount = (s: GlobalState): number => s.status.homeRecentsCount ?? 8;
 const homeTaskCount = (s: GlobalState): number => s.status.homeTaskCount ?? 8;
 const showRightPanel = (s: GlobalState) => s.status.showRightPanel;
+const showWorkingOverview = (s: GlobalState) =>
+  s.status.showWorkingOverview ?? !s.status.showRightPanel;
 const showLeftPanel = (s: GlobalState) => s.status.showLeftPanel;
 const showPageAgentPanel = (s: GlobalState) => s.status.showPageAgentPanel;
 const showTaskAgentPanel = (s: GlobalState) => s.status.showTaskAgentPanel;
@@ -531,6 +533,7 @@ export const systemStatusSelectors = {
   showRightPanel,
   showSystemRole,
   showTaskAgentPanel,
+  showWorkingOverview,
   showTerminalPanel,
   showVerifyReportPanel,
   showVideoPanel,

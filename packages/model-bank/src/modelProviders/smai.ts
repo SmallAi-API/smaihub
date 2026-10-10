@@ -3,7 +3,7 @@ import type { ModelProviderCard } from '../types';
 const SMAI: ModelProviderCard = {
   apiKeyUrl: 'https://api.smai.ai',
   chatModels: [],
-  checkModel: 'gpt-4o-mini',
+  checkModel: 'gpt-6.1-sol',
   description:
     'smai.ai 提供多种 AI 模型服务，支持 GPT、Claude、Gemini、DeepSeek 等主流大模型，新版本API，推荐使用。',
   disableBrowserRequest: false,
