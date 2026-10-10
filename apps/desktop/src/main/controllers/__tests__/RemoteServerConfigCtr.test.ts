@@ -47,6 +47,7 @@ const mockBrowserManager = {
 
 const mockGatewayConnectionSrv = {
   disconnect: vi.fn().mockResolvedValue({ success: true }),
+  updatePersonalToken: vi.fn(),
 };
 
 const mockApp = {
@@ -752,54 +753,10 @@ describe('RemoteServerConfigCtr', () => {
       );
     });
 
-    it('should load lastRefreshAt from store', () => {
-      const lastRefreshTime = Date.now() - 3600000; // 1 hour ago
-      mockStoreManager.get.mockImplementation((key) => {
-        if (key === 'encryptedTokens') {
-          return {
-            accessToken: 'stored-access',
-            expiresAt: Date.now() + 3600000,
-            lastRefreshAt: lastRefreshTime,
-            refreshToken: 'stored-refresh',
-          };
-        }
-        return { active: false, storageMode: 'cloud' };
-      });
+    it('should hand the new access token to the live gateway connection', async () => {
+      await controller.saveTokens('fresh-access', 'refresh', 3600);
 
-      const newController = new RemoteServerConfigCtr(mockApp);
-      newController.afterAppReady();
-
-      // Verify lastRefreshAt was loaded
-      expect(newController.getLastTokenRefreshAt()).toBe(lastRefreshTime);
-    });
-  });
-
-  describe('getLastTokenRefreshAt', () => {
-    it('should return undefined when no tokens have been saved', () => {
-      expect(controller.getLastTokenRefreshAt()).toBeUndefined();
-    });
-
-    it('should return the last refresh time after saving tokens', async () => {
-      const beforeSave = Date.now();
-      await controller.saveTokens('access', 'refresh', 3600);
-      const afterSave = Date.now();
-
-      const lastRefreshAt = controller.getLastTokenRefreshAt();
-
-      expect(lastRefreshAt).toBeDefined();
-      expect(lastRefreshAt).toBeGreaterThanOrEqual(beforeSave);
-      expect(lastRefreshAt).toBeLessThanOrEqual(afterSave);
-    });
-
-    it('should persist lastRefreshAt to store when saving tokens', async () => {
-      await controller.saveTokens('access', 'refresh', 3600);
-
-      expect(mockStoreManager.set).toHaveBeenCalledWith(
-        'encryptedTokens',
-        expect.objectContaining({
-          lastRefreshAt: expect.any(Number),
-        }),
-      );
+      expect(mockGatewayConnectionSrv.updatePersonalToken).toHaveBeenCalledWith('fresh-access');
     });
   });
 

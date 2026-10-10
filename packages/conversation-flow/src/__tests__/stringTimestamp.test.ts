@@ -15,13 +15,18 @@ import type { Message } from '../types/shared';
 const iso = (minutesAgo: number) =>
   new Date(Date.UTC(2026, 9, 10, 12, 0, 0) - minutesAgo * 60_000).toISOString();
 
-const base = (overrides: Partial<Message> & { id: string }): Message =>
+type MessageFixture = Omit<Partial<Message>, 'createdAt'> & {
+  createdAt?: number | string;
+  id: string;
+};
+
+const base = (overrides: MessageFixture): Message =>
   ({
     content: '',
     createdAt: Date.now(),
     role: 'user',
     ...overrides,
-  }) as Message;
+  }) as unknown as Message;
 
 describe('string createdAt payloads (LOBE-14005)', () => {
   it('orders a linear conversation chronologically when createdAt is ISO strings', () => {
@@ -76,8 +81,20 @@ describe('string createdAt payloads (LOBE-14005)', () => {
           { id: 'tool-2', type: 'default', apiName: 'y', identifier: 'p', arguments: '{}' },
         ],
       },
-      base({ id: 'tool-1', createdAt: iso(34), role: 'tool', parentId: 'a1', tool_call_id: 'tool-1' }),
-      base({ id: 'tool-2', createdAt: iso(33), role: 'tool', parentId: 'a1', tool_call_id: 'tool-2' }),
+      base({
+        id: 'tool-1',
+        createdAt: iso(34),
+        role: 'tool',
+        parentId: 'a1',
+        tool_call_id: 'tool-1',
+      }),
+      base({
+        id: 'tool-2',
+        createdAt: iso(33),
+        role: 'tool',
+        parentId: 'a1',
+        tool_call_id: 'tool-2',
+      }),
       base({
         id: 'cont-new',
         createdAt: iso(25),
