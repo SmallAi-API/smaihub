@@ -96,6 +96,7 @@ describe('trash project context', () => {
     const plain = await topicModel.create({ agentId: agent.id });
     const assistant = await messageModel.create({
       agentId: agent.id,
+      content: '',
       role: 'assistant',
       tools: [
         { apiName: 'search', arguments: '{}', id: 'ctx-call', identifier: 'web', type: 'default' },
@@ -103,6 +104,7 @@ describe('trash project context', () => {
       topicId: a.id,
     });
     const companion = await messageModel.create({
+      content: '',
       agentId: agent.id,
       plugin: { apiName: 'search', arguments: '{}', identifier: 'web', type: 'default' },
       role: 'tool',
@@ -111,10 +113,11 @@ describe('trash project context', () => {
     });
     const noProject = await messageModel.create({
       agentId: agent.id,
+      content: '',
       role: 'user',
       topicId: plain.id,
     });
-    const topicless = await messageModel.create({ agentId: agent.id, role: 'user' });
+    const topicless = await messageModel.create({ agentId: agent.id, content: '', role: 'user' });
     await service.trashMessages([assistant.id, noProject.id, topicless.id]);
     const root = await registry.findByResource('message', assistant.id);
     expect(root?.projectId).toBe('ctx-a');
@@ -139,7 +142,7 @@ describe('trash project context', () => {
         topicModel.create({ agentId: agent.id, projectId }),
       ),
     );
-    const topicless = await messageModel.create({ agentId: agent.id, role: 'user' });
+    const topicless = await messageModel.create({ agentId: agent.id, content: '', role: 'user' });
     const root = await service.trashAgent(agent.id);
     expect(root?.projectId).toBeNull();
     expect(await registry.findChildren(root!.id)).toHaveLength(4);
@@ -203,6 +206,7 @@ describe('trash project context', () => {
       const topic = await topicModel.create({ agentId: agent.id, projectId: 'ctx-a' });
       const message = await messageModel.create({
         agentId: agent.id,
+        content: '',
         role: 'user',
         topicId: topic.id,
       });

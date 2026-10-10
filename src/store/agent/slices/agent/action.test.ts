@@ -1254,7 +1254,10 @@ describe('AgentSlice Actions', () => {
         };
         vi.mocked(agentService.updateAgentConfig).mockResolvedValue({
           success: true,
-          agent: { title: 'Renamed', agencyConfig: { workingDirByDevice } } as LobeAgentConfig,
+          agent: {
+            title: 'Renamed',
+            agencyConfig: { workingDirByDevice },
+          } as unknown as LobeAgentConfig,
         });
         await useAgentStore
           .getState()
@@ -1265,7 +1268,10 @@ describe('AgentSlice Actions', () => {
           );
         resolveMeta({
           success: true,
-          agent: { title: 'Renamed', agencyConfig: staleAgencyConfig } as LobeAgentConfig,
+          agent: {
+            title: 'Renamed',
+            agencyConfig: staleAgencyConfig,
+          } as unknown as LobeAgentConfig,
         });
         await metadataSave;
         expect(
