@@ -1084,6 +1084,7 @@ export interface SoftDeletedMessage {
    */
   ownerId: string | null;
   parentId: string | null;
+  projectId: string | null;
   role: string;
   topicId: string | null;
 }
@@ -5473,11 +5474,19 @@ export class MessageModel {
           content: messages.content,
           id: messages.id,
           parentId: messages.parentId,
+          projectId: topics.projectId,
           role: messages.role,
           tools: messages.tools,
           topicId: messages.topicId,
         })
         .from(messages)
+        .leftJoin(
+          topics,
+          and(
+            eq(messages.topicId, topics.id),
+            buildWorkspaceWhere({ userId: this.userId, workspaceId: this.workspaceId }, topics),
+          ),
+        )
         .where(and(this.ownership(), inArray(messages.id, ids)));
       if (requested.length === 0) return [];
 
@@ -5513,11 +5522,19 @@ export class MessageModel {
               content: messages.content,
               id: messages.id,
               parentId: messages.parentId,
+              projectId: topics.projectId,
               role: messages.role,
               tools: messages.tools,
               topicId: messages.topicId,
             })
             .from(messages)
+            .leftJoin(
+              topics,
+              and(
+                eq(messages.topicId, topics.id),
+                buildWorkspaceWhere({ userId: this.userId, workspaceId: this.workspaceId }, topics),
+              ),
+            )
             .where(and(this.ownership(), inArray(messages.id, companionIds)));
         }
       }
@@ -5594,6 +5611,7 @@ export class MessageModel {
         isCompanion: !requestedIds.has(row.id),
         ownerId: companionOwner.get(row.id) ?? null,
         parentId: row.parentId,
+        projectId: row.projectId,
         role: row.role,
         topicId: row.topicId,
       }));
