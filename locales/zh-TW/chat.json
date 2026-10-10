@@ -2330,6 +2330,7 @@
   "terminalPanel.createFailed": "無法啟動終端會話",
   "terminalPanel.newTab": "新終端",
   "terminalPanel.split": "分割終端",
+  "terminalPanel.targetLocal": "這台電腦",
   "terminalPanel.title": "終端",
   "textSelection.addToConversation": "加入對話",
   "textSelection.added": "已加入對話上下文",

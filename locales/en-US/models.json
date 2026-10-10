@@ -104,6 +104,8 @@
   "gpt-image-1-mini.description": "成本更低的 GPT Image 1 版本，原生支持文本与图像输入并生成图像输出。",
   "gpt-image-1.5.description": "ChatGPT Image 1.5 原生多模态图片生成模型",
   "gpt-image-1.description": "ChatGPT 原生多模态图片生成模型",
+  "gpt-image-2.5-flare.description": "OpenAI's fastest GPT Image 2.5 model, for high-quality everyday image generation.",
+  "gpt-image-2.5-sunburst.description": "The GPT Image 2.5 model for workflows where editing precision matters most, generating and editing images from text and image inputs.",
   "gpt-image-2.description": "OpenAI's next-generation multimodal image model with native reasoning, up to 4K resolution, near-perfect text rendering, and high-fidelity multilingual support.",
   "gpt-realtime-mini.description": "最新实时语音版本，支持音频和文本实时输入输出",
   "grok-4-0709.description": "我们最新最强大的旗舰模型，在自然语言处理、数学计算和推理方面表现卓越 —— 是一款完美的全能型选手。",
