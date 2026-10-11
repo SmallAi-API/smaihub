@@ -7,6 +7,7 @@ import { initialAgentSliceState } from '@/store/agent/slices/agent/initialState'
 import { initialAgentArtworkSliceState } from '@/store/agent/slices/artwork/initialState';
 import { initialBotSliceState } from '@/store/agent/slices/bot/initialState';
 import { initialBuiltinAgentSliceState } from '@/store/agent/slices/builtin';
+import { initialKnowledgeSliceState } from '@/store/agent/slices/knowledge/initialState';
 
 import { builtinAgentSelectors } from './builtinAgentSelectors';
 
@@ -15,6 +16,7 @@ const createState = (overrides: Partial<AgentStoreState> = {}): AgentStoreState 
   ...initialAgentSliceState,
   ...initialBuiltinAgentSliceState,
   ...initialBotSliceState,
+  ...initialKnowledgeSliceState,
   ...overrides,
 });
 

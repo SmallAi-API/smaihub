@@ -8,7 +8,7 @@ import {
 
 const createDiagnostics = () =>
   initializeOpenAIDiagnostics({
-    apiMode: 'chatCompletion',
+    apiMode: 'chat_completions',
     diagnostics: {} as any,
     endpoint: 'https://example.test/v1/chat/completions',
     payload: {},

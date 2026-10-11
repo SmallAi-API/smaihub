@@ -3,6 +3,7 @@ import { strToU8, zipSync } from 'fflate';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type * as FileModelModule from '@/database/models/file';
+import type * as FileModelTypes from '@/database/models/file';
 import { createTRPCErrorLogger } from '@/libs/trpc/utils/errorLogger';
 import { verifyRouter } from '@/server/routers/lambda/verify';
 import { FileService } from '@/server/services/file';
@@ -60,7 +61,7 @@ vi.mock('@/database/models/verifyRun', () => ({
 vi.mock('@/database/models/file', async (importOriginal) => {
   const actual = await importOriginal<typeof FileModelModule>();
   class FileModel extends actual.FileModel {
-    findById = modelMocks.findFileById as unknown as actual.FileModel['findById'];
+    findById = modelMocks.findFileById as unknown as FileModelTypes.FileModel['findById'];
   }
   return { ...actual, FileModel };
 });
