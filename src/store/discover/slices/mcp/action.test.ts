@@ -6,6 +6,7 @@ import { globalHelpers } from '@/store/global/helpers';
 import type { McpListResponse } from '@/types/discover';
 
 import { mcpSelectors } from '../../selectors';
+import type { DiscoverStore } from '../../store';
 import { useDiscoverStore as useStore } from '../../store';
 import { mcpCategoriesQueryKey, mcpDetailQueryKey, mcpListQueryKey } from './projection';
 
@@ -33,7 +34,7 @@ const makeList = (identifier = 'mcp-1'): McpListResponse =>
     totalPages: 1,
   }) as McpListResponse;
 
-const emptyMcpState = () => ({
+const emptyMcpState = (): Partial<DiscoverStore> => ({
   mcpCategoriesMap: {},
   mcpCategoriesReplica: createReplicaState(),
   mcpDetailMap: {},
