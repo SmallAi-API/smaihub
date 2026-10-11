@@ -245,7 +245,7 @@ describe('userMemory base replica', () => {
       const rowKey = { queryKey: RETRIEVE_KEY, scope };
       const indexRowKey = { queryKey: REPLICA_INDEX_KEY, scope };
       await storage.set(rowKey, { data: emptyResult(), updatedAt: 1 });
-      await storage.set(indexRowKey, { data: [RETRIEVE_KEY], updatedAt: 1 });
+      await storage.set(indexRowKey, { data: [RETRIEVE_KEY] as never, updatedAt: 1 });
 
       const remove = storage.remove.bind(storage);
       let failDeletes = true;

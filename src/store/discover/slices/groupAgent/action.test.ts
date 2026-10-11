@@ -6,6 +6,7 @@ import { globalHelpers } from '@/store/global/helpers';
 import type { GroupAgentListResponse } from '@/types/discover';
 
 import { groupAgentSelectors } from '../../selectors';
+import type { DiscoverStore } from '../../store';
 import { useDiscoverStore as useStore } from '../../store';
 import {
   groupAgentCategoriesQueryKey,
@@ -37,7 +38,7 @@ const makeList = (identifier = 'group-agent-1'): GroupAgentListResponse => ({
   totalPages: 1,
 });
 
-const emptyGroupAgentState = () => ({
+const emptyGroupAgentState = (): Partial<DiscoverStore> => ({
   groupAgentCategoriesMap: {},
   groupAgentCategoriesReplica: createReplicaState(),
   groupAgentDetailMap: {},

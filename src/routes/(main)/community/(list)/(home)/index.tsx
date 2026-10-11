@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import AsyncBoundary from '@/components/AsyncBoundary';
 import { useDiscoverStore } from '@/store/discover';
-import { mcpSelectors } from '@/store/discover/selectors';
+import { assistantSelectors, mcpSelectors } from '@/store/discover/selectors';
 import { AssistantSorts, McpSorts } from '@/types/discover';
 
 import ListLoading from '../../components/ListLoading';
@@ -15,19 +15,20 @@ import McpList from '../mcp/features/List';
 
 const HomePage = memo(() => {
   const { t } = useTranslation('discover');
-  const useAssistantList = useDiscoverStore((s) => s.useAssistantList);
+  const useAssistantList = useDiscoverStore((s) => s.useFetchAssistantList);
   const useMcpList = useDiscoverStore((s) => s.useFetchMcpList);
 
   const {
-    data: assistantList,
-    isLoading: assistantLoading,
     error: assistantError,
+    isLoading: assistantLoading,
     mutate: refetchAssistants,
+    queryKey: assistantQueryKey,
   } = useAssistantList({
     page: 1,
     pageSize: 12,
     sort: AssistantSorts.Recommended,
   });
+  const assistantList = useDiscoverStore(assistantSelectors.assistantList(assistantQueryKey));
 
   const {
     error: mcpError,
