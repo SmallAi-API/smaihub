@@ -799,16 +799,19 @@ export const userMemoryKeys = {
 
 // ---- tool (skills / plugins / builtin / mcp / composio stores) -------------
 export const toolKeys = {
+  agentSkillDetail: def('tool:agentSkillDetail', (id: string) => ['tool:agentSkillDetail', id]),
+  agentSkills: def('tool:agentSkills', () => ['tool:agentSkills']),
   composioAppTools: def('tool:composioAppTools', (appSlug: string) => [
     'tool:composioAppTools',
     appSlug,
   ]),
   composioCatalog: def(
     'tool:composioCatalog',
-    (category: string | undefined, search: string | undefined) => [
+    (category: string | undefined, search: string | undefined, cursor?: string) => [
       'tool:composioCatalog',
       category,
       search,
+      cursor,
     ],
   ),
   composioCategories: def('tool:composioCategories', () => ['tool:composioCategories']),
