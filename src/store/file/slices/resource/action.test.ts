@@ -84,7 +84,7 @@ const seedList = (
     hasMore: false,
     items,
     nextCursor: null,
-    pageSize: queryParams.pageSize,
+    pageSize: queryParams.pageSize ?? 50,
     queryParams,
     total: items.length,
     ...meta,

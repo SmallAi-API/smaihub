@@ -19,7 +19,8 @@ import { setScopedMutate } from '@/libs/swr/mutate';
 import { resourceService } from '@/services/resource';
 import { initialState } from '@/store/file/initialState';
 import { useFileStore } from '@/store/file/store';
-import type { ResourceItem } from '@/types/resource';
+import { SortType } from '@/types/files';
+import type { ResourceItem, ResourceQueryParams } from '@/types/resource';
 
 import type { ResourceListParams } from './projection';
 import { normalizeResourceListParams, RESOURCE_LIST_KEY, resourceListResource } from './projection';
@@ -340,7 +341,7 @@ describe('resourceList replica', () => {
     await seedPersisted(paramsB, [row('cached-b')]);
 
     // Folder A answers; folder B never does — only its cache can paint it.
-    querySpy.mockImplementation((params) =>
+    querySpy.mockImplementation((params: ResourceListParams) =>
       params.parentId === 'folder-b' ? pending() : Promise.resolve(page([row('a-1')], 1)),
     );
 
@@ -386,12 +387,12 @@ describe('resourceList replica', () => {
     const sortedParams = normalizeResourceListParams({
       parentId: null,
       sorter: 'size',
-      sortType: 'asc',
+      sortType: SortType.Asc,
     })!;
     await seedPersisted(sortedParams, [row('cached-sorted')]);
 
     // Only the default (newest-first) query answers; the sorted one is offline.
-    querySpy.mockImplementation((params) =>
+    querySpy.mockImplementation((params: ResourceListParams) =>
       params.sorter === 'size' ? pending() : Promise.resolve(page([row('newest-1')], 1)),
     );
 
@@ -400,7 +401,7 @@ describe('resourceList replica', () => {
         useFileStore((s) => s.useFetchResources)({
           parentId: null,
           sorter: props.sorter,
-          sortType: props.sorter ? 'asc' : undefined,
+          sortType: props.sorter ? SortType.Asc : undefined,
         }),
       { initialProps: {} as { sorter?: 'size' }, wrapper },
     );
@@ -416,7 +417,7 @@ describe('resourceList replica', () => {
   it('does not carry a pending create into the folder the user navigates to', async () => {
     const paramsB = normalizeResourceListParams({ parentId: 'folder-b' })!;
     await seedPersisted(paramsB, [row('cached-b')]);
-    querySpy.mockImplementation((params) =>
+    querySpy.mockImplementation((params: ResourceListParams) =>
       params.parentId === 'folder-a' ? Promise.resolve(page([row('a-1')], 1)) : pending(),
     );
     // The create never settles: its overlay stays in flight across the switch.
@@ -435,6 +436,7 @@ describe('resourceList replica', () => {
         fileType: 'text/plain',
         name: 'New',
         parentId: 'folder-a',
+        size: 0,
         sourceType: 'file',
         url: '',
       });
@@ -449,7 +451,7 @@ describe('resourceList replica', () => {
   });
 
   it('does not surface an upload from another folder when the next folder answers', async () => {
-    querySpy.mockImplementation((params) =>
+    querySpy.mockImplementation((params: ResourceListParams) =>
       Promise.resolve(
         params.parentId === 'folder-b' ? page([row('b-1')], 1) : page([row('a-1')], 1),
       ),
@@ -503,7 +505,6 @@ describe('resourceList replica', () => {
         {
           fileType: 'text/plain',
           name: 'Uploading',
-          parentId: null,
           size: 3,
           sourceType: 'file',
           url: '',
@@ -572,12 +573,12 @@ describe('resourceList replica', () => {
     const sortedParams = normalizeResourceListParams({
       parentId: null,
       sorter: 'size',
-      sortType: 'asc',
+      sortType: SortType.Asc,
     })!;
     await seedPersisted(sortedParams, [row('cached-sorted')]);
 
     // Only the default (newest-first) query answers; the sorted one is offline.
-    querySpy.mockImplementation((params) =>
+    querySpy.mockImplementation((params: ResourceListParams) =>
       params.sorter === 'size' ? pending() : Promise.resolve(page([row('newest-1')], 1)),
     );
 
@@ -586,7 +587,7 @@ describe('resourceList replica', () => {
         useFileStore((s) => s.useFetchResources)({
           parentId: null,
           sorter: props.sorter,
-          sortType: props.sorter ? 'asc' : undefined,
+          sortType: props.sorter ? SortType.Asc : undefined,
         }),
       { initialProps: {} as { sorter?: 'size' }, wrapper },
     );
@@ -598,7 +599,6 @@ describe('resourceList replica', () => {
         {
           fileType: 'text/plain',
           name: 'Uploading',
-          parentId: null,
           size: 3,
           sourceType: 'file',
           url: '',
@@ -623,7 +623,7 @@ describe('resourceList replica', () => {
     });
     vi.spyOn(resourceService, 'createResource').mockImplementation(() => createGate);
 
-    querySpy.mockImplementation((params) =>
+    querySpy.mockImplementation((params: ResourceListParams) =>
       params.sorter === 'size'
         ? Promise.resolve(page([row('sorted-1')], 1))
         : Promise.resolve(page([row('newest-1')], 1)),
@@ -634,7 +634,7 @@ describe('resourceList replica', () => {
         useFileStore((s) => s.useFetchResources)({
           parentId: null,
           sorter: props.sorter,
-          sortType: props.sorter ? 'asc' : undefined,
+          sortType: props.sorter ? SortType.Asc : undefined,
         }),
       { initialProps: {} as { sorter?: 'size' }, wrapper },
     );
@@ -646,8 +646,8 @@ describe('resourceList replica', () => {
       creating = useFileStore.getState().createResource({
         fileType: 'text/plain',
         name: 'New',
-        parentId: null,
         sourceType: 'file',
+        size: 0,
         url: '',
       });
     });
@@ -732,7 +732,7 @@ describe('resourceList replica', () => {
 
   it('does not carry a pre-paint create into the folder the user navigates to', async () => {
     // Folder A never answers, so its first page never paints; folder B does.
-    querySpy.mockImplementation((params) =>
+    querySpy.mockImplementation((params: ResourceListParams) =>
       params.parentId === 'folder-b' ? Promise.resolve(page([row('b-1')], 1)) : pending(),
     );
     const createSpy = vi.spyOn(resourceService, 'createResource').mockImplementation(pending);
@@ -750,6 +750,7 @@ describe('resourceList replica', () => {
         fileType: 'text/plain',
         name: 'New',
         parentId: 'folder-a',
+        size: 0,
         sourceType: 'file',
         url: '',
       });
@@ -846,7 +847,11 @@ describe('resourceList replica', () => {
     ['a bulk delete', () => useFileStore.getState().deleteResources(['gone'])],
   ])('drops %s from every persisted query variant', async (_label, runDelete) => {
     // The same row is cached under another sort the user is not viewing.
-    const sorted = normalizeResourceListParams({ ...BASE_INPUT, sorter: 'name', sortType: 'asc' })!;
+    const sorted = normalizeResourceListParams({
+      ...BASE_INPUT,
+      sorter: 'name',
+      sortType: SortType.Asc,
+    })!;
     await seedPersisted(sorted, [row('gone'), row('keep')]);
 
     querySpy.mockResolvedValue(page([row('gone'), row('keep')], 2));
@@ -866,7 +871,11 @@ describe('resourceList replica', () => {
   });
 
   it('evicts every persisted list variant after a select-all deletion by query', async () => {
-    const sorted = normalizeResourceListParams({ ...BASE_INPUT, sorter: 'name', sortType: 'asc' })!;
+    const sorted = normalizeResourceListParams({
+      ...BASE_INPUT,
+      sorter: 'name',
+      sortType: SortType.Asc,
+    })!;
     await seedPersisted(sorted, [row('gone')]);
 
     // The head answers once; the revalidation after the deletion fails.
@@ -893,7 +902,7 @@ describe('resourceList replica', () => {
   });
 
   it('does not collapse the folder the user navigated to while a move was in flight', async () => {
-    querySpy.mockImplementation(async (params) => {
+    querySpy.mockImplementation(async (params: ResourceQueryParams) => {
       if (params.parentId === 'folder-b') {
         return params.offset === 0 ? page(rows(50, 200), 120) : page(rows(50, 250), 120);
       }
@@ -940,7 +949,7 @@ describe('resourceList replica', () => {
     const sorted = normalizeResourceListParams({
       parentId: null,
       sorter: 'size',
-      sortType: 'asc',
+      sortType: SortType.Asc,
     })!;
     await seedPersisted(sorted, [row('cached-sorted')]);
 
@@ -949,7 +958,7 @@ describe('resourceList replica', () => {
       () => new Promise((_resolve, reject) => (failCreate = reject)) as never,
     );
     // The sorted query stays offline: only its cached page can paint it.
-    querySpy.mockImplementation((params) =>
+    querySpy.mockImplementation((params: ResourceListParams) =>
       params.sorter === 'size' ? pending() : Promise.resolve(page([row('newest-1')], 1)),
     );
 
@@ -958,7 +967,7 @@ describe('resourceList replica', () => {
         useFileStore((s) => s.useFetchResources)({
           parentId: null,
           sorter: props.sorter,
-          sortType: props.sorter ? 'asc' : undefined,
+          sortType: props.sorter ? SortType.Asc : undefined,
         }),
       { initialProps: {} as { sorter?: 'size' }, wrapper },
     );
@@ -969,7 +978,7 @@ describe('resourceList replica', () => {
       creating = useFileStore.getState().createResource({
         fileType: 'text/plain',
         name: 'New',
-        parentId: null,
+        size: 0,
         sourceType: 'file',
         url: '',
       });
@@ -992,7 +1001,11 @@ describe('resourceList replica', () => {
   });
 
   it('applies a confirmed rename to every persisted query variant', async () => {
-    const sorted = normalizeResourceListParams({ ...BASE_INPUT, sorter: 'name', sortType: 'asc' })!;
+    const sorted = normalizeResourceListParams({
+      ...BASE_INPUT,
+      sorter: 'name',
+      sortType: SortType.Asc,
+    })!;
     await seedPersisted(sorted, [row('doc'), row('other')]);
 
     querySpy.mockResolvedValue(page([row('doc')], 1));

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { SortType } from '@/types/files';
+
 import { getResourceQueryKey, isOptimisticRowInRequestedPool } from './utils';
 
 describe('getResourceQueryKey', () => {
@@ -31,7 +33,7 @@ describe('isOptimisticRowInRequestedPool', () => {
       isOptimisticRowInRequestedPool(key, {
         parentId: 'folder-a',
         sorter: 'size',
-        sortType: 'asc',
+        sortType: SortType.Asc,
       }),
     ).toBe(true);
   });
