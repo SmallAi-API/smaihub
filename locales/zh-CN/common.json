@@ -240,6 +240,8 @@
   "footer.star.desc": "如果你喜欢我们的产品，可以去 GitHub 给我们点一颗星。这个小动作对我们意义重大，能激励我们持续改进",
   "footer.star.title": "在 GitHub 为我们点亮星标",
   "footer.title": "需要帮助吗？联系微信：SmallAi2024",
+  "forkRequiresSavedTopic": "当前主题未保存。请先保存以分叉新主题",
+  "forkTopic": "在新主题中继续",
   "fullscreen": "全屏模式",
   "generation.hero.taglinePrefix": "即刻创作",
   "generation.promptModeration.blocked": "内容政策检查失败。请修改您的提示。",
