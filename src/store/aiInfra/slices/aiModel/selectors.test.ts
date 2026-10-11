@@ -1,4 +1,4 @@
-import { AiModelSourceEnum } from 'model-bank';
+import { AiModelSourceEnum, type AiProviderModelListItem } from 'model-bank';
 import { describe, expect, it } from 'vitest';
 
 import { createReplicaState } from '@/libs/replica';
@@ -7,7 +7,7 @@ import { type AIProviderStoreState } from '@/store/aiInfra/initialState';
 import { aiModelSelectors } from './selectors';
 
 describe('aiModelSelectors', () => {
-  const models = [
+  const models: AiProviderModelListItem[] = [
     {
       id: 'model1',
       type: 'chat',
