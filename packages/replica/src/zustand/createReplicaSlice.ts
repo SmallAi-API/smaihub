@@ -213,9 +213,9 @@ export const createReplicaSlice = <TStore, TParams, TData, TFetched = TData>(
      * still matches), `replace` the entry and persist pre-mutation rows back over
      * an invalidation that has already completed.
      */
-    remove: (key: string) => {
-      headQuery.delete(key);
-      return engine.remove(key);
+    remove: (key: string, scope: string = resource.scope.get()) => {
+      if (scope === resource.scope.get()) headQuery.delete(key);
+      return engine.remove(key, scope);
     },
     useSync,
   };

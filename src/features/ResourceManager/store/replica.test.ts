@@ -27,8 +27,10 @@ import {
   DEFAULT_SEARCH_PAGE_SIZE,
   type ExplorerSearchParams,
   explorerSearchResource,
+  type ExplorerSearchValue,
   type HierarchySearchParams,
   hierarchySearchResource,
+  type HierarchySearchValue,
 } from './projection';
 
 const EXPLORER_PARAMS: ExplorerSearchParams = {
@@ -55,7 +57,15 @@ const explorerEntry = (params: ExplorerSearchParams) =>
 const hierarchyEntry = (params: HierarchySearchParams) =>
   useResourceManagerStore.getState().hierarchySearchEntries[hierarchyKeyOf(params)];
 
-const item = (id: string): ResourceItem => ({ fileType: 'custom/document', id, name: id });
+const item = (id: string): ResourceItem => ({
+  createdAt: new Date(0),
+  fileType: 'custom/document',
+  id,
+  name: id,
+  size: 0,
+  sourceType: 'document',
+  updatedAt: new Date(0),
+});
 
 const itemsOf = (length: number, offset = 0) =>
   Array.from({ length }, (_, i) => item(`file-${i + offset}`));
@@ -446,7 +456,12 @@ describe('ResourceManager search replicas', () => {
     // identity), not the raw keywords.
     await explorerSearchResource.storage!.set(
       { queryKey: REPLICA_INDEX_KEY, scope },
-      { data: previous.map((q) => explorerSearchResource.storageKey(paramsOf(q))), updatedAt: 1 },
+      {
+        data: previous.map((q) =>
+          explorerSearchResource.storageKey(paramsOf(q)),
+        ) as unknown as ExplorerSearchValue,
+        updatedAt: 1,
+      },
     );
 
     const remove = vi.spyOn(explorerSearchResource.storage!, 'remove');
@@ -508,7 +523,7 @@ describe('ResourceManager search replicas', () => {
     );
     await hierarchySearchResource.storage!.set(
       { queryKey: REPLICA_INDEX_KEY, scope },
-      { data: [staleKey], updatedAt: 1 },
+      { data: [staleKey] as unknown as HierarchySearchValue, updatedAt: 1 },
     );
 
     // Not loaded this session: memory and the SWR cache are both empty for it,
@@ -582,7 +597,7 @@ describe('ResourceManager search replicas', () => {
       if (key.queryKey === REPLICA_INDEX_KEY) {
         // The user switches workspaces while the index row is in flight.
         useScope(`${previousScope}-next`);
-        return { data: [staleKey], updatedAt: 1 };
+        return { data: [staleKey] as unknown as HierarchySearchValue, updatedAt: 1 };
       }
       return undefined;
     });

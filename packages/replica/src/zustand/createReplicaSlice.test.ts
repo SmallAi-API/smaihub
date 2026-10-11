@@ -469,6 +469,21 @@ describe('createReplicaSlice', () => {
       await waitFor(() => expect(storage.rows.get('user-1:personal|a')).toBeUndefined());
     });
 
+    it('keeps the active scope response when a removal targets the previous scope', async () => {
+      let resolveFetch!: (value: string[]) => void;
+      const fetcher = vi.fn(() => new Promise<string[]>((resolve) => (resolveFetch = resolve)));
+      const { slice, store } = setup({ fetcher });
+      scopeState.current = 'user-2:personal';
+
+      renderHook(() => slice.useSync({ id: 'a' }), { wrapper });
+      await waitFor(() => expect(fetcher).toHaveBeenCalled());
+
+      act(() => slice.remove('a', 'user-1:personal'));
+      await act(async () => resolveFetch(['current-scope']));
+
+      await waitFor(() => expect(store.getState().lists.a).toEqual(['current-scope']));
+    });
+
     it('retries an off-scope purge once the captured scope may persist again', async () => {
       const storage = createMemoryStorage();
       storage.rows.set('user-1:personal|a', { data: ['revoked'], updatedAt: 1 });

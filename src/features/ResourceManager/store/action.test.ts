@@ -186,7 +186,15 @@ describe('resource manager store actions', () => {
   it('should drop the deleted rows from the cached explorer searches', async () => {
     const params = { pageSize: 50, q: 'report' } as any;
     const key = explorerSearchResource.key(params);
-    const row = (id: string): ResourceItem => ({ fileType: 'custom/document', id, name: id });
+    const row = (id: string): ResourceItem => ({
+      createdAt: new Date(0),
+      fileType: 'custom/document',
+      id,
+      name: id,
+      size: 0,
+      sourceType: 'document',
+      updatedAt: new Date(0),
+    });
 
     useResourceManagerStore.setState({
       explorerSearchEntries: {
@@ -223,7 +231,17 @@ describe('resource manager store actions', () => {
         [key]: {
           currentPage: 0,
           hasMore: false,
-          items: [{ fileType: 'custom/document', id: 'file-1', name: 'file-1' }],
+          items: [
+            {
+              createdAt: new Date(0),
+              fileType: 'custom/document',
+              id: 'file-1',
+              name: 'file-1',
+              size: 0,
+              sourceType: 'document',
+              updatedAt: new Date(0),
+            },
+          ],
           pageSize: 50,
           searchParams: params,
           total: 1,
