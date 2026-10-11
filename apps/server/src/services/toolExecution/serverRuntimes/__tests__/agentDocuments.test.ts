@@ -63,6 +63,7 @@ describe('agentDocumentsRuntime auto-pin to task', () => {
 
   let serviceImpl: {
     copyDocumentById: ReturnType<typeof vi.fn>;
+    countChildren: ReturnType<typeof vi.fn>;
     createDocument: ReturnType<typeof vi.fn>;
     createForTopic: ReturnType<typeof vi.fn>;
     getDocumentSnapshotById: ReturnType<typeof vi.fn>;
@@ -77,6 +78,7 @@ describe('agentDocumentsRuntime auto-pin to task', () => {
     agentDocumentToolOutcomeMocks.emitAgentDocumentToolOutcomeSafely.mockClear();
     serviceImpl = {
       copyDocumentById: vi.fn().mockResolvedValue(newDoc),
+      countChildren: vi.fn().mockResolvedValue(new Map()),
       createDocument: vi.fn().mockResolvedValue(newDoc),
       createForTopic: vi.fn().mockResolvedValue(newDoc),
       getDocumentSnapshotById: vi.fn().mockResolvedValue(newDoc),
@@ -453,11 +455,13 @@ describe('agentDocumentsRuntime Work registration state', () => {
 describe('AgentDocumentsExecutionRuntime.createDocument', () => {
   const makeStub = () => ({
     copyDocument: vi.fn(),
+    createFolder: vi.fn(),
     createDocument: vi.fn(),
     createTopicDocument: vi.fn(),
     listDocuments: vi.fn(),
     listTopicDocuments: vi.fn(),
     modifyNodes: vi.fn(),
+    moveDocuments: vi.fn(),
     readDocument: vi.fn(),
     removeDocument: vi.fn(),
     renameDocument: vi.fn(),
@@ -659,11 +663,13 @@ describe('AgentDocumentsExecutionRuntime.createDocument', () => {
 describe('AgentDocumentsExecutionRuntime.listDocuments', () => {
   const makeStub = () => ({
     copyDocument: vi.fn(),
+    createFolder: vi.fn(),
     createDocument: vi.fn(),
     createTopicDocument: vi.fn(),
     listDocuments: vi.fn(),
     listTopicDocuments: vi.fn(),
     modifyNodes: vi.fn(),
+    moveDocuments: vi.fn(),
     readDocument: vi.fn(),
     removeDocument: vi.fn(),
     renameDocument: vi.fn(),
