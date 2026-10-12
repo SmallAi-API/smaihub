@@ -48,6 +48,7 @@
   "directories.bindDescription": "將下面的資料夾連結到專案，以便您可以繼續從該專案工作。檔案保留在當前設備上。",
   "directories.bindFailed": "無法連結目錄",
   "directories.boundRoot": "此對話已綁定到專案目錄。開始新的對話以使用不同的目錄。",
+  "directories.boundTip": "此目錄屬於專案 ({{path}})。切換設備以在另一個設備上使用專案的目錄。",
   "directories.chooseAgent": "選擇代理",
   "directories.conversations": "對話",
   "directories.coordinator": "專案協調人",
