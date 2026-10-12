@@ -7,6 +7,7 @@ import urlJoin from 'url-join';
 import { UserModel } from '@/database/models/user';
 import { appEnv } from '@/envs/app';
 import { getJWKS } from '@/libs/oidc-provider/jwt';
+import { OIDC_ISSUER_PATH, OIDC_ROUTES } from '@/libs/oidc-provider/routes';
 import { normalizeLocale } from '@/locales/resources';
 
 import { isOIDCUserBanned } from './access-control';
@@ -310,24 +311,16 @@ export const createOIDCProvider = async (db: LobeChatDatabase): Promise<Provider
     // mounted under it and the adapter hands it the untouched pathname. A route
     // left at its default (e.g. `/jwks`) is therefore unreachable: the request
     // arrives as `/oidc/jwks` and the provider answers 404.
-    routes: {
-      authorization: '/oidc/auth',
-      code_verification: '/oidc/device',
-      device_authorization: '/oidc/device/auth',
-      end_session: '/oidc/session/end',
-      jwks: '/oidc/jwks',
-      token: '/oidc/token',
-      userinfo: '/oidc/me',
-    },
-    // 3. Scopes 定义
+    routes: { ...OIDC_ROUTES },
+    // 3. Scopes definition
     scopes: defaultScopes,
 
     // 8. Token TTL
     ttl: oidcArtifactTTL,
   };
 
-  // 创建提供者实例
-  const baseUrl = urlJoin(appEnv.APP_URL!, '/oidc');
+  // Create provider instance
+  const baseUrl = urlJoin(appEnv.APP_URL!, OIDC_ISSUER_PATH);
 
   const provider = new Provider(baseUrl, configuration);
   provider.proxy = true;
