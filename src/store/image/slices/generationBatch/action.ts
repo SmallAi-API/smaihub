@@ -9,6 +9,7 @@ import { type GetGenerationStatusResult } from '@/server/routers/lambda/generati
 import { generationService } from '@/services/generation';
 import { generationBatchService } from '@/services/generationBatch';
 import { type StoreSetter } from '@/store/types';
+import { getGenerationStatusPollingInterval } from '@/store/utils/generationStatusPolling';
 import { AsyncTaskStatus } from '@/types/asyncTask';
 import { type GenerationBatch } from '@/types/generation';
 import { setNamespace } from '@/utils/storeDebug';
@@ -195,32 +196,12 @@ export class GenerationBatchActionImpl {
       },
       {
         refreshWhenHidden: false,
-        refreshInterval: (data: GetGenerationStatusResult | undefined) => {
-          // 如果状态是 success 或 error，停止轮询
-          if (data?.status === AsyncTaskStatus.Success || data?.status === AsyncTaskStatus.Error) {
-            return 0; // 停止轮询
-          }
-
-          // 根据请求次数动态调整间隔：使用指数退避算法
-          // 基础间隔 1 秒，最大间隔 30 秒
-          const baseInterval = 1000;
-          const maxInterval = 30_000;
-          const currentCount = requestCountRef.current;
-
-          // 指数退避：每 5 次请求后间隔翻倍
-          const backoffMultiplier = Math.floor(currentCount / 5);
-          let dynamicInterval = Math.min(
-            baseInterval * Math.pow(2, backoffMultiplier),
-            maxInterval,
-          );
-
-          // 如果之前有错误，使用更长的间隔（乘以 2）
-          if (isErrorRef.current) {
-            dynamicInterval = Math.min(dynamicInterval * 2, maxInterval);
-          }
-
-          return dynamicInterval;
-        },
+        refreshInterval: (data: GetGenerationStatusResult | undefined) =>
+          getGenerationStatusPollingInterval({
+            hasError: isErrorRef.current,
+            requestCount: requestCountRef.current,
+            status: data?.status,
+          }),
         onError: (error) => {
           // 发生错误时设置错误状态
           isErrorRef.current = true;

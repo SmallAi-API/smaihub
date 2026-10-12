@@ -2018,7 +2018,15 @@ describe('Generation Actions', () => {
         // The same editor may amend its draft before retrying the failed preparation.
         vi.spyOn(messageService, 'updateMessage').mockResolvedValue({ success: true });
         edit.content = 'amended prompt';
-        const rows = [{ content: 'amended prompt', id: 'branch-user', role: 'user' as const }];
+        const rows = [
+          {
+            content: 'amended prompt',
+            createdAt: 0,
+            id: 'branch-user',
+            role: 'user' as const,
+            updatedAt: 0,
+          },
+        ];
         const state = useChatStore.getState();
         vi.mocked(state.prefetchMessages).mockImplementation(async () => {
           state.messagesMap[messageMapKey(target)] = rows;
