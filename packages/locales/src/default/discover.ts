@@ -1126,6 +1126,8 @@ export default {
 
   'skills.sorts.updatedAt': 'Recently Updated',
 
+  'toc.permalink': 'Permalink for this section',
+
   'tab.assistant': 'Agent',
 
   'tab.home': 'Home',
