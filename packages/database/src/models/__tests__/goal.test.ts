@@ -74,12 +74,12 @@ describe('GoalModel', () => {
       // A budget editor reads the goal before the break revises the recipe…
       const stale = (await goalModel.findById(goal.id))!.config!;
       await goalModel.updateRolloutPolicy(goal.id, {
-        ...stale.rollout,
+        ...stale.rollout!,
         spec: { recipeOutline: 'v1\n\n### v2\nfix', repeatable: true },
       });
       // …and saves after it, with a new canary size of its own.
       await goalModel.update(goal.id, {
-        config: { ...stale, rollout: { ...stale.rollout, canarySize: 4 }, maxConcurrentTasks: 2 },
+        config: { ...stale, rollout: { ...stale.rollout!, canarySize: 4 }, maxConcurrentTasks: 2 },
       });
 
       const config = (await goalModel.findById(goal.id))!.config!;

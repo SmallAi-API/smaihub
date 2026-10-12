@@ -635,7 +635,7 @@ describe('batch rollout gate', () => {
     });
 
   it('releases the next wave when the gate passed', () => {
-    const move = decideWithGate({ blockers: [], met: true, provisional: false });
+    const move = decideWithGate({ blockers: [], checks: [], met: true, provisional: false });
     expect(move.branch).toBe('rollout_gate');
     expect(move.outcome).toBe('advanced');
   });
@@ -643,6 +643,7 @@ describe('batch rollout gate', () => {
   it('hands a blocked gate to a person instead of parking the goal', () => {
     const move = decideWithGate({
       blockers: ['1 probe(s) did not succeed'],
+      checks: [],
       met: false,
       provisional: false,
     });

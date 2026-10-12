@@ -37,7 +37,7 @@ const createHarness = (initialView: Record<string, List> = {}) => {
 };
 
 const S = 'user-1:personal';
-const append = (item: string) => (list: List) => [...list, item];
+const append = (item: string) => (list: List | undefined) => [...(list ?? []), item];
 /** A seed write merges into its input, as a replayed seed must (see `seedPatches`). */
 const seedWith = (item: string) => (list: List | undefined) => [...(list ?? []), item];
 
