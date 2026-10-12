@@ -438,7 +438,10 @@ describe('AgentInterventionModel', () => {
       items: [
         {
           ...firstItem,
-          sanitizedRequest: { ...firstItem.sanitizedRequest, interventionId: 'callback-first' },
+          sanitizedRequest: {
+            ...firstItem.sanitizedRequest,
+            interventionId: 'callback-first',
+          } as any,
         },
       ],
     });
@@ -447,7 +450,10 @@ describe('AgentInterventionModel', () => {
       items: [
         {
           ...secondItem,
-          sanitizedRequest: { ...secondItem.sanitizedRequest, interventionId: 'callback-second' },
+          sanitizedRequest: {
+            ...secondItem.sanitizedRequest,
+            interventionId: 'callback-second',
+          } as any,
         },
       ],
     });

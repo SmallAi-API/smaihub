@@ -101,7 +101,7 @@ const LobeMockProvider = createOpenAICompatibleRuntime({
 });
 
 beforeEach(() => {
-  instance = new LobeMockProvider({ apiKey: 'test' });
+  instance = new LobeMockProvider({ apiKey: 'test' }) as unknown as LobeOpenAICompatibleRuntime;
 
   // Use vi.spyOn to mock the chat.completions.create method
   vi.spyOn(instance['client'].chat.completions, 'create').mockResolvedValue(
@@ -1486,7 +1486,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           apiKey: 'test',
 
           baseURL: 'https://api.abc.com/v1',
-        });
+        }) as unknown as LobeOpenAICompatibleRuntime;
 
         vi.spyOn(instance['client'].chat.completions, 'create').mockRejectedValue(apiError);
 
