@@ -636,7 +636,12 @@ describe('MessageContentProcessor', () => {
         model: 'gpt-4',
         provider: 'openai',
       });
-      const fileItem = { fileType: 'text/csv', name: 'data.csv', size: content.length };
+      const fileItem = {
+        fileType: 'text/csv',
+        name: 'data.csv',
+        size: content.length,
+        url: 'https://app.example.com/f/file.csv',
+      };
 
       const result = await processor.process(
         createContext([

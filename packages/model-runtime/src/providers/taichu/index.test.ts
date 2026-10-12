@@ -3,7 +3,6 @@ import { ModelProvider } from 'model-bank';
 import OpenAI from 'openai';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type LobeOpenAICompatibleRuntime } from '../../core/BaseAI';
 import { testProvider } from '../../providerTestUtils';
 import { LobeTaichuAI } from './index';
 
@@ -21,7 +20,7 @@ testProvider({
   },
 });
 
-let instance: LobeOpenAICompatibleRuntime;
+let instance: any;
 
 beforeEach(() => {
   instance = new LobeTaichuAI({ apiKey: 'test' });

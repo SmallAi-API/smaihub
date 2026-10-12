@@ -2,13 +2,12 @@
 import { ModelProvider } from 'model-bank';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { LobeOpenAICompatibleRuntime } from '../../core/BaseAI';
 import { LobeCohereAI, params } from './index';
 
 // Mock the console.error to avoid polluting test output
 vi.spyOn(console, 'error').mockImplementation(() => {});
 
-let instance: LobeOpenAICompatibleRuntime;
+let instance: any;
 
 beforeEach(() => {
   instance = new LobeCohereAI({ apiKey: 'test' });

@@ -403,7 +403,7 @@ describe('serverMessagesEngine', () => {
 
     it('sends attachments planned for preview as previews', async () => {
       const content = 'row,value\n'.repeat(1000);
-      const { messages: result } = await serverMessagesEngine({
+      const result = await serverMessagesEngine({
         attachmentPreviewFileIds: ['file1'],
         messages: [
           {

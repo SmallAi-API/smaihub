@@ -1,7 +1,6 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { LobeOpenAICompatibleRuntime } from '../../core/BaseAI';
 import { LobeOpenRouterAI, params } from './index';
 
 const loadModelsMock = vi.hoisted(() => vi.fn().mockResolvedValue([]));
@@ -13,7 +12,7 @@ vi.mock('@lobechat/business-model-bank/model-config', () => ({
 // Mock the console.error to avoid polluting test output
 vi.spyOn(console, 'error').mockImplementation(() => {});
 
-let instance: LobeOpenAICompatibleRuntime;
+let instance: any;
 
 beforeEach(() => {
   instance = new LobeOpenRouterAI({ apiKey: 'test' });

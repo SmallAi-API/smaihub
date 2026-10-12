@@ -2,7 +2,6 @@
 import { ModelProvider } from 'model-bank';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { LobeOpenAICompatibleRuntime } from '../../core/BaseAI';
 import { testProvider } from '../../providerTestUtils';
 import { LobeQwenAI, params } from './index';
 
@@ -26,7 +25,7 @@ testProvider({
   },
 });
 
-let instance: LobeOpenAICompatibleRuntime;
+let instance: any;
 
 beforeEach(() => {
   instance = new LobeQwenAI({ apiKey: 'test' });

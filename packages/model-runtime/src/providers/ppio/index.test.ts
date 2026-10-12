@@ -3,7 +3,6 @@ import { ModelProvider } from 'model-bank';
 import type { Mock } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { LobeOpenAICompatibleRuntime } from '../../core/BaseAI';
 import { testProvider } from '../../providerTestUtils';
 import models from './fixtures/models.json';
 import { LobePPIOAI } from './index';
@@ -22,7 +21,7 @@ testProvider({
 // Mock the console.error to avoid polluting test output
 vi.spyOn(console, 'error').mockImplementation(() => {});
 
-let instance: LobeOpenAICompatibleRuntime;
+let instance: any;
 
 beforeEach(() => {
   instance = new LobePPIOAI({ apiKey: 'test' });
