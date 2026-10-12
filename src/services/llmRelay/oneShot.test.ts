@@ -1,7 +1,7 @@
 import type { AgentStreamEvent } from '@lobechat/agent-gateway-client';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { OneShotRelayDeps } from './oneShot';
+import type { OneShotChannelSubscription, OneShotRelayDeps } from './oneShot';
 import { ONE_SHOT_SUBSCRIBE_TIMEOUT_MS, OneShotRelay } from './oneShot';
 
 const createRelay = (overrides: Partial<OneShotRelayDeps> = {}) => {
@@ -167,7 +167,7 @@ describe('OneShotRelay', () => {
       const { relay } = createRelay({
         subscribe: vi.fn(
           () =>
-            new Promise((resolve) => {
+            new Promise<OneShotChannelSubscription>((resolve) => {
               finishSetup = () => resolve({ close, ready: Promise.resolve() });
             }),
         ),
@@ -192,7 +192,7 @@ describe('OneShotRelay', () => {
   it('stops waiting for the subscription once the caller aborts', async () => {
     vi.useFakeTimers();
     try {
-      const { relay } = createRelay({ subscribe: vi.fn(() => new Promise(() => {})) });
+      const { relay } = createRelay({ subscribe: vi.fn(() => new Promise<never>(() => {})) });
       const controller = new AbortController();
       const request = vi.fn(async () => 'ok');
       const result = relay.run('ollama', request, { signal: controller.signal });
@@ -209,7 +209,7 @@ describe('OneShotRelay', () => {
   it('does not wait for the subscription when the caller already aborted', async () => {
     vi.useFakeTimers();
     try {
-      const { relay } = createRelay({ subscribe: vi.fn(() => new Promise(() => {})) });
+      const { relay } = createRelay({ subscribe: vi.fn(() => new Promise<never>(() => {})) });
       const controller = new AbortController();
       controller.abort();
       const request = vi.fn(async () => 'ok');
