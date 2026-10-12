@@ -112,7 +112,10 @@ describe('buildConnectAgentConfig', () => {
       provider: 'deepseek-harness',
       title: 'DeepSeek Harness',
     });
-    expect(config.agencyConfig.heterogeneousProvider.command).toBeUndefined();
+    const heterogeneousProvider = config.agencyConfig.heterogeneousProvider;
+    expect(
+      'command' in heterogeneousProvider ? heterogeneousProvider.command : undefined,
+    ).toBeUndefined();
   });
 
   it('stores a customized label as the personal name without overwriting the platform profile', () => {
