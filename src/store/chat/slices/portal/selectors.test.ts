@@ -351,7 +351,8 @@ describe('chatDockSelectors', () => {
       ['remote device', { deviceId: 'remote-device' }, true],
       ['cloud sandbox', { sandboxTopicId: 'topic-a' }, true],
     ])('identifies a %s file', (_label, source, expected) => {
-      const file = { filePath: '/work/index.html', workingDirectory: '', ...source };
+      const params = { filePath: '/work/index.html', workingDirectory: '', ...source };
+      const file = { ...params, id: createLocalFileTabId(params) };
       const state = createState({
         activeLocalFilePath: file.filePath,
         activeTopicId: 'topic-a',
@@ -361,8 +362,10 @@ describe('chatDockSelectors', () => {
     });
 
     it('follows the active tab when local and remote files share the same path', () => {
-      const local = { filePath: '/work/index.html', workingDirectory: '/work' };
-      const remote = { ...local, deviceId: 'remote-device' };
+      const params = { filePath: '/work/index.html', workingDirectory: '/work' };
+      const remoteParams = { ...params, deviceId: 'remote-device' };
+      const local = { ...params, id: createLocalFileTabId(params) };
+      const remote = { ...remoteParams, id: createLocalFileTabId(remoteParams) };
       const state = createState({
         activeLocalFileId: createLocalFileTabId(remote),
         openLocalFiles: [local, remote],

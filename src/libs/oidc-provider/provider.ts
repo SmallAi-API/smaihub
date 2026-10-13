@@ -10,6 +10,7 @@ import { getJWKS } from '@/libs/oidc-provider/jwt';
 import { OIDC_ISSUER_PATH, OIDC_ROUTES } from '@/libs/oidc-provider/routes';
 import { normalizeLocale } from '@/locales/resources';
 
+import { accessTokenTTL, isAcceptanceReviewClient, reviewResourceServer } from './acceptanceReview';
 import { isOIDCUserBanned } from './access-control';
 import { DrizzleAdapter } from './adapter';
 import { defaultClaims, defaultClients, defaultScopes } from './config';
@@ -68,8 +69,12 @@ export const createOIDCProvider = async (db: LobeChatDatabase): Promise<Provider
 
     // 新增：客户端 CORS 控制逻辑
     clientBasedCORS(ctx, origin, client) {
-      // 检查客户端是否允许此来源
-      // 一个常见的策略是允许所有已注册的 redirect_uris 的来源
+      // The review toolbar runs on whatever origin the delivered product is
+      // previewed on; its token is scoped to one acceptance by audience.
+      if (isAcceptanceReviewClient(client?.clientId)) return true;
+
+      // Check if the client allows this origin
+      // A common strategy is to allow origins of all registered redirect_uris
       if (!client || !client.redirectUris) {
         logProvider('clientBasedCORS: No client or redirectUris found, denying origin: %s', origin);
         return false; // 如果没有客户端或重定向URI，则拒绝
@@ -145,7 +150,15 @@ export const createOIDCProvider = async (db: LobeChatDatabase): Promise<Provider
         enabled: true,
 
         getResourceServerInfo: (ctx, resourceIndicator) => {
-          logProvider('getResourceServerInfo called with indicator: %s', resourceIndicator); // <-- 添加这行日志
+          logProvider('getResourceServerInfo called with indicator: %s', resourceIndicator); // <-- Add this log line
+          const review = reviewResourceServer(
+            ctx.oidc.client?.clientId,
+            resourceIndicator,
+            ctx.oidc.params?.resource,
+          );
+          if (review === 'reject') throw new errors.InvalidTarget();
+          if (review) return review;
+
           if (resourceIndicator === API_AUDIENCE) {
             logProvider('Indicator matches API_AUDIENCE, returning JWT config.'); // <-- 添加这行日志
             return {
@@ -316,7 +329,10 @@ export const createOIDCProvider = async (db: LobeChatDatabase): Promise<Provider
     scopes: defaultScopes,
 
     // 8. Token TTL
-    ttl: oidcArtifactTTL,
+    ttl: {
+      ...oidcArtifactTTL,
+      AccessToken: (ctx, token) => accessTokenTTL(token, oidcArtifactTTL.AccessToken),
+    },
   };
 
   // Create provider instance

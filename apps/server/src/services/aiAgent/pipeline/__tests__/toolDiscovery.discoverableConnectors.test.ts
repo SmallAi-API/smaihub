@@ -187,7 +187,7 @@ describe('discoverTools — unpinned custom MCP connectors', () => {
     // offering the old list until someone re-syncs it by hand.
     expect(scheduleStaleConnectorToolsRefresh).toHaveBeenCalledTimes(1);
     const [connectors] = vi.mocked(scheduleStaleConnectorToolsRefresh).mock.calls[0];
-    expect(connectors.map((c) => c.identifier)).toContain(YINGMI);
+    expect(connectors.map((c) => c.id)).toContain(customConnector.id);
   });
 
   it('does not decrypt unpinned connectors for a share visitor run', async () => {
