@@ -43,6 +43,7 @@ const item = (overrides: Partial<AcceptanceCommentItem> = {}): AcceptanceComment
     rect: null,
     resolvedAt: null,
     resolvedByUserId: null,
+    source: null,
     updatedAt: new Date(2026, 8, 9, 10, seq),
     ...overrides,
   };

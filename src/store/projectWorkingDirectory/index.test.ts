@@ -174,7 +174,7 @@ describe('projectWorkingDirectory store', () => {
 });
 
 describe('findProjectDirectory', () => {
-  const stale = { id: 'dir-1', permission: 'read', projectId: 'project-1' } as ProjectDirectory;
+  const stale = { id: 'dir-1', permission: 'readOnly', projectId: 'project-1' } as ProjectDirectory;
   const fresh = { ...stale, permission: 'readWrite' } as ProjectDirectory;
 
   afterEach(() => {

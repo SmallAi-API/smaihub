@@ -76,7 +76,7 @@ describe('project send preflight', () => {
     // so a send the server would accept was blocked. Negative states re-resolve.
     it.each([
       ['unlinked', { environmentId: null, instanceId: null }],
-      ['read-only', { permission: 'read' }],
+      ['read-only', { permission: 'readOnly' }],
     ])('re-resolves a cached %s row and passes when the server accepts it', async (_, patch) => {
       useProjectDirectoryStore.setState({
         directoriesMap: { all: [{ ...row, ...patch } as ProjectDirectory] },
@@ -91,7 +91,7 @@ describe('project send preflight', () => {
 
     it('rejects a cached negative row the server still refuses', async () => {
       useProjectDirectoryStore.setState({
-        directoriesMap: { all: [{ ...row, permission: 'read' } as ProjectDirectory] },
+        directoriesMap: { all: [{ ...row, permission: 'readOnly' } as ProjectDirectory] },
       });
       vi.spyOn(projectWorkingDirectoryService, 'resolve').mockRejectedValue(
         new Error('This directory is read-only'),

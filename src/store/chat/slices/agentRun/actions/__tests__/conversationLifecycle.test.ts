@@ -1,4 +1,5 @@
 import type * as LobechatConstModule from '@lobechat/const';
+import type { ConversationContext } from '@lobechat/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { TRPCClientError } from '@trpc/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -116,7 +117,7 @@ afterEach(() => {
 });
 
 // Helper to create context for testing
-const createTestContext = (agentId: string = TEST_IDS.SESSION_ID) => ({
+const createTestContext = (agentId: string = TEST_IDS.SESSION_ID): ConversationContext => ({
   agentId,
   topicId: null,
   threadId: null,
