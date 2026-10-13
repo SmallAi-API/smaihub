@@ -424,6 +424,8 @@
   "share.settings.tools.loading": "加載工具中…",
   "share.settings.tools.needsMemoryPermission": "還需在上方打開“允許閱讀我的記憶”，否則此工具對訪客將保持無效。",
   "share.settings.tools.notAvailableToVisitors": "此工具在共享運行中永遠無法使用 — 訪客運行被阻止訪問您的知識庫和代理文件。",
+  "share.settings.tools.onDemandDesc": "此代理尚未啟用。一旦授權，模型僅在需要時在訪客運行中啟用它。",
+  "share.settings.tools.showOnDemand": "顯示按需工具",
   "share.settings.tools.title": "訪客可以使用的工具",
   "share.settings.updateError": "無法保存更改。請再試一次。",
   "share.settings.usage.conversations": "對話",

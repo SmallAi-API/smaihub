@@ -40,7 +40,7 @@
   "features.persistentSandbox.title": "持久沙盒",
   "features.projects.desc": "將長期目標組織成專屬的工作空間，並擁有自己的代理、知識庫和任務。",
   "features.projects.title": "專案工作空間",
-  "features.selfLearning.desc": "顯示每個代理從實際操作中學到的內容——其規則庫、實際使用的規則，以及哪些層仍然是空白的。",
+  "features.selfLearning.desc": "讓每個代理在背景中從您的對話中學習：它記住事實、精煉技能、收集教訓，並在每晚回顧其一天。您發送回的回合變成規則。每晚的回顧最多涵蓋50個對話。所有內容都可以在記憶 → 自我演變中查看。",
   "features.selfLearning.title": "自我演化",
   "features.taskVerify.desc": "在任務詳細信息中添加交付接受部分：用一句話描述接受，並讓 AI 生成可編輯的驗證標準。",
   "features.taskVerify.title": "任務交付接受",

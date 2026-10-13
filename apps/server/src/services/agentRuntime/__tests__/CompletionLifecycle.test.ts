@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { NotifyAgentInterventionRequiredParams } from '@/business/server/agent-run/agentInterventionReview';
 import { AgentOperationModel } from '@/database/models/agentOperation';
+import type { TopicModel } from '@/database/models/topic';
 import { WorkModel } from '@/database/models/work';
 import * as agentSignalService from '@/server/services/agentSignal';
 import * as verifyServices from '@/server/services/verify';
@@ -36,7 +37,13 @@ const {
   mockNotifyAgentInterventionRequired: vi.fn(async () => {}),
   mockNotifyAgentRunCompleted: vi.fn(async () => {}),
   mockListWorks: vi.fn(async (): Promise<{ id: string }[]> => []),
-  mockSettleRunningOperation: vi.fn(async () => ({ status: 'settled' as const })),
+  mockSettleRunningOperation: vi.fn<TopicModel['settleRunningOperation']>(async () => ({
+    assistantMessageId: 'msg-1',
+    hooks: undefined,
+    orchestrationRole: undefined,
+    status: 'settled',
+    threadId: undefined,
+  })),
 }));
 
 vi.mock('@/database/models/work', () => ({
@@ -885,7 +892,13 @@ describe('CompletionLifecycle.dispatchHooks — the topic running mark', () => {
   });
 
   beforeEach(() => {
-    mockSettleRunningOperation.mockReset().mockResolvedValue({ status: 'settled' });
+    mockSettleRunningOperation.mockReset().mockResolvedValue({
+      assistantMessageId: 'msg-1',
+      hooks: undefined,
+      orchestrationRole: undefined,
+      status: 'settled',
+      threadId: undefined,
+    });
   });
 
   afterEach(() => {
@@ -1065,7 +1078,10 @@ describe('CompletionLifecycle.dispatchHooks — the topic running mark', () => {
   it('treats losing the race to a newer run as a no-op', async () => {
     const lifecycle = buildLifecycle();
     (lifecycle as any).agentOperationModel = acceptingOperationModel();
-    mockSettleRunningOperation.mockResolvedValue({ status: 'conflict' });
+    mockSettleRunningOperation.mockResolvedValue({
+      activeOperationId: 'op-newer',
+      status: 'conflict',
+    });
 
     await expect(lifecycle.dispatchHooks('op-1', state(), 'interrupted')).resolves.toBeUndefined();
 
