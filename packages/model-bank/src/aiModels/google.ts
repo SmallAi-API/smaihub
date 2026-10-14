@@ -23,6 +23,48 @@ const googleChatModels: AIChatModelCard[] = [
       video: true,
       vision: true,
     },
+    contextWindowTokens: 1_048_576,
+    description:
+      'Gemini 4 Argon is built for complex software engineering, mathematics, scientific reasoning, and autonomous multi-step agent tasks, with multimodal input and text output.',
+    displayName: 'Gemini 4 Argon',
+    enabled: true,
+    family: 'gemini',
+    generation: 'gemini-4',
+    id: 'gemini-4-argon',
+    // Synchronous output limit; background Interactions decoding is not enabled.
+    maxOutput: 65_536,
+    // Introductory USD rates through 2026-11-30. From 2026-12-01:
+    // input 4 / cacheRead 0.2 / output 20 per million tokens. Thinking is billed as output.
+    // Implicit caching requires 4,096 prompt tokens; explicit caching is unsupported.
+    // https://ai.google.dev/gemini-api/docs/models/gemini-4-argon
+    pricing: {
+      units: [
+        { name: 'textInput_cacheRead', rate: 0.1, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'imageInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'videoInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'audioInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
+        { name: 'textOutput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
+      ],
+    },
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['thinkingLevel3', 'urlContext'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      audio: true,
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
     contextWindowTokens: 1_048_576 + 65_536,
     description: 'Points to gemini-3.1-pro-preview',
     displayName: 'Gemini Pro Latest',

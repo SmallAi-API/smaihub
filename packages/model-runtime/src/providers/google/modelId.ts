@@ -235,6 +235,9 @@ export const isGeminiVersionAtLeast = (
 
 export const isGemini3OrAbove = (model?: string): boolean => isGeminiVersionAtLeast(model, 3);
 
+export const isGemini4Argon = (model?: string): boolean =>
+  !!model && normalizeGoogleModelId(model) === 'gemini-4-argon';
+
 export const shouldOmitDeprecatedGoogleGenerationParams = (model: string): boolean => {
   const normalizedModelId = normalizeGoogleModelId(model);
 

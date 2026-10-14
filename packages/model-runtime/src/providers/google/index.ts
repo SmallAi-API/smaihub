@@ -55,6 +55,7 @@ import { createGoogleGenerateObject, createGoogleGenerateObjectWithTools } from 
 import { handleGoogleVideoWebhook } from './handleCreateVideoWebhook';
 import {
   isGemini3OrAbove,
+  isGemini4Argon,
   isGoogleImageResponseModel,
   isGoogleSafetyOffModel,
   shouldDisableGoogleSystemInstruction,
@@ -219,7 +220,9 @@ export class LobeGoogleAI implements LobeRuntimeAI {
       const config: GenerateContentConfig = {
         abortSignal: originalSignal,
         imageConfig: Object.keys(imageConfig).length > 0 ? imageConfig : undefined,
-        maxOutputTokens: payload.max_tokens,
+        maxOutputTokens: isGemini4Argon(requestModel)
+          ? Math.min(payload.max_tokens ?? 65_536, 65_536)
+          : payload.max_tokens,
         responseModalities: isImageResponseModel ? ['Text', 'Image'] : undefined,
         // avoid wide sensitive words
         // refs: https://github.com/lobehub/lobe-chat/pull/1418
@@ -612,10 +615,12 @@ export class LobeGoogleAI implements LobeRuntimeAI {
         const id = model.name.replace(/^models\//, '');
 
         return {
-          contextWindowTokens: (model.inputTokenLimit || 0) + (model.outputTokenLimit || 0),
+          contextWindowTokens: isGemini4Argon(id)
+            ? 1_048_576
+            : (model.inputTokenLimit || 0) + (model.outputTokenLimit || 0),
           displayName: model.displayName || id,
           id,
-          maxOutput: model.outputTokenLimit || undefined,
+          maxOutput: isGemini4Argon(id) ? 65_536 : model.outputTokenLimit || undefined,
         };
       });
 

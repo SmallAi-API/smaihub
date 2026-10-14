@@ -1367,20 +1367,16 @@ const smaiChatModels: AIChatModelCard[] = [
       video: true,
       vision: true,
     },
-    contextWindowTokens: 1_048_576 + 65_536,
+    contextWindowTokens: 1_048_576,
     description:
-      "Gemini 4 Argon is Google's most intelligent Flash model, engineered for long-horizon software engineering, autonomous agents, and complex enterprise workflows.",
+      'Gemini 4 Argon is built for complex software engineering, mathematics, scientific reasoning, and autonomous multi-step agent tasks, with multimodal input and text output.',
     displayName: 'Gemini 4 Argon',
     enabled: true,
     family: 'gemini',
     generation: 'gemini-4',
     id: 'gemini-4-argon',
-    knowledgeCutoff: '2026-03',
+    // Synchronous output limit; background Interactions decoding is not enabled.
     maxOutput: 65_536,
-    // Introductory pricing, in effect through 2026-12-31. From 2027-01-01 standard rates apply:
-    // input 1.5 / output 7.5 / cacheRead 0.15 / cacheWrite lookup { '1h': 1 } (per million tokens).
-    // See https://cloud.google.com/vertex-ai/generative-ai/pricing
-    releasedAt: '2026-10-14',
     settings: {
       disabledParams: ['temperature', 'top_p'],
       extendParams: ['thinkingLevel3', 'urlContext'],

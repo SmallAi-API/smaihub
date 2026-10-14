@@ -1,4 +1,9 @@
-import { isGemini3OrAbove, normalizeGoogleModelId, parseGoogleModelId } from './modelId';
+import {
+  isGemini3OrAbove,
+  isGemini4Argon,
+  normalizeGoogleModelId,
+  parseGoogleModelId,
+} from './modelId';
 
 /**
  * Google Gemini Thinking Resolver
@@ -273,6 +278,13 @@ export const resolveGoogleThinkingConfig = (
   const { thinkingBudget, thinkingLevel } = options;
 
   const isGemini3 = isGemini3Model(model);
+  if (isGemini4Argon(model)) {
+    return {
+      includeThoughts: true,
+      thinkingBudget: undefined,
+      thinkingLevel: !thinkingLevel || thinkingLevel === 'minimal' ? 'medium' : thinkingLevel,
+    };
+  }
   const hasExplicitBudget = thinkingBudget !== undefined && thinkingBudget !== null;
 
   // IMPORTANT: thinkingBudget and thinkingLevel are mutually exclusive

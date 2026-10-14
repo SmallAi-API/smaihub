@@ -96,6 +96,9 @@ const DEFAULT_THINKING_LEVEL_BY_EXTEND_PARAM = {
 const MODEL_THINKING_LEVEL_DEFAULTS: Partial<
   Record<string, Partial<Record<ThinkingLevelExtendParam, ThinkingLevelValue>>>
 > = {
+  'gemini-4-argon': {
+    thinkingLevel3: 'medium',
+  },
   'gemini-flash-latest': {
     thinkingLevel: 'medium',
     thinkingLevel3: 'medium',
