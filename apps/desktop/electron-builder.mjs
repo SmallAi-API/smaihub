@@ -288,7 +288,7 @@ const config = {
     await verifyFontListSignature(context);
 
     if (context.electronPlatformName === 'darwin') {
-      verifyComputerUseHelper(
+      await verifyComputerUseHelper(
         path.join(
           context.appOutDir,
           `${context.packager.appInfo.productFilename}.app`,

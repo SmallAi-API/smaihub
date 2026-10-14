@@ -109,10 +109,10 @@ describe('Computer Use helper packaging', () => {
     ).rejects.toThrow(/Checksum mismatch/);
   });
 
-  it('accepts only the notarized LobeHub identity at the expected version', () => {
+  it('accepts only the notarized LobeHub identity at the expected version', async () => {
     const appPath = '/x/LobeHub Computer Use.app';
     const execute = createExecute();
-    verifyComputerUseHelper(appPath, { execute, version: '0.0.33' });
+    await verifyComputerUseHelper(appPath, { execute, version: '0.0.33' });
     expect(execute.mock.calls.map(([command, args]) => [command, args[0]])).toEqual([
       ['codesign', '--verify'],
       ['codesign', '--display'],
@@ -120,17 +120,17 @@ describe('Computer Use helper packaging', () => {
       ['plutil', '-extract'],
     ]);
 
-    expect(() =>
+    await expect(
       verifyComputerUseHelper(appPath, {
         execute: createExecute({ signature: SIGNATURE.replace('4684H589ZU', 'OTHERTEAM1') }),
       }),
-    ).toThrow(/Unexpected Computer Use helper signature/);
-    expect(() =>
+    ).rejects.toThrow(/Unexpected Computer Use helper signature/);
+    await expect(
       verifyComputerUseHelper(appPath, {
         execute: createExecute({ version: '0.0.32' }),
         version: '0.0.33',
       }),
-    ).toThrow(/expected 0.0.33/);
+    ).rejects.toThrow(/expected 0.0.33/);
   });
 
   it('copies the verified helper into Contents/Library/Helpers with ditto', async () => {
