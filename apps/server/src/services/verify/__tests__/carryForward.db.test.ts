@@ -156,7 +156,7 @@ describe('repair round carry-forward (database)', () => {
     const repairEvidence = await evidence().listByRun(repair.id);
     expect(
       repairEvidence
-        .map((row) => [row.checkItemId, row.content])
+        .map((row) => [row.checkItemId, row.content] as const)
         .sort(([a], [b]) => a.localeCompare(b)),
     ).toEqual([
       ['keys', 'keys evidence'],
