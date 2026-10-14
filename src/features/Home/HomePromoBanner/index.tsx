@@ -73,7 +73,7 @@ const HomePromoBanner = memo(() => {
   const applyBusinessModelModeConfig = useBusinessModelModeConfig();
   const [loading, setLoading] = useState(false);
 
-  const model = defaultHomeNewModels.find((item) => item.model === 'gpt-6.1-sol');
+  const model = defaultHomeNewModels.find((item) => item.model === 'gemini-4-argon');
   const provider = model?.provider ?? fallbackChatProvider;
 
   const handleTryNow = useCallback(async () => {

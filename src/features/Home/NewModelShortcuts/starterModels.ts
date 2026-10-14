@@ -5,8 +5,8 @@ export const NEW_GPT_MODEL = 'gpt-6.1-sol';
 export const NEW_GPT_MODEL_NAME = 'GPT-6.1 Sol';
 export const NEW_CLAUDE_MODEL = 'claude-opus-5-5';
 export const NEW_CLAUDE_MODEL_NAME = 'Claude Opus 5.5';
-export const NEW_GEMINI_MODEL = 'gemini-3.8-flash';
-export const NEW_GEMINI_MODEL_NAME = 'Gemini 3.8 Flash';
+export const NEW_GEMINI_MODEL = 'gemini-4-argon';
+export const NEW_GEMINI_MODEL_NAME = 'Gemini 4 Argon';
 export const NEW_DEEPSEEK_MODEL = 'deepseek-v4-flash-vision-exp';
 export const NEW_DEEPSEEK_MODEL_NAME = 'DeepSeek V4 Flash Vision';
 
