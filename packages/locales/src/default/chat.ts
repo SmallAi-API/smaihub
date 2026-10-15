@@ -1474,7 +1474,7 @@ export default {
   'memory.title': 'Memory',
   'gatewayMode.cardTitle': 'Agent Gateway Mode',
   'gatewayMode.desc':
-    "Run agents in the cloud through LobeHub's Agent Gateway. Tasks keep running even after you close the page.",
+    "Run agents in the cloud through smai.ai's Agent Gateway. Tasks keep running even after you close the page.",
   'sandboxStorage.ephemeral': 'Temporary working directory',
   'sandboxStorage.ephemeralDesc': 'Cleaned up when the sandbox is recycled',
   'sandboxStorage.persistentUpsell': 'Persistent working directory',
