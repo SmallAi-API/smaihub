@@ -39,10 +39,10 @@ const createMockState = (overrides: Partial<State> = {}): State => ({
   displayMessages: [],
   hooks: {},
   isLoadingEarlierMessages: false,
-  messageReplica: { entries: {} } as State['messageReplica'],
   messagesInit: false,
   operationState: DEFAULT_OPERATION_STATE,
   skipFetch: false,
+  transcriptSource: 'chat',
   ...overrides,
 });
 

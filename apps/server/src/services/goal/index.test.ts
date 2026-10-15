@@ -2101,7 +2101,7 @@ describe('GoalService', () => {
     const graph = await service.create({ requirement: '迁移 12 个 store', title: 'Migrate' });
     await service.tick(graph.goal.id);
 
-    const task = (await service.graph(graph.goal.id)).nodes.find((n) => n.kind === 'task');
+    const task = (await service.graph(graph.goal.id)).nodes.find((n) => n.kind === 'task')!;
     const [created] = await serverDB
       .select()
       .from(goalEvents)

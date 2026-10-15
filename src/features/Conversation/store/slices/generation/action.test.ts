@@ -298,7 +298,6 @@ describe('Generation Actions', () => {
       vi.mocked(useChatStore.getState).mockReturnValue({
         dbMessagesMap: {},
         messagesMap: {},
-        dbMessagesMap: {},
         operations: {},
         operationsByMessage: {},
         topicDataMap: {},
@@ -760,7 +759,6 @@ describe('Generation Actions', () => {
         resolveDelete = resolve;
       });
       const chatState: any = {
-        dbMessagesMap: {},
         dbMessagesMap: { [oldContextKey]: [oldUserMessage, oldAssistantMessage] },
         messagesMap: { [oldContextKey]: [oldUserMessage, oldAssistantMessage] },
         operations: {},
@@ -1440,7 +1438,6 @@ describe('Generation Actions', () => {
       vi.mocked(useChatStore.getState).mockReturnValue({
         dbMessagesMap: {},
         messagesMap: {},
-        dbMessagesMap: {},
         operations: {
           'stale-op': {
             id: 'stale-op',

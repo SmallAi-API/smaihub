@@ -28,11 +28,6 @@ export const COMPUTER_USE_HELPER_SIGN_IGNORE =
   '/Contents/Library/Helpers/LobeHub Computer Use\\.app(/|$)';
 
 const EXACT_VERSION = /^\d+\.\d+\.\d+$/;
-const STAPLER_RETRY_DELAYS_MS = [5000, 10_000];
-// Error 68 alone can also indicate a bad ticket. Retry only explicit transient
-// URL loading errors (timeout, DNS, connection failure/loss, or offline).
-const TRANSIENT_APPLE_NETWORK_ERROR =
-  /(?:NSURLErrorDomain|kCFErrorDomainCFNetwork)\s+Code=-(?:1001|1003|1004|1005|1006|1009)\b/;
 
 /**
  * The helper release shares its version with AUV, so the pinned `@auv-js/cli`
@@ -57,16 +52,42 @@ export const resolveComputerUseHelperAsset = ({ arch, version }) => {
   return { checksumUrl: `${url}.sha256`, name, url };
 };
 
-const run = (execute, command, args, options = {}) => {
-  const result = execute(command, args, { encoding: 'utf8', ...options });
+const run = (execute, command, args) => {
+  const result = execute(command, args, { encoding: 'utf8' });
   if (result.error) throw result.error;
   if (result.status !== 0) {
     throw new Error(
-      `${command} ${args.join(' ')} exited with ${result.status}: ${[result.stderr, result.stdout].filter(Boolean).join('\n').trim()}`,
-      { cause: result },
+      `${command} ${args.join(' ')} exited with ${result.status}: ${(result.stderr || result.stdout || '').trim()}`,
     );
   }
   return result;
+};
+
+const STAPLER_VALIDATE_RETRY_DELAYS_MS = [5000, 15_000];
+
+const sleepSync = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+
+/**
+ * `stapler validate` looks the ticket up in Apple's CloudKit service, and CI
+ * runners intermittently lose that connection (exit 68, NSURLErrorDomain).
+ * Retry before failing the build; a missing or invalid ticket fails every try.
+ */
+const validateStapledTicket = (execute, appPath, { logger, sleep }) => {
+  const attempts = STAPLER_VALIDATE_RETRY_DELAYS_MS.length + 1;
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return run(execute, 'xcrun', ['stapler', 'validate', appPath]);
+    } catch (error) {
+      const delay = STAPLER_VALIDATE_RETRY_DELAYS_MS[attempt];
+      if (delay === undefined) throw error;
+      // Logged so a build that only passes on retry stays visible in CI output.
+      const reason = String(error.message).split('\n')[0].slice(0, 200);
+      logger.warn(
+        `⚠️ stapler validate failed (attempt ${attempt + 1}/${attempts}), retrying in ${delay / 1000}s: ${reason}`,
+      );
+      sleep(delay);
+    }
+  }
 };
 
 const sha256 = (buffer) => createHash('sha256').update(buffer).digest('hex');
@@ -77,36 +98,14 @@ const download = async (fetchImpl, url) => {
   return Buffer.from(await response.arrayBuffer());
 };
 
-const validateStapledTicket = async (appPath, { execute, logger }) => {
-  for (let attempt = 0; ; attempt++) {
-    try {
-      run(execute, 'xcrun', ['stapler', 'validate', appPath], { timeout: 60_000 });
-      return;
-    } catch (error) {
-      if (
-        attempt >= STAPLER_RETRY_DELAYS_MS.length ||
-        error.cause?.status !== 68 ||
-        !TRANSIENT_APPLE_NETWORK_ERROR.test(error.message)
-      ) {
-        throw error;
-      }
-      const delay = STAPLER_RETRY_DELAYS_MS[attempt];
-      logger.warn(
-        `Computer Use helper stapler validation hit a transient Apple network error (attempt ${attempt + 1}/3); retrying in ${delay / 1000}s.\n${error.message}`,
-      );
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-  }
-};
-
 /**
  * Checks that an unpacked helper is the notarized LobeHub build of `version`.
  * Run before embedding and again after LobeHub.app is signed, which proves
  * electron-builder left the helper's signature and ticket alone.
  */
-export const verifyComputerUseHelper = async (
+export const verifyComputerUseHelper = (
   appPath,
-  { execute = spawnSync, logger = console, version } = {},
+  { execute = spawnSync, logger = console, sleep = sleepSync, version } = {},
 ) => {
   run(execute, 'codesign', ['--verify', '--strict', '--deep', '--verbose=2', appPath]);
 
@@ -120,7 +119,7 @@ export const verifyComputerUseHelper = async (
     );
   }
 
-  await validateStapledTicket(appPath, { execute, logger });
+  validateStapledTicket(execute, appPath, { logger, sleep });
 
   if (version) {
     const infoPlist = path.join(appPath, 'Contents', 'Info.plist');
@@ -190,7 +189,7 @@ export const embedComputerUseHelper = async ({
   try {
     run(execute, 'ditto', ['-x', '-k', zipPath, staging]);
     const stagedApp = path.join(staging, COMPUTER_USE_HELPER_APP_NAME);
-    await verifyComputerUseHelper(stagedApp, { execute, logger, version });
+    verifyComputerUseHelper(stagedApp, { execute, version });
 
     const destination = path.join(appPath, COMPUTER_USE_HELPER_BUNDLE_PATH);
     await fs.rm(destination, { force: true, recursive: true });

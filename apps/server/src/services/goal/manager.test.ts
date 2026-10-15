@@ -3090,7 +3090,7 @@ describe('planning the system planner hands to the main Agent', () => {
       .update(goals)
       .set({
         config: {
-          exploration: { maxExperiments: 2 },
+          exploration: { instruction: 'Explore alternatives', maxExperiments: 2 },
           manager: { maxTurns: 1 },
           managerState: { consumed: true, token: 'spent', turns: 1 } as GoalConfig['managerState'],
         },
