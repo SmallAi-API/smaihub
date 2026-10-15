@@ -72,6 +72,43 @@ afterEach(async () => {
 });
 
 describe('githubSetup', () => {
+  it('keeps the public origin after binding behind a Docker proxy', async () => {
+    mocks.consumeState.mockResolvedValue({ lobeUserId: userId, ts: 1 });
+
+    const res = await app.request('https://0.0.0.0:3210/setup?installation_id=777&state=s');
+    expect(res.status).toBe(302);
+    expect(res.headers.get('location')).toBe(
+      '/settings/integrations/github?account=arvinxx&installed=ok',
+    );
+    const target = new URL(res.headers.get('location')!, 'https://public.example.com');
+    expect(target.origin).toBe('https://public.example.com');
+    expect(
+      await ScmInstallationModel.findByProviderInstallationId(serverDB, 'github', '777'),
+    ).toMatchObject({ userId });
+  });
+
+  it('keeps workspace return paths, query parameters and fragments on callback errors', async () => {
+    mocks.consumeState.mockResolvedValue({
+      lobeUserId: userId,
+      returnTo: '/acme/settings/integrations/github?tab=connections#accounts',
+      ts: 1,
+    });
+    mocks.fetchInstallation.mockRejectedValue(new Error('installation unavailable'));
+
+    const res = await app.request('https://0.0.0.0:3210/setup?installation_id=777&state=s');
+    expect(res.headers.get('location')).toBe(
+      '/acme/settings/integrations/github?tab=connections&error=installation_fetch_failed#accounts',
+    );
+  });
+
+  it('keeps the sign-in bounce on the public origin behind a Docker proxy', async () => {
+    const res = await app.request('https://0.0.0.0:3210/setup?installation_id=777');
+    expect(res.status).toBe(302);
+    expect(res.headers.get('location')).toBe(
+      '/signin?callbackUrl=%2Fsetup%3Finstallation_id%3D777',
+    );
+  });
+
   it('bounces to sign-in when neither state nor session identifies a user', async () => {
     const res = await setup({ code: 'c', installation_id: '777' });
     expect(res.status).toBe(302);
@@ -83,7 +120,7 @@ describe('githubSetup', () => {
 
     const res = await setup({ code: 'c', installation_id: '777', state: 's' });
     expect(res.status).toBe(302);
-    const location = new URL(res.headers.get('location')!);
+    const location = new URL(res.headers.get('location')!, 'http://localhost');
     expect(location.pathname).toBe('/settings/integrations/github');
     expect(Object.fromEntries(location.searchParams)).toEqual({
       account: 'arvinxx',
@@ -116,7 +153,7 @@ describe('githubSetup', () => {
       installation_id: '777',
       setup_action: 'install',
     });
-    const firstLocation = new URL(first.headers.get('location')!);
+    const firstLocation = new URL(first.headers.get('location')!, 'http://localhost');
     // The confirmation carries a single-use claim, never the raw id.
     expect(Object.fromEntries(firstLocation.searchParams)).toEqual({
       account: 'arvinxx',
@@ -135,9 +172,9 @@ describe('githubSetup', () => {
     // Someone else's installation: also pending, never refreshed into their row.
     await ScmInstallationModel.bind(serverDB, { ...snapshot, userId: 'scm-setup-other' });
     const theirs = await setup({ installation_id: '777', setup_action: 'update' });
-    expect(new URL(theirs.headers.get('location')!).searchParams.get('pending')).toBe(
-      'claim-token',
-    );
+    expect(
+      new URL(theirs.headers.get('location')!, 'http://localhost').searchParams.get('pending'),
+    ).toBe('claim-token');
     expect(
       (await ScmInstallationModel.findByProviderInstallationId(serverDB, 'github', '777'))
         ?.repositories,
@@ -147,7 +184,9 @@ describe('githubSetup', () => {
     await ScmInstallationModel.bind(serverDB, { ...snapshot, userId });
     mocks.fetchInstallation.mockResolvedValue({ ...snapshot, repositories: [] });
     const second = await setup({ installation_id: '777', setup_action: 'update' });
-    expect(new URL(second.headers.get('location')!).searchParams.get('installed')).toBe('updated');
+    expect(
+      new URL(second.headers.get('location')!, 'http://localhost').searchParams.get('installed'),
+    ).toBe('updated');
     const refreshed = await ScmInstallationModel.findByProviderInstallationId(
       serverDB,
       'github',
@@ -164,7 +203,9 @@ describe('githubSetup', () => {
     // exchanging it without credentials can only fail, so the install
     // proceeds and only the identity link is skipped.
     const res = await setup({ code: 'c', installation_id: '777', state: 's' });
-    expect(new URL(res.headers.get('location')!).searchParams.get('installed')).toBe('ok');
+    expect(
+      new URL(res.headers.get('location')!, 'http://localhost').searchParams.get('installed'),
+    ).toBe('ok');
     expect(mocks.exchangeCode).not.toHaveBeenCalled();
     expect(
       await ScmInstallationModel.findByProviderInstallationId(serverDB, 'github', '777'),
@@ -175,24 +216,33 @@ describe('githubSetup', () => {
     mocks.consumeState.mockResolvedValue({ lobeUserId: userId, ts: 1 });
 
     const res = await setup({ installation_id: '777', setup_action: 'install', state: 's' });
-    expect(new URL(res.headers.get('location')!).searchParams.get('installed')).toBe('ok');
+    expect(
+      new URL(res.headers.get('location')!, 'http://localhost').searchParams.get('installed'),
+    ).toBe('ok');
     expect(mocks.exchangeCode).not.toHaveBeenCalled();
     expect(
       await ScmInstallationModel.findByProviderInstallationId(serverDB, 'github', '777'),
     ).toMatchObject({ installedByExternalLogin: null, userId });
   });
 
-  it('only follows same-origin return destinations from the state', async () => {
+  it.each([
+    'https://evil.example/phish',
+    '//evil.example/phish',
+    '/\\evil.example/phish',
+    '/.//evil.example/phish',
+  ])('keeps return destination %s on the public origin', async (returnTo) => {
     mocks.consumeState.mockResolvedValue({
       lobeUserId: userId,
-      returnTo: 'https://evil.example/phish',
+      returnTo,
       ts: 1,
     });
 
     const res = await setup({ code: 'c', installation_id: '777', state: 's' });
-    const location = new URL(res.headers.get('location')!);
+    const location = new URL(res.headers.get('location')!, 'http://localhost');
     expect(location.origin).toBe('http://localhost');
-    expect(location.pathname).toBe('/settings/integrations/github');
+    expect(res.headers.get('location')!.startsWith('//')).toBe(false);
+    if (returnTo !== '/.//evil.example/phish')
+      expect(location.pathname).toBe('/settings/integrations/github');
   });
 
   it('refuses an installation the authorizing GitHub user cannot see', async () => {
@@ -202,9 +252,9 @@ describe('githubSetup', () => {
     // A valid state of one's own plus a guessed installation id would
     // otherwise move someone else's installation into this scope.
     const res = await setup({ code: 'c', installation_id: '777', state: 's' });
-    expect(new URL(res.headers.get('location')!).searchParams.get('error')).toBe(
-      'installation_not_yours',
-    );
+    expect(
+      new URL(res.headers.get('location')!, 'http://localhost').searchParams.get('error'),
+    ).toBe('installation_not_yours');
     expect(
       await ScmInstallationModel.findByProviderInstallationId(serverDB, 'github', '777'),
     ).toBeNull();
@@ -216,9 +266,9 @@ describe('githubSetup', () => {
     mocks.consumeState.mockResolvedValue({ lobeUserId: userId, ts: 1 });
 
     const res = await setup({ code: 'c', installation_id: '777', state: 's' });
-    expect(new URL(res.headers.get('location')!).searchParams.get('error')).toBe(
-      'installation_taken',
-    );
+    expect(
+      new URL(res.headers.get('location')!, 'http://localhost').searchParams.get('error'),
+    ).toBe('installation_taken');
     expect(
       (await ScmInstallationModel.findByProviderInstallationId(serverDB, 'github', '777'))?.userId,
     ).toBe('scm-setup-owner');
@@ -236,7 +286,9 @@ describe('githubSetup', () => {
     // not carry the stored token across; the row keeps its owner.
     mocks.consumeState.mockResolvedValue({ lobeUserId: userId, ts: 1 });
     const res = await setup({ code: 'c', installation_id: '778', state: 's' });
-    expect(new URL(res.headers.get('location')!).searchParams.get('error')).toBe('identity_taken');
+    expect(
+      new URL(res.headers.get('location')!, 'http://localhost').searchParams.get('error'),
+    ).toBe('identity_taken');
     expect(await ScmIdentityModel.findByExternalUser(serverDB, 'github', '42')).toMatchObject({
       userId: 'scm-setup-first',
     });
@@ -247,7 +299,9 @@ describe('githubSetup', () => {
     mocks.exchangeCode.mockRejectedValue(new Error('bad_verification_code'));
 
     const res = await setup({ code: 'expired', installation_id: '777', state: 's' });
-    expect(new URL(res.headers.get('location')!).searchParams.get('error')).toBe('exchange_failed');
+    expect(
+      new URL(res.headers.get('location')!, 'http://localhost').searchParams.get('error'),
+    ).toBe('exchange_failed');
     expect(
       await ScmInstallationModel.findByProviderInstallationId(serverDB, 'github', '777'),
     ).toBeNull();

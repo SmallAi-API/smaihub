@@ -33,7 +33,12 @@ const SETTINGS_PATH = '/settings/integrations/github';
 const redirectToSettings = (origin: string, params: Record<string, string>, returnTo?: string) => {
   const target = new URL(sanitizeReturnTo(returnTo) ?? SETTINGS_PATH, origin);
   for (const [key, value] of Object.entries(params)) target.searchParams.set(key, value);
-  return Response.redirect(target, 302);
+  const pathname = target.pathname.replace(/^\/+/, '/');
+  // The request origin can be Docker's internal host. Let the browser keep its public origin.
+  return new Response(null, {
+    headers: { location: `${pathname}${target.search}${target.hash}` },
+    status: 302,
+  });
 };
 
 /**
@@ -84,7 +89,7 @@ export const githubSetup = async (c: Context): Promise<Response> => {
     if (!userId) {
       // Bounce through sign-in and come back with the same query.
       const callbackUrl = encodeURIComponent(`${url.pathname}${url.search}`);
-      return Response.redirect(new URL(`/signin?callbackUrl=${callbackUrl}`, url.origin), 302);
+      return c.redirect(`/signin?callbackUrl=${callbackUrl}`, 302);
     }
 
     let snapshot: Awaited<ReturnType<typeof fetchGitHubInstallation>>;

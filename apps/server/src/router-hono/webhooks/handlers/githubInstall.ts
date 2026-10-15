@@ -39,7 +39,7 @@ export const githubInstall = async (c: Context): Promise<Response> => {
   }
   if (!session?.user?.id) {
     const callbackUrl = encodeURIComponent(`${GITHUB_INSTALL_PATH}${url.search}`);
-    return Response.redirect(new URL(`/signin?callbackUrl=${callbackUrl}`, url.origin), 302);
+    return c.redirect(`/signin?callbackUrl=${callbackUrl}`, 302);
   }
   const userId = session.user.id;
 

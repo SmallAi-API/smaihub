@@ -44,6 +44,21 @@ afterEach(async () => {
 });
 
 describe('githubInstall', () => {
+  it('keeps the sign-in bounce on the public origin behind a Docker proxy', async () => {
+    mocks.getSession.mockResolvedValue(null);
+    const res = await app.request(
+      'https://0.0.0.0:3210/install?returnTo=%2Facme%2Fsettings%2Fintegrations%2Fgithub&workspaceId=ws',
+    );
+    expect(res.status).toBe(302);
+    const location = res.headers.get('location')!;
+    expect(location.startsWith('/signin?')).toBe(true);
+    const target = new URL(location, 'https://public.example.com');
+    expect(target.origin).toBe('https://public.example.com');
+    expect(target.searchParams.get('callbackUrl')).toBe(
+      '/api/webhooks/github/install?returnTo=%2Facme%2Fsettings%2Fintegrations%2Fgithub&workspaceId=ws',
+    );
+  });
+
   it('issues a state for the session user and sends them to GitHub', async () => {
     const res = await install({ returnTo: '/settings/integrations/github' });
     expect(res.status).toBe(302);
