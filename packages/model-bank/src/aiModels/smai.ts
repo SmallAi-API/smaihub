@@ -2419,7 +2419,6 @@ export const smaiImageModels: AIImageModelCard[] = [
     description:
       "OpenAI's next-generation multimodal image model with native reasoning, up to 4K resolution, near-perfect text rendering, and high-fidelity multilingual support.",
     displayName: 'GPT Image 2',
-    enabled: true,
     id: 'gpt-image-2',
     parameters: gptImage2Schema,
     releasedAt: '2026-04-22',
@@ -2429,7 +2428,6 @@ export const smaiImageModels: AIImageModelCard[] = [
     description:
       'Gemini 3.1 Flash Image（Nano Banana Pro 2）是 Google 在2026年2月份推出的图像生成模型。',
     displayName: 'Nano Banana 2',
-    enabled: true,
     id: 'gemini-3.1-flash-image-preview:image',
     parameters: nanoBanana2Parameters,
     releasedAt: '2026-02-27',
@@ -2440,7 +2438,6 @@ export const smaiImageModels: AIImageModelCard[] = [
     description:
       'Gemini 3 Pro Image（Nano Banana Pro）是 Google 的图像生成模型，同时支持多模态对话。',
     displayName: '🍌 Nano Banana Pro',
-    enabled: true,
     id: 'gemini-3-pro-image-preview:image',
     parameters: nanoBananaProParameters,
     releasedAt: '2025-11-20',
@@ -2449,7 +2446,6 @@ export const smaiImageModels: AIImageModelCard[] = [
   {
     description: 'ChatGPT Image 1.5 原生多模态图片生成模型',
     displayName: 'GPT Image 1.5',
-    enabled: true,
     id: 'gpt-image-1.5',
     parameters: gptImage1ParamsSchema,
     releasedAt: '2025-12-17',
@@ -2458,7 +2454,6 @@ export const smaiImageModels: AIImageModelCard[] = [
   {
     description: 'ChatGPT 原生多模态图片生成模型',
     displayName: 'GPT Image 1',
-    enabled: true,
     id: 'gpt-image-1',
     parameters: gptImage1ParamsSchema,
     releasedAt: '2025-5-17',
@@ -2467,7 +2462,6 @@ export const smaiImageModels: AIImageModelCard[] = [
   {
     description: '成本更低的 GPT Image 1 版本，原生支持文本与图像输入并生成图像输出。',
     displayName: 'GPT Image 1 Mini',
-    enabled: true,
     id: 'gpt-image-1-mini',
     parameters: gptImage1ParamsSchema,
     releasedAt: '2025-10-06',
