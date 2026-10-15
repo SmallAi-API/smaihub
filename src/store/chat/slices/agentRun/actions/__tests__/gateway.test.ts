@@ -884,6 +884,7 @@ describe('GatewayActionImpl', () => {
       const onOperationCancel = vi.fn();
       const replaceMessages = vi.fn();
       const refreshTopic = vi.fn().mockResolvedValue(undefined);
+      const refreshTopicDetail = vi.fn().mockResolvedValue(undefined);
       const startOperation = vi.fn(() => ({ operationId: 'gw-op-1' }));
       const switchTopic = vi.fn();
       const updateTopicStatus = vi.fn();
@@ -895,25 +896,22 @@ describe('GatewayActionImpl', () => {
         }
       });
 
-      const get = vi.fn<() => ChatStore>();
-      get.mockImplementation(
-        () =>
-          ({
-            ...state,
-            associateMessageWithOperation,
-            connectToGateway,
-            internal_dispatchTopic: internalDispatchTopic,
-            internal_replaceTopicId: internalReplaceTopicId,
-            moveQueuedMessages,
-            moveVoiceMessages,
-            onOperationCancel,
-            replaceMessages,
-            refreshTopic,
-            startOperation,
-            switchTopic,
-            updateTopicStatus,
-          }) as unknown as ChatStore,
-      );
+      const get = vi.fn(() => ({
+        ...state,
+        associateMessageWithOperation,
+        connectToGateway,
+        internal_dispatchTopic: internalDispatchTopic,
+        internal_replaceTopicId: internalReplaceTopicId,
+        moveQueuedMessages,
+        moveVoiceMessages,
+        onOperationCancel,
+        replaceMessages,
+        refreshTopic,
+        refreshTopicDetail,
+        startOperation,
+        switchTopic,
+        updateTopicStatus,
+      })) as any;
 
       // Set up window.global_serverConfigStore
       (globalThis as any).window = {
@@ -940,6 +938,7 @@ describe('GatewayActionImpl', () => {
         onOperationCancel,
         replaceMessages,
         refreshTopic,
+        refreshTopicDetail,
         set,
         startOperation,
         state,
@@ -1020,6 +1019,44 @@ describe('GatewayActionImpl', () => {
           type: 'execServerAgentRuntime',
         }),
       );
+    });
+
+    it('refreshes the Topic detail key after heterogeneous follow-up dispatch', async () => {
+      const { action, state, connectToGateway, refreshTopicDetail } = createExecuteTestAction();
+      state.topicDetailMap = {
+        'target-topic': {
+          id: 'target-topic',
+          metadata: {
+            heteroRuntimeConfig: { fields: [], operationId: 'old-operation' },
+          },
+        },
+      };
+      vi.mocked(aiAgentService.execAgentTask).mockResolvedValue({
+        agentId: 'target-agent',
+        assistantMessageId: 'assistant-1',
+        autoStarted: true,
+        createdAt: new Date().toISOString(),
+        heteroType: 'codex',
+        message: 'ok',
+        operationId: 'new-operation',
+        status: 'created',
+        success: true,
+        timestamp: new Date().toISOString(),
+        token: 'token',
+        topicId: 'target-topic',
+        userMessageId: 'user-1',
+      });
+      await action.executeGatewayAgent({
+        context: {
+          agentId: 'target-agent',
+          isolatedTopic: true,
+          scope: 'main',
+          topicId: 'target-topic',
+        },
+        message: 'Continue after changing Agent speed',
+      });
+      expect(refreshTopicDetail).toHaveBeenCalledWith('target-topic');
+      expect(connectToGateway).toHaveBeenCalled();
     });
 
     const precreatedInterventionResult: ExecAgentResult = {
@@ -3066,6 +3103,7 @@ describe('GatewayActionImpl', () => {
           moveQueuedMessages: vi.fn(),
           moveVoiceMessages: vi.fn(),
           onOperationCancel: vi.fn(),
+          refreshTopicDetail: vi.fn().mockResolvedValue(undefined),
           startOperation,
           updateTopicStatus: vi.fn(),
         })) as any;
