@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { OFFICIAL_SITE } from '@/const/url';
+import { useFeatureGatedTools } from '@/hooks/useFeatureGatedTools';
 import { useToolStore } from '@/store/tool';
 import { builtinToolSelectors } from '@/store/tool/selectors';
 
@@ -29,7 +30,7 @@ export const BuiltinDetailProvider = ({ children, identifier }: BuiltinDetailPro
   );
 
   // Get the full builtin tool data to access API definitions
-  const builtinToolsData = useToolStore((s) => s.builtinTools, isEqual);
+  const builtinToolsData = useFeatureGatedTools((s) => s.builtinTools);
   const toolData = useMemo(
     () => builtinToolsData.find((tool) => tool.identifier === identifier),
     [identifier, builtinToolsData],

@@ -6,6 +6,10 @@
  * the store does not pull every tool runtime into the initial SPA graph.
  */
 
+import { isToolEnabledByFeatureFlags } from '@lobechat/builtin-tools/featureGates';
+
+import { getServerConfigStoreState } from '@/store/serverConfig';
+
 import type { BuiltinToolContext, BuiltinToolResult, IBuiltinToolExecutor } from '../types';
 import { stashBuiltinToolWorkIntent } from './workRegistration';
 
@@ -75,6 +79,15 @@ export const invokeExecutor = async (
   params: any,
   ctx: BuiltinToolContext,
 ): Promise<BuiltinToolResult> => {
+  if (!isToolEnabledByFeatureFlags(identifier, getServerConfigStoreState()?.featureFlags)) {
+    const message = `The tool ${identifier} is temporarily unavailable. Do not retry this tool.`;
+    return {
+      content: message,
+      error: { message, type: 'ToolFeatureDisabled' },
+      success: false,
+    };
+  }
+
   await registerBuiltinToolExecutors();
 
   const executor = executorRegistry.get(identifier);

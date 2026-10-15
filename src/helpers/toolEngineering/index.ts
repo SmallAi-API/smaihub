@@ -120,7 +120,10 @@ export const createToolsEngine = (config: ToolsEngineConfig = {}): ToolsEngine =
       connectorPermissions,
       // Disabled identifiers leave the pool outright: explicit activation
       // bypasses the enable rules, so a rule-only gate would not hold.
-      excludedIdentifiers: disabledPluginIds,
+      excludedIdentifiers: [
+        ...disabledPluginIds,
+        ...getFeatureDisabledToolIds(getServerConfigStoreState()?.featureFlags),
+      ],
       manifestContext,
     },
   );

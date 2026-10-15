@@ -18,6 +18,7 @@ import { memo, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import AsyncError from '@/components/AsyncError';
+import { useFeatureGatedTools } from '@/hooks/useFeatureGatedTools';
 import { useFetchInstalledPlugins } from '@/hooks/useFetchInstalledPlugins';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useToolStore } from '@/store/tool';
@@ -105,7 +106,7 @@ const SkillList = memo<SkillListProps>(
     const agentBoundConnectors = useToolStore(connectorSelectors.agentBoundConnectors, isEqual);
     const isAgentBoundInit = useToolStore((s) => s.isAgentBoundInit);
     const fetchAgentBoundConnectors = useToolStore((s) => s.fetchAgentBoundConnectors);
-    const allBuiltinTools = useToolStore((s) => s.builtinTools, isEqual);
+    const allBuiltinTools = useFeatureGatedTools((s) => s.builtinTools);
     const uninstalledBuiltinTools = useToolStore(
       builtinToolSelectors.uninstalledBuiltinTools,
       isEqual,

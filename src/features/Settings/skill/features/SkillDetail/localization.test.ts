@@ -14,8 +14,8 @@ const createTranslator = (translations: Record<string, string> = {}) =>
 
 describe('SkillDetail localization helpers', () => {
   it.each([
-    [enUS, 'smai.ai Computer Use'],
-    [zhCN, 'smai.ai 使用电脑'],
+    [enUS, 'Computer Use'],
+    [zhCN, '使用电脑'],
   ] as const)(
     'localizes the Computer Use skill from shipped translations',
     (translations, title) => {

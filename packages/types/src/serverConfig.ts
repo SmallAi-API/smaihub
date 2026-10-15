@@ -32,6 +32,7 @@ export type IFeatureFlagsState = {
    * and the widget / dashboard APIs answer FORBIDDEN.
    */
   enableDashboard: boolean | undefined;
+  enableVideoGenerationSkill: boolean | undefined;
   enableDevDock: boolean | undefined;
   /**
    * Rollout gate for the multiplexed gateway socket. Necessary but not

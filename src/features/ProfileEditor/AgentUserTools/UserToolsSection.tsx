@@ -12,10 +12,10 @@ import type { AgentToolProps } from '@/features/ProfileEditor/AgentTool';
 import SharedAgentTool from '@/features/ProfileEditor/AgentTool';
 import PluginTag from '@/features/ProfileEditor/PluginTag';
 import { getVisibleProfileToolIds } from '@/features/ProfileEditor/profileToolVisibility';
+import { useNonProfileConfigurableBuiltinToolIds } from '@/features/ProfileEditor/useProfileBuiltinTools';
 import { useAgentStore } from '@/store/agent';
 import { agentSelectors } from '@/store/agent/selectors';
 import { useToolStore } from '@/store/tool';
-import { builtinToolSelectors } from '@/store/tool/selectors';
 import { connectorSelectors } from '@/store/tool/slices/connector';
 
 interface Props extends AgentToolProps {
@@ -57,12 +57,8 @@ const UserToolsSection = memo<Props>(
       () => new Set(agentConnectors.map((c) => c.identifier)),
       [agentConnectors],
     );
-    const nonProfileConfigurableBuiltinToolIds = useToolStore(
-      builtinToolSelectors.nonProfileConfigurableBuiltinToolIds({
-        isManualMode: isManualSkillMode,
-      }),
-      isEqual,
-    );
+    const nonProfileConfigurableBuiltinToolIds =
+      useNonProfileConfigurableBuiltinToolIds(isManualSkillMode);
     const nonProfileConfigurableBuiltinToolIdentifiers = useMemo(
       () => new Set(nonProfileConfigurableBuiltinToolIds),
       [nonProfileConfigurableBuiltinToolIds],

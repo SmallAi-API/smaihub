@@ -6,6 +6,7 @@ import { memo, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
 import NavHeader from '@/features/NavHeader';
+import { useFeatureGatedTools } from '@/hooks/useFeatureGatedTools';
 import { useToolStore } from '@/store/tool';
 import { agentSkillsSelectors, builtinToolSelectors } from '@/store/tool/selectors';
 
@@ -45,7 +46,7 @@ export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
   const querySkillIdentifier = searchParams.get('skill');
   const [selected, setSelected] = useState<SelectedTool | null>(null);
 
-  const builtinTools = useToolStore((s) => s.builtinTools, isEqual);
+  const builtinTools = useFeatureGatedTools((s) => s.builtinTools);
   const builtinSkills = useToolStore((s) => s.builtinSkills, isEqual);
   const marketAgentSkills = useToolStore(agentSkillsSelectors.getMarketAgentSkills, isEqual);
   const userAgentSkills = useToolStore(agentSkillsSelectors.getUserAgentSkills, isEqual);
@@ -55,7 +56,15 @@ export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
   );
 
   useEffect(() => {
-    if (selected) return;
+    if (selected) {
+      if (
+        selected.type === 'builtin' &&
+        !builtinTools.some((t) => t.identifier === selected.identifier)
+      ) {
+        setSelected(null);
+      }
+      return;
+    }
     if (viewMode === 'skill' && querySkillIdentifier) return;
     if (viewMode === 'connector') {
       const firstTool = builtinTools.find(
@@ -96,15 +105,17 @@ export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
           onSelect={handleSelect}
         />
 
-        {selected && (
-          <div className={styles.detail}>
-            <SkillDetail
-              identifier={selected.identifier}
-              type={selected.type}
-              onDelete={() => setSelected(null)}
-            />
-          </div>
-        )}
+        {selected &&
+          (selected.type !== 'builtin' ||
+            builtinTools.some((t) => t.identifier === selected.identifier)) && (
+            <div className={styles.detail}>
+              <SkillDetail
+                identifier={selected.identifier}
+                type={selected.type}
+                onDelete={() => setSelected(null)}
+              />
+            </div>
+          )}
       </div>
     </>
   );

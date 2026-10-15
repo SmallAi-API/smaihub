@@ -31,7 +31,6 @@ const MarketAgentSkillPopoverContent = memo<MarketAgentSkillPopoverContentProps>
     return (
       <ToolItemDetailPopover
         description={data?.description || description || undefined}
-        identifier={identifier}
         sourceLabel={sourceLabel}
         title={data?.name || name}
         icon={

@@ -12,6 +12,7 @@ import {
   createBuiltinSkillDetailModal,
   createLobehubSkillDetailModal,
 } from '@/features/SkillStore/SkillDetail';
+import { useFeatureGatedTools } from '@/hooks/useFeatureGatedTools';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useToolStore } from '@/store/tool';
 import { type ToolStoreState } from '@/store/tool/initialState';
@@ -43,7 +44,7 @@ export const LobeHubList = memo<LobeHubListProps>(({ keywords }) => {
   const { t } = useTranslation('setting');
   const isLobehubSkillEnabled = useServerConfigStore(serverConfigSelectors.enableLobehubSkill);
   const allLobehubSkillServers = useToolStore(lobehubSkillStoreSelectors.getServers, isEqual);
-  const builtinTools = useToolStore(getBuiltinToolsOnly, isEqual);
+  const builtinTools = useFeatureGatedTools(getBuiltinToolsOnly);
   const builtinSkills = useToolStore((s) => s.builtinSkills, isEqual);
 
   const useFetchLobehubSkillConnections = useToolStore((s) => s.useFetchLobehubSkillConnections);

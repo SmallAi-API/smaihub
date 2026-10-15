@@ -4,12 +4,14 @@ import {
   manualModeExcludeToolIds,
   runtimeManagedToolIds,
 } from '@lobechat/builtin-tools';
-import type { BuiltinSkillManifest, LobeToolMeta } from '@lobechat/types';
+import { isToolEnabledByFeatureFlags } from '@lobechat/builtin-tools/featureGates';
+import type { BuiltinSkillManifest, IFeatureFlagsState, LobeToolMeta } from '@lobechat/types';
 
 import {
   isBuiltinSkillAvailableInCurrentEnv,
   isBuiltinToolAvailableInCurrentEnv,
 } from '@/helpers/toolAvailability';
+import { getServerConfigStoreState } from '@/store/serverConfig';
 
 import type { ToolStoreState } from '../../initialState';
 import { agentSkillsSelectors } from '../agentSkills/selectors';
@@ -78,6 +80,7 @@ const ALWAYS_ON_TOOL_IDS = new Set(alwaysOnToolIds);
 const MANUAL_MODE_EXCLUDE_TOOL_IDS = new Set(manualModeExcludeToolIds);
 
 interface ProfileConfigurableToolOptions {
+  featureFlags?: Partial<IFeatureFlagsState>;
   isManualMode: boolean;
 }
 
@@ -90,8 +93,15 @@ interface ProfileConfigurableToolOptions {
  */
 const isProfileConfigurableBuiltinTool = (
   tool: ToolStoreState['builtinTools'][number],
-  { isManualMode }: ProfileConfigurableToolOptions,
+  { featureFlags, isManualMode }: ProfileConfigurableToolOptions,
 ): boolean => {
+  if (
+    !isToolEnabledByFeatureFlags(
+      tool.identifier,
+      featureFlags ?? getServerConfigStoreState()?.featureFlags,
+    )
+  )
+    return false;
   if (tool.discoverable === false) return false;
   if (RUNTIME_MANAGED_TOOL_IDS.has(tool.identifier)) return false;
 
@@ -236,6 +246,8 @@ const discoverableMetaList = (s: ToolStoreState): LobeToolMeta[] => {
     .filter((item) => {
       // Exclude pure infrastructure tools (never user-facing)
       if (item.discoverable === false) return false;
+      if (!isToolEnabledByFeatureFlags(item.identifier, getServerConfigStoreState()?.featureFlags))
+        return false;
       if (uninstalledBuiltinTools.includes(item.identifier)) return false;
       return true;
     })

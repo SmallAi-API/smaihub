@@ -213,6 +213,19 @@ describe('mapFeatureFlagsEnvToState', () => {
     expect(webOnly.enableGatewayMuxMobile).toBeFalsy();
   });
 
+  it('keeps the video generation skill off by default and supports rollout', () => {
+    expect(DEFAULT_FEATURE_FLAGS.video_generation_skill).toBe(false);
+    expect(mapFeatureFlagsEnvToState(DEFAULT_FEATURE_FLAGS).enableVideoGenerationSkill).toBe(false);
+    expect(
+      mapFeatureFlagsEnvToState({ video_generation_skill: true }).enableVideoGenerationSkill,
+    ).toBe(true);
+    const config = { video_generation_skill: ['user-123'] };
+    expect(mapFeatureFlagsEnvToState(config, 'user-123').enableVideoGenerationSkill).toBe(true);
+    expect(mapFeatureFlagsEnvToState(config, 'user-456').enableVideoGenerationSkill).toBe(false);
+    expect(mapFeatureFlagsEnvToState(config).enableVideoGenerationSkill).toBe(false);
+    expect(FeatureFlagsSchema.parse(config)).toEqual(config);
+  });
+
   it('should keep dashboards off by default and enable them per user or globally', () => {
     expect(DEFAULT_FEATURE_FLAGS.dashboard).toBe(false);
     expect(mapFeatureFlagsEnvToState(DEFAULT_FEATURE_FLAGS, 'user-1').enableDashboard).toBe(false);

@@ -3705,13 +3705,13 @@ When I am ___, I need ___
   'tools.builtins.install': 'Install',
   'tools.builtins.installed': 'Installed',
   'tools.builtins.lobe-artifacts.description':
-    'smai.ai: Generate and preview interactive interfaces, charts, and visualizations.',
+    'Generate and preview interactive interfaces, charts, and visualizations.',
   'tools.builtins.lobe-artifacts.readme':
     'Generate and live-preview interactive UI components, data visualizations, charts, SVG graphics, and web applications. Create rich visual content that users can interact with directly.',
-  'tools.builtins.lobe-artifacts.title': 'smai.ai Artifacts',
-  'tools.builtins.lobe-calculator.title': 'smai.ai Calculator',
+  'tools.builtins.lobe-artifacts.title': 'Artifacts',
+  'tools.builtins.lobe-calculator.title': 'Calculator',
   'tools.builtins.lobe-calculator.description':
-    'smai.ai: Perform mathematical calculations, solve equations, and work with symbolic expressions.',
+    'Perform mathematical calculations, solve equations, and work with symbolic expressions.',
   'tools.builtins.lobe-calculator.readme':
     'Advanced mathematical calculator supporting basic arithmetic, algebraic equations, calculus operations, and symbolic math. Includes base conversion, equation solving, differentiation, integration, and more.',
   'tools.builtins.lobe-cloud-sandbox.description':
@@ -3729,10 +3729,10 @@ When I am ___, I need ___
     'Create and manage persistent documents within conversation topics. Save notes, reports, articles, and markdown content that stays accessible across sessions.',
   'tools.builtins.lobe-notebook.title': 'Notebook',
   'tools.builtins.lobe-user-memory.description':
-    'smai.ai: Save and recall preferences, activities, and experiences for future conversations.',
+    'Save and recall preferences, activities, and experiences for future conversations.',
   'tools.builtins.lobe-user-memory.readme':
     'Build a personalized knowledge base about you. Remember preferences, track activities and experiences, store identity information, and recall relevant context in future conversations.',
-  'tools.builtins.lobe-user-memory.title': 'smai.ai Memory',
+  'tools.builtins.lobe-user-memory.title': 'Memory',
   // ===== Additional Builtin Tools =====
   'tools.builtins.lobe-activator.description': 'Discover and activate tools and skills',
   'tools.builtins.lobe-activator.title': 'Tools & Skills Activator',
@@ -3740,13 +3740,13 @@ When I am ___, I need ___
     'Configure agent metadata, model settings, plugins, and the system prompt',
   'tools.builtins.lobe-agent-builder.title': 'Agent Builder',
   'tools.builtins.lobe-agent-documents.description':
-    'smai.ai: Create, read, edit, and organize agent documents, and load rules.',
-  'tools.builtins.lobe-agent-documents.title': 'smai.ai Documents',
-  'tools.builtins.lobe-agent-management.description': 'smai.ai: Manage and coordinate agents.',
-  'tools.builtins.lobe-agent-management.title': 'smai.ai Agent Management',
+    'Create, read, edit, and organize agent documents, and load rules.',
+  'tools.builtins.lobe-agent-documents.title': 'Documents',
+  'tools.builtins.lobe-agent-management.description': 'Manage and coordinate agents.',
+  'tools.builtins.lobe-agent-management.title': 'Agent Management',
   'tools.builtins.lobe-agent.description':
-    'smai.ai: Manage plans and todos, dispatch sub-agents, and analyze images, audio, and video.',
-  'tools.builtins.lobe-agent.title': 'smai.ai Agent',
+    'Manage plans and todos, dispatch sub-agents, and analyze images, audio, and video.',
+  'tools.builtins.lobe-agent.title': 'Agent',
   'tools.builtins.lobe-brief.description':
     'Report progress, deliver results, and request user decisions',
   'tools.builtins.lobe-brief.title': 'Brief Tools',
@@ -3763,10 +3763,10 @@ When I am ___, I need ___
     'Find, browse, and read your uploaded files, and search organized knowledge bases via semantic vector search',
   'tools.builtins.lobe-knowledge-base.title': 'Knowledge Base',
   'tools.builtins.lobe-message.description':
-    'smai.ai: Send, read, edit, and manage messages across messaging platforms.',
+    'Send, read, edit, and manage messages across messaging platforms.',
   'tools.builtins.lobe-message.readme':
     'Cross-platform messaging tool supporting Discord, Telegram, Slack, Google Chat, and IRC. Provides unified APIs for message operations, reactions, pins, threads, channel management, and platform-specific features like polls.',
-  'tools.builtins.lobe-message.title': 'smai.ai Messages',
+  'tools.builtins.lobe-message.title': 'Messages',
   'tools.builtins.lobe-page-agent.description':
     'Create, read, update, and delete nodes in XML-structured documents',
   'tools.builtins.lobe-page-agent.readme':
@@ -3778,10 +3778,10 @@ When I am ___, I need ___
     'Manage connections to your desktop devices. List online devices, activate a device for remote operations, and check connection status.',
   'tools.builtins.lobe-remote-device.title': 'Remote Device',
   'tools.builtins.lobe-skill-store.description':
-    'smai.ai: Browse and install skill packages to extend agent capabilities.',
-  'tools.builtins.lobe-skill-store.title': 'smai.ai Skill Store',
-  'tools.builtins.lobe-skills.description': 'smai.ai: Activate and run reusable skills.',
-  'tools.builtins.lobe-skills.title': 'smai.ai Skills',
+    'Browse and install skill packages to extend agent capabilities.',
+  'tools.builtins.lobe-skill-store.title': 'Store',
+  'tools.builtins.lobe-skills.description': 'Activate and run reusable skills.',
+  'tools.builtins.lobe-skills.title': 'Skills',
   'tools.builtins.lobe-dashboard.description':
     'Build live monitoring widgets from sandboxed scripts, preview them with real data and put them on dashboards',
   'tools.builtins.lobe-dashboard.title': 'Dashboards',
@@ -3797,15 +3797,15 @@ When I am ___, I need ___
     'Search the web for current information and crawl web pages to extract content. Supports multiple search engines, categories, and time ranges for comprehensive research.',
   'tools.builtins.lobe-web-browsing.title': 'Web Browsing',
   'tools.builtins.lobe-image-generation.description':
-    'smai.ai: Generate images from text or reference images with image models available on the platform.',
+    'Generate images from text or reference images with image models available on the platform.',
   'tools.builtins.lobe-image-generation.readme':
     'Opt-in image generation for models without native image output. Pin this tool to enable it in chat or agent mode; leave unpinned to avoid the tool schema cost.',
-  'tools.builtins.lobe-image-generation.title': 'smai.ai Image Generation',
+  'tools.builtins.lobe-image-generation.title': 'Image Generation',
   'tools.builtins.lobe-video-generation.description':
-    'smai.ai: Generate videos from text or reference images with video models available on the platform.',
+    'Generate videos from text or reference images with video models available on the platform.',
   'tools.builtins.lobe-video-generation.readme':
     'Opt-in video generation. Pin this tool to enable it in chat or agent mode; leave unpinned to avoid the tool schema cost.',
-  'tools.builtins.lobe-video-generation.title': 'smai.ai Video Generation',
+  'tools.builtins.lobe-video-generation.title': 'Video Generation',
   'tools.builtins.lobe-web-onboarding.description':
     'Drive the web onboarding flow with a controlled agent runtime',
   'tools.builtins.lobe-web-onboarding.title': 'Web Onboarding',
@@ -3813,15 +3813,15 @@ When I am ___, I need ___
   'tools.builtins.find-skills.description':
     'Helps users discover and install agent skills when they ask "how do I do X", "find a skill for X", or want to extend capabilities',
   'tools.builtins.find-skills.title': 'Find Skills',
-  'tools.builtins.lobe-computer-use.title': 'smai.ai Computer Use',
+  'tools.builtins.lobe-computer-use.title': 'Computer Use',
   'tools.builtins.lobe-computer-use.description':
-    'smai.ai: Operate applications, use the mouse and keyboard, and capture screenshots through a connected desktop device.',
+    'Operate applications, use the mouse and keyboard, and capture screenshots through a connected desktop device.',
   'tools.builtins.lobe-agent-browser.description':
-    'smai.ai: Automate browser navigation, form filling, screenshots, and app testing.',
-  'tools.builtins.lobe-agent-browser.title': 'smai.ai Agent Browser',
+    'Automate browser navigation, form filling, screenshots, and app testing.',
+  'tools.builtins.lobe-agent-browser.title': 'Agent Browser',
   'tools.builtins.lobehub.description':
-    'smai.ai: Manage platform agents, topics, messages, documents, knowledge bases, and generated content through the CLI.',
-  'tools.builtins.lobehub.title': 'smai.ai Platform',
+    'Manage platform agents, topics, messages, documents, knowledge bases, and generated content through the CLI.',
+  'tools.builtins.lobehub.title': 'Automation Management Platform',
   'tools.builtins.task.description':
     'Task management and execution — create, track, review, and complete tasks via CLI.',
   'tools.builtins.task.title': 'Task',

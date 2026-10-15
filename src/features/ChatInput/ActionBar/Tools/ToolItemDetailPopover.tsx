@@ -18,15 +18,6 @@ const styles = createStaticStyles(({ css }) => ({
     line-height: 1.5;
     color: ${cssVar.colorTextSecondary};
   `,
-  identifier: css`
-    overflow: hidden;
-
-    font-family: ${cssVar.fontFamilyCode};
-    font-size: 11px;
-    color: ${cssVar.colorTextTertiary};
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  `,
   title: css`
     font-size: 14px;
     font-weight: 600;
@@ -37,7 +28,6 @@ const styles = createStaticStyles(({ css }) => ({
 interface ToolItemDetailPopoverProps {
   description?: ReactNode;
   icon?: ReactNode;
-  identifier?: string;
   meta?: ReactNode;
   sourceLabel?: string;
   title: ReactNode;
@@ -46,11 +36,10 @@ interface ToolItemDetailPopoverProps {
 /**
  * Hover popover content for items rendered in the skill panel.
  * Mirrors the structure of ModelDetailPanel but kept lightweight: a header
- * row (icon + title + source tag), a description block, and an optional
- * identifier line for technical reference.
+ * row (icon + title + source tag) and a description block.
  */
 const ToolItemDetailPopover = memo<ToolItemDetailPopoverProps>(
-  ({ icon, title, description, sourceLabel, identifier, meta }) => {
+  ({ icon, title, description, sourceLabel, meta }) => {
     return (
       <Flexbox className={styles.container} gap={10}>
         <Flexbox horizontal align={'center'} gap={10}>
@@ -66,7 +55,6 @@ const ToolItemDetailPopover = memo<ToolItemDetailPopoverProps>(
                 </Tag>
               )}
             </Flexbox>
-            {identifier && <span className={styles.identifier}>{identifier}</span>}
           </Flexbox>
         </Flexbox>
         {description && <div className={styles.description}>{description}</div>}

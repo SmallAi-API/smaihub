@@ -45,6 +45,7 @@ import PluginTag from './PluginTag';
 import PopoverContent from './PopoverContent';
 import { getVisibleProfileToolIds } from './profileToolVisibility';
 import { resolveStalePluginCleanup, selectProfileToolCatalogsSynced } from './staleProfilePlugins';
+import { useProfileBuiltinTools } from './useProfileBuiltinTools';
 
 export interface AgentToolProps {
   /**
@@ -117,30 +118,8 @@ const AgentTool = memo<AgentToolProps>(
     const updateAgentConfigById = useAgentStore((s) => s.updateAgentConfigById);
     const installedPluginList = useToolStore(pluginSelectors.installedPluginMetaList, isEqual);
 
-    // Keep the broad list for stale-config validation. The picker uses the
-    // narrower profile list below so runtime-owned tools never become choices.
-    const knownBuiltinList = useToolStore(
-      useAllMetaList ? builtinToolSelectors.installedAllMetaList : builtinToolSelectors.metaList,
-      isEqual,
-    );
-    const profileBuiltinList = useToolStore(
-      useAllMetaList
-        ? builtinToolSelectors.installedProfileConfigurableMetaList({
-            isManualMode: isManualSkillMode,
-          })
-        : builtinToolSelectors.metaList,
-      isEqual,
-    );
-    const nonProfileConfigurableBuiltinToolIds = useToolStore(
-      builtinToolSelectors.nonProfileConfigurableBuiltinToolIds({
-        isManualMode: isManualSkillMode,
-      }),
-      isEqual,
-    );
-    const nonProfileConfigurableBuiltinToolIdentifiers = useMemo(
-      () => new Set(nonProfileConfigurableBuiltinToolIds),
-      [nonProfileConfigurableBuiltinToolIds],
-    );
+    const { knownBuiltinList, profileBuiltinList, nonProfileConfigurableBuiltinToolIdentifiers } =
+      useProfileBuiltinTools(isManualSkillMode, useAllMetaList);
 
     // Composio-related state
     const allComposioServers = useToolStore(composioStoreSelectors.getServers, isEqual);
@@ -336,7 +315,6 @@ const AgentTool = memo<AgentToolProps>(
               popoverContent: (
                 <ToolItemDetailPopover
                   icon={<ComposioSkillIcon icon={type.icon} label={type.label} size={36} />}
-                  identifier={type.identifier}
                   sourceLabel={type.author}
                   title={type.label}
                   description={t(`tools.composio.servers.${type.identifier}.description` as any, {
@@ -372,7 +350,6 @@ const AgentTool = memo<AgentToolProps>(
               popoverContent: (
                 <ToolItemDetailPopover
                   icon={<LobehubSkillIcon icon={provider.icon} label={provider.label} size={36} />}
-                  identifier={provider.id}
                   sourceLabel={provider.author}
                   title={provider.label}
                   description={t(`tools.lobehubSkill.providers.${provider.id}.description` as any, {
@@ -423,7 +400,6 @@ const AgentTool = memo<AgentToolProps>(
           ),
           popoverContent: (
             <ToolItemDetailPopover
-              identifier={skill.identifier}
               sourceLabel={t('skillStore.tabs.lobehub')}
               description={t(`tools.builtins.${skill.identifier}.description` as any, {
                 defaultValue: skill.description,
@@ -506,7 +482,6 @@ const AgentTool = memo<AgentToolProps>(
             <ToolItemDetailPopover
               description={skill.description}
               icon={<Icon icon={SkillsIcon} size={36} />}
-              identifier={skill.identifier}
               sourceLabel={t('skillStore.tabs.custom')}
               title={skill.name}
             />
@@ -544,7 +519,6 @@ const AgentTool = memo<AgentToolProps>(
           ),
           popoverContent: (
             <ToolItemDetailPopover
-              identifier={item.identifier}
               sourceLabel={t('skillStore.tabs.lobehub')}
               description={t(`tools.builtins.${item.identifier}.description` as any, {
                 defaultValue: item.meta?.description || '',
@@ -612,7 +586,6 @@ const AgentTool = memo<AgentToolProps>(
           popoverContent: (
             <ToolItemDetailPopover
               description={item.description}
-              identifier={item.identifier}
               sourceLabel={isCustom ? t('skillStore.tabs.custom') : t('skillStore.tabs.community')}
               title={item.title}
               icon={
@@ -675,7 +648,6 @@ const AgentTool = memo<AgentToolProps>(
               <ToolItemDetailPopover
                 description={connector.mcpServerUrl ?? ''}
                 icon={<Icon icon={McpIcon} size={36} />}
-                identifier={connector.identifier}
                 sourceLabel={t('skillStore.tabs.custom')}
                 title={connector.name || connector.identifier}
               />

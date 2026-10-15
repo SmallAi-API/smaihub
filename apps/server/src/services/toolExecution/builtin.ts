@@ -1,4 +1,8 @@
 import { builtinTools } from '@lobechat/builtin-tools';
+import {
+  FEATURE_GATED_TOOLS,
+  isToolEnabledByFeatureFlags,
+} from '@lobechat/builtin-tools/featureGates';
 import { COMPOSIO_APP_TYPES } from '@lobechat/const';
 import { type LobeChatDatabase } from '@lobechat/database';
 import {
@@ -10,6 +14,7 @@ import { detectTruncatedJSON, safeParseJSON } from '@lobechat/utils';
 import debug from 'debug';
 
 import { UserModel } from '@/database/models/user';
+import { getServerFeatureFlagsStateFromRuntimeConfig } from '@/server/featureFlags';
 import { isShareBlockedBuiltinDispatch } from '@/server/services/aiAgent/shareGate';
 import { ComposioService } from '@/server/services/composio';
 import { MarketService } from '@/server/services/market';
@@ -121,6 +126,21 @@ export class BuiltinToolsExecutor implements IToolExecutor {
     context: ToolExecutionContext,
   ): Promise<ToolExecutionResult> {
     const { identifier, apiName, arguments: argsStr, source } = payload;
+
+    // Recheck at dispatch: restored runs can carry a manifest assembled before a rollout closed.
+    if (FEATURE_GATED_TOOLS[identifier]) {
+      const flags = await getServerFeatureFlagsStateFromRuntimeConfig(this.userId).catch(
+        () => undefined,
+      );
+      if (!isToolEnabledByFeatureFlags(identifier, flags)) {
+        const message = `The tool ${identifier} is temporarily unavailable. Do not retry this tool.`;
+        return {
+          content: message,
+          error: { code: 'TOOL_FEATURE_DISABLED', kind: 'stop', message },
+          success: false,
+        };
+      }
+    }
 
     // An empty arguments string means the call reached us without any argument
     // deltas (not generated, or dropped by the provider / an OpenAI-compatible

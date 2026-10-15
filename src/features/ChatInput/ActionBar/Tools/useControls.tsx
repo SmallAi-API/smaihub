@@ -3,13 +3,12 @@ import { WebBrowsingManifest } from '@lobechat/builtin-tool-web-browsing';
 import { getConnectorCatalog, RECOMMENDED_SKILLS, RecommendedSkillType } from '@lobechat/const';
 import { type AgentPluginMode, getDisabledPluginIds } from '@lobechat/types';
 import type { ItemType } from '@lobehub/ui';
-import { Icon, Popover, SearchBar, stopPropagation, Tooltip } from '@lobehub/ui';
+import { Icon, Popover, SearchBar, stopPropagation } from '@lobehub/ui';
 import { Avatar, confirmModal, Switch, Tag } from '@lobehub/ui/base-ui';
 import { McpIcon, SkillsIcon } from '@lobehub/ui/icons';
 import { createStaticStyles, cssVar, cx } from 'antd-style';
 import isEqual from 'fast-deep-equal';
 import {
-  BadgeCheck,
   Ban,
   Check,
   ChevronDown,
@@ -32,6 +31,7 @@ import { openPluginEditDrawer } from '@/features/PluginDevModal/imperative';
 import { createSkillStoreModal } from '@/features/SkillStore';
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
 import { useCheckPluginsIsInstalled } from '@/hooks/useCheckPluginsIsInstalled';
+import { useFeatureGatedTools } from '@/hooks/useFeatureGatedTools';
 import { useFetchInstalledPlugins } from '@/hooks/useFetchInstalledPlugins';
 import { usePermission } from '@/hooks/usePermission';
 import { useAgentStore } from '@/store/agent';
@@ -72,12 +72,6 @@ import MarketSkillIcon from './MarketSkillIcon';
 import SkillRow from './SkillRow';
 import ToolItem from './ToolItem';
 import ToolItemDetailPopover from './ToolItemDetailPopover';
-
-const officialTag = (
-  <Tooltip placement={'top'} title={'LobeHub'}>
-    <Tag color={'success'} icon={<Icon icon={BadgeCheck} />} size={'small'} />
-  </Tooltip>
-);
 
 type SkillPolicyMode = AgentPluginMode;
 
@@ -538,11 +532,10 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
     (s) => chatConfigByIdSelectors.getSkillActivateModeById(agentId)(s) === 'manual',
   );
   const isAutoSkillMode = !isManualSkillMode;
-  const builtinList = useToolStore(
+  const builtinList = useFeatureGatedTools(
     isManualSkillMode
       ? builtinToolSelectors.metaListIncludingHidden
       : builtinToolSelectors.metaList,
-    isEqual,
   );
   // Application-fixed tools (always-on, not user-controllable, e.g. lobe-agent).
   // Rendered read-only at the top of the "Pinned" section so users can see what the
@@ -1066,7 +1059,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
             const popoverContent = (
               <ToolItemDetailPopover
                 icon={<ComposioSkillIcon icon={type.icon} label={type.label} size={36} />}
-                identifier={type.identifier}
                 sourceLabel={type.author}
                 title={type.label}
                 description={t(`tools.composio.servers.${type.identifier}.description` as any, {
@@ -1082,7 +1074,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
                   displayName: type.label,
                   onDelete: () => removeComposioServer(server.identifier),
                 },
-                extraTag: type.author === 'LobeHub' ? officialTag : undefined,
                 icon,
                 id: server.identifier,
                 popoverContent,
@@ -1175,7 +1166,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
             const popoverContent = (
               <ToolItemDetailPopover
                 icon={<LobehubSkillIcon icon={provider.icon} label={provider.label} size={36} />}
-                identifier={provider.id}
                 sourceLabel={provider.author}
                 title={provider.label}
                 description={t(`tools.lobehubSkill.providers.${provider.id}.description` as any, {
@@ -1187,7 +1177,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
             if (server?.status === LobehubSkillStatus.CONNECTED || server?.isConnected) {
               return createManagedSkillItem({
                 badge: <Icon icon={McpIcon} size={12} />,
-                extraTag: provider.author === 'LobeHub' ? officialTag : undefined,
                 icon,
                 id: server.identifier,
                 popoverContent,
@@ -1235,7 +1224,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
         );
         const popoverContent = (
           <ToolItemDetailPopover
-            identifier={item.identifier}
             sourceLabel={t('skillStore.tabs.lobehub')}
             title={title}
             description={t(`tools.builtins.${item.identifier}.description` as any, {
@@ -1262,7 +1250,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
             displayName: title,
             onDelete: () => uninstallBuiltinTool(item.identifier),
           },
-          extraTag: officialTag,
           icon,
           id: item.identifier,
           popoverContent,
@@ -1299,7 +1286,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
         const title = t(`tools.builtins.${identifier}.title` as any, { defaultValue: identifier });
 
         return createManagedSkillItem({
-          extraTag: officialTag,
           icon: avatar ? (
             <Avatar avatar={avatar} shape={'square'} size={SKILL_ICON_SIZE} />
           ) : (
@@ -1310,7 +1296,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
           panelExtra,
           popoverContent: (
             <ToolItemDetailPopover
-              identifier={identifier}
               sourceLabel={t('skillStore.tabs.lobehub')}
               title={title}
               description={t(`tools.builtins.${identifier}.description` as any, {
@@ -1355,7 +1340,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
         );
         const popoverContent = (
           <ToolItemDetailPopover
-            identifier={item.identifier}
             sourceLabel={t('skillStore.tabs.lobehub')}
             title={title}
             description={t(`tools.builtins.${item.identifier}.description` as any, {
@@ -1379,7 +1363,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
         return createManagedSkillItem({
           badge: <Icon icon={Wrench} size={12} />,
           defaultMode: 'pinned',
-          extraTag: officialTag,
           icon,
           id: item.identifier,
           popoverContent,
@@ -1405,7 +1388,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
         );
         const popoverContent = (
           <ToolItemDetailPopover
-            identifier={skill.identifier}
             sourceLabel={t('skillStore.tabs.lobehub')}
             title={title}
             description={t(`tools.builtins.${skill.identifier}.description` as any, {
@@ -1428,7 +1410,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
 
         return createManagedSkillItem({
           badge: <Icon icon={SkillsIcon} size={12} />,
-          extraTag: officialTag,
           icon,
           id: skill.identifier,
           popoverContent,
@@ -1480,7 +1461,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
           <ToolItemDetailPopover
             description={skill.description}
             icon={<Icon icon={SkillsIcon} size={36} />}
-            identifier={skill.identifier}
             sourceLabel={t('skillStore.tabs.custom')}
             title={skill.name}
           />
@@ -1514,7 +1494,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
           <ToolItemDetailPopover
             description={connector.mcpServerUrl ?? ''}
             icon={<Icon icon={McpIcon} size={36} />}
-            identifier={connector.identifier}
             sourceLabel={t('skillStore.tabs.custom')}
             title={title}
           />
@@ -1606,7 +1585,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
     const popoverContent = (
       <ToolItemDetailPopover
         description={item.description}
-        identifier={item.identifier}
         sourceLabel={isCustom ? t('skillStore.tabs.custom') : t('skillStore.tabs.community')}
         title={title}
         icon={
@@ -1637,8 +1615,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
         <Tag color={'warning'} icon={<Icon icon={Package} />} size={'small'}>
           {t('store.customPlugin', { ns: 'plugin' })}
         </Tag>
-      ) : item.author === 'LobeHub' ? (
-        officialTag
       ) : undefined,
       icon,
       id: item.identifier,
@@ -1952,7 +1928,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
         ),
         popoverContent: (
           <ToolItemDetailPopover
-            identifier={item.identifier}
             sourceLabel={t('skillStore.tabs.lobehub')}
             description={t(`tools.builtins.${item.identifier}.description` as any, {
               defaultValue: item.meta?.description || '',
@@ -2013,7 +1988,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
         ),
         popoverContent: (
           <ToolItemDetailPopover
-            identifier={skill.identifier}
             sourceLabel={t('skillStore.tabs.lobehub')}
             description={t(`tools.builtins.${skill.identifier}.description` as any, {
               defaultValue: skill.description,
@@ -2087,7 +2061,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
           popoverContent: (
             <ToolItemDetailPopover
               description={item.description}
-              identifier={item.identifier}
               sourceLabel={t('skillStore.tabs.community')}
               title={item.title}
               icon={
@@ -2134,7 +2107,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
           popoverContent: (
             <ToolItemDetailPopover
               description={item.description}
-              identifier={item.identifier}
               sourceLabel={t('skillStore.tabs.custom')}
               title={item.title}
               icon={
@@ -2217,7 +2189,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
           <ToolItemDetailPopover
             description={skill.description}
             icon={<Icon icon={SkillsIcon} size={36} />}
-            identifier={skill.identifier}
             sourceLabel={t('skillStore.tabs.custom')}
             title={skill.name}
           />

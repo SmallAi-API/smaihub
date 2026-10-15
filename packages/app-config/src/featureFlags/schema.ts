@@ -75,6 +75,9 @@ export const FeatureFlagsSchema = z.object({
    */
   dashboard: FeatureFlagValue.optional(),
 
+  /** Assistant video generation skill only; independent video creation stays available. */
+  video_generation_skill: FeatureFlagValue.optional(),
+
   // internal flag
   agent_onboarding: FeatureFlagValue.optional(),
   dev_dock: FeatureFlagValue.optional(),
@@ -147,6 +150,7 @@ export const DEFAULT_FEATURE_FLAGS: IFeatureFlags = {
 
   // Off until an admin publishes a user allowlist or flips it to true.
   dashboard: false,
+  video_generation_skill: false,
 
   agent_onboarding: isDev,
   dev_dock: isDev,
@@ -183,6 +187,7 @@ export const mapFeatureFlagsEnvToState = (
     enableGatewayMuxMobile: evaluateFeatureFlag(config.agent_gateway_mux_mobile, userId),
     enableLlmRelay: evaluateFeatureFlag(config.agent_llm_relay, userId),
     enableDashboard: evaluateFeatureFlag(config.dashboard, userId),
+    enableVideoGenerationSkill: evaluateFeatureFlag(config.video_generation_skill, userId),
     showProvider: evaluateFeatureFlag(config.provider_settings, userId),
 
     showOpenAIApiKey: evaluateFeatureFlag(config.openai_api_key, userId),
