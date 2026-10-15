@@ -1377,6 +1377,7 @@ const smaiChatModels: AIChatModelCard[] = [
     id: 'gemini-4-argon',
     // Synchronous output limit; background Interactions decoding is not enabled.
     maxOutput: 65_536,
+    releasedAt: '2026-10-14',
     settings: {
       disabledParams: ['temperature', 'top_p'],
       extendParams: ['thinkingLevel3', 'urlContext'],

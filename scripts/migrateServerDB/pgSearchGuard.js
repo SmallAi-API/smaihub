@@ -97,6 +97,9 @@ Details: ${DOCS_URL}
 /**
  * Throw `PgSearchNotReadyError` when the resolved provider is `pg_search` but the database cannot
  * serve it. Other providers never touch `pg_search`, so they skip the check.
+ *
+ * @param {(text: string) => Promise<{ rows: Record<string, unknown>[] }>} query
+ * @param {{ FTS_SEARCH_PROVIDER?: string }} [env=process.env]
  */
 const assertPgSearchReady = async (query, env = process.env) => {
   if (resolveFtsSearchProvider(env) !== 'pg_search') return;

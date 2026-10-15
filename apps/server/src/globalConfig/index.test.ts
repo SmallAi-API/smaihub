@@ -45,20 +45,20 @@ vi.mock('./parseFilesConfig', () => ({
 describe('getServerAiProviderConfig', () => {
   const catalog: LobeDefaultAiModelListItem[] = [
     {
+      abilities: {},
       enabled: true,
       id: 'claude-sonnet-4-6',
       maxOutput: 1024,
       providerId: 'anthropic',
-      source: 'builtin',
       type: 'chat',
     },
     {
+      abilities: {},
       enabled: true,
       id: 'claude-sonnet-4-6',
       maxOutput: 4096,
       providerId: 'lobehub',
       settings: { extendParams: ['enableAdaptiveThinking'] },
-      source: 'builtin',
       type: 'chat',
     },
   ];
