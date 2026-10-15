@@ -14,8 +14,9 @@ const isProvenanceKey = (key: string) => (CODEX_PROVENANCE_KEYS as readonly stri
 export type CodexRunProvenance = Partial<Record<(typeof CODEX_PROVENANCE_KEYS)[number], string>>;
 
 /** Picks only the run provenance from a launch environment. */
-export const pickCodexRunProvenance = (env: NodeJS.ProcessEnv): CodexRunProvenance =>
-  Object.fromEntries(CODEX_PROVENANCE_KEYS.map((key) => [key, env[key]]));
+export const pickCodexRunProvenance = (
+  env: Record<string, string | undefined>,
+): CodexRunProvenance => Object.fromEntries(CODEX_PROVENANCE_KEYS.map((key) => [key, env[key]]));
 
 /**
  * Environment for the shared app-server process: defined values only, without run provenance,
