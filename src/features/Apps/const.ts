@@ -1,5 +1,7 @@
+import { imageUrl } from '@/const/url';
+
 export const APP_SHOTS = {
-  desktopDark: '/app-images/desktop_dark.png',
-  desktopLight: '/app-images/desktop.png',
+  desktopDark: imageUrl('desktop_dark.png'),
+  desktopLight: imageUrl('desktop.png'),
 };
 export const CLI_INSTALL_COMMAND = 'npm install -g @lobehub/cli';
