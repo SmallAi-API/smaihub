@@ -1,5 +1,5 @@
 import { Command } from 'cmdk';
-import { Bot, FilePen, LibraryBig, MessageSquarePlusIcon, Monitor } from 'lucide-react';
+import { Bot, FilePen, LibraryBig, ListTodo, MessageSquarePlusIcon, Monitor } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -15,7 +15,7 @@ import ContextCommands from './ContextCommands';
 import { useCommandMenu } from './useCommandMenu';
 
 const MainMenu = memo(() => {
-  const { pathname, menuContext, setPages, pages, onClose } = useCommandMenuContext();
+  const { pathname, menuContext, setPages, pages } = useCommandMenuContext();
   const { t } = useTranslation('common');
   const { allowed: canCreate } = usePermission('create_content');
   const { enabled: dashboardEnabled } = useHomeDashboardFeature();
@@ -29,8 +29,8 @@ const MainMenu = memo(() => {
     handleCreateTopic,
     handleCreateLibrary,
     handleCreatePage,
+    handleCreateTask,
     handleNavigate,
-    handleExternalLink,
     handleCreateAgentTeam,
   } = useCommandMenu();
 
@@ -78,6 +78,16 @@ const MainMenu = memo(() => {
           onSelect={handleCreatePage}
         >
           {t('cmdk.newPage')}
+        </CommandItem>
+
+        <CommandItem
+          disabled={!canCreate}
+          icon={<ListTodo />}
+          keywords={[t('cmdk.newTask')]}
+          value="create new task"
+          onSelect={handleCreateTask}
+        >
+          {t('cmdk.newTask')}
         </CommandItem>
 
         <CommandItem
