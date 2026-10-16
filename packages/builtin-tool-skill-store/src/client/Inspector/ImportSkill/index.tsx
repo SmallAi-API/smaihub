@@ -1,14 +1,14 @@
 'use client';
 
-import { type BuiltinInspectorProps } from '@lobechat/types';
-import { createStaticStyles, cssVar, cx } from 'antd-style';
+import type { BuiltinInspectorProps } from '@lobechat/types';
+import { createStaticStyles, cssVar, cx } from '@lobehub/ui';
 import { Check, X } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { highlightTextStyles, inspectorTextStyles, shinyTextStyles } from '@/styles';
 
-import { type ImportSkillParams, type ImportSkillState } from '../../../types';
+import type { ImportSkillParams, ImportSkillState } from '../../../types';
 
 const styles = createStaticStyles(({ css }) => ({
   statusIcon: css`

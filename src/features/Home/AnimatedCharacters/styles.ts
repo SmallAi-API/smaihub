@@ -1,4 +1,4 @@
-import { createStaticStyles } from 'antd-style';
+import { createStaticStyles } from '@lobehub/ui';
 
 import { CHARACTERS_HEIGHT, CHARACTERS_WIDTH } from '../portraitFraming';
 

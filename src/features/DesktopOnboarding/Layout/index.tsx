@@ -1,9 +1,7 @@
 'use client';
 
 import { TITLE_BAR_HEIGHT } from '@lobechat/desktop-bridge';
-import { Flexbox } from '@lobehub/ui';
-import { Divider } from '@lobehub/ui/base-ui';
-import { css, cx } from 'antd-style';
+import { Center, css, cx, Divider, Flexbox, Text } from '@lobehub/ui';
 import { type FC, type PropsWithChildren } from 'react';
 
 import SimpleTitleBar from '@/features/Electron/titlebar/SimpleTitleBar';
@@ -50,6 +48,11 @@ const OnboardingContainer: FC<PropsWithChildren> = ({ children }) => {
           <Flexbox align={'center'} className={cx(contentContainer)} height={'100%'} width={'100%'}>
             {children}
           </Flexbox>
+          <Center padding={24}>
+            <Text align={'center'} type={'secondary'}>
+              © 2026 LobeHub. All rights reserved.
+            </Text>
+          </Center>
         </Flexbox>
       </Flexbox>
     </Flexbox>

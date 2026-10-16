@@ -2,14 +2,25 @@
 
 import { AGENT_CHAT_URL, DEFAULT_INBOX_AVATAR } from '@lobechat/const';
 import { Claude, Cline, Cursor, OpenAI } from '@lobehub/icons';
-import { Block, Flexbox, Highlighter, Icon, Markdown } from '@lobehub/ui';
-import { Button, Divider, Select, Tabs, Text } from '@lobehub/ui/base-ui';
-import { createStaticStyles, cx } from 'antd-style';
+import {
+  Avatar,
+  Block,
+  Button,
+  createStaticStyles,
+  cx,
+  Divider,
+  Flexbox,
+  Highlighter,
+  Icon,
+  Markdown,
+  Select,
+  Tabs,
+  Text,
+} from '@lobehub/ui';
 import { BotIcon, UserRoundIcon } from 'lucide-react';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import AgentAvatar from '@/features/AgentAvatar';
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
 import { useAgentStore } from '@/store/agent';
 import { builtinAgentSelectors } from '@/store/agent/selectors';
@@ -191,7 +202,7 @@ const Platform = memo<PlatformProps>(
 
     const command = genInstallCommand(identifier, active);
 
-    const agentPrompt = `Curl ${getSkillInstructionsUrl(identifier || '<skill-identifier>')}, then follow the instructions to set up smai.ai Skills Marketplace and install the skill. Once installed, read the SKILL.md file in the installed directory and follow its instructions to complete the task.`;
+    const agentPrompt = `Curl ${getSkillInstructionsUrl(identifier || '<skill-identifier>')}, then follow the instructions to set up LobeHub Skills Marketplace and install the skill. Once installed, read the SKILL.md file in the installed directory and follow its instructions to complete the task.`;
 
     const handleUseOnLobeAI = useCallback(() => {
       if (!inboxAgentId) return;
@@ -256,7 +267,7 @@ const Platform = memo<PlatformProps>(
             <Flexbox padding={8}>
               <Button
                 block
-                icon={<AgentAvatar avatar={DEFAULT_INBOX_AVATAR} size={18} />}
+                icon={<Avatar avatar={DEFAULT_INBOX_AVATAR} size={18} />}
                 size={'large'}
                 type={'primary'}
                 onClick={handleUseOnLobeAI}

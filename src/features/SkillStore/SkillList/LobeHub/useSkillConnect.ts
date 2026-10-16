@@ -1,7 +1,7 @@
 'use client';
 
 import { COMPOSIO_APP_TYPES, getLobehubSkillProviderById } from '@lobechat/const';
-import { App } from 'antd';
+import { toast } from '@lobehub/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useToolStore } from '@/store/tool';
@@ -31,7 +31,6 @@ export const useSkillConnect = ({
   serverName,
   type,
 }: UseSkillConnectOptions) => {
-  const { message } = App.useApp();
   const [isConnecting, setIsConnecting] = useState(false);
   const [isWaitingAuth, setIsWaitingAuth] = useState(false);
 
@@ -230,7 +229,7 @@ export const useSkillConnect = ({
       // Surface the server's actionable message (e.g. a toolkit that needs a
       // custom auth config) instead of silently failing.
       const msg = error instanceof Error ? error.message : String(error);
-      message.error(msg);
+      toast.error(msg);
     } finally {
       setIsConnecting(false);
     }
@@ -244,7 +243,6 @@ export const useSkillConnect = ({
     createComposioConnection,
     refreshComposioConnectionStatus,
     openOAuthWindow,
-    message,
   ]);
 
   const handleConnect = type === 'lobehub' ? handleLobehubConnect : handleComposioConnect;

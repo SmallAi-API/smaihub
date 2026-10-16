@@ -1,9 +1,10 @@
-import { Avatar, Button } from '@lobehub/ui/base-ui';
+import { Button } from '@lobehub/ui';
 import { ModelProvider } from 'model-bank/modelProvider';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import urlJoin from 'url-join';
 
+import { ProviderIcon } from '@/components/LobeIcons';
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
 import { useProviderName } from '@/hooks/useProviderName';
 import { type GlobalLLMProviderKey } from '@/types/user/settings/modelProvider';
@@ -23,7 +24,7 @@ const ChatInvalidAPIKey = memo<ChatInvalidAPIKeyProps>(({ id, provider }) => {
 
   return (
     <BaseErrorForm
-      avatar={<Avatar avatar={'/logo.png'} shape={'square'} size={40} />}
+      avatar={<ProviderIcon provider={provider} shape={'square'} size={40} />}
       title={t(`unlock.apiKey.title`, { name: providerName, ns: 'error' })}
       action={
         <Button

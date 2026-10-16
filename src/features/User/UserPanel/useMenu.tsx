@@ -1,7 +1,7 @@
+import { LOBE_CHAT_CLOUD, UTM_SOURCE } from '@lobechat/business-const';
 import { isDesktop } from '@lobechat/const';
-import { Flexbox, Hotkey, Icon } from '@lobehub/ui';
-import { Tag } from '@lobehub/ui/base-ui';
-import { BrainCircuit, Download, HardDriveDownload, LogOut, Settings2 } from 'lucide-react';
+import { Flexbox, Hotkey, Icon, Tag } from '@lobehub/ui';
+import { BrainCircuit, Cloudy, Download, HardDriveDownload, LogOut, Settings2 } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,9 +10,11 @@ import useBusinessMenuItems from '@/business/client/features/User/useBusinessMen
 import { useHasActiveWorkspace } from '@/business/client/hooks/useHasActiveWorkspace';
 import { type MenuProps } from '@/components/Menu';
 import { DEFAULT_DESKTOP_HOTKEY_CONFIG } from '@/const/desktop';
+import { OFFICIAL_URL } from '@/const/url';
 import DataImporter from '@/features/DataImporter';
 import WorkspaceLink from '@/features/Workspace/WorkspaceLink';
 import { useNavLayout } from '@/hooks/useNavLayout';
+import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
 import { authSelectors } from '@/store/user/selectors';
 
@@ -45,6 +47,7 @@ const NewVersionBadge = memo(
 export const useMenu = () => {
   const hasNewVersion = useNewVersion();
   const { t } = useTranslation(['common', 'setting', 'auth']);
+  const { showCloudPromotion, hideDocs } = useServerConfigStore(featureFlagsSelectors);
   const [isLogin, isLoginWithAuth] = useUserStore((s) => [
     authSelectors.isLogin(s),
     authSelectors.isLoginWithAuth(s),
@@ -85,6 +88,22 @@ export const useMenu = () => {
       : []),
   ];
 
+  const helps: MenuProps['items'] = [
+    showCloudPromotion && {
+      icon: <Icon icon={Cloudy} />,
+      key: 'cloud',
+      label: (
+        <a
+          href={`${OFFICIAL_URL}?utm_source=${UTM_SOURCE}`}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {t('userPanel.cloud', { name: LOBE_CHAT_CLOUD })}
+        </a>
+      ),
+    },
+  ].filter(Boolean) as MenuProps['items'];
+
   const getApp: MenuProps['items'] = [
     {
       icon: <Icon icon={Download} />,
@@ -116,7 +135,7 @@ export const useMenu = () => {
           },
         ]
       : []),
-
+    ...(!hideDocs ? helps : []),
     ...getApp,
   ]
     .filter(Boolean)

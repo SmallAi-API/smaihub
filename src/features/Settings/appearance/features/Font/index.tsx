@@ -1,9 +1,8 @@
 'use client';
 
 import { isDesktop } from '@lobechat/const';
-import { Flexbox } from '@lobehub/ui';
-import { Select, Skeleton } from '@lobehub/ui/base-ui';
-import { Form, type FormGroupItem, useForm } from '@lobehub/ui/base-ui/form';
+import { Flexbox, Select, Skeleton, Switch } from '@lobehub/ui';
+import { Form, type FormGroupItem, useForm } from '@lobehub/ui/form';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -28,6 +27,7 @@ const FontSettings = memo(() => {
     preferenceSelectors.terminalFontFamily(s),
   ]);
   const fontSize = useUserStore(userGeneralSettingsSelectors.fontSize);
+  const fontAntialiasing = useUserStore(userGeneralSettingsSelectors.fontAntialiasing);
   const updatePreference = useUserStore((s) => s.updatePreference);
   const setSettings = useUserStore((s) => s.setSettings);
   const isUserStateInit = useUserStore((s) => s.isUserStateInit);
@@ -210,6 +210,23 @@ const FontSettings = memo(() => {
             },
           ]
         : []),
+      {
+        children: (
+          <Switch
+            checked={fontAntialiasing}
+            onChange={(checked) =>
+              save(() => setSettings({ general: { fontAntialiasing: checked } }))
+            }
+          />
+        ),
+        desc: t('settingAppearance.font.antialiasing.desc'),
+        label: (
+          <SettingsSearchAnchor id={'appearance-font-antialiasing'}>
+            {t('settingAppearance.font.antialiasing.title')}
+          </SettingsSearchAnchor>
+        ),
+        minWidth: undefined,
+      },
       {
         children: (
           <FontSizeControl

@@ -1,7 +1,6 @@
 'use client';
 
-import { Button, Flexbox } from '@lobehub/ui';
-import { createStaticStyles, cx, responsive } from 'antd-style';
+import { Button, createStaticStyles, cx, Flexbox, responsive } from '@lobehub/ui';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 

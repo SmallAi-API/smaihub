@@ -1,10 +1,9 @@
 'use client';
 
 import type { GridProps } from '@lobehub/ui';
-import { Block, Center, Grid } from '@lobehub/ui';
-import { Text } from '@lobehub/ui/base-ui';
-import { cssVar } from 'antd-style';
-import { memo, type ReactNode } from 'react';
+import { Block, Center, cssVar, Grid, Text } from '@lobehub/ui';
+import type { ReactNode } from 'react';
+import { memo } from 'react';
 import useMergeState from 'use-merge-value';
 
 import { useIsDark } from '@/hooks/useIsDark';
@@ -68,6 +67,7 @@ const AspectRatioSelect = memo<AspectRatioSelectProps>(
                 />
               );
             }
+
             return (
               <Block
                 clickable

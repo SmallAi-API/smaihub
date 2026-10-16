@@ -13,9 +13,20 @@ import type {
   VerifyVerdict,
 } from '@lobechat/types';
 import { toRecord } from '@lobechat/utils/object';
-import { Block, Center, Empty, Flexbox, Icon, Image, Markdown } from '@lobehub/ui';
-import { Button, Text } from '@lobehub/ui/base-ui';
-import { createStaticStyles, cssVar, cx } from 'antd-style';
+import {
+  Block,
+  Button,
+  Center,
+  createStaticStyles,
+  cssVar,
+  cx,
+  Empty,
+  Flexbox,
+  Icon,
+  Image,
+  Markdown,
+  Text,
+} from '@lobehub/ui';
 import type { TFunction } from 'i18next';
 import {
   AlertTriangle,

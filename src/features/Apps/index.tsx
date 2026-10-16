@@ -1,7 +1,7 @@
 'use client';
 
 import { DOWNLOAD_URL, isDesktop } from '@lobechat/const';
-import { Button, Tag, Text } from '@lobehub/ui/base-ui';
+import { Button, Tag, Text } from '@lobehub/ui';
 import { Lark, QQ, Telegram, WeChat } from '@lobehub/ui/icons';
 import { ArrowUpRight, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

@@ -1,6 +1,4 @@
-import { Button } from '@lobehub/ui/base-ui';
-import { App } from 'antd';
-import { createStaticStyles } from 'antd-style';
+import { Button, createStaticStyles, toast } from '@lobehub/ui';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -65,7 +63,6 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
  */
 const HomePromoBanner = memo(() => {
   const { t } = useTranslation('home');
-  const { message } = App.useApp();
   const { agentId } = useResolvedHomeAgentId();
   const { allowed: canCreateContent } = usePermission('create_content');
   const updateAgentConfigById = useAgentStore((state) => state.updateAgentConfigById);
@@ -92,9 +89,9 @@ const HomePromoBanner = memo(() => {
         applyBusinessModelModeConfig({ model: model.model, provider }),
         { rethrow: true },
       );
-      message.success(t('homePromoBanner.success'));
+      toast.success(t('homePromoBanner.success'));
     } catch {
-      message.error(t('homePromoBanner.error'));
+      toast.error(t('homePromoBanner.error'));
     } finally {
       setLoading(false);
     }
@@ -103,7 +100,6 @@ const HomePromoBanner = memo(() => {
     applyBusinessModelModeConfig,
     canCreateContent,
     loading,
-    message,
     model,
     provider,
     t,

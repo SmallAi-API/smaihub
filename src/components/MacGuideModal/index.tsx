@@ -1,8 +1,7 @@
 'use client';
 
 import { Button, Flexbox, Text } from '@lobehub/ui';
-import { createModal, type ModalInstance, useModalContext } from '@lobehub/ui/base-ui';
-import { cssVar } from 'antd-style';
+import { createModal, cssVar, type ModalInstance, useModalContext } from '@lobehub/ui';
 import { Apple } from 'lucide-react';
 import { memo } from 'react';
 

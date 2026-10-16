@@ -1,15 +1,22 @@
 'use client';
 
-import { LOBE_CHAT_CLOUD } from '@lobechat/business-const';
-import { Center, Flexbox, Icon, lobeStaticStylish } from '@lobehub/ui';
-import { Button } from '@lobehub/ui/base-ui';
+import { LOBE_CHAT_CLOUD, UTM_SOURCE } from '@lobechat/business-const';
+import {
+  Button,
+  Center,
+  createStaticStyles,
+  cx,
+  Flexbox,
+  Icon,
+  lobeStaticStylish,
+} from '@lobehub/ui';
 import { useSize } from 'ahooks';
-import { createStaticStyles, cx } from 'antd-style';
 import { ArrowRightIcon } from 'lucide-react';
 import { memo, useEffect, useRef, useState } from 'react';
 import Marquee from 'react-fast-marquee';
 import { useTranslation } from 'react-i18next';
 
+import { OFFICIAL_URL } from '@/const/url';
 import { useIsDark } from '@/hooks/useIsDark';
 import { isOnServerSide } from '@/utils/env';
 
@@ -82,7 +89,11 @@ const CloudBanner = memo<{ mobile?: boolean }>(({ mobile }) => {
       <div className={styles.background} />
       <Center horizontal className={styles.wrapper} gap={16} width={'100%'}>
         {isTruncated ? <Marquee pauseOnHover>{content}</Marquee> : content}
-        <a href={`https://api.smai.ai/console/plan`} rel="noreferrer" target="_blank">
+        <a
+          href={`${OFFICIAL_URL}?utm_source=${UTM_SOURCE}&utm_medium=banner`}
+          rel="noreferrer"
+          target="_blank"
+        >
           <Button size={'small'} type="primary">
             {t('alert.cloud.action')} <Icon icon={ArrowRightIcon} />
           </Button>

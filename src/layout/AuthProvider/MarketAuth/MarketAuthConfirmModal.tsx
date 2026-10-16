@@ -1,8 +1,7 @@
 'use client';
 
-import { Block } from '@lobehub/ui';
-import { Text } from '@lobehub/ui/base-ui';
-import { createStaticStyles, cx } from 'antd-style';
+import { BRANDING_NAME } from '@lobechat/business-const';
+import { Block, createStaticStyles, cx, Text } from '@lobehub/ui';
 import { memo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -106,7 +105,7 @@ const MarketAuthConfirmModal = memo<MarketAuthConfirmModalProps>(
           width={'100%'}
         >
           <Block padding={16} variant={'filled'}>
-            <Text align={'center'}>{ts('description')}</Text>
+            <Text align={'center'}>{ts('description', { appName: BRANDING_NAME })}</Text>
           </Block>
         </AuthCard>
       </ImperativeModal>

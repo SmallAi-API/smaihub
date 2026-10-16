@@ -1,4 +1,4 @@
-import { cx } from 'antd-style';
+import { cx } from '@lobehub/ui';
 import type { ReactNode } from 'react';
 import { memo, useCallback, useRef, useState, useSyncExternalStore } from 'react';
 

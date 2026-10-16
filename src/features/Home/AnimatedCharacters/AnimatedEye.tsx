@@ -1,4 +1,4 @@
-import { createStaticStyles } from 'antd-style';
+import { createStaticStyles } from '@lobehub/ui';
 import { memo, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 
 import { getMousePosition, subscribeMousePosition } from './mousePosition';

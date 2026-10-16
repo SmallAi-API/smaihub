@@ -1,8 +1,8 @@
 'use client';
 
-import { Flexbox, Icon } from '@lobehub/ui';
-import { Tabs, type TabsItem, Tag } from '@lobehub/ui/base-ui';
-import { createStaticStyles } from 'antd-style';
+import { SOCIAL_URL } from '@lobechat/business-const';
+import { createStaticStyles, Flexbox, Icon } from '@lobehub/ui';
+import { Tabs, type TabsItem, Tag } from '@lobehub/ui';
 import {
   BookOpenIcon,
   BotIcon,
@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import urlJoin from 'url-join';
 
 import { useToolStore } from '@/store/tool';
 import { pluginSelectors } from '@/store/tool/selectors';
@@ -67,7 +68,7 @@ const Nav = memo<NavProps>(
       identifier,
     } = useDetailContext();
 
-    // 检查插件是否已安装
+    // Check if the plugin is installed
     const installedPlugin = useToolStore(pluginSelectors.getInstalledPluginById(identifier));
 
     const deploymentCount = deploymentOptions?.length || 0;
@@ -81,7 +82,7 @@ const Nav = memo<NavProps>(
         variant="square"
         items={
           [
-            // 只有已安装的插件才显示设置 tab
+            // Only show the settings tab for installed plugins
             !noSettings &&
               installedPlugin && {
                 icon: <Icon icon={SettingsIcon} size={16} />,
@@ -179,6 +180,33 @@ const Nav = memo<NavProps>(
     ) : (
       <Flexbox horizontal align={'center'} className={styles.nav} justify={'space-between'}>
         {nav}
+        {!inModal && (
+          <Flexbox
+            horizontal
+            flex="none"
+            gap={12}
+            style={{ marginInlineStart: 12, whiteSpace: 'nowrap' }}
+          >
+            <a className={styles.link} href={SOCIAL_URL.discord} rel="noreferrer" target="_blank">
+              {t('mcp.details.nav.needHelp')}
+            </a>
+            {github?.url && (
+              <>
+                <a className={styles.link} href={github.url} rel="noreferrer" target="_blank">
+                  {t('mcp.details.nav.viewSourceCode')}
+                </a>
+                <a
+                  className={styles.link}
+                  href={urlJoin(github.url, 'issues')}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  {t('mcp.details.nav.reportIssue')}
+                </a>
+              </>
+            )}
+          </Flexbox>
+        )}
       </Flexbox>
     );
   },

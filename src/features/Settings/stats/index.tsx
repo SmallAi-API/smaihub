@@ -1,12 +1,14 @@
 'use client';
 
-import { Grid } from '@lobehub/ui';
-import { Divider } from '@lobehub/ui/base-ui';
-import { Form } from '@lobehub/ui/base-ui/form';
+import { DayjsDatePicker as DatePicker, Divider, Grid, Icon, Tabs } from '@lobehub/ui';
+import { Form } from '@lobehub/ui/form';
+import { ProviderIcon } from '@lobehub/ui/icons';
 import dayjs from 'dayjs';
+import { Brain, UserIcon } from 'lucide-react';
 import { memo, type ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import AsyncBoundary from '@/components/AsyncBoundary';
 import SettingHeader from '@/features/Settings/features/SettingHeader';
 import { useClientDataSWR } from '@/libs/swr';
 import { statsKeys } from '@/libs/swr/keys';
@@ -21,8 +23,9 @@ import {
   Welcome,
 } from './features/overview';
 import { AssistantsRank, ModelsRank, TopicsRank } from './features/rankings';
+import { UsageCards, UsageTable, UsageTrends } from './features/usage';
 import { AiHeatmaps } from './features/visualization';
-import { type UserDisplayResolver } from './types';
+import { GroupBy, type UserDisplayResolver } from './types';
 
 interface StatsSettingProps {
   /**
@@ -45,55 +48,124 @@ interface StatsSettingProps {
   showSettingHeader?: boolean;
 }
 
-const StatsSetting = memo<StatsSettingProps>(({ mobile, headerNode, showSettingHeader = true }) => {
-  const { t, i18n } = useTranslation('auth');
-  dayjs.locale(i18n.language);
+const StatsSetting = memo<StatsSettingProps>(
+  ({ mobile, headerNode, enableUserDimension, resolveUser, showSettingHeader = true }) => {
+    const { t, i18n } = useTranslation('auth');
+    dayjs.locale(i18n.language);
 
-  const [dateStrings] = useState<string>();
+    const [groupBy, setGroupBy] = useState<GroupBy>(GroupBy.Model);
+    const [dateRange, setDateRange] = useState<dayjs.Dayjs>(dayjs(new Date()));
+    const [dateStrings, setDateStrings] = useState<string>();
 
-  const { mutate } = useClientDataSWR(statsKeys.usageStat(), async () =>
-    usageService.findAndGroupByDay(dateStrings),
-  );
+    const { data, isLoading, error, mutate } = useClientDataSWR(statsKeys.usageStat(), async () =>
+      usageService.findAndGroupByDay(dateStrings),
+    );
 
-  useEffect(() => {
-    if (dateStrings) {
-      mutate();
-    }
-  }, [dateStrings, mutate]);
+    useEffect(() => {
+      if (dateStrings) {
+        mutate();
+      }
+    }, [dateStrings]);
 
-  return (
-    <>
-      {showSettingHeader && <SettingHeader title={t('tab.stats')} />}
-      {/* ========== Header Section ========== */}
-      <Form.Group
-        collapsible={false}
-        extra={headerNode === undefined ? <ShareButton /> : undefined}
-        variant={'filled'}
-        title={
-          headerNode === undefined ? (
-            <Welcome mobile={mobile} />
-          ) : headerNode === false ? undefined : (
-            headerNode
-          )
-        }
-      >
-        <Grid gap={8} maxItemWidth={150} rows={4}>
-          <TotalAssistants mobile={mobile} />
-          <TotalTopics mobile={mobile} />
-          <TotalMessages mobile={mobile} />
-          <TotalTokens />
-        </Grid>
-        <Divider dashed style={{ marginBlock: 24 }} />
-        <AiHeatmaps mobile={mobile} />
-        <Divider dashed style={{ marginBlock: 24 }} />
-        <Grid gap={16} rows={3} style={{ paddingBottom: 12 }}>
-          <ModelsRank />
-          <AssistantsRank mobile={mobile} />
-          <TopicsRank mobile={mobile} />
-        </Grid>
-      </Form.Group>
-    </>
-  );
-});
+    const handleDateChange = (month: dayjs.Dayjs | null) => {
+      if (!month) return;
+      setDateRange(month);
+      setDateStrings(month.format('YYYY-MM'));
+    };
+
+    return (
+      <>
+        {showSettingHeader && <SettingHeader title={t('tab.stats')} />}
+        {/* ========== Header Section ========== */}
+        <Form.Group
+          collapsible={false}
+          extra={headerNode === undefined ? <ShareButton /> : undefined}
+          variant={'filled'}
+          title={
+            headerNode === undefined ? (
+              <Welcome mobile={mobile} />
+            ) : headerNode === false ? undefined : (
+              headerNode
+            )
+          }
+        >
+          <Grid gap={8} maxItemWidth={150} rows={4}>
+            <TotalAssistants mobile={mobile} />
+            <TotalTopics mobile={mobile} />
+            <TotalMessages mobile={mobile} />
+            <TotalTokens />
+          </Grid>
+          <Divider dashed style={{ marginBlock: 24 }} />
+          <AiHeatmaps mobile={mobile} />
+          <Divider dashed style={{ marginBlock: 24 }} />
+          <Grid gap={16} rows={3} style={{ paddingBottom: 12 }}>
+            <ModelsRank />
+            <AssistantsRank mobile={mobile} />
+            <TopicsRank mobile={mobile} />
+          </Grid>
+        </Form.Group>
+        <Form.Group
+          collapsible={false}
+          title={<span style={{ lineHeight: '35px' }}>{t('tab.usage')}</span>}
+          variant={'filled'}
+          extra={
+            <>
+              <DatePicker
+                format="YYYY-MM"
+                picker="month"
+                value={dateRange}
+                onChange={handleDateChange}
+              />
+              <Tabs
+                activeKey={groupBy}
+                style={{ marginLeft: 8 }}
+                items={[
+                  {
+                    icon: <Icon icon={Brain} />,
+                    key: GroupBy.Model,
+                    label: t('usage.welcome.model'),
+                  },
+                  {
+                    icon: <Icon icon={ProviderIcon} />,
+                    key: GroupBy.Provider,
+                    label: t('usage.welcome.provider'),
+                  },
+                  ...(enableUserDimension
+                    ? [
+                        {
+                          icon: <Icon icon={UserIcon} />,
+                          key: GroupBy.User,
+                          label: t('usage.welcome.user'),
+                        },
+                      ]
+                    : []),
+                ]}
+                onChange={(key) => setGroupBy(key as GroupBy)}
+              />
+            </>
+          }
+        >
+          <AsyncBoundary data={data} error={error} errorVariant={'block'} onRetry={() => mutate()}>
+            <UsageCards
+              data={data}
+              groupBy={groupBy}
+              isLoading={isLoading}
+              resolveUser={resolveUser}
+            />
+            <Divider style={{ marginBlock: 24 }} />
+            <UsageTrends
+              data={data}
+              groupBy={groupBy}
+              isLoading={isLoading}
+              resolveUser={resolveUser}
+            />
+          </AsyncBoundary>
+          <div style={{ height: 24 }} />
+          <UsageTable dateStrings={dateStrings} />
+        </Form.Group>
+      </>
+    );
+  },
+);
 
 export default StatsSetting;

@@ -6,13 +6,12 @@ import { locales, normalizeLocale } from '@/locales/resources';
 
 import { RouteVariants } from './server/routeVariants';
 
-export const getAntdLocale = async (lang?: string) => {
-  const normalLang = normalizeLocale(lang);
+const normalizeAcceptLanguageHeader = (acceptLanguage: string) =>
+  acceptLanguage
+    .replaceAll(/zh-Hans(?:-[a-z]{2})?/gi, 'zh-CN')
+    .replaceAll(/zh-Hant(?:-[a-z]{2})?/gi, 'zh-TW');
 
-  const { default: locale } = await import(`antd/locale/${normalLang.replace('-', '_')}.js`);
-
-  return locale;
-};
+const supportedAcceptLanguageLocales = [...locales];
 
 /**
  * Parse the browser language and return the fallback language
@@ -29,12 +28,12 @@ export const parseBrowserLanguage = (headers: Headers, defaultLang: string = DEF
    * 3) The default locale.
    */
   const browserLang: string = resolveAcceptLanguage(
-    headers.get('accept-language') || '',
-    [...locales],
+    normalizeAcceptLanguageHeader(headers.get('accept-language') || ''),
+    supportedAcceptLanguageLocales,
     defaultLang,
   );
 
-  return browserLang;
+  return normalizeLocale(browserLang);
 };
 
 /**

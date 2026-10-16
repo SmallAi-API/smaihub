@@ -1,9 +1,17 @@
 'use client';
 
-import { Block, Flexbox, Icon } from '@lobehub/ui';
-import { Avatar, confirmModal, Skeleton, Text, toast } from '@lobehub/ui/base-ui';
-import { createStaticStyles } from 'antd-style';
-import { ArrowLeftIcon } from 'lucide-react';
+import {
+  Avatar,
+  Block,
+  confirmModal,
+  createStaticStyles,
+  Flexbox,
+  Icon,
+  Skeleton,
+  Text,
+  toast,
+} from '@lobehub/ui';
+import { ArrowLeftIcon, BookOpenIcon } from 'lucide-react';
 import { memo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -168,6 +176,17 @@ const GithubIntegration = memo<GithubIntegrationProps>(({ onBack }) => {
           </Text>
           <Text type="secondary">{t('github.tagline')}</Text>
         </Flexbox>
+        <a
+          className={styles.docs}
+          href={GITHUB_INTEGRATION.docsUrl}
+          rel="noreferrer"
+          target="_blank"
+        >
+          <Icon icon={BookOpenIcon} size="small" />
+          <Text style={{ fontSize: 13 }} type="secondary">
+            {t('github.info.docsLink')}
+          </Text>
+        </a>
       </Flexbox>
 
       {scope === 'workspace' && !data.isInitialLoading ? (

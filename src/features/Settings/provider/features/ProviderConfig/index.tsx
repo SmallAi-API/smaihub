@@ -1,9 +1,22 @@
 'use client';
 
 import { BRANDING_PROVIDER } from '@lobechat/business-const';
-import { AES_GCM_URL, FORM_STYLE } from '@lobechat/const';
-import { Flexbox, Icon, stopPropagation, Tooltip } from '@lobehub/ui';
-import { Avatar, Skeleton, Spin, Switch } from '@lobehub/ui/base-ui';
+import { AES_GCM_URL, BASE_PROVIDER_DOC_URL, FORM_STYLE } from '@lobechat/const';
+import {
+  Avatar,
+  Center,
+  createStaticStyles,
+  cssVar,
+  cx,
+  Flexbox,
+  Icon,
+  responsive,
+  Skeleton,
+  Spin,
+  stopPropagation,
+  Switch,
+  Tooltip,
+} from '@lobehub/ui';
 import {
   Form,
   type FormFieldProps,
@@ -11,17 +24,18 @@ import {
   type FormValues,
   useForm,
   useWatch,
-} from '@lobehub/ui/base-ui/form';
+} from '@lobehub/ui/form';
 import { useDebounceFn } from 'ahooks';
-import { createStaticStyles, cssVar, cx, responsive } from 'antd-style';
 import { get, set } from 'es-toolkit/compat';
 import { InfoIcon, LockIcon } from 'lucide-react';
 import { AiProviderBaseURLSchema } from 'model-bank/aiProvider';
 import { type ReactNode } from 'react';
 import { memo, useCallback, useLayoutEffect, useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import urlJoin from 'url-join';
 
 import { FormInput, FormPassword } from '@/components/FormInput';
+import { ProviderCombine, ProviderIcon } from '@/components/LobeIcons';
 import { SkeletonInput, SkeletonSwitch } from '@/components/Skeleton';
 import { usePermission } from '@/hooks/usePermission';
 import { lambdaQuery } from '@/libs/trpc/client';
@@ -33,7 +47,6 @@ import {
   type UpdateAiProviderConfigParams,
 } from '@/types/aiProvider';
 import { AiProviderSourceEnum } from '@/types/aiProvider';
-import { getProviderLogoUrl } from '@/utils/providerLogo';
 
 import { KeyVaultsConfigKey, LLMProviderApiTokenKey, LLMProviderBaseUrlKey } from '../../const';
 import { isResponsesApiSupportedSdkType } from '../providerSettings';
@@ -114,7 +127,7 @@ const ProviderConfig = memo<ProviderConfigProps>(
     id,
     settings,
     checkModel,
-
+    logo,
     className,
     checkErrorRender,
     canDeactivate = true,
@@ -123,6 +136,7 @@ const ProviderConfig = memo<ProviderConfigProps>(
     extra,
     source = AiProviderSourceEnum.Builtin,
     apiKeyUrl,
+    title,
     normalizeConfigValues,
   }) => {
     const {
@@ -450,6 +464,8 @@ const ProviderConfig = memo<ProviderConfigProps>(
       debouncedHandleValueChange(id, normalizeValues(pickFieldValues(values)));
     };
 
+    const logoUrl = data?.logo ?? logo;
+
     // Header components - shared between OAuth card and Form
     const headerTitle = (
       <Flexbox
@@ -466,8 +482,49 @@ const ProviderConfig = memo<ProviderConfigProps>(
             : { filter: 'grayscale(100%)', maxHeight: 24, opacity: 0.66 }),
         }}
       >
-        <Avatar alt={name || id} avatar={getProviderLogoUrl(id, name)} size={28} />
-        {name}
+        {isCustom ? (
+          <Flexbox horizontal align={'center'} gap={8}>
+            {logoUrl ? (
+              <Avatar avatar={logoUrl} shape={'circle'} size={32} title={name || id} />
+            ) : (
+              <ProviderCombine provider={'not-exist-provider'} size={24} />
+            )}
+            {name}
+          </Flexbox>
+        ) : (
+          <>
+            {title ??
+              // OAuth providers sell a subscription plan rather than the vendor
+              // platform, so the plan name reads truer than the vendor wordmark
+              // the combined logo would render (e.g. ChatGPT vs. OpenAI).
+              (isOAuthProvider ? (
+                <Flexbox horizontal align={'center'} gap={8}>
+                  <ProviderIcon
+                    provider={id}
+                    shape={'square'}
+                    size={24}
+                    style={{ borderRadius: 6 }}
+                    type={'avatar'}
+                  />
+                  {name}
+                </Flexbox>
+              ) : (
+                <ProviderCombine provider={id} size={24} />
+              ))}
+            <Tooltip title={t('providerModels.config.helpDoc')}>
+              <a
+                href={urlJoin(BASE_PROVIDER_DOC_URL, id)}
+                rel="noreferrer"
+                target="_blank"
+                onClick={stopPropagation}
+              >
+                <Center className={styles.help} height={20} width={20}>
+                  ?
+                </Center>
+              </a>
+            </Tooltip>
+          </>
+        )}
       </Flexbox>
     );
 

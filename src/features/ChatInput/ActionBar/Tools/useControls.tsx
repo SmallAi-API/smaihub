@@ -2,11 +2,21 @@ import { MemoryManifest } from '@lobechat/builtin-tool-memory';
 import { WebBrowsingManifest } from '@lobechat/builtin-tool-web-browsing';
 import { getConnectorCatalog, RECOMMENDED_SKILLS, RecommendedSkillType } from '@lobechat/const';
 import { type AgentPluginMode, getDisabledPluginIds } from '@lobechat/types';
-import type { ItemType } from '@lobehub/ui';
-import { Icon, Popover, SearchBar, stopPropagation } from '@lobehub/ui';
-import { Avatar, confirmModal, Switch, Tag } from '@lobehub/ui/base-ui';
+import {
+  Avatar,
+  confirmModal,
+  createStaticStyles,
+  cssVar,
+  cx,
+  Icon,
+  type ItemType,
+  Popover,
+  SearchBar,
+  stopPropagation,
+  Switch,
+  Tag,
+} from '@lobehub/ui';
 import { McpIcon, SkillsIcon } from '@lobehub/ui/icons';
-import { createStaticStyles, cssVar, cx } from 'antd-style';
 import isEqual from 'fast-deep-equal';
 import {
   Ban,

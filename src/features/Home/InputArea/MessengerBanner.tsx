@@ -1,8 +1,7 @@
 'use client';
 
 import { ClaudeCode, Codex, HermesAgent, OpenClaw, Pi } from '@lobehub/icons';
-import { Flexbox, Icon } from '@lobehub/ui';
-import { createStaticStyles } from 'antd-style';
+import { createStaticStyles, Flexbox, Icon } from '@lobehub/ui';
 import { Sparkles } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
