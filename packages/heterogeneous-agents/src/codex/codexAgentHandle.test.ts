@@ -50,7 +50,7 @@ describe('createCodexAgentHandle', () => {
     clientVersion: '0.0.61',
     commandPath: 'codex',
     cwd: process.cwd(),
-    env: { LOBEHUB_AGENT_ID: 'agent-device', LOBEHUB_TOPIC_ID: 'topic-device' },
+    env: { ...process.env, LOBEHUB_AGENT_ID: 'agent-device', LOBEHUB_TOPIC_ID: 'topic-device' },
     operationId: 'op-device',
     prompt: 'one prompt',
   };

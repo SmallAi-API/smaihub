@@ -22,7 +22,7 @@ describe('native device startup cancellation', () => {
       clientVersion: '0.0.61',
       commandPath: 'codex',
       cwd: process.cwd(),
-      env: {},
+      env: { ...process.env },
       onStartupControl: ({ cancel }) => {
         void cancel('SIGINT');
       },

@@ -42,6 +42,53 @@ const syncCalls = async (name: 'taskGroupList' | 'taskList') => {
 };
 
 describe('TaskListSliceAction', () => {
+  it.each([false, true])(
+    'forwards includeArchived=%s to list and board queries with separate caches',
+    async (includeArchived) => {
+      const { taskService } = await import('@/services/task');
+      vi.mocked(taskService.list).mockResolvedValue({ data: [], success: true, total: 0 });
+      vi.mocked(taskService.groupList).mockResolvedValue({ data: [], success: true });
+
+      const { result } = renderHook(() => ({
+        board: useTaskStore.getState().useFetchTaskGroupList({ allAgents: true, includeArchived }),
+        list: useTaskStore.getState().useFetchTaskList({ allAgents: true, includeArchived }),
+        otherBoard: useTaskStore
+          .getState()
+          .useFetchTaskGroupList({ allAgents: true, includeArchived: !includeArchived }),
+        otherList: useTaskStore
+          .getState()
+          .useFetchTaskList({ allAgents: true, includeArchived: !includeArchived }),
+      }));
+      expect(result.current.board.queryKey).not.toBe(result.current.otherBoard.queryKey);
+      expect(result.current.list.queryKey).not.toBe(result.current.otherList.queryKey);
+      const [list] = await syncCalls('taskList');
+      const [board] = await syncCalls('taskGroupList');
+      await list.fetcher();
+      await board.fetcher();
+      expect(taskService.list).toHaveBeenCalledWith(
+        expect.objectContaining({ includeArchived: includeArchived || undefined }),
+      );
+      expect(taskService.groupList).toHaveBeenCalledWith(
+        expect.objectContaining({ includeArchived: includeArchived || undefined }),
+      );
+    },
+  );
+
+  it('keeps archived My tasks in a separate cache and requests them from the server', async () => {
+    const { useClientDataSWR } = await import('@/libs/swr');
+    const { taskService } = await import('@/services/task');
+    renderHook(() => {
+      useTaskStore.getState().useFetchMyTaskList({ scope: 'assigned' });
+      useTaskStore.getState().useFetchMyTaskList({ scope: 'assigned', includeArchived: true });
+    });
+    const calls = vi.mocked(useClientDataSWR).mock.calls;
+    expect(calls[0][0]).not.toEqual(calls[1][0]);
+    await (calls[1][1] as () => Promise<unknown>)();
+    expect(taskService.list).toHaveBeenCalledWith(
+      expect.objectContaining({ includeArchived: true, scope: 'assigned' }),
+    );
+  });
+
   describe('refreshTaskList', () => {
     // An edit can move a task across every list boundary at once — reorder it
     // by `updatedAt`, change its visibility, attach a schedule that flips

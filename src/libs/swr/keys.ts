@@ -307,13 +307,20 @@ export const taskKeys = {
    */
   myList: def(
     'task:myList',
-    (scope: 'assigned' | 'created', statuses?: string[], limit?: number, offset?: number) => [
+    (
+      scope: 'assigned' | 'created',
+      statuses?: string[],
+      limit?: number,
+      offset?: number,
+      includeArchived?: boolean,
+    ) => [
       'task:myList',
       scope,
       // Status narrowing is part of the identity: "hide completed" and "show
       // all" are different server pages, not a client-side view of one page.
       statuses ? [...statuses].sort().join(',') : 'all',
       ...(limit === undefined && offset === undefined ? [] : [{ limit, offset }]),
+      ...(includeArchived ? [{ includeArchived: true }] : []),
     ],
   ),
   scheduledList: def(
