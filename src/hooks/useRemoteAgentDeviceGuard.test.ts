@@ -33,6 +33,7 @@ describe('useRemoteAgentDeviceGuard', () => {
       canDisplayExecutionTarget: true,
       canSelectExecutionTarget: true,
       isPreferenceLoading: false,
+      topicDeviceUnknown: false,
       workspaceScoped: false,
     });
     mockedListDevices.mockResolvedValue([
@@ -55,6 +56,7 @@ describe('useRemoteAgentDeviceGuard', () => {
       canDisplayExecutionTarget: true,
       canSelectExecutionTarget: true,
       isPreferenceLoading: false,
+      topicDeviceUnknown: false,
       workspaceScoped: false,
     });
     mockedListDevices.mockResolvedValue([{ deviceId: 'my-device', online: false }] as never);
@@ -73,6 +75,7 @@ describe('useRemoteAgentDeviceGuard', () => {
       canDisplayExecutionTarget: true,
       canSelectExecutionTarget: true,
       isPreferenceLoading: false,
+      topicDeviceUnknown: false,
       workspaceScoped: true,
     });
     mockedListDevices.mockResolvedValue([]);
@@ -93,6 +96,7 @@ describe('useRemoteAgentDeviceGuard', () => {
       canDisplayExecutionTarget: true,
       canSelectExecutionTarget: true,
       isPreferenceLoading: false,
+      topicDeviceUnknown: false,
       workspaceScoped: false,
     });
     mockedListDevices.mockResolvedValue([
@@ -120,6 +124,7 @@ describe('useRemoteAgentDeviceGuard', () => {
       canDisplayExecutionTarget: true,
       canSelectExecutionTarget: true,
       isPreferenceLoading: true,
+      topicDeviceUnknown: false,
       workspaceScoped: true,
     });
 
@@ -135,6 +140,7 @@ describe('useRemoteAgentDeviceGuard', () => {
       canDisplayExecutionTarget: true,
       canSelectExecutionTarget: true,
       isPreferenceLoading: false,
+      topicDeviceUnknown: false,
       workspaceScoped: false,
     });
 
@@ -155,6 +161,7 @@ describe('useRemoteAgentDeviceGuard', () => {
       canDisplayExecutionTarget: true,
       canSelectExecutionTarget: true,
       isPreferenceLoading: false,
+      topicDeviceUnknown: false,
       workspaceScoped: false,
     }));
     mockedListDevices.mockResolvedValue([
