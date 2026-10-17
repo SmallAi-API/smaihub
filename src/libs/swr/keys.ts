@@ -817,7 +817,6 @@ export const verifyKeys = {
     'verify:reportBundle',
     verifyRunId,
   ]),
-  results: def('verify:results', (operationId: string) => ['verify:results', operationId]),
   rubric: def('verify:rubric', (rubricId: string) => ['verify:rubric', rubricId]),
   /** The acceptance round an old `/verify/:runId` link redirects to. */
   runAcceptanceRound: def('verify:runAcceptanceRound', (verifyRunId: string) => [
@@ -829,7 +828,6 @@ export const verifyKeys = {
     rubricId,
   ]),
   rubrics: def('verify:rubrics', () => ['verify:rubrics']),
-  state: def('verify:state', (operationId: string) => ['verify:state', operationId]),
   tracing: def('verify:tracing', (tracingId: string) => ['verify:tracing', tracingId]),
 };
 
