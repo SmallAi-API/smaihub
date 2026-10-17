@@ -530,16 +530,6 @@ export const deviceKeys = {
     workspaceId,
     deviceId,
   ]),
-  gitAheadBehind: def('device:gitAheadBehind', (deviceId: string, path: string) => [
-    'device:gitAheadBehind',
-    deviceId,
-    path,
-  ]),
-  gitBranch: def('device:gitBranch', (deviceId: string, path: string) => [
-    'device:gitBranch',
-    deviceId,
-    path,
-  ]),
   gitBranches: def('device:gitBranches', (deviceId: string, path: string) => [
     'device:gitBranches',
     deviceId,
@@ -599,16 +589,6 @@ export const deviceKeys = {
       baseRef,
     ],
   ),
-  gitWorkingTreeStatus: def('device:gitWorkingTreeStatus', (deviceId: string, path: string) => [
-    'device:gitWorkingTreeStatus',
-    deviceId,
-    path,
-  ]),
-  gitWorktrees: def('device:gitWorktrees', (deviceId: string, path: string) => [
-    'device:gitWorktrees',
-    deviceId,
-    path,
-  ]),
   listDevices: def('device:listDevices', () => ['device:listDevices']),
   repoType: def('device:repoType', (path: string) => ['device:repoType', path]),
 };
