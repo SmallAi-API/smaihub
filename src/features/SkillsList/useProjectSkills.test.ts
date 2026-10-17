@@ -53,13 +53,13 @@ const skill = (name: string): ProjectSkillItem => ({
   previewRoot: '/repo',
   scope: 'project',
   skillDir: `/repo/.agents/skills/${name}`,
-  source: 'agents',
+  source: '.agents/skills',
 });
 
 const scan = (...names: string[]): ListProjectSkillsResult => ({
   root: '/repo',
   skills: names.map(skill),
-  source: 'agents',
+  source: '.agents/skills',
 });
 
 describe('useProjectSkills after a reload', () => {
