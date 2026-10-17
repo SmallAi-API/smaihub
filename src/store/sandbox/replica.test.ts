@@ -14,7 +14,7 @@ import { createElement, type PropsWithChildren, useEffect } from 'react';
 import { SWRConfig, useSWRConfig } from 'swr';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { cacheScope, readReplicaStoredKeys } from '@/libs/replica';
+import { cacheScope, readReplicaStoredKeys, type ReplicaResource } from '@/libs/replica';
 import { setScopedMutate } from '@/libs/swr/mutate';
 import { sandboxStorageService } from '@/services/sandboxStorage';
 
@@ -123,10 +123,10 @@ describe('sandbox replicas', () => {
     sandboxInstanceDirectoryResource,
   ] as const;
 
-  const stored = async (
-    resource: (typeof resources)[number],
+  const stored = async <TData>(
+    resource: Pick<ReplicaResource<any, TData>, 'storage'>,
     queryKey = SANDBOX_SCOPE_ENTRY as string,
-  ) => (await resource.storage!.get({ queryKey, scope }))?.data;
+  ): Promise<TData | undefined> => (await resource.storage!.get({ queryKey, scope }))?.data;
 
   beforeEach(() => {
     useScope(`sandbox-user-${randomUUID()}:ws-1`);
