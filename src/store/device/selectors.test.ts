@@ -1,7 +1,7 @@
 import type { DeviceListItem } from '@lobechat/types';
 import { describe, expect, it } from 'vitest';
 
-import type { DeviceState } from './initialState';
+import { type DeviceState, initialState } from './initialState';
 import { canHostTerminal, deviceSelectors } from './selectors';
 
 const device = (overrides: Partial<DeviceListItem>): DeviceListItem =>
@@ -14,7 +14,10 @@ const channel = (name: string | null) => ({
   platform: null,
 });
 
-const state = (devices: DeviceListItem[]) => ({ deviceListMap: { all: devices } }) as DeviceState;
+const state = (devices: DeviceListItem[]): DeviceState => ({
+  ...initialState,
+  deviceListMap: { all: devices },
+});
 
 describe('canHostTerminal', () => {
   it('accepts a live CLI connection, including its suffixed variants', () => {
