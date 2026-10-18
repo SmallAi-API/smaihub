@@ -3,7 +3,7 @@
 import { DOWNLOAD_URL } from '@lobechat/const';
 import type { DeviceScope, DeviceVisibility } from '@lobechat/types';
 import { Button, createStaticStyles, cssVar, Flexbox, Icon, Tabs, Text } from '@lobehub/ui';
-import { DownloadIcon, MonitorDownIcon, ShieldCheckIcon, TerminalIcon } from 'lucide-react';
+import { DownloadIcon, MonitorDownIcon, ShieldCheckIcon } from 'lucide-react';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -158,11 +158,6 @@ const DeviceConnectModal = memo<DeviceConnectModalProps>(
                   icon: <Icon icon={MonitorDownIcon} />,
                   key: 'desktop',
                   label: t('devices.connectWizard.method.desktop'),
-                },
-                {
-                  icon: <Icon icon={TerminalIcon} />,
-                  key: 'cli',
-                  label: t('devices.connectWizard.method.cli'),
                 },
               ]}
               styles={{
