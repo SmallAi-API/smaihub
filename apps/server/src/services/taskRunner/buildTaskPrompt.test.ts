@@ -15,6 +15,7 @@ import {
   goalEvents,
   goalNodes,
   goals,
+  type NewVerifyCheckResult,
   tasks,
   users,
   verifyCheckResults,
@@ -134,20 +135,40 @@ describe('buildTaskPrompt unresolved checks', () => {
         })),
       )
       .returning();
-    await db.insert(verifyCheckResults).values(
-      [
-        { checkItemId: 'rebased', status: 'passed', verdict: 'passed', verifyRunId: judged.id },
-        {
-          checkItemId: 'evidence',
-          status: 'failed',
-          suggestion: 'Capture the account switch run and the no-data loading contrast.',
-          verdict: 'failed',
-          verifyRunId: judged.id,
-        },
-        { checkItemId: 'rebased', status: 'pending', verifyRunId: unjudged.id },
-        { checkItemId: 'evidence', status: 'pending', verifyRunId: unjudged.id },
-      ].map((row) => ({ ...row, userId, verifierType: 'agent' as const })),
-    );
+    const checkResults: NewVerifyCheckResult[] = [
+      {
+        checkItemId: 'rebased',
+        status: 'passed',
+        userId,
+        verifierType: 'agent',
+        verdict: 'passed',
+        verifyRunId: judged.id,
+      },
+      {
+        checkItemId: 'evidence',
+        status: 'failed',
+        suggestion: 'Capture the account switch run and the no-data loading contrast.',
+        userId,
+        verifierType: 'agent',
+        verdict: 'failed',
+        verifyRunId: judged.id,
+      },
+      {
+        checkItemId: 'rebased',
+        status: 'pending',
+        userId,
+        verifierType: 'agent',
+        verifyRunId: unjudged.id,
+      },
+      {
+        checkItemId: 'evidence',
+        status: 'pending',
+        userId,
+        verifierType: 'agent',
+        verifyRunId: unjudged.id,
+      },
+    ];
+    await db.insert(verifyCheckResults).values(checkResults);
 
     const result = await buildTaskPrompt((await taskModel.findById(task.id))!, {
       briefModel: new BriefModel(db, userId),

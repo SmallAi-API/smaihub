@@ -64,9 +64,12 @@ const seedRepairedDelivery = async (title: string) => {
   });
   const created = await service.tick(graph.goal.id);
   const deliveredAt = new Date(Date.now() - VERIFY_SETTLE_GRACE_MS - 5 * 60_000);
-  await serverDB.insert(topics).values({ id: 'tpc_delivered', userId });
-  await serverDB.insert(taskTopics).values({
+  await serverDB.insert(topics).values({
     completedAt: deliveredAt,
+    id: 'tpc_delivered',
+    userId,
+  });
+  await serverDB.insert(taskTopics).values({
     createdAt: deliveredAt,
     operationId: 'op-delivered',
     seq: 1,

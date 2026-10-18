@@ -18,7 +18,7 @@ import {
 } from './harness';
 
 // Loaded after the mock harness so module mocks are registered first.
-let Files: ComponentType<{ workingDirectory: string }>;
+let Files: ComponentType<{ deviceId?: string; workingDirectory: string }>;
 
 beforeAll(async () => {
   Files = (await import('../index')).default;
