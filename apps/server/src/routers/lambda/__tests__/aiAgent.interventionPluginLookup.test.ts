@@ -112,7 +112,7 @@ describe('aiAgentRouter — tool plugin lookups for a large Stop batch', () => {
         arguments: '{}',
         id,
         identifier: 'lobe-local-system',
-        intervention: { batchId, operationId, status: 'pending' },
+        intervention: { batchId, operationId, status: 'pending' as const },
         toolCallId: `call-stop-${index}`,
         type: 'default',
         userId,
