@@ -1,6 +1,6 @@
 import type { IEditor } from '@lobehub/editor';
 import { render } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // InternalEditor is the mounting surface; stub it out so the component tree
 // stays free of the real Lexical mount while loadEditorContent still runs for
@@ -21,6 +21,10 @@ vi.mock('react-i18next', () => ({
 }));
 
 describe('EditorDataMode.loadEditorContent empty-parse shell tolerance', () => {
+  beforeEach(() => {
+    internalEditorSpy.onInit = null;
+  });
+
   it('routes a childless-root Lexical shell to the fallback instead of json hydration', async () => {
     vi.resetModules();
     const { EMPTY_EDITOR_STATE } = await import('@/libs/editor/constants');
@@ -35,7 +39,6 @@ describe('EditorDataMode.loadEditorContent empty-parse shell tolerance', () => {
 
     const setDocumentSpy = vi.mocked(mockEditor.setDocument);
     setDocumentSpy.mockClear();
-    internalEditorSpy.onInit = null;
     const { default: Component } = mod;
     render(
       <Component
@@ -69,7 +72,6 @@ describe('EditorDataMode.loadEditorContent empty-parse shell tolerance', () => {
 
     const setDocumentSpy = vi.mocked(mockEditor.setDocument);
     setDocumentSpy.mockClear();
-    internalEditorSpy.onInit = null;
     const { default: Component } = mod;
     render(
       <Component

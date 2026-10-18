@@ -1,6 +1,6 @@
+import type { LobeChatDatabase } from '@lobechat/database';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { LobeChatDatabase } from '@/database';
 import { AgentDocumentModel } from '@/database/models/agentDocuments';
 
 import { AgentDocumentsService } from './index';
