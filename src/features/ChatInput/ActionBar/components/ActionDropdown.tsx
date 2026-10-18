@@ -38,11 +38,6 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { type MenuOpenChangeDetails, shouldVetoMenuClose } from './menuCloseVeto';
 
 const styles = createStaticStyles(({ css, cssVar }) => ({
-  dropdownMenu: css`
-    .ant-avatar {
-      margin-inline-end: var(--lobe-margin-xs);
-    }
-  `,
   trigger: css`
     outline: none;
 
@@ -368,9 +363,9 @@ const ActionDropdown = memo<ActionDropdownProps>(
     const resolvedPopupClassName = useMemo<DropdownMenuPopupProps['className']>(() => {
       const popupClassName = popupProps?.className;
       if (typeof popupClassName === 'function') {
-        return (state) => cx(styles.dropdownMenu, menu.className, popupClassName(state));
+        return (state) => cx(menu.className, popupClassName(state));
       }
-      return cx(styles.dropdownMenu, menu.className, popupClassName);
+      return cx(menu.className, popupClassName);
     }, [menu.className, popupProps?.className]);
 
     const resolvedPopupStyle = useMemo<DropdownMenuPopupProps['style']>(() => {
