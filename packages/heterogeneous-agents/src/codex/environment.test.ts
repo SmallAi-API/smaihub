@@ -22,10 +22,18 @@ describe('Codex thread environment', () => {
   it('keeps the workspace out of the shared app-server process env', () => {
     // Runs from two workspaces must reuse one app-server; a workspace in the process env made
     // the reuse check reject the second run as a different environment.
+    const baseEnv: NodeJS.ProcessEnv = {
+      CODEX_HOME: '/codex',
+      NEXT_PUBLIC_DEVELOPER_DEBUG: '',
+      NEXT_PUBLIC_I18N_DEBUG: '',
+      NEXT_PUBLIC_I18N_DEBUG_BROWSER: '',
+      NEXT_PUBLIC_I18N_DEBUG_SERVER: '',
+      NODE_ENV: 'test',
+    };
     const launch = (workspace: string) =>
-      getCodexProcessEnv({ CODEX_HOME: '/codex', LOBEHUB_WORKSPACE_ID: workspace });
+      getCodexProcessEnv({ ...baseEnv, LOBEHUB_WORKSPACE_ID: workspace });
     expect(launch('ws-a')).toEqual(launch('ws-b'));
-    expect(launch('ws-a')).toEqual({ CODEX_HOME: '/codex' });
+    expect(launch('ws-a')).toEqual(baseEnv);
   });
 
   it('folds every shell policy override into one table carrying the run provenance', () => {
