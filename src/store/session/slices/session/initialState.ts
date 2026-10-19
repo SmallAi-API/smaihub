@@ -20,7 +20,6 @@ export interface SessionState {
   isSearching: boolean;
   isSessionsFirstFetchFinished: boolean;
   pinnedSessions: LobeSessions;
-  searchKeywords: string;
   /**
    * @title 正在重命名的会话 ID
    * @description 用于控制会话重命名弹窗的显示状态
@@ -46,7 +45,6 @@ export const initialSessionState: SessionState = {
   isSearching: false,
   isSessionsFirstFetchFinished: false,
   pinnedSessions: [],
-  searchKeywords: '',
   sessionRenamingId: null,
   sessionUpdatingId: null,
   sessions: [],
