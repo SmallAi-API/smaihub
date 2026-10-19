@@ -674,6 +674,7 @@ export const scmKeys = {
     'scm:installations',
     workspaceId ?? null,
   ]),
+  wakeTarget: def('scm:wakeTarget', (topicId: string) => ['scm:wakeTarget', topicId]),
 };
 
 // ---- verify (deliverable judging) ---------------------------------------
