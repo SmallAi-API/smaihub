@@ -3,7 +3,6 @@
 import { type DropdownItem } from '@lobehub/ui';
 import { ActionIcon, DropdownMenu, Flexbox, Icon } from '@lobehub/ui';
 import {
-  Book,
   CircleHelp,
   Download,
   FlaskConical,
@@ -16,6 +15,7 @@ import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useHasActiveWorkspace } from '@/business/client/hooks/useHasActiveWorkspace';
+import { useHelpMenuBugReportItem } from '@/business/client/hooks/useHelpMenuBugReportItem';
 import Billboard from '@/features/Billboard';
 import { useBillboardMenuItems } from '@/features/Billboard/MenuItems';
 import { useActiveNavKey } from '@/features/NavPanel/useActiveNavKey';
@@ -25,6 +25,7 @@ import { useNavLayout } from '@/hooks/useNavLayout';
 import { useAnalytics } from '@/libs/analytics/client';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
+import { labPreferSelectors } from '@/store/user/slices/preference/selectors/labPrefer';
 import { userGeneralSettingsSelectors } from '@/store/user/slices/settings/selectors/general';
 
 type FooterMenuItems = DropdownItem[];
@@ -77,6 +78,8 @@ const Footer = memo(() => {
   const billboardMenuItems = useBillboardMenuItems();
   const enableBusinessFeatures = useServerConfigStore(serverConfigSelectors.enableBusinessFeatures);
   const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
+  const enableBugReport = useUserStore(labPreferSelectors.enableTopicBugReport);
+  const bugReportItem = useHelpMenuBugReportItem();
 
   const trackMenuClick = useCallback(
     (key: string) => {
@@ -96,30 +99,29 @@ const Footer = memo(() => {
     helpMenuItems: DropdownItem[];
     trackedMenuKeys: string[];
   }>(() => {
-    const ownItems: FooterMenuItems = [
-      ...(footer.showSettingsEntry && !isDevMode
+    const settingsGroup: FooterMenuItems =
+      footer.showSettingsEntry && !isDevMode
         ? [
             {
               icon: <Icon icon={Settings2} />,
               key: 'setting',
               label: <WorkspaceLink to="/settings">{t(settingLabelKey)}</WorkspaceLink>,
             },
-            {
-              type: 'divider' as const,
-            },
           ]
-        : []),
-      ...(enableBusinessFeatures
-        ? [
-            {
-              icon: <Icon icon={Send} />,
-              key: 'inviteFriend',
-              label: (
-                <WorkspaceLink to="/settings/referral">{t('userPanel.inviteFriend')}</WorkspaceLink>
-              ),
-            },
-          ]
-        : []),
+        : [];
+    const inviteGroup: FooterMenuItems = enableBusinessFeatures
+      ? [
+          {
+            icon: <Icon icon={Send} />,
+            key: 'inviteFriend',
+            label: (
+              <WorkspaceLink to="/settings/referral">{t('userPanel.inviteFriend')}</WorkspaceLink>
+            ),
+          },
+        ]
+      : [];
+    // Getting help: read the docs, report what broke, or reach a person.
+    const helpGroup: FooterMenuItems = [
       {
         icon: <Icon icon={KeyRound} />,
         key: 'apiKey',
@@ -129,18 +131,7 @@ const Footer = memo(() => {
           </a>
         ),
       },
-      {
-        icon: <Icon icon={Book} />,
-        key: 'docs',
-        label: (
-          <a href="https://docs.smai.ai/docs/smai-app" rel="noopener noreferrer" target="_blank">
-            {t('tab.docs')}
-          </a>
-        ),
-      },
-      {
-        type: 'divider',
-      },
+
       ...(footer.layout === 'compact'
         ? [
             {
@@ -164,6 +155,11 @@ const Footer = memo(() => {
           ]
         : []),
     ];
+
+    // A divider only between groups that have items, never at an edge or doubled.
+    const ownItems: FooterMenuItems = [settingsGroup, inviteGroup, helpGroup]
+      .filter((group) => group.length > 0)
+      .flatMap((group, index) => (index === 0 ? group : [{ type: 'divider' as const }, ...group]));
 
     return {
       helpMenuItems: [
