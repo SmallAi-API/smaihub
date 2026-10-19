@@ -2654,6 +2654,7 @@ export default {
   'goalProcess.result.nav.document': 'Final document',
   'goalProcess.result.nav.label': 'Jump to section',
   'goalProcess.result.nav.overview': 'Overview',
+  'goalProcess.result.nav.report': 'Report',
   'goalProcess.result.requirement': 'Original requirement',
   'goalProcess.result.scale.cost': 'Spent {{cost}}',
   'goalProcess.result.scale.criteria': '{{met}}/{{total}} criteria met',
@@ -2689,6 +2690,7 @@ export default {
   'goalProcess.result.unfinished.nextSteps': 'Suggested next steps',
   'goalProcess.result.unfinished.title': 'Not done / next steps',
   'goalProcess.result.unfinished.unmetCriteria': 'Unmet criteria',
+  'goalProcess.result.report.expand': 'View full screen',
   'goalProcess.result.story.chapterMissing':
     'This chapter is no longer in the report — it may have been rewritten.',
   'goalProcess.result.story.detourKind.dead_end': 'Dead end',
