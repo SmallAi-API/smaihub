@@ -2114,6 +2114,9 @@ export default {
   'createGoal.costBudgetPlaceholder': 'No cap',
   'createGoal.createFailed': 'Failed to create goal',
   'createGoal.back': 'Back',
+  'createGoal.agentsHint':
+    'The main agent plans and supervises the goal; tasks go to the executor, or to the main agent when none is chosen.',
+  'createGoal.agentsTitle': 'Agents',
   'createGoal.budgetTitle': 'Budget',
   'createGoal.contextLabel': 'Context for the Agent',
   'createGoal.contextHint': 'Add constraints, source material, or anything the Agent should know',
@@ -2266,6 +2269,8 @@ export default {
   'goalTask.step.queued': 'Not started',
   'goalList.title': 'Goals',
   'goalDetail.acceptance': 'Acceptance checks',
+  'goalDetail.agentManagedByOwner':
+    "Only the goal's creator or a Workspace admin can change its agents",
   'goalAcceptance.add': 'Add criterion',
   'goalAcceptance.edit': 'Edit',
   'goalAcceptance.empty': 'No criteria yet — add the outcomes the final acceptance should check.',
@@ -2296,6 +2301,9 @@ export default {
     'The complete task tree and latest runs for this goal.',
   'goalDetail.instruction': 'Goal instruction',
   'goalDetail.latestRuns': 'Recent executions',
+  'goalDetail.mainAgent': 'Main agent · plans and supervises this goal',
+  'goalDetail.mainAgentLabel': 'Plan',
+  'goalDetail.mainAgentUnassigned': 'Choose main agent',
   'goalDetail.closeConfirm.achieved.content':
     'Runs still in progress will be stopped and no new tasks will start. You can reopen the goal from this menu.',
   'goalDetail.closeConfirm.achieved.ok': 'Mark achieved',
@@ -2309,6 +2317,13 @@ export default {
   'goalDetail.deleteConfirm.ok': 'Delete goal',
   'goalDetail.deleteConfirm.title': 'Delete this goal?',
   'goalDetail.moreActions': 'More goal actions',
+  'goalDetail.modelFixed':
+    "This Agent's author fixed its model; only they or an admin can pick another for this goal",
+  'goalDetail.planningModel': 'Planning model · used by the main agent for planning turns',
+  'goalDetail.taskAgent': 'Executor · does the tasks under this goal',
+  'goalDetail.taskAgentFollowsMain': 'Same as main agent',
+  'goalDetail.taskAgentLabel': 'Execute',
+  'goalDetail.taskModel': "Task model · used by the goal's tasks, including unfinished ones",
   'goalDetail.metrics.planItems': 'Plan items',
   'goalDetail.metrics.progress': 'Progress',
   'goalDetail.metrics.agentRuns': 'Agent runs',
