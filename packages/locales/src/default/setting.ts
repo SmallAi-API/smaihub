@@ -3484,6 +3484,7 @@ When I am ___, I need ___
     'You can always customize LobeAI and add agents later in Workspace settings.',
   'workspace.onboarding.skipConfirm.ok': 'Skip',
   'workspace.onboarding.skipConfirm.cancel': 'Continue setup',
+  'workspace.onboarding.skipFailed': "Couldn't skip setup. Please try again.",
   'workspace.onboarding.toast.saved': 'Saved',
   'workspace.onboarding.toast.failed': 'Could not save. Please try again.',
   'workspace.onboarding.toast.installAgentsFailed':
@@ -3567,6 +3568,148 @@ When I am ___, I need ___
     'Your plan includes {{includedSeats}} free seats, expandable up to {{maxSeats}} with purchased extras.',
   'workspace.onboarding.step4Invite.subtitleWithLimit':
     'Free includes up to {{maxSeats}} seats, including you.',
+  'workspace.onboarding.flow.summary.maxSeats': 'Up to {{count}} members',
+  'workspace.onboarding.flow.welcome.title': 'Welcome to {{name}} 👋',
+  'workspace.onboarding.flow.welcome.description':
+    "I'm your team's agent steward. In the next few steps we'll connect your work apps, hire a team assistant and invite members, so agents become part of how your team works.",
+  'workspace.onboarding.flow.welcome.adminOnly':
+    'Only admins see this setup. Members who join later use the configured workspace right away.',
+  'workspace.onboarding.flow.connectApps.title': "Connect your team's work apps",
+  'workspace.onboarding.flow.connectApps.description':
+    'Connect the apps your team uses so the assistant can learn its projects and who does what. Authorization applies to the whole workspace.',
+  'workspace.onboarding.flow.connectApps.skip': 'Skip for now, connect later',
+  'workspace.onboarding.flow.connectApps.apps.github':
+    "Reads the team's repositories and collaboration to learn your stack and who works on what",
+  'workspace.onboarding.flow.connectApps.apps.notion':
+    "Reads the team's docs and wiki to learn your projects and ways of working",
+  'workspace.onboarding.flow.connectApps.apps.linear':
+    "Reads the team's projects, cycles and issues to learn how you plan work and who owns what",
+  'workspace.onboarding.flow.connectApps.apps.google-drive':
+    "Lets the assistant find and read the team's shared files",
+  'workspace.onboarding.flow.connectApps.apps.jira':
+    "Reads the team's projects and recent issues to learn what you build and who owns what",
+  'workspace.onboarding.flow.connectApps.apps.confluence':
+    "Reads the team's shared pages to learn your projects, processes and decisions",
+  'workspace.onboarding.flow.connectApps.apps.twitter':
+    "Reads the team account's posts and interactions to learn what you share and who you engage with",
+  'workspace.onboarding.flow.connectApps.privateSources.title':
+    'Include private content in the analysis',
+  'workspace.onboarding.flow.connectApps.privateSources.desc':
+    'Off: private Linear teams, private Jira projects and personal Confluence spaces are skipped. Anything else the connecting account can see may still be read, so connect with an account whose access fits the whole team. On: private and personal content can also appear in the team profile every member sees.',
+  'workspace.onboarding.flow.connectApps.privateSources.saveFailed':
+    "Couldn't save this setting. Try again.",
+  'workspace.onboarding.flow.connectApps.more':
+    'You can connect more apps anytime in Settings → Connectors.',
+  'workspace.onboarding.flow.learnYourTeam.title': 'Get to know your team',
+  'workspace.onboarding.flow.learnYourTeam.description': 'Building your team profile',
+  'workspace.onboarding.flow.learnYourTeam.hint':
+    '💡 You can skip ahead; the analysis keeps running in the background',
+  'workspace.onboarding.flow.learnYourTeam.error':
+    "Couldn't finish the team analysis. Retry or skip for now.",
+  'workspace.onboarding.flow.learnYourTeam.progress.review':
+    'Reading team data from connected apps',
+  'workspace.onboarding.flow.learnYourTeam.progress.build':
+    "Mapping the team's projects, roles and ways of working",
+  'workspace.onboarding.flow.learnYourTeam.progress.explore':
+    'Writing the team profile and first task ideas',
+  'workspace.onboarding.flow.teamProfile.title': 'Team profile',
+  'workspace.onboarding.flow.teamProfile.empty':
+    'No team profile yet. Add team details, or go back to run the analysis again.',
+  'workspace.onboarding.flow.teamProfile.supplementLabel': '**Added by an admin:** {{text}}',
+  'workspace.onboarding.flow.teamProfile.supplement.title': 'Add team details',
+  'workspace.onboarding.flow.teamProfile.supplement.description':
+    "Add the team's business, current projects or ways of working to help the assistant understand the team. Every member can see this profile.",
+  'workspace.onboarding.flow.teamProfile.supplement.placeholder':
+    "For example: we're an 8-person product team building B2B SaaS, shipping every two weeks.",
+  'workspace.onboarding.flow.teamProfile.supplement.cancel': 'Cancel',
+  'workspace.onboarding.flow.teamProfile.supplement.save': 'Update profile',
+  'workspace.onboarding.flow.teamProfile.supplement.saveFailed': "Couldn't save. Please try again.",
+  'workspace.onboarding.flow.assistant.hint':
+    '💡 This assistant is shared by the whole team. Members can @ it in chats and group chats.',
+  'workspace.onboarding.flow.invite.quote': 'Bring your teammates in,',
+  'workspace.onboarding.flow.invite.highlight': 'and I can start helping everyone.',
+  'workspace.onboarding.flow.invite.send_one': 'Invite {{count}} member',
+  'workspace.onboarding.flow.invite.send_other': 'Invite {{count}} members',
+  'workspace.onboarding.flow.invite.skip': 'Skip for now, invite later',
+  'workspace.onboarding.flow.invite.invalidEmails': 'Invalid email address: {{emails}}',
+  'workspace.onboarding.flow.starterTasks.title': "Your team's first tasks",
+  'workspace.onboarding.flow.starterTasks.description':
+    'Hand these tasks to the team assistant and watch it work through them in the workspace.',
+  'workspace.onboarding.flow.starterTasks.quote': "I'll suggest a few tasks",
+  'workspace.onboarding.flow.starterTasks.highlight': 'to save your team repetitive sync work.',
+  'workspace.onboarding.flow.starterTasks.empty':
+    'No suggested tasks yet. You can finish setup now.',
+  'workspace.onboarding.flow.starterTasks.addFailed': "Couldn't add the tasks. Please try again.",
+  'workspace.onboarding.flow.starterTasks.partialFailed':
+    "{{count}} tasks couldn't be added. Try again.",
+  'workspace.onboarding.flow.channels.title': "Bring the assistant into your team's chats",
+  'workspace.onboarding.flow.channels.description':
+    'Connect a bot your team owns to {{name}}. Everyone in the group can @{{name}} to hand off work — nobody has to link an account.',
+  'workspace.onboarding.flow.channels.quote': "Add me to your team's group chats,",
+  'workspace.onboarding.flow.channels.highlight': 'and anyone can hand me work.',
+  'workspace.onboarding.flow.channels.showMore': 'More channels ({{count}})',
+  'workspace.onboarding.flow.channels.showLess': 'Show less',
+  'workspace.onboarding.flow.channels.more': 'You can change channels anytime in Agent → Channels.',
+  'workspace.onboarding.flow.channels.connect.back': 'Back to list',
+  'workspace.onboarding.flow.channels.connect.category': 'Bot channel',
+  'workspace.onboarding.flow.channels.connect.description':
+    "Use your own {{platform}} app to bring {{name}} into your team's chats as a bot.",
+  'workspace.onboarding.flow.channels.connect.guide': 'Setup guide',
+  'workspace.onboarding.flow.channels.connect.section': 'Connect',
+  'workspace.onboarding.flow.channels.connect.status.idle': 'Not connected',
+  'workspace.onboarding.flow.channels.connect.status.verifying': 'Verifying',
+  'workspace.onboarding.flow.channels.connect.status.connected': 'Connected',
+  'workspace.onboarding.flow.channels.connect.status.failed': 'Failed',
+  'workspace.onboarding.flow.channels.connect.savedSecret': 'Saved — leave empty to keep it',
+  'workspace.onboarding.flow.channels.connect.submit': 'Verify and save',
+  'workspace.onboarding.flow.channels.connect.skip': 'Skip this one',
+  'workspace.onboarding.flow.channels.connect.verifying':
+    'Checking the credentials with the platform…',
+  'workspace.onboarding.flow.channels.connect.attempt': 'Attempt {{count}}',
+  'workspace.onboarding.flow.channels.connect.connectedTitle': '{{name}} connected',
+  'workspace.onboarding.flow.channels.connect.connectedDesc':
+    'Members can now @{{name}} in your group to hand off work. Change it anytime in Agent → Channels.',
+  'workspace.onboarding.flow.channels.connect.edit': 'Edit credentials',
+  'workspace.onboarding.flow.channels.connect.failedTitle': "Couldn't connect {{name}}",
+  'workspace.onboarding.flow.channels.connect.errorCode': 'Error code: {{code}}',
+  'workspace.onboarding.flow.channels.connect.retry': 'Retry',
+  'workspace.onboarding.flow.channels.connect.footer':
+    'Each one can be retried or skipped on its own',
+  'workspace.onboarding.flow.devices.title': "Put the team's computers to work",
+  'workspace.onboarding.flow.devices.quote': 'Lend me a computer, ',
+  'workspace.onboarding.flow.devices.toolSignIn':
+    'Then run <code>{{command}}</code> once to sign in to {{name}}.',
+  'workspace.onboarding.flow.devices.toolDocs': 'Install docs',
+  'workspace.onboarding.flow.devices.description':
+    'Once a team computer is connected, {{name}} can read and write files, run commands and use local tools on it to get work done for the team.',
+  'workspace.onboarding.flow.devices.highlight': "and I'll handle the busywork.",
+  'workspace.onboarding.flow.devices.installStep': 'Install and sign in to the LobeHub CLI',
+  'workspace.onboarding.flow.devices.connectStep':
+    'Connect the computer to the workspace for every member',
+  'workspace.onboarding.flow.devices.methodDesktop': 'Desktop app (recommended)',
+  'workspace.onboarding.flow.devices.methodCli': 'Command line',
+  'workspace.onboarding.flow.devices.desktopInstall':
+    'Download and install the LobeHub desktop app on a team computer',
+  'workspace.onboarding.flow.devices.desktopDownload': 'Download desktop app',
+  'workspace.onboarding.flow.devices.desktopShare':
+    'Sign in with your account, find this computer in your personal Settings → Devices, choose "Share to workspace…", then pick this workspace and make it visible to all members',
+  'workspace.onboarding.flow.devices.desktopHint':
+    "Share a member's own computer with the team. It stays theirs, and is only usable while they are signed in and online.",
+  'workspace.onboarding.flow.devices.cliHint':
+    'Connect a server or dedicated computer that belongs to the team and stays online.',
+  'workspace.onboarding.flow.devices.codingTitle': 'Install an AI coding tool',
+  'workspace.onboarding.flow.devices.codingHint':
+    'You connected GitHub. With Claude Code or Codex on the computer, {{name}} can write code and open pull requests.',
+  'workspace.onboarding.flow.devices.listTitle': 'Team devices',
+  'workspace.onboarding.flow.devices.count': '{{online}} of {{count}} online',
+  'workspace.onboarding.flow.devices.viewAll': 'View all devices',
+  'workspace.onboarding.flow.devices.waiting': 'Waiting for a device to come online…',
+  'workspace.onboarding.flow.devices.waitingHint':
+    'Run the commands above and the device shows up here.',
+  'workspace.onboarding.flow.devices.agentsScanning': 'Detecting coding agents…',
+  'workspace.onboarding.flow.devices.agentsNone': 'No coding agents found',
+  'workspace.onboarding.flow.devices.skip': 'Skip for now',
+  'workspace.onboarding.flow.devices.later': 'You can connect devices later in Settings → Devices.',
   'workspace.onboarding.step4.heading': '{{name}} is ready!',
   'workspace.onboarding.step4.subtitle':
     'Your workspace is set up. Jump in and start collaborating with your team.',
