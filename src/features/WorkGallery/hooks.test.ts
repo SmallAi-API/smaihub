@@ -14,7 +14,8 @@ import { cacheScope } from '@/libs/replica';
 import { setScopedMutate } from '@/libs/swr/mutate';
 import { documentService } from '@/services/document';
 import { workService } from '@/services/work';
-import { initialWorkState, useWorkStore } from '@/store/work';
+import { useWorkStore } from '@/store/work';
+import { initialWorkState } from '@/store/work/initialState';
 import { workspaceWorksResource } from '@/store/work/projection';
 
 import { useWorkspaceWorksInfinite } from './hooks';
