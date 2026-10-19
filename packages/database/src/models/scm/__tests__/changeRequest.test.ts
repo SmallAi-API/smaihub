@@ -405,7 +405,10 @@ describe('ScmChangeRequestModel', () => {
     await serverDB.insert(topics).values({ id: 'scm-wake-topic', title: 't', userId });
     const has = (scope = { userId }) =>
       ScmChangeRequestModel.hasWakeTarget(serverDB, scope, 'scm-wake-topic', 2);
-    const link = (number: number, extra: Partial<typeof snapshot> & { isDraft?: boolean } = {}) =>
+    const link = (
+      number: number,
+      extra: Partial<Parameters<typeof ScmChangeRequestModel.upsert>[1]> = {},
+    ) =>
       ScmChangeRequestModel.upsert(serverDB, {
         ...snapshot,
         ...extra,

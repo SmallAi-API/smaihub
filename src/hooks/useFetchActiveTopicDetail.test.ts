@@ -8,6 +8,7 @@ import { scmService } from '@/services/scm';
 import { topicService } from '@/services/topic';
 import { useChatStore } from '@/store/chat';
 import { topicSelectors } from '@/store/chat/selectors';
+import { initialOperationState } from '@/store/chat/slices/operation/initialState';
 import type { ChatTopic } from '@/types/topic';
 
 import { useFetchActiveTopicDetail } from './useFetchActiveTopicDetail';
@@ -20,14 +21,15 @@ vi.mock('@/store/serverConfig', () => ({
 }));
 
 const context = { agentId: 'agent-cr', topicId: 'topic-cr' };
-const topic = {
-  createdAt: new Date(),
+const timestamp = Date.now();
+const topic: ChatTopic = {
+  createdAt: timestamp,
   id: context.topicId,
   metadata: {},
   status: 'active',
   title: 'Review feedback',
-  updatedAt: new Date(),
-} as ChatTopic;
+  updatedAt: timestamp,
+};
 const runningOperation = {
   assistantMessageId: 'assistant-cr',
   heteroType: 'claude-code',
@@ -60,7 +62,7 @@ describe('background runs in the active topic', () => {
       operations: {},
       operationsByContext: {},
       operationsByMessage: {},
-      operationsByType: {},
+      operationsByType: { ...initialOperationState.operationsByType },
       topicDataMap: {},
       topicDetailMap: {},
       topicDetailReplica: createReplicaState(),

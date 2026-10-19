@@ -59,6 +59,8 @@ import {
   SIDEBAR_SPACER_ID,
 } from '@/store/global/selectors/systemStatus';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
+import { useUserStore } from '@/store/user';
+import { labPreferSelectors } from '@/store/user/selectors';
 
 // ---------------------------------------------------------------------------
 // Types & constants
@@ -76,6 +78,7 @@ export interface SidebarItemConfig {
 
 const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
   { id: 'tasks', labelKey: 'tab.tasks', routeId: 'tasks' },
+  { id: 'goals', labelKey: 'tab.goals', routeId: 'goals' },
   { id: 'dashboard', labelKey: 'tab.dashboard', routeId: 'dashboard' },
   { icon: KeyRound, id: 'api', labelKey: 'tab.apiAccess' },
   { id: 'pages', labelKey: 'tab.pages', routeId: 'page' },
@@ -95,13 +98,18 @@ const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
 // owner-private, so hide it from the customizer where toggling it on
 // would render an empty accordion no user can populate.
 // Dashboards also stay out until the `dashboard` feature flag is on for the
-// user; a dropped id is restored by `withAllKnownKeys` once it is.
+// user, and Goals until the user turns on its lab; a dropped id is restored by
+// `withAllKnownKeys` once it is.
 export const getAvailableSidebarItems = (
   isWorkspaceMode: boolean,
-  { dashboardEnabled = false }: { dashboardEnabled?: boolean } = {},
+  {
+    dashboardEnabled = false,
+    goalsEnabled = false,
+  }: { dashboardEnabled?: boolean; goalsEnabled?: boolean } = {},
 ): SidebarItemConfig[] =>
   ALL_SIDEBAR_ITEMS.filter((item) => {
     if (item.id === 'dashboard' && !dashboardEnabled) return false;
+    if (item.id === 'goals' && !goalsEnabled) return false;
     if (isWorkspaceMode && (item.id === 'memory' || item.id === 'dashboard')) return false;
     if (!isWorkspaceMode && item.id === 'private') return false;
     return true;
@@ -109,7 +117,7 @@ export const getAvailableSidebarItems = (
 
 export const getSortableSidebarItemIds = (
   isWorkspaceMode: boolean,
-  options?: { dashboardEnabled?: boolean },
+  options?: { dashboardEnabled?: boolean; goalsEnabled?: boolean },
 ): Set<string> =>
   new Set([
     ...getAvailableSidebarItems(isWorkspaceMode, options).map((item) => item.id),
@@ -406,9 +414,10 @@ const CustomizeSidebarContent = memo(() => {
   const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
   const isWorkspaceMode = !!useActiveWorkspaceSlug();
   const dashboardEnabled = useServerConfigStore(serverConfigSelectors.enableDashboard);
+  const goalsEnabled = useUserStore(labPreferSelectors.enableGoals);
   const sortableItemIds = useMemo(
-    () => getSortableSidebarItemIds(isWorkspaceMode, { dashboardEnabled }),
-    [isWorkspaceMode, dashboardEnabled],
+    () => getSortableSidebarItemIds(isWorkspaceMode, { dashboardEnabled, goalsEnabled }),
+    [isWorkspaceMode, dashboardEnabled, goalsEnabled],
   );
   const filteredStoreItems = useMemo(
     () => storeItems.filter((id) => sortableItemIds.has(id)),

@@ -600,6 +600,7 @@ export default {
   'tab.docs': 'Docs',
   'tab.files': 'Files',
   'tab.generation': 'Generation',
+  'tab.goals': 'Goals',
   'tab.home': 'Home',
   'tab.marketplace': 'Marketplace',
   'tab.me': 'Me',
