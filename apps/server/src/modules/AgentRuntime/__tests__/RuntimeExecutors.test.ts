@@ -3684,9 +3684,13 @@ describe('RuntimeExecutors', { timeout: 60_000 }, () => {
         state: {},
         success: false,
       });
-      const loadAgentState = vi.fn(async () => ({
-        status: mockToolExecutionService.executeTool.mock.calls.length ? 'interrupted' : 'running',
-      }));
+      const loadAgentState = vi.fn(async () =>
+        createMockState({
+          status: mockToolExecutionService.executeTool.mock.calls.length
+            ? 'interrupted'
+            : 'running',
+        }),
+      );
       const executors = createRuntimeExecutors({
         ...ctx,
         loadAgentState,
@@ -3707,12 +3711,10 @@ describe('RuntimeExecutors', { timeout: 60_000 }, () => {
       };
 
       const result = await executors.call_tool!(instruction, state);
-
       expect(mockToolExecutionService.executeTool).toHaveBeenCalledTimes(1);
       expect(loadAgentState).toHaveBeenCalledWith('op-123');
       expect((result.nextContext!.payload as any).isSuccess).toBe(false);
     });
-
     it('should materialize failed tool result after retry exhaustion', async () => {
       mockToolExecutionService.executeTool.mockResolvedValue({
         content: 'still failing',
