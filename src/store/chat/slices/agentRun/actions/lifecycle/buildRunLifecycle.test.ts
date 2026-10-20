@@ -1,4 +1,4 @@
-import type { ConversationContext } from '@lobechat/types';
+import type { ChatMessageError, ConversationContext } from '@lobechat/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ChatStore } from '@/store/chat/store';
@@ -384,7 +384,7 @@ describe('buildRunLifecycle — sub-agent runs skip top-level effects', () => {
 describe('buildRunLifecycle.afterRunComplete — failed run notification', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  const error = { message: 'boom', type: 'AgentRuntimeError' };
+  const error = { message: 'boom', type: 'AgentRuntimeError' } satisfies ChatMessageError;
 
   it('announces a failed run with its error instead of a completion', async () => {
     const { get } = makeStore();

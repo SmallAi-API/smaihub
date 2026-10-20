@@ -220,7 +220,7 @@ describe('discoverTools — unpinned custom MCP connectors', () => {
         expect(ids).not.toContain(YINGMI);
       }
       const [connectors] = vi.mocked(scheduleStaleConnectorToolsRefresh).mock.calls[0];
-      expect(connectors.map((c) => c.identifier)).not.toContain(YINGMI);
+      expect(connectors.map((c) => c.id)).not.toContain(customConnector.id);
     });
 
     it('makes a granted unpinned connector activatable without enabling it', async () => {

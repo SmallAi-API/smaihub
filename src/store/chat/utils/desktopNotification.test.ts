@@ -5,6 +5,7 @@ import {
   GROUP_CHAT_TOPIC_URL,
   GROUP_CHAT_URL,
 } from '@lobechat/const';
+import type { ChatMessageError } from '@lobechat/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ChatStore } from '@/store/chat/store';
@@ -262,7 +263,7 @@ describe('failed run notification', () => {
     body: { code: 'working_directory_not_found', workingDirectory: '/Users/me/gone' },
     message: 'Working directory does not exist: /Users/me/gone',
     type: 'AgentRuntimeError',
-  };
+  } satisfies ChatMessageError;
 
   it('names the missing working directory in the body', () => {
     expect(buildFailureNotificationBody(workingDirectoryError)).toBe(
