@@ -66,7 +66,7 @@ describe('sendMessage behind a running Gateway run', () => {
     const { result } = renderHook(() => useChatStore());
     const append = vi
       .spyOn(aiAgentService, 'appendQueuedFollowUp')
-      .mockResolvedValue({ id: 'x', length: 1, queued: true });
+      .mockResolvedValue({ id: 'x', length: 1, queued: true, state: 'queued' });
 
     await act(async () => {
       await result.current.sendMessage({ context, message: 'also check the tests' });
@@ -177,6 +177,7 @@ describe('sendMessage behind a running Gateway run', () => {
       id: 'x',
       length: 2,
       queued: true,
+      state: 'queued',
     });
     const serverRequest = {
       agentId: TEST_IDS.SESSION_ID,

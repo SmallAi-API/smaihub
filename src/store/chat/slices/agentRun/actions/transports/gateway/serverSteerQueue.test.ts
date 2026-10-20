@@ -102,7 +102,7 @@ describe('handOffQueuedMessage', () => {
     startRun();
     const append = vi
       .spyOn(aiAgentService, 'appendQueuedFollowUp')
-      .mockResolvedValue({ id: 'q1', length: 1, queued: true });
+      .mockResolvedValue({ id: 'q1', length: 1, queued: true, state: 'queued' });
     get().enqueueMessage(key, queued('q1', { serverDelivery: 'appending' }));
 
     await handOffQueuedMessage(get, key, context, 'q1', async () => request);
@@ -157,7 +157,7 @@ describe('handOffQueuedMessage', () => {
     const append = vi
       .spyOn(aiAgentService, 'appendQueuedFollowUp')
       .mockRejectedValueOnce(unavailable)
-      .mockResolvedValueOnce({ id: 'q1', length: 1, queued: true });
+      .mockResolvedValueOnce({ id: 'q1', length: 1, queued: true, state: 'queued' });
     get().enqueueMessage(key, queued('q1', { serverDelivery: 'appending' }));
 
     await handOffQueuedMessage(get, key, context, 'q1', async () => request);
@@ -185,7 +185,7 @@ describe('handOffQueuedMessage', () => {
       .mockRejectedValueOnce(unavailable)
       .mockRejectedValueOnce(unavailable)
       .mockRejectedValueOnce(unavailable)
-      .mockResolvedValueOnce({ id: 'q1', length: 1, queued: true });
+      .mockResolvedValueOnce({ id: 'q1', length: 1, queued: true, state: 'queued' });
     startRun();
     get().enqueueMessage(key, queued('q1', { serverDelivery: 'appending' }));
 
@@ -310,7 +310,9 @@ describe('handOffQueuedMessage', () => {
 
   it('withdraws from the server a follow-up removed from the tray while it was being queued', async () => {
     startRun();
-    let resolveAppend!: (value: { id: string; length: number; queued: true }) => void;
+    let resolveAppend!: (
+      value: Awaited<ReturnType<typeof aiAgentService.appendQueuedFollowUp>>,
+    ) => void;
     vi.spyOn(aiAgentService, 'appendQueuedFollowUp').mockReturnValue(
       new Promise((resolve) => (resolveAppend = resolve)),
     );
@@ -322,7 +324,7 @@ describe('handOffQueuedMessage', () => {
     const handOff = handOffQueuedMessage(get, key, context, 'q1', async () => request);
     await vi.waitFor(() => expect(aiAgentService.appendQueuedFollowUp).toHaveBeenCalled());
     get().removeQueuedMessage(key, 'q1');
-    resolveAppend({ id: 'q1', length: 1, queued: true });
+    resolveAppend({ id: 'q1', length: 1, queued: true, state: 'queued' });
     await handOff;
 
     expect(remove).toHaveBeenCalledWith({ id: 'q1', threadId: null, topicId: 'tpc-1' });
@@ -336,6 +338,7 @@ describe('server queue watch', () => {
       id: 'q1',
       length: 1,
       queued: true,
+      state: 'queued',
     });
     const list = vi
       .spyOn(aiAgentService, 'listQueuedFollowUps')
@@ -368,6 +371,7 @@ describe('server queue watch while a run delivers', () => {
       id: 'q1',
       length: 1,
       queued: true,
+      state: 'queued',
     });
     const list = vi
       .spyOn(aiAgentService, 'listQueuedFollowUps')
@@ -392,6 +396,7 @@ describe('server queue watch while a run delivers', () => {
       id: 'q1',
       length: 1,
       queued: true,
+      state: 'queued',
     });
     vi.spyOn(aiAgentService, 'listQueuedFollowUps').mockRejectedValue(
       Object.assign(new Error('Queue unavailable'), { data: { code: 'SERVICE_UNAVAILABLE' } }),
@@ -410,6 +415,7 @@ describe('server queue watch while a run delivers', () => {
       id: 'q1',
       length: 1,
       queued: true,
+      state: 'queued',
     });
     const list = vi
       .spyOn(aiAgentService, 'listQueuedFollowUps')
@@ -456,7 +462,7 @@ describe('server queue watch while a run delivers', () => {
     const editorData = { root: { type: 'root' } };
     const append = vi
       .spyOn(aiAgentService, 'appendQueuedFollowUp')
-      .mockResolvedValue({ id: 'q1', length: 1, queued: true });
+      .mockResolvedValue({ id: 'q1', length: 1, queued: true, state: 'queued' });
     get().enqueueMessage(key, queued('q1', { editorData, serverDelivery: 'appending' }));
 
     await handOffQueuedMessage(get, key, context, 'q1', async () => request);
@@ -483,6 +489,7 @@ describe('server queue watch after the run ended without taking them', () => {
       id: 'q1',
       length: 1,
       queued: true,
+      state: 'queued',
     });
     const list = vi
       .spyOn(aiAgentService, 'listQueuedFollowUps')
@@ -509,6 +516,7 @@ describe('server queue watch after the run ended without taking them', () => {
       id: 'q1',
       length: 1,
       queued: true,
+      state: 'queued',
     });
     vi.spyOn(aiAgentService, 'listQueuedFollowUps').mockResolvedValue([
       pending('q1', { createdAt: 1, prompt: 'q1' }),
@@ -534,6 +542,7 @@ describe('server queue watch after the run ended without taking them', () => {
       id: 'q1',
       length: 1,
       queued: true,
+      state: 'queued',
     });
     vi.spyOn(aiAgentService, 'listQueuedFollowUps').mockResolvedValue([
       pending('q1', { createdAt: 1, prompt: 'q1' }),
