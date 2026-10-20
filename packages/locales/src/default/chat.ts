@@ -2970,6 +2970,8 @@ export default {
   'taskList.contextMenu.copyDescription':
     'You can copy to personal or workspaces that have permission to create a task.',
   'taskList.contextMenu.copyFailed': 'Failed to copy task',
+  'taskList.contextMenu.copyContent': 'Copy Content',
+  'taskList.contextMenu.copyContentSuccess': 'Content copied',
   'taskList.contextMenu.copyId': 'Copy ID',
   'taskList.contextMenu.copyIdSuccess': 'ID copied',
   'taskList.contextMenu.copyLink': 'Copy Link',
