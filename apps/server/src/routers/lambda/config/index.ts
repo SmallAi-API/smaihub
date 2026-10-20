@@ -1,4 +1,3 @@
-import { EdgeConfig } from '@lobechat/edge-config';
 import debug from 'debug';
 
 import { getDevDockAccess } from '@/business/server/devDockAccess';
@@ -6,56 +5,13 @@ import { businessConfigEndpoints } from '@/business/server/lambda-routers/config
 import { publicProcedure, router } from '@/libs/trpc/lambda';
 import { getServerFeatureFlagsStateFromRuntimeConfig } from '@/server/featureFlags';
 import { getServerDefaultAgentConfig, getServerGlobalConfig } from '@/server/globalConfig';
-import {
-  type GlobalBillboard,
-  type GlobalBillboardItem,
-  type GlobalRuntimeConfig,
-} from '@/types/serverConfig';
+import { getBillboard, getInitialBillboard } from '@/server/services/billboard';
+import { type GlobalRuntimeConfig } from '@/types/serverConfig';
 
 const log = debug('config-router');
 
-const isObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
-
-const normalizeBillboardItem = (raw: unknown): GlobalBillboardItem | null => {
-  if (!isObject(raw)) return null;
-  if (typeof raw.title !== 'string') return null;
-  if (typeof raw.description !== 'string') return null;
-  return raw as unknown as GlobalBillboardItem;
-};
-
-const normalizeBillboard = (raw: unknown): GlobalBillboard | null => {
-  if (!isObject(raw)) return null;
-  if (typeof raw.slug !== 'string' || raw.slug.length === 0) return null;
-  if (typeof raw.title !== 'string') return null;
-  if (typeof raw.startAt !== 'string' || typeof raw.endAt !== 'string') return null;
-  if (!Array.isArray(raw.items)) return null;
-
-  const items = raw.items
-    .map((item) => normalizeBillboardItem(item))
-    .filter((item): item is GlobalBillboardItem => item !== null);
-
-  return { ...(raw as unknown as GlobalBillboard), items };
-};
-
-const getActiveBillboard = async (): Promise<GlobalBillboard | null> => {
-  if (!EdgeConfig.isEnabled()) return null;
-  try {
-    const data = await new EdgeConfig().getBillboards();
-    if (!data) return null;
-    const normalized = normalizeBillboard(data);
-    if (!normalized) {
-      log('[Billboard] EdgeConfig payload failed validation, ignoring:', data);
-      return null;
-    }
-    return normalized;
-  } catch (err) {
-    log('[Billboard] Failed to read from EdgeConfig:', err);
-    return null;
-  }
-};
-
 export const configRouter = router({
+  getBillboard: publicProcedure.query(() => getBillboard()),
   getDefaultAgentConfig: publicProcedure.query(async () => {
     return getServerDefaultAgentConfig();
   }),
@@ -66,7 +22,7 @@ export const configRouter = router({
     const [serverConfig, serverFeatureFlags, billboard, businessDevDockAccess] = await Promise.all([
       getServerGlobalConfig(),
       getServerFeatureFlagsStateFromRuntimeConfig(ctx.userId || undefined),
-      getActiveBillboard(),
+      getInitialBillboard(),
       getDevDockAccess(ctx.userId || undefined),
     ]);
 

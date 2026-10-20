@@ -53,6 +53,20 @@ export const getAppConfig = () => {
       VIDEO_GENERATION_PREFER_WEBHOOK: z.boolean().optional(),
       WEBHOOK_PROXY_URL: z.string().url().optional(),
       VERCEL_EDGE_CONFIG: z.string().optional(),
+      BILLBOARD_URL: z
+        .string()
+        .url()
+        .refine((value) => {
+          try {
+            const url = new URL(value);
+            return (
+              url.protocol === 'https:' && !url.username && !url.password && !/\s/u.test(value)
+            );
+          } catch {
+            return false;
+          }
+        }, 'BILLBOARD_URL must be an HTTPS URL without credentials')
+        .optional(),
       MIDDLEWARE_REWRITE_THROUGH_LOCAL: z.boolean().optional(),
 
       CDN_USE_GLOBAL: z.boolean().optional(),
@@ -125,6 +139,7 @@ export const getAppConfig = () => {
       PLUGIN_SETTINGS: process.env.PLUGIN_SETTINGS,
 
       VERCEL_EDGE_CONFIG: process.env.VERCEL_EDGE_CONFIG,
+      BILLBOARD_URL: process.env.BILLBOARD_URL?.trim() || undefined,
 
       APP_URL,
       INTERNAL_APP_URL,

@@ -52,6 +52,11 @@ const StoreInitialization = memo(() => {
   const useFetchServerConfig = useServerConfigStore((s) => s.useInitServerConfig);
   useFetchServerConfig();
 
+  // Keep announcements fresh without reinitializing the remaining server config.
+  const serverConfigInit = useServerConfigStore((s) => s.serverConfigInit);
+  const useFetchBillboard = useServerConfigStore((s) => s.useFetchBillboard);
+  useFetchBillboard(serverConfigInit);
+
   // Update NextAuth status
   const useUserStoreUpdater = createStoreUpdater(useUserStore);
   const oAuthSSOProviders = useServerConfigStore(serverConfigSelectors.oAuthSSOProviders);

@@ -379,6 +379,7 @@ export const videoKeys = {
 
 // ---- serverConfig -------------------------------------------------------
 export const serverConfigKeys = {
+  billboard: 'serverConfig:billboard' as const,
   get: 'serverConfig:get' as const,
 };
 

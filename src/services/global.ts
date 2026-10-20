@@ -7,7 +7,7 @@ import { lambdaClient } from '@/libs/trpc/client';
 import { getElectronStoreState } from '@/store/electron';
 import { electronSyncSelectors } from '@/store/electron/selectors';
 import { type LobeAgentConfig } from '@/types/agent';
-import { type GlobalRuntimeConfig } from '@/types/serverConfig';
+import { type GlobalBillboard, type GlobalRuntimeConfig } from '@/types/serverConfig';
 
 const VERSION_URL = 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com';
 const SERVER_VERSION_URL = '/api/version';
@@ -67,6 +67,10 @@ class GlobalService extends BusinessGlobalService {
 
   getGlobalConfig = async (): Promise<GlobalRuntimeConfig> => {
     return lambdaClient.config.getGlobalConfig.query();
+  };
+
+  getBillboard = async (): Promise<GlobalBillboard | null> => {
+    return lambdaClient.config.getBillboard.query();
   };
 
   getDefaultAgentConfig = async (): Promise<PartialDeep<LobeAgentConfig>> => {

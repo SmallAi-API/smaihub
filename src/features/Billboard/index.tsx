@@ -5,29 +5,23 @@ import { memo, useCallback, useState } from 'react';
 import { useAnalytics } from '@/libs/analytics/client';
 import { useGlobalStore } from '@/store/global';
 import { useServerConfigStore } from '@/store/serverConfig';
+import type { GlobalBillboard } from '@/types/serverConfig';
 
 import BillboardCarousel from './Carousel';
+import { useBillboardWindow } from './useBillboardWindow';
 
 export const billboardDismissKey = (slug: string) => `billboard:${slug}`;
 export const BILLBOARD_ANCHOR_ATTR = 'data-billboard-anchor';
 const CARD_ATTR = 'data-billboard-card';
 
-const Billboard = memo(() => {
-  const billboard = useServerConfigStore((s) => s.billboard);
+const BillboardContent = memo(({ billboard }: { billboard: GlobalBillboard }) => {
   const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
   const dismissedSlugs = useGlobalStore((s) => s.status.readNotificationSlugs ?? []);
   const { analytics } = useAnalytics();
   const [closing, setClosing] = useState(false);
   const [exitTarget, setExitTarget] = useState<{ x: number; y: number }>({ x: 0, y: 40 });
 
-  const inWindow = billboard
-    ? (() => {
-        const now = Date.now();
-        const start = Date.parse(billboard.startAt);
-        const end = Date.parse(billboard.endAt);
-        return Number.isFinite(start) && Number.isFinite(end) && start <= now && now <= end;
-      })()
-    : false;
+  const inWindow = useBillboardWindow(billboard);
 
   const isDismissed = billboard
     ? dismissedSlugs.includes(billboardDismissKey(billboard.slug))
@@ -79,6 +73,14 @@ const Billboard = memo(() => {
       onClose={handleCloseStart}
     />
   );
+});
+
+BillboardContent.displayName = 'BillboardContent';
+
+const Billboard = memo(() => {
+  const billboard = useServerConfigStore((s) => s.billboard);
+  // A newly published group must not inherit an old group's dismissal animation.
+  return billboard ? <BillboardContent billboard={billboard} key={billboard.slug} /> : null;
 });
 
 Billboard.displayName = 'Billboard';

@@ -9,18 +9,16 @@ import { useServerConfigStore } from '@/store/serverConfig';
 
 import { billboardDismissKey } from './index';
 import { resolveBillboardTitle } from './locale';
+import { useBillboardWindow } from './useBillboardWindow';
 
 export const useBillboardMenuItems = (): DropdownItem[] => {
   const billboard = useServerConfigStore((s) => s.billboard);
   const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
   const { i18n } = useTranslation();
+  const inWindow = useBillboardWindow(billboard);
 
   return useMemo(() => {
     if (!billboard || billboard.items.length === 0) return [];
-    const now = Date.now();
-    const start = Date.parse(billboard.startAt);
-    const end = Date.parse(billboard.endAt);
-    const inWindow = Number.isFinite(start) && Number.isFinite(end) && start <= now && now <= end;
     if (!inWindow) return [];
     const title = resolveBillboardTitle(billboard, i18n.language);
     return [
@@ -53,5 +51,5 @@ export const useBillboardMenuItems = (): DropdownItem[] => {
         },
       },
     ];
-  }, [billboard, i18n.language, updateSystemStatus]);
+  }, [billboard, i18n.language, inWindow, updateSystemStatus]);
 };

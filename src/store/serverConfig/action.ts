@@ -1,14 +1,16 @@
 import { type SWRResponse } from 'swr';
 
-import { useOnlyFetchOnceSWR } from '@/libs/swr';
+import { useClientPollingSWR, useOnlyFetchOnceSWR } from '@/libs/swr';
 import { serverConfigKeys } from '@/libs/swr/keys';
+import { isAutoRetryable } from '@/libs/swr/normalizeError';
 import { globalService } from '@/services/global';
 import { type StoreSetter } from '@/store/types';
-import { type GlobalRuntimeConfig } from '@/types/serverConfig';
+import { type GlobalBillboard, type GlobalRuntimeConfig } from '@/types/serverConfig';
 
 import { type ServerConfigStore } from './store';
 
 const CLOUD_DESKTOP_BUSINESS_FEATURES_FLAG = '__LOBECLOUD_DESKTOP_BUSINESS_FEATURES__';
+const BILLBOARD_REFRESH_INTERVAL = 60_000;
 
 const setDesktopBusinessFeaturesFlag = (enableBusinessFeatures: boolean | undefined) => {
   (globalThis as unknown as Record<string, boolean | undefined>)[
@@ -56,6 +58,29 @@ export class ServerConfigActionImpl {
             'initServerConfig',
           );
         },
+      },
+    );
+  };
+
+  useFetchBillboard = (enabled: boolean): SWRResponse<GlobalBillboard | null> => {
+    return useClientPollingSWR<GlobalBillboard | null>(
+      enabled ? serverConfigKeys.billboard : null,
+      () => globalService.getBillboard(),
+      {
+        focusThrottleInterval: 30_000,
+        // A prolonged feed outage must not exhaust the shared hook's retry limit.
+        // Focus/reconnect revalidation resumes retries after hidden/offline periods.
+        onErrorRetry: (error, _key, config, revalidate, options) => {
+          if (!isAutoRetryable(error)) return;
+          setTimeout(() => {
+            if (config.isVisible() && config.isOnline()) revalidate(options);
+          }, BILLBOARD_REFRESH_INTERVAL);
+        },
+        onSuccess: (billboard) => {
+          this.#set({ billboard }, false, 'refreshBillboard');
+        },
+        refreshInterval: BILLBOARD_REFRESH_INTERVAL,
+        refreshWhenHidden: false,
       },
     );
   };
