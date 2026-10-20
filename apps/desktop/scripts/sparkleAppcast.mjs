@@ -48,12 +48,18 @@ const run = (command, args, options = {}) => {
   });
 };
 
-const createS3 = ({ bucket, endpoint }) => {
-  // Tencent COS rejects path-style requests for custom endpoints.
-  // Virtual-hosted addressing also remains compatible with standard S3.
+export const createS3 = ({ bucket, endpoint }) => {
+  // Match desktop-publish-s3's COS settings; this job runs on a separate runner.
   run('aws', ['configure', 'set', 'default.s3.addressing_style', 'virtual']);
+  run('aws', ['configure', 'set', 'default.s3.multipart_threshold', '512MB']);
+  run('aws', ['configure', 'set', 'default.s3.payload_signing_enabled', 'true']);
   const endpointArgs = endpoint ? ['--endpoint-url', endpoint] : [];
-  const aws = (args) => run('aws', ['s3', ...args, ...endpointArgs]);
+  // Recent AWS CLIs use streaming checksum trailers, which some S3-compatible
+  // endpoints reject with MissingContentLength. Keep SigV4 payload signing above.
+  const env = endpoint
+    ? { ...process.env, AWS_REQUEST_CHECKSUM_CALCULATION: 'WHEN_REQUIRED' }
+    : process.env;
+  const aws = (args) => run('aws', ['s3', ...args, ...endpointArgs], { env });
   return {
     download: (key, dest) => {
       try {
