@@ -7,8 +7,8 @@ export const NEW_CLAUDE_MODEL = 'claude-opus-5-5';
 export const NEW_CLAUDE_MODEL_NAME = 'Claude Opus 5.5';
 export const NEW_GEMINI_MODEL = 'gemini-4-argon';
 export const NEW_GEMINI_MODEL_NAME = 'Gemini 4 Argon';
-export const NEW_DEEPSEEK_MODEL = 'deepseek-v4-flash-vision-exp';
-export const NEW_DEEPSEEK_MODEL_NAME = 'DeepSeek V4 Flash Vision';
+export const NEW_DEEPSEEK_MODEL = 'deepseek-v4.1-flash';
+export const NEW_DEEPSEEK_MODEL_NAME = 'DeepSeek V4.1 Flash';
 
 export const BUSINESS_CHAT_PROVIDER = 'smai';
 export const OSS_GEMINI_PROVIDER = 'smai';
