@@ -15,7 +15,6 @@ import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useHasActiveWorkspace } from '@/business/client/hooks/useHasActiveWorkspace';
-import { useHelpMenuBugReportItem } from '@/business/client/hooks/useHelpMenuBugReportItem';
 import Billboard from '@/features/Billboard';
 import { useBillboardMenuItems } from '@/features/Billboard/MenuItems';
 import { useActiveNavKey } from '@/features/NavPanel/useActiveNavKey';
@@ -25,7 +24,6 @@ import { useNavLayout } from '@/hooks/useNavLayout';
 import { useAnalytics } from '@/libs/analytics/client';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
-import { labPreferSelectors } from '@/store/user/slices/preference/selectors/labPrefer';
 import { userGeneralSettingsSelectors } from '@/store/user/slices/settings/selectors/general';
 
 type FooterMenuItems = DropdownItem[];
@@ -78,8 +76,6 @@ const Footer = memo(() => {
   const billboardMenuItems = useBillboardMenuItems();
   const enableBusinessFeatures = useServerConfigStore(serverConfigSelectors.enableBusinessFeatures);
   const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
-  const enableBugReport = useUserStore(labPreferSelectors.enableTopicBugReport);
-  const bugReportItem = useHelpMenuBugReportItem();
 
   const trackMenuClick = useCallback(
     (key: string) => {
