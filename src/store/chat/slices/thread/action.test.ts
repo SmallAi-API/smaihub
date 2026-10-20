@@ -78,15 +78,20 @@ vi.mock('@/store/session', () => ({
   },
 }));
 
-vi.mock(import('@/store/user/selectors'), async (importOriginal) => ({
-  ...(await importOriginal()),
-  systemAgentSelectors: {
-    thread: vi.fn(() => ({})),
-  },
-  userGeneralSettingsSelectors: {
-    currentResponseLanguage: vi.fn(() => 'en-US'),
-  },
-}));
+vi.mock(import('@/store/user/selectors'), async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    systemAgentSelectors: {
+      ...actual.systemAgentSelectors,
+      thread: vi.fn(() => ({ model: 'gpt-4o-mini', provider: 'openai' })),
+    },
+    userGeneralSettingsSelectors: {
+      ...actual.userGeneralSettingsSelectors,
+      currentResponseLanguage: vi.fn(() => 'en-US' as const),
+    },
+  };
+});
 
 const SCOPE = 'thread-test-user:personal';
 
