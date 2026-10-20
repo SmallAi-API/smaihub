@@ -1,7 +1,10 @@
+import type { CompiledStyles, InlineStyles, StyleXArray } from '@stylexjs/stylex';
 import * as stylex from '@stylexjs/stylex';
 import { type CSSProperties } from 'react';
 
-type StyleArgs = Parameters<typeof stylex.props>;
+type StyleArg = StyleXArray<
+  (null | undefined | CompiledStyles) | boolean | Readonly<[CompiledStyles, InlineStyles]>
+>;
 
 /**
  * stylex.props for elements that also forward a caller's className / style, which
@@ -13,7 +16,7 @@ type StyleArgs = Parameters<typeof stylex.props>;
  * specificity, so a plain class cannot override them. Components that let callers
  * restyle them take an `xstyle?: StyleXStyles` prop and pass it in `styles`.
  */
-export const sx = (styles: StyleArgs[number], className?: string, style?: CSSProperties) => {
+export const sx = (styles: StyleArg, className?: string, style?: CSSProperties) => {
   const props = stylex.props(styles);
   const mergedClassName = [props.className, className].filter(Boolean).join(' ');
   return {
