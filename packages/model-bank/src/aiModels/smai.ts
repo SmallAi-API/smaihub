@@ -2278,12 +2278,12 @@ const smaiChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 131_072,
     description:
-      'DeepSeek V4 Flash is the cost-efficient member of the V4 family with a 1M context window and hybrid thinking. Thinking mode is on by default and can be toggled via the `thinking` parameter; non-thinking mode is optimized for latency-sensitive workflows.',
-    displayName: 'DeepSeek V4 Flash',
+      'DeepSeek V4.1 Flash is the cost-efficient member of the V4 family with a 1M context window and hybrid thinking. Thinking mode is on by default and can be toggled via the `thinking` parameter; non-thinking mode is optimized for latency-sensitive workflows.',
+    displayName: 'DeepSeek V4.1 Flash',
     enabled: true,
-    id: 'deepseek-v4-flash',
+    id: 'deepseek-v4.1-flash',
     maxOutput: 384_000,
-    releasedAt: '2026-04-24',
+    releasedAt: '2026-10-17',
     settings: {
       extendParams: ['enableReasoning', 'reasoningBudgetToken32k'],
     },

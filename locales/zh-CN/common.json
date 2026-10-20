@@ -194,7 +194,7 @@
   "defaultSession": "自定义助理",
   "delete": "删除",
   "deleteHistoryMigrating": "聊天记录仍在迁移中。迁移完成后可以删除 — 请几分钟后再试。",
-  "deleteSharedOwnerOnly": "只有工作区所有者可以删除此项——它包含其他成员的对话",
+  "deleteSharedContentOwnerOnly": "无法删除：这包括其他成员的主题、评论或任务。请请求工作区所有者删除它。",
   "document": "使用文档",
   "download": "下载",
   "downloadingUpdate": "正在下载 {{percent}}%",

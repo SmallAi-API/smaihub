@@ -1,6 +1,7 @@
 {
   "agent_cron_job_completed": "您的排程任務 \"{{jobName}}\" 已成功完成。",
   "agent_cron_job_completed_title": "排程任務已完成",
+  "agent_cron_job_completed_with_summary": "您的排程任務 \"{{jobName}}\" 已成功完成。\n\n{{summary}}",
   "agent_cron_job_failed": "您的排程任務 \"{{jobName}}\" 失敗了。打開任務以查看完整錯誤。",
   "agent_cron_job_failed_insufficient_budget": "您的排程任務 \"{{jobName}}\" 無法執行，因為您的帳戶已經沒有餘額。請充值或升級您的計劃以恢復未來的執行。",
   "agent_cron_job_failed_insufficient_budget_title": "排程任務已暫停：餘額不足",
