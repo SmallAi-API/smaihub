@@ -20,33 +20,18 @@ export const BACKEND_PATH_PREFIXES = [
   '/api/auth',
   '/api/agent/llm-relay',
   '/market',
-  FILE_PROXY_PATH_PREFIX,
+  '/canvas-preview',
+  '/canvas-runtime',
 ];
 
-/** Segment-aware so `/files` / `/fabricated` are not mistaken for `/f`. */
-const matchesPathPrefix = (pathname: string, prefix: string) =>
-  pathname === prefix || pathname.startsWith(`${prefix}/`);
+const SANDBOXED_PATH_PREFIXES = ['/canvas-preview', '/canvas-runtime'];
 
-export const isBackendPath = (pathname: string) =>
-  BACKEND_PATH_PREFIXES.some((prefix) => matchesPathPrefix(pathname, prefix));
+const matchesPrefix = (pathname: string, prefixes: string[]) =>
+  prefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 
-/** Header carrying the desktop OIDC access token to the remote backend. */
-export const OIDC_AUTH_HEADER = 'Oidc-Auth';
+export const isBackendPath = (pathname: string) => matchesPrefix(pathname, BACKEND_PATH_PREFIXES);
 
-/** Whether an absolute URL targets the uploaded-file proxy. */
-export const isFileProxyUrl = (rawUrl: string) => {
-  try {
-    return matchesPathPrefix(new URL(rawUrl).pathname, FILE_PROXY_PATH_PREFIX);
-  } catch {
-    return false;
-  }
-};
-
-/** Origin equality for two absolute URLs. Malformed input is never a match. */
-export const isSameOrigin = (rawUrl: string, otherUrl: string) => {
-  try {
-    return new URL(rawUrl).origin === new URL(otherUrl).origin;
-  } catch {
-    return false;
-  }
-};
+// Canvas previews run in an opaque-origin sandbox (Origin: null); the proxy would otherwise
+// attach the user's access token to whatever backend path their scripts fetch.
+export const isSandboxedBackendRequestAllowed = (pathname: string, origin: string | null) =>
+  origin !== 'null' || matchesPrefix(pathname, SANDBOXED_PATH_PREFIXES);

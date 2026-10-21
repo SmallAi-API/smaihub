@@ -258,6 +258,7 @@ describe('ProjectModel', () => {
     const owner = new ProjectModel(serverDB, userId, 'project-manage-workspace');
     const member = new ProjectModel(serverDB, otherUserId, 'project-manage-workspace');
     const project = await createProject(owner, { name: 'Shared' });
+    assert.isNotNull(project.coordinatorAgentId);
 
     expect(await member.findManageableById(project.id)).toEqual(
       expect.objectContaining({ id: project.id }),
@@ -335,6 +336,7 @@ describe('ProjectModel', () => {
 
   it('updates member and knowledge bindings without touching the coordinator', async () => {
     const project = await createProject(model, { name: 'Patch bindings' });
+    assert.isNotNull(project.coordinatorAgentId);
     const [agent] = await serverDB.insert(agents).values({ title: 'Writer', userId }).returning();
     const [knowledgeBase] = await serverDB
       .insert(knowledgeBases)

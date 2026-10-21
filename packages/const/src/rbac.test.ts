@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import type { WorkspaceSystemRoleName } from './rbac';
 import {
   canWorkspaceRoleBeTaskAssignee,
   legacyRoleToWorkspaceRole,
@@ -52,7 +53,7 @@ describe('workspace built-in roles', () => {
   // accepts either scope; the project model itself lets any such member manage
   // a project they can see, so the viewer exclusion rests on this mapping.
   it('grants project writes to every role except the viewer', () => {
-    const canUpdateAgents = (role: string) =>
+    const canUpdateAgents = (role: WorkspaceSystemRoleName) =>
       WORKSPACE_ROLE_PERMISSIONS[role].some((code) => code.startsWith('agent:update:'));
 
     expect(canUpdateAgents(WORKSPACE_SYSTEM_ROLES.OWNER)).toBe(true);

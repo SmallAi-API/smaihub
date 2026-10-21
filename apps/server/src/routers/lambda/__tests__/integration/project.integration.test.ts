@@ -163,12 +163,12 @@ describe('Project Router Integration', () => {
     await serverDB
       .insert(workspaces)
       .values({ id: workspaceId, name: 'Teammates', primaryOwnerId: userId, slug: workspaceId });
-    const memberCaller = (id: string) =>
-      projectRouter.createCaller({
-        ...createTestContext(id),
-        workspaceId,
-        workspaceRole: 'member' as const,
-      });
+    const memberContext = (id: string) => ({
+      ...createTestContext(id),
+      workspaceId,
+      workspaceRole: 'member' as const,
+    });
+    const memberCaller = (id: string) => projectRouter.createCaller(memberContext(id));
     const project = await memberCaller(userId).create({ identifier: 'TEAM', name: 'Team' });
     const teammate = memberCaller(teammateId);
 
@@ -187,7 +187,7 @@ describe('Project Router Integration', () => {
       ).rejects.toMatchObject({ code: 'FORBIDDEN' });
 
       const task = await taskRouter
-        .createCaller({ ...createTestContext(teammateId), workspaceId, workspaceRole: 'member' })
+        .createCaller(memberContext(teammateId))
         .create({ instruction: 'Help the team', projectId: project.data.id });
       expect(task.data.projectId).toBe(project.data.id);
 
