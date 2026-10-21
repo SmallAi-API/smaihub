@@ -14,14 +14,14 @@ LobeHub 不同于传统 CRUD 的网页，存在大量的富交互能力，如何
 
 ## 概念要素
 
-| 概念名词 | 解释 |
-| --- | --- |
-| store | 状态库 (store)，包含存储应用的状态、动作。允许在应用渲染中访问和修改状态。 |
-| state | 状态 (state) 是指应用程序的数据，存储了应用程序的当前状态，状态的变化**一定会触发应用的重新渲染**，以反映新的状态。 |
-| action | 动作 (action) 是一个操作函数，它描述了应用程序中发生的交互事件。动作通常是由用户交互、网络请求或定时器等触发。 action 可以是**同步**的，也可以是**异步**的。 |
-| reducer | 归约器 (reducer) 是一个纯函数，它接收当前状态和动作作为参数，并返回一个新的状态。它用于根据动作类型来更新应用程序的状态。Reducer 是一个纯函数，不存在副作用，因此一定是 **同步** 函数。 |
+| 概念名词     | 解释                                                                                                                                                   |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| store    | 状态库 (store)，包含存储应用的状态、动作。允许在应用渲染中访问和修改状态。                                                                                                            |
+| state    | 状态 (state) 是指应用程序的数据，存储了应用程序的当前状态，状态的变化**一定会触发应用的重新渲染**，以反映新的状态。                                                                                     |
+| action   | 动作 (action) 是一个操作函数，它描述了应用程序中发生的交互事件。动作通常是由用户交互、网络请求或定时器等触发。 action 可以是**同步**的，也可以是**异步**的。                                                          |
+| reducer  | 归约器 (reducer) 是一个纯函数，它接收当前状态和动作作为参数，并返回一个新的状态。它用于根据动作类型来更新应用程序的状态。Reducer 是一个纯函数，不存在副作用，因此一定是 **同步** 函数。                                             |
 | selector | 选择器 (selector) 是一个函数，用于从应用程序的状态中获取特定的数据。它接收应用程序的状态作为参数，并返回经过计算或转换后的数据。Selector 可以将状态的一部分或多个状态组合起来，以生成派生的数据。Selector 通常用于将应用程序的状态映射到组件的 props，以供组件使用。 |
-| slice | 切片 (slice) 是一个概念，用于表达数据模型状态的一部分。它指定了一个状态切片（slice），以及与该切片相关的 state、action、reducer 和 selector。使用 Slice 可以将大型的 Store 拆分为更小的、可维护的子类型。 |
+| slice    | 切片 (slice) 是一个概念，用于表达数据模型状态的一部分。它指定了一个状态切片（slice），以及与该切片相关的 state、action、reducer 和 selector。使用 Slice 可以将大型的 Store 拆分为更小的、可维护的子类型。                    |
 
 ## 结构分层
 
@@ -153,7 +153,7 @@ src/store/session
 
 ## SessionStore 的实现
 
-在 LobeHub 中，SessionStore 被设计为管理会话状态和逻辑的核心模块。它由多个 Slices 组成，每个 Slice 管理一部分相关的状态和逻辑。下面是一个简化的 SessionStore 的实现示例：
+旧 SessionStore 保留会话选择、界面状态和兼容动作，各个 Slice 负责相关的一组行为。下面用简化示例说明如何将动作类组合进 store：
 
 ### store.ts
 
@@ -193,32 +193,41 @@ export const useSessionStore = createWithEqualityFn<SessionStore>()(
 );
 ```
 
-在这个 `store.ts` 文件中，我们创建了一个 `useSessionStore` 钩子，它使用 `zustand` 库来创建一个全局状态管理器。我们通过共享的 `flattenActions` 工具函数，将 initialState 和每个 Slice 的动作合并，以创建完整的 SessionStore。这里没有使用 `persist` 中间件：SessionStore 的数据通过 SWR 从服务端获取，而不是持久化到本地存储。
+在这个 `store.ts` 文件中，我们创建了一个 `useSessionStore` 钩子，它使用 `zustand` 库来创建一个全局状态管理器。我们通过共享的 `flattenActions` 工具函数，将 initialState 和每个 Slice 的动作合并，以创建完整的 SessionStore。旧 SessionStore 管理会话选择和界面状态。Agent 与侧边栏列表由 [HomeStore 中基于 replica 的 Agent 列表](https://github.com/lobehub/lobehub/blob/canary/src/store/home/slices/agentList/action.ts)负责加载和缓存。
 
 ### slices/session/action.ts
 
-```ts
-import { type SWRResponse } from 'swr';
+下面的动作切片展示现有的 `switchSession` 动作：检查当前 Agent ID，然后通过带调试标签的状态写入更新 `activeAgentId`。
 
+```ts
 import { type SessionStore } from '@/store/session';
 import { type StoreSetter } from '@/store/types';
+import { setNamespace } from '@/utils/storeDebug';
 
-export interface SessionAction {
-  /**
-   * A custom hook that uses SWR to fetch sessions data.
-   */
-  useFetchSessions: () => SWRResponse<any>;
-}
+const n = setNamespace('session');
 
 type Setter = StoreSetter<SessionStore>;
-export const createSessionSlice = (set: Setter, get: () => SessionStore): SessionAction => ({
-  useFetchSessions: () => {
-    // ...初始化会话的逻辑
-  },
-  // ...其他动作的实现
-});
+export const createSessionSlice = (set: Setter, get: () => SessionStore, _api?: unknown) =>
+  new SessionActionImpl(set, get, _api);
+
+export class SessionActionImpl {
+  readonly #get: () => SessionStore;
+  readonly #set: Setter;
+
+  constructor(set: Setter, get: () => SessionStore, _api?: unknown) {
+    void _api;
+    this.#set = set;
+    this.#get = get;
+  }
+
+  switchSession = (sessionId: string): void => {
+    if (this.#get().activeAgentId === sessionId) return;
+
+    this.#set({ activeAgentId: sessionId }, false, n(`activeSession/${sessionId}`));
+  };
+}
+
+export type SessionAction = Pick<SessionActionImpl, keyof SessionActionImpl>;
 ```
 
-在 `action.ts` 文件中，我们定义了一个 `SessionAction` 接口来描述会话相关的动作，并且实现了一个 `useFetchSessions` 函数来创建这些动作。然后，我们将这些动作与初始状态合并，以形成会话相关的 Slice。
-
-通过这种结构分层和模块化的方法，我们可以确保 LobeHub 的 SessionStore 是清晰、可维护的，同时也便于扩展和测试。
+`createSessionSlice` 返回动作类实例，`flattenActions` 将它的公开方法暴露到旧 store 上，`SessionAction` 则由这些方法推导。列表加载和持久化由对应的列表资源负责；这个选择动作只更新界面状态。

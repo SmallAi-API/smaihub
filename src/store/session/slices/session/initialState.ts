@@ -18,7 +18,6 @@ export interface SessionState {
    */
   isAgentPinned: boolean;
   isSearching: boolean;
-  isSessionsFirstFetchFinished: boolean;
   pinnedSessions: LobeSessions;
   /**
    * @title 正在重命名的会话 ID
@@ -43,7 +42,6 @@ export const initialSessionState: SessionState = {
   defaultSessions: [],
   isAgentPinned: false,
   isSearching: false,
-  isSessionsFirstFetchFinished: false,
   pinnedSessions: [],
   sessionRenamingId: null,
   sessionUpdatingId: null,
