@@ -40,7 +40,7 @@ vi.mock('@/database/models/verifyRun', () => ({
 vi.mock('@/database/models/file', async (importOriginal) => {
   const actual = await importOriginal<typeof FileModelModule>();
   class FileModel extends actual.FileModel {
-    findById = modelMocks.findFileById as unknown as actual.FileModel['findById'];
+    findById = modelMocks.findFileById as unknown as FileModelModule.FileModel['findById'];
   }
   return { ...actual, FileModel };
 });
