@@ -6,6 +6,8 @@ import { ChatErrorType } from '@lobechat/types';
 import { and, eq, isNull } from 'drizzle-orm';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { SessionModel } from '@/database/models/session';
+
 import { messageRouter } from '../../message';
 import { cleanupTestUser, createTestContext, createTestUser } from './setup';
 
@@ -536,14 +538,8 @@ describe('Message Router Integration Tests', () => {
         sessionId: testSessionId,
       });
 
-      // 创建另一个 session 的消息
-      const [anotherSession] = await serverDB
-        .insert(sessions)
-        .values({
-          userId,
-          type: 'agent',
-        })
-        .returning();
+      // A legacy session context includes its Agent and relationship.
+      const anotherSession = await new SessionModel(serverDB, userId).create({ type: 'agent' });
 
       await caller.createMessage({
         content: 'Message in another session',
