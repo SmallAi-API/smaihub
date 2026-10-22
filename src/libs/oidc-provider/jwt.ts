@@ -1,6 +1,8 @@
 import { acceptanceIdFromReviewResource } from '@lobechat/const';
 import { TRPCError } from '@trpc/server';
 import debug from 'debug';
+import type { JSONWebKeySet, JWK, JWK_RSA_Public } from 'jose';
+import { calculateJwkThumbprint } from 'jose';
 
 import { authEnv } from '@/envs/auth';
 
@@ -51,7 +53,22 @@ export const getJWKS = (): object => {
   }
 };
 
-const getVerificationKey = async () => {
+const isRsaSigningKey = (key: JWK): key is JWK_RSA_Public =>
+  key.alg === 'RS256' &&
+  key.kty === 'RSA' &&
+  typeof key.e === 'string' &&
+  typeof key.n === 'string';
+
+const toPublicRsaKey = async (key: JWK_RSA_Public): Promise<JWK_RSA_Public> => ({
+  alg: 'RS256',
+  e: key.e,
+  kid: key.kid ?? (await calculateJwkThumbprint(key)),
+  kty: 'RSA',
+  n: key.n,
+  ...(key.use ? { use: key.use } : {}),
+});
+
+const getVerificationKeys = async () => {
   try {
     const jwksString = getJwksKeyString();
 
@@ -59,37 +76,24 @@ const getVerificationKey = async () => {
       throw new Error('JWKS_KEY 环境变量未设置');
     }
 
-    const jwks = JSON.parse(jwksString);
+    const jwks = JSON.parse(jwksString) as JSONWebKeySet;
 
     if (!jwks.keys || !Array.isArray(jwks.keys) || jwks.keys.length === 0) {
       throw new Error('JWKS 格式无效: 缺少或为空的 keys 数组');
     }
 
-    const privateRsaKey = jwks.keys.find((key: any) => key.alg === 'RS256' && key.kty === 'RSA');
-    if (!privateRsaKey) {
-      throw new Error('JWKS 中没有找到 RS256 算法的 RSA 密钥');
+    const publicKeys = await Promise.all(jwks.keys.filter(isRsaSigningKey).map(toPublicRsaKey));
+    if (publicKeys.length === 0) {
+      throw new Error('No RSA key with RS256 algorithm found in JWKS');
     }
-
-    // 创建一个只包含公钥组件的“纯净”JWK对象。
-    // RSA公钥的关键字段是 kty, n, e。其他如 kid, alg, use 也是公共的。
-    const publicKeyJwk = {
-      alg: privateRsaKey.alg,
-      e: privateRsaKey.e,
-      kid: privateRsaKey.kid,
-      kty: privateRsaKey.kty,
-      n: privateRsaKey.n,
-      use: privateRsaKey.use,
-    };
-
-    // 移除任何可能存在的 undefined 字段，保持对象干净
-    Object.keys(publicKeyJwk).forEach(
-      (key) => (publicKeyJwk as any)[key] === undefined && delete (publicKeyJwk as any)[key],
-    );
 
     const { importJWK } = await import('jose');
 
-    // 现在，无论在哪个环境下，`importJWK` 都会将这个对象正确地识别为一个公钥。
-    return await importJWK(publicKeyJwk, 'RS256');
+    // Validate configuration before token verification so a malformed JWK remains an
+    // infrastructure error (500) instead of being misreported as invalid user auth (401).
+    await Promise.all(publicKeys.map((key) => importJWK(key, 'RS256')));
+
+    return publicKeys;
   } catch (error) {
     log('Failed to get JWKS public key: %O', error);
     throw new Error(`JWKS_KEY public key retrieval failed: ${(error as Error).message}`, {
@@ -98,8 +102,38 @@ const getVerificationKey = async () => {
   }
 };
 
+const isSignatureVerificationError = (error: unknown) =>
+  typeof error === 'object' &&
+  error !== null &&
+  'code' in error &&
+  error.code === 'ERR_JWS_SIGNATURE_VERIFICATION_FAILED';
+
+const verifyJwt = async (token: string, publicKeys: JWK_RSA_Public[]) => {
+  const { createLocalJWKSet, decodeProtectedHeader, importJWK, jwtVerify } = await import('jose');
+  const options = { algorithms: ['RS256'] };
+
+  if (decodeProtectedHeader(token).kid) {
+    return jwtVerify(token, createLocalJWKSet({ keys: publicKeys }), options);
+  }
+
+  // Tokens issued before this rotation support landed did not include `kid`.
+  // Try each retained key only for those in-flight tokens; newly issued tokens
+  // keep the exact-key lookup above and avoid ambiguous JWKS selection.
+  let signatureError: unknown;
+  for (const publicKey of publicKeys) {
+    try {
+      return await jwtVerify(token, await importJWK(publicKey, 'RS256'), options);
+    } catch (error) {
+      if (!isSignatureVerificationError(error)) throw error;
+      signatureError = error;
+    }
+  }
+
+  throw signatureError ?? new Error('No RSA key available for JWT verification');
+};
+
 /**
- * 验证 OIDC JWT Access Token
+ * Validate OIDC JWT Access Token
  * @param token - JWT access token
  * @returns 解析后的 token payload 和用户信息
  */
@@ -111,13 +145,10 @@ export const validateOIDCJWT = async (token: string) => {
   // plain Error so upstream middleware maps them to 500 and triggers ops
   // alerts — treating them as 401 would incorrectly ask clients to re-auth
   // while the real problem is server-side.
-  const publicKey = await getVerificationKey();
+  const publicKeys = await getVerificationKeys();
 
   try {
-    const { jwtVerify } = await import('jose');
-    const { payload } = await jwtVerify(token, publicKey, {
-      algorithms: ['RS256'],
-    });
+    const { payload } = await verifyJwt(token, publicKeys);
 
     log('JWT 验证成功，payload: %O', payload);
 
@@ -173,9 +204,8 @@ export const validateOIDCJWT = async (token: string) => {
 };
 
 export const verifyAcceptanceReviewJWT = async (token: string) => {
-  const publicKey = await getVerificationKey();
-  const { jwtVerify } = await import('jose');
-  const { payload } = await jwtVerify(token, publicKey, { algorithms: ['RS256'] });
+  const publicKeys = await getVerificationKeys();
+  const { payload } = await verifyJwt(token, publicKeys);
   const acceptanceId = acceptanceIdFromReviewResource(payload.aud);
   if (!isAcceptanceReviewClient(payload.client_id as string) || !acceptanceId || !payload.sub)
     throw new Error('Not an acceptance review token');
