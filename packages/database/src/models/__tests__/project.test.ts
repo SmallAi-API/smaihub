@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { INBOX_SESSION_ID } from '@lobechat/const';
 import { and, eq } from 'drizzle-orm';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, assert, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getTestDB } from '../../core/getTestDB';
 import {
@@ -118,6 +118,7 @@ describe('ProjectModel', () => {
     const project = await createProject(model, { description: 'A large effort', name: 'Apollo' });
     expect(project.status).toBe('backlog');
     expect(project.coordinatorAgentId).toBeTruthy();
+    assert.isNotNull(project.coordinatorAgentId);
     expect(
       await serverDB.select().from(agents).where(eq(agents.id, project.coordinatorAgentId)),
     ).toEqual([expect.objectContaining({ virtual: true })]);
@@ -248,6 +249,7 @@ describe('ProjectModel', () => {
 
   it('binds only accessible agents and knowledge bases', async () => {
     const project = await createProject(model, { name: 'Bindings' });
+    assert.isNotNull(project.coordinatorAgentId);
     const [agent] = await serverDB
       .insert(agents)
       .values({ title: 'Researcher', userId })
