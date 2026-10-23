@@ -678,5 +678,6 @@
   "usage.remaining": "剩余",
   "usage.storage.embeddings.used": "向量存储",
   "usage.storage.file.used": "文件使用量",
+  "usage.storage.sandboxStorage.pool": "沙盒驱动器（工作区池）",
   "usage.storage.sandboxStorage.used": "沙箱存储"
 }
