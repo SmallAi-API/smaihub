@@ -139,6 +139,9 @@ async function waitForPageWorkspaceReady(world: CustomWorld): Promise<void> {
   throw new Error('Page workspace did not become ready in time');
 }
 
+/** Clicks on the new page button before giving up on a mask that keeps returning. */
+const NEW_PAGE_CLICK_ATTEMPTS = 3;
+
 async function clickNewPageButton(world: CustomWorld): Promise<void> {
   // The one-time "Pages and Resources are now Docs" notice is a modal: while it
   // is up, the click lands on the mask and no page is created.
@@ -166,7 +169,18 @@ async function clickNewPageButton(world: CustomWorld): Promise<void> {
     if ((await candidate.count()) === 0) continue;
     if (!(await candidate.isVisible())) continue;
 
-    await candidate.click();
+    // The notice can mount after the dismissal above (it waits for the user
+    // preference and the Docs home list), and then its mask swallows the click
+    // until the step times out. Dismiss it again and retry instead.
+    for (let attempt = 1; ; attempt++) {
+      try {
+        await candidate.click({ timeout: 5000 });
+        break;
+      } catch (error) {
+        if (attempt >= NEW_PAGE_CLICK_ATTEMPTS) throw error;
+        await dismissDocsMergeNotice(world, 1500);
+      }
+    }
     await world.page.waitForTimeout(500);
     return;
   }
