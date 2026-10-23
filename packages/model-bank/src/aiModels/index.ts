@@ -133,6 +133,7 @@ export { default as supergrok } from './superGrok';
 export { default as taichu } from './taichu';
 export { default as tencentcloud } from './tencentcloud';
 export { default as togetherai } from './togetherai';
+export { typeSafeModels as typesafe } from './typesafe';
 export { default as unsloth } from './unsloth';
 export { default as upstage } from './upstage';
 export { default as v0 } from './v0';
