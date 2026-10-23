@@ -560,11 +560,13 @@ export function sharedRendererDefine(options: { isElectron: boolean; isMobile: b
 }
 
 export const sharedOptimizeDeps = {
-  exclude: [...stylexTokenModules],
+  exclude: [...stylexTokenModules, 'linkedom'],
   include: [
     'react',
     'react-dom',
     'react-dom/client',
+    'react/jsx-runtime',
+    'react/jsx-dev-runtime',
     'react-router',
     'react-router/dom',
     '@lobehub/ui',
