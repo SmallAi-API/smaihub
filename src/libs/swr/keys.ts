@@ -148,6 +148,14 @@ export const acceptanceCommentKeys = {
   ]),
 };
 
+// ---- acceptance collaboration -------------------------------------------
+export const acceptanceCollaborationKeys = {
+  conversation: def('acceptanceCollaboration:conversation', (acceptanceId: string) => [
+    'acceptanceCollaboration:conversation',
+    acceptanceId,
+  ]),
+};
+
 // ---- document comment ---------------------------------------------------
 export const documentCommentKeys = {
   anchors: def('documentComment:anchors', (workspaceId: string | null, documentId: string) => [
@@ -985,6 +993,7 @@ export const swrKeys = {
   thread: threadKeys,
   tool: toolKeys,
   topic: topicKeys,
+  acceptanceCollaboration: acceptanceCollaborationKeys,
   acceptanceComment: acceptanceCommentKeys,
   documentComment: documentCommentKeys,
   documentLike: documentLikeKeys,
