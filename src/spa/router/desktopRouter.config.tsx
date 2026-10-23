@@ -17,6 +17,38 @@ export const mainAreaMetaRoutes: RouteObject[] = [
   { children: createMainAreaChildren(), path: '/' },
 ];
 
+const acceptanceRoute = (path: string): RouteObject => ({
+  children: [
+    {
+      element: dynamicElement(
+        () => import('@/routes/(main)/acceptance/empty'),
+        'Desktop > Acceptance Empty',
+      ),
+      index: true,
+    },
+    {
+      element: dynamicElement(
+        () => import('@/routes/acceptance/[acceptanceId]'),
+        'Desktop > AcceptanceReport',
+      ),
+      handle: { meta: acceptanceRouteMeta },
+      path: ':acceptanceId',
+    },
+    {
+      element: dynamicElement(
+        () => import('@/routes/acceptance/[acceptanceId]'),
+        'Desktop > AcceptanceCheck',
+      ),
+      handle: { meta: acceptanceRouteMeta },
+      path: ':acceptanceId/check/:checkId',
+    },
+  ],
+  element: dynamicElement(() => import('@/routes/(main)/acceptance'), 'Desktop > Acceptance'),
+  errorElement: <ErrorBoundary />,
+  handle: { meta: acceptanceRouteMeta },
+  path,
+});
+
 // `/share/*` is served by the standalone Share app (apps/share), not this router.
 const webOnlyRoutes: RouteObject[] = [
   {
@@ -25,53 +57,25 @@ const webOnlyRoutes: RouteObject[] = [
     path: '/verify-im',
   },
 
-  // Desktop app download landing — brings its own chrome, so it sits outside
-  // the main layout rather than under `/` (where `:workspaceSlug` would claim it).
+  // Acceptance renders outside the main layout, so it brings its own workspace
+  // context: `/acceptance` is personal, `/:workspaceSlug/acceptance` is scoped.
   {
     children: [
+      acceptanceRoute('/acceptance'),
       {
-        element: dynamicElement(() => import('@/routes/(download)/download'), 'Desktop > Download'),
-        index: true,
+        children: [acceptanceRoute('acceptance')],
+        element: dynamicLayout(
+          () => import('@/routes/(main)/[workspaceSlug]/_layout'),
+          'Desktop > Workspace > Acceptance Layout',
+        ),
+        errorElement: <ErrorBoundary />,
+        path: ':workspaceSlug',
       },
     ],
     element: dynamicLayout(
-      () => import('@/routes/(download)/download/_layout/RouteLayout'),
-      'Desktop > Download > Layout',
+      () => import('@/routes/(main)/acceptance/_layout'),
+      'Desktop > Acceptance Layout',
     ),
-    errorElement: <ErrorBoundary />,
-    path: '/download',
-  },
-
-  {
-    children: [
-      {
-        element: dynamicElement(
-          () => import('@/routes/(main)/acceptance/empty'),
-          'Desktop > Acceptance Empty',
-        ),
-        index: true,
-      },
-      {
-        element: dynamicElement(
-          () => import('@/routes/acceptance/[acceptanceId]'),
-          'Desktop > AcceptanceReport',
-        ),
-        handle: { meta: acceptanceRouteMeta },
-        path: ':acceptanceId',
-      },
-      {
-        element: dynamicElement(
-          () => import('@/routes/acceptance/[acceptanceId]'),
-          'Desktop > AcceptanceCheck',
-        ),
-        handle: { meta: acceptanceRouteMeta },
-        path: ':acceptanceId/check/:checkId',
-      },
-    ],
-    element: dynamicElement(() => import('@/routes/(main)/acceptance'), 'Desktop > Acceptance'),
-    errorElement: <ErrorBoundary />,
-    handle: { meta: acceptanceRouteMeta },
-    path: '/acceptance',
   },
 ];
 
