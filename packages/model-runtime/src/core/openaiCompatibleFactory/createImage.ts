@@ -1,4 +1,3 @@
-import { cleanObject } from '@lobechat/utils/object';
 import createDebug from 'debug';
 import { type RuntimeImageGenParamsValue } from 'model-bank';
 import type OpenAI from 'openai';
@@ -9,6 +8,7 @@ import type {
   CreateImageResponse,
 } from '../../types/image';
 import { getModelPricing } from '../../utils/getModelPricing';
+import { cleanObject } from '../../utils/object';
 import { referenceImageUrlToBase64 } from '../../utils/referenceImageCache';
 import { parseDataUri } from '../../utils/uriParser';
 import { convertImageUrlToFile } from '../contextBuilders/openai';

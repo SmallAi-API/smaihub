@@ -4,7 +4,6 @@
 import type { GoogleGenAIOptions } from '@google/genai';
 import type { ModelPricingContext, RouterRuntimeRequestContext } from '@lobechat/types';
 import { AgentRuntimeErrorType } from '@lobechat/types';
-import { createTimingHelpers, getDurationMs } from '@lobechat/utils';
 import debug from 'debug';
 import { nanoid } from 'nanoid';
 
@@ -35,6 +34,7 @@ import { postProcessModelList } from '../../utils/postProcessModelList';
 import { isImageDecodingRequestError, shouldStopFallbackForError } from '../../utils/routeFallback';
 import { safeParseJSON } from '../../utils/safeParseJSON';
 import { setRuntimeSignatureScopeSource } from '../../utils/signatureScope';
+import { createTimingHelpers, getDurationMs } from '../../utils/timing';
 import { createVideoWithCompletionMode } from '../../utils/videoCompletionMode';
 import type { LobeRuntimeAI } from '../BaseAI';
 import type { ApiType } from './apiTypes';

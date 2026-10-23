@@ -1,6 +1,6 @@
 import { AgentRuntimeErrorType, ChatErrorType, type ChatMessageError } from '@lobechat/types';
-import { isRecord } from '@lobechat/utils/object';
 
+import { isRecord } from '../utils/object';
 import { refineErrorCode } from './refine';
 import { getErrorCodeSpec } from './specs';
 
