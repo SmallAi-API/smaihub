@@ -17,6 +17,8 @@
   "desktop.showApp.title": "顯示/隱藏主視窗",
   "editMessage.desc": "通過按住 Alt 並雙擊消息進入編輯模式",
   "editMessage.title": "編輯消息",
+  "findInTopic.desc": "在右側面板中搜索當前主題的每條消息",
+  "findInTopic.title": "在主題中查找",
   "navigateToChat.desc": "切換到聊天標籤並輸入 smai.ai",
   "navigateToChat.title": "切換至預設會話",
   "nextTab.desc": "在桌面應用程式中循環到下一個瀏覽器樣式的標籤；在結尾處回繞到第一個標籤",
