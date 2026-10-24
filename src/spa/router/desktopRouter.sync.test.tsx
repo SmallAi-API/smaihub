@@ -207,6 +207,7 @@ describe('desktop router shared definition', () => {
         .filter((routePath): routePath is string => Boolean(routePath));
 
       expect(projectPaths).toEqual([
+        'topic/:topicId?',
         'conversation/:topicId?',
         'tasks',
         'settings/:section?',
