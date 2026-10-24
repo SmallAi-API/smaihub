@@ -10,6 +10,7 @@ import { AiInfraRepos } from '@/database/repositories/aiInfra';
 import { getServerGlobalConfig } from '@/server/globalConfig';
 import { KeyVaultsGateKeeper } from '@/server/modules/KeyVaultsEncrypt';
 import { initModelRuntimeFromDB } from '@/server/modules/ModelRuntime';
+import { smaiUsageService } from '@/server/services/smaiUsage';
 import { type AiProviderDetailItem, type AiProviderRuntimeState } from '@/types/aiProvider';
 
 import { aiProviderRouter } from '../aiProvider';
@@ -26,6 +27,7 @@ vi.mock('@/database/repositories/aiInfra');
 vi.mock('@/database/models/aiModel');
 vi.mock('@/database/models/aiProvider');
 vi.mock('@/database/models/user');
+vi.mock('@/server/services/smaiUsage', () => ({ smaiUsageService: { getUsage: vi.fn() } }));
 vi.mock('@/server/modules/ModelRuntime', () => ({
   initModelRuntimeFromDB: vi.fn(),
 }));
@@ -512,6 +514,59 @@ describe('aiProviderRouter', () => {
         mockGateKeeper.encrypt,
         KeyVaultsGateKeeper.getUserKeyVaults,
       );
+    });
+  });
+
+  describe('getSmaiUsage', () => {
+    it('uses personal stored credentials even when a workspace is active', async () => {
+      vi.mocked(AiProviderModel).prototype.getAiProviderById = vi.fn().mockResolvedValue({
+        enabled: true,
+        id: 'smai',
+        keyVaults: { apiKey: 'sk-personal', baseURL: 'https://personal.example/v1' },
+      });
+      vi.mocked(smaiUsageService.getUsage).mockResolvedValue({
+        available: false,
+        reason: 'unavailable',
+      });
+      const caller = aiProviderRouter.createCaller({
+        ...createMockContext(),
+        workspaceId: 'workspace-one',
+      });
+      await caller.getSmaiUsage();
+      expect(AiProviderModel).toHaveBeenCalledWith(expect.anything(), mockUserId);
+      expect(smaiUsageService.getUsage).toHaveBeenCalledWith({
+        apiKey: 'sk-personal',
+        baseURL: 'https://personal.example/v1',
+        userId: mockUserId,
+      });
+    });
+    it('does not fall back to environment credentials without an enabled personal provider', async () => {
+      vi.mocked(AiProviderModel).prototype.getAiProviderById = vi
+        .fn()
+        .mockResolvedValue({ enabled: false });
+      expect(await aiProviderRouter.createCaller(createMockContext()).getSmaiUsage()).toEqual({
+        available: false,
+        reason: 'not_configured',
+      });
+      expect(smaiUsageService.getUsage).not.toHaveBeenCalled();
+    });
+    it('hides vault failures and private upstream details', async () => {
+      vi.mocked(AiProviderModel).prototype.getAiProviderById = vi
+        .fn()
+        .mockRejectedValue(new Error('private vault details'));
+      expect(await aiProviderRouter.createCaller(createMockContext()).getSmaiUsage()).toEqual({
+        available: false,
+        reason: 'unavailable',
+      });
+      expect(smaiUsageService.getUsage).not.toHaveBeenCalled();
+    });
+    it('does not expose personal balances to a restricted model-reading API key', async () => {
+      const caller = aiProviderRouter.createCaller({
+        ...createMockContext(),
+        apiKeyScopes: ['model:read'],
+      });
+      await expect(caller.getSmaiUsage()).rejects.toMatchObject({ code: 'FORBIDDEN' });
+      expect(smaiUsageService.getUsage).not.toHaveBeenCalled();
     });
   });
 

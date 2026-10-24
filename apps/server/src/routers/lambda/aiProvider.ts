@@ -24,12 +24,14 @@ import { getServerGlobalConfig } from '@/server/globalConfig';
 import { initModelRuntimeForRequest } from '@/server/modules/AgentRuntime/llmRelay/oneShot';
 import { KeyVaultsGateKeeper } from '@/server/modules/KeyVaultsEncrypt';
 import { getUserScopedAiProviderRuntimeState } from '@/server/services/aiProviderAccess';
+import { smaiUsageService } from '@/server/services/smaiUsage';
 import { type AiProviderDetailItem, type AiProviderRuntimeState } from '@/types/aiProvider';
 import {
   CreateAiProviderSchema,
   UpdateAiProviderConfigSchema,
   UpdateAiProviderSchema,
 } from '@/types/aiProvider';
+import type { SmaiUsageResult } from '@/types/smaiUsage';
 import { type ProviderConfig } from '@/types/user/settings';
 
 const aiProviderProcedure = wsCompatProcedure.use(serverDatabase).use(async (opts) => {
@@ -49,6 +51,7 @@ const aiProviderProcedure = wsCompatProcedure.use(serverDatabase).use(async (opt
       aiModelModel: new AiModelModel(ctx.serverDB, ctx.userId, ctx.workspaceId ?? undefined),
       aiProviderModel: new AiProviderModel(ctx.serverDB, ctx.userId, ctx.workspaceId ?? undefined),
       gateKeeper,
+      personalAiProviderModel: new AiProviderModel(ctx.serverDB, ctx.userId),
       userModel: new UserModel(ctx.serverDB, ctx.userId),
     },
   });
@@ -258,6 +261,28 @@ export const aiProviderRouter = router({
 
       return { enabled, enabledModels, runtimeConfig };
     }),
+
+  getSmaiUsage: aiProviderProcedure.query(async ({ ctx }): Promise<SmaiUsageResult> => {
+    if (ctx.apiKeyScopes !== undefined && !isFullAccessApiKey(ctx.apiKeyScopes)) {
+      return { available: false, reason: 'not_configured' };
+    }
+    try {
+      const provider = await ctx.personalAiProviderModel.getAiProviderById(
+        'smai',
+        KeyVaultsGateKeeper.getUserKeyVaults,
+      );
+      if (!provider?.enabled) return { available: false, reason: 'not_configured' };
+      return await smaiUsageService.getUsage({
+        apiKey:
+          typeof provider.keyVaults?.apiKey === 'string' ? provider.keyVaults.apiKey : undefined,
+        baseURL:
+          typeof provider.keyVaults?.baseURL === 'string' ? provider.keyVaults.baseURL : undefined,
+        userId: ctx.userId,
+      });
+    } catch {
+      return { available: false, reason: 'unavailable' };
+    }
+  }),
 
   // Provider rows carry workspace-shared credentials and the model-layer where is
   // workspace-wide, so destructive/config writes are Admin-or-higher in workspace mode

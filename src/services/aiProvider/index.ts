@@ -6,6 +6,7 @@ import {
   type CreateAiProviderParams,
   type UpdateAiProviderConfigParams,
 } from '@/types/aiProvider';
+import type { SmaiUsageResult } from '@/types/smaiUsage';
 
 export class AiProviderService {
   createAiProvider = async (params: CreateAiProviderParams) => {
@@ -18,6 +19,10 @@ export class AiProviderService {
 
   getAiProviderById = async (id: string): Promise<AiProviderDetailItem | undefined> => {
     return lambdaClient.aiProvider.getAiProviderById.query({ id });
+  };
+
+  getSmaiUsage = async (): Promise<SmaiUsageResult> => {
+    return lambdaClient.aiProvider.getSmaiUsage.query();
   };
 
   toggleProviderEnabled = async (id: string, enabled: boolean) => {

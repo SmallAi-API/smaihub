@@ -197,7 +197,7 @@ const HomeInbox = memo<HomeInboxProps>((props) => {
   // Business-slot widget: `enabled` false while it's toggled off or its column
   // isn't on the page, so the slot implementation can skip its fetches.
   const usageActive = useHomeUsageWidgetActive();
-  const usageNode = useHomeUsageWidget(
+  const usageContent = useHomeUsageWidget(
     isLogin === true && usageActive && showRailSections && !hiddenWidgets.includes('usage'),
   );
 
@@ -511,11 +511,15 @@ const HomeInbox = memo<HomeInboxProps>((props) => {
   // reference data, glanceable but never urgent, so it sits under everything
   // that reports actual work. Same shell as every other rail widget.
   const usageCard =
-    usageNode &&
+    usageContent &&
     (isRail ? (
-      <RailCard title={t('inbox.usage.title')}>{usageNode}</RailCard>
+      <RailCard action={usageContent.action} title={t('inbox.usage.title')}>
+        {usageContent.node}
+      </RailCard>
     ) : (
-      <GroupBlock title={t('inbox.usage.title')}>{usageNode}</GroupBlock>
+      <GroupBlock actionAlwaysVisible action={usageContent.action} title={t('inbox.usage.title')}>
+        {usageContent.node}
+      </GroupBlock>
     ));
 
   const visibleSections = filterHiddenWidgetSections(sections, hiddenWidgets);

@@ -38,7 +38,7 @@ import { messageService } from '@/services/message';
 import { shareChatService } from '@/services/shareChat';
 import { topicService } from '@/services/topic';
 import { getAgentStoreState } from '@/store/agent';
-import { chatConfigByIdSelectors } from '@/store/agent/selectors';
+import { agentSelectors, chatConfigByIdSelectors } from '@/store/agent/selectors';
 import {
   consumePendingSandboxSelection,
   getPendingSandboxSelection,
@@ -847,15 +847,6 @@ export class GatewayActionImpl {
 
   /**
    * Execute agent task via Gateway WebSocket.
-   * The dispatcher can select this transport for device execution even when Gateway mode is off.
-   */
-  /**
-   * Execute agent task via Gateway WebSocket.
-   * The backend creates user + assistant messages and the topic (if needed).
-   * Returns the result so the caller can handle topic switching.
-   */
-  /**
-   * Execute agent task via Gateway WebSocket.
    * The backend creates user + assistant messages and the topic (if needed),
    * then starts the agent. This method handles topic switching and WebSocket connection.
    */
@@ -993,6 +984,11 @@ export class GatewayActionImpl {
       userMessage,
     } = params;
 
+    const usageProvider = executionContext.agentShareId
+      ? undefined
+      : agentSelectors.getAgentConfigById(executionContext.subAgentId || executionContext.agentId)(
+          getAgentStoreState(),
+        )?.provider;
     const agentGatewayUrl = getGatewayServerConfig()?.agentGatewayUrl;
     if (!agentGatewayUrl) {
       throw new Error('[Gateway] Cannot execute agent: serverConfig.agentGatewayUrl is missing');
@@ -1512,6 +1508,7 @@ export class GatewayActionImpl {
         context: resolvedMessageContext,
         parentMessageId: result.assistantMessageId,
         parentMessageType: 'assistant',
+        provider: usageProvider,
         runId: gatewayOpId,
         // A member's approval continuation is nested inside the supervisor's
         // run: top-level terminal effects (queue drain, unread, notification)
@@ -1891,12 +1888,15 @@ export class GatewayActionImpl {
         context,
         parentMessageId: assistantMessageId,
         parentMessageType: 'assistant',
+        provider:
+          this.#get().dbMessagesMap[messageMapKey(context)]?.find(
+            (message) => message.id === assistantMessageId,
+          )?.provider ?? undefined,
         runId: gatewayOpId,
         runScope: (context.scope === 'sub_agent' ? 'sub_agent' : 'top_level') as RunScope,
         runtimeType: 'gateway',
       }),
     });
-
     // Same demux as the initial-run path: a reconnected supervisor WS can also
     // receive forwarded member events, so route them away from the supervisor
     // handler (and stream them when the reconnect context carries the group).

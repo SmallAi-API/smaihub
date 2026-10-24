@@ -194,5 +194,13 @@
   "starter.modelInUse": "Already using {{name}}",
   "starter.modelSwitched": "Switched to {{name}}",
   "starter.newLabel": "New",
-  "starter.write": "Write"
+  "starter.write": "Write",
+  "usage.billingQuota": "Billing credits",
+  "usage.details": "Details",
+  "usage.refresh": "Refresh quota",
+  "usage.remainingProgress": "Remaining key quota",
+  "usage.topics": "Topics",
+  "usage.unlimited": "Unlimited",
+  "usage.unlimitedHint": "This key has no quota limit. Account balance and plan limits still apply.",
+  "usage.updatedAt": "Updated {{time}}"
 }

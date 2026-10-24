@@ -5,6 +5,7 @@ import debug from 'debug';
 import { t } from 'i18next';
 
 import { LOADING_FLAT } from '@/const/message';
+import { notifySmaiUsageChanged } from '@/features/HomeUsage/events';
 import type { AgentRuntimeType } from '@/store/chat/slices/agentRun/actions/dispatch/agentDispatcher';
 import { emitClientAgentSignalSourceEvent } from '@/store/chat/slices/agentRun/actions/lifecycle/agentSignalBridge';
 import { snapshotTopicWorkingDirGit } from '@/store/chat/slices/agentRun/actions/lifecycle/snapshotWorkingDirGit';
@@ -125,6 +126,8 @@ export interface RunAdapterContext {
   context: ConversationContext;
   parentMessageId: string;
   parentMessageType: 'user' | 'assistant' | 'tool';
+  /** Provider captured by the executing transport, independent of later model switches. */
+  provider?: string;
   runId: string;
   runScope: RunScope;
   runtimeType: AgentRuntimeType;
@@ -151,6 +154,7 @@ export const buildRunLifecycle = (
   const messageKey = messageMapKey(context);
   const contextKey = messageKey;
   let voiceTopicTitleSummaryRequested = false;
+  let usageChangeNotified = false;
 
   const summarizeVoiceTopicTitleAfterCompletion = () => {
     if (voiceTopicTitleSummaryRequested || adapter.runScope === 'sub_agent' || !topicId) return;
@@ -367,6 +371,12 @@ export const buildRunLifecycle = (
       // OR the normalized `status` gateway/hetero pass — so the same side effects
       // fire regardless of which transport reached this boundary.
       const disposition = resolveTerminalDisposition(event);
+
+      // Failed/cancelled runs may be billed; include the queued-follow-up branch.
+      if (disposition && !usageChangeNotified) {
+        usageChangeNotified = true;
+        notifySmaiUsageChanged(adapter.provider);
+      }
 
       // Title recovery is a successful-completion side effect, not a notification
       // side effect. Run it before the queued-message early return so a follow-up

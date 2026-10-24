@@ -960,14 +960,13 @@ export class StreamingExecutorActionImpl {
     // once at the run boundary instead of replacing the full list after every write.
     await this.#get().refreshMessages(context);
 
-    // Run-completion side effects are assembled once and invoked at
-    // this boundary. The bodies are relocated verbatim into `buildRunLifecycle`,
-    // so the streamingExecutor characterization net stays green (behavior-preserving).
+    // Complete using the provider resolved for this run, even after a model switch.
     const runScope: RunScope = scope === 'sub_agent' ? 'sub_agent' : 'top_level';
     const runLifecycle = buildRunLifecycle(this.#get, {
       context,
       parentMessageId,
       parentMessageType,
+      provider,
       runId: operationId,
       runScope,
       runtimeType: 'client',

@@ -180,6 +180,15 @@ export default {
   'inbox.unread.title': 'Unread',
   'inbox.unread.viewChat': 'View chat',
   'inbox.usage.title': 'Usage & Quota',
+  'usage.billingQuota': 'Billing credits',
+  'usage.details': 'Details',
+  'usage.refresh': 'Refresh quota',
+  'usage.remainingProgress': 'Remaining key quota',
+  'usage.topics': 'Topics',
+  'usage.unlimited': 'Unlimited',
+  'usage.unlimitedHint':
+    'This key has no quota limit. Account balance and plan limits still apply.',
+  'usage.updatedAt': 'Updated {{time}}',
   'project.create': 'New project',
   'project.deleteConfirm':
     "This project will be deleted and can't be recovered. Confirm to continue.",

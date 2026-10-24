@@ -30,6 +30,15 @@ const def = <A extends unknown[]>(
   build: (...args: A) => readonly unknown[],
 ): KeyFactory<A> => Object.assign(build, { root });
 
+// Financial snapshots are intentionally absent from CACHE_TIERS persistence.
+export const homeUsageKeys = {
+  quota: def('homeUsage:quota', (userId: string, credentialVersion: number) => [
+    'homeUsage:quota',
+    userId,
+    credentialVersion,
+  ]),
+};
+
 interface LocalFilePreviewKeyParams {
   accept?: 'image';
   allowExternalFile?: boolean;

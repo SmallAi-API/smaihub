@@ -174,7 +174,7 @@
   "inbox.unread.followUpPlaceholder": "回复以继续这次运行…",
   "inbox.unread.title": "未读",
   "inbox.unread.viewChat": "查看聊天",
-  "inbox.usage.title": "使用情况与配额",
+  "inbox.usage.title": "用量与额度",
   "project.create": "新建项目",
   "project.deleteConfirm": "此项目将被删除且无法恢复。确认继续。",
   "recommendations.heteroAgent.cta": "添加助手",
@@ -194,5 +194,13 @@
   "starter.modelInUse": "已在使用 {{name}}",
   "starter.modelSwitched": "已切换到 {{name}}",
   "starter.newLabel": "上新",
-  "starter.write": "写作"
+  "starter.write": "写作",
+  "usage.billingQuota": "计费额度",
+  "usage.details": "详情",
+  "usage.refresh": "刷新额度",
+  "usage.remainingProgress": "Key 剩余额度",
+  "usage.topics": "话题",
+  "usage.unlimited": "不限额",
+  "usage.unlimitedHint": "此 Key 不设额度上限，仍受账户余额和套餐等限制。",
+  "usage.updatedAt": "更新于 {{time}}"
 }

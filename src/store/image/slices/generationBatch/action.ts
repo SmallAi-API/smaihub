@@ -2,6 +2,7 @@ import { isEqual } from 'es-toolkit/compat';
 import { useRef } from 'react';
 import { type SWRResponse } from 'swr';
 
+import { notifySmaiUsageChanged } from '@/features/HomeUsage/events';
 import { createReplicaSlice, recordLens, type ReplicaSyncResult } from '@/libs/replica';
 import { useClientDataSWR } from '@/libs/swr';
 import { imageKeys } from '@/libs/swr/keys';
@@ -43,6 +44,7 @@ export const createGenerationBatchSlice = (set: Setter, get: () => ImageStore, _
 export class GenerationBatchActionImpl {
   readonly #batches;
   readonly #get: () => ImageStore;
+  readonly #reportedUsageTaskIds = new Set<string>();
 
   constructor(set: Setter, get: () => ImageStore, _api?: unknown) {
     void _api;
@@ -224,6 +226,10 @@ export class GenerationBatchActionImpl {
             (data.status === AsyncTaskStatus.Success || data.status === AsyncTaskStatus.Error) &&
             targetBatch
           ) {
+            if (targetBatch.provider === 'smai' && !this.#reportedUsageTaskIds.has(asyncTaskId)) {
+              this.#reportedUsageTaskIds.add(asyncTaskId);
+              notifySmaiUsageChanged(targetBatch.provider);
+            }
             // 重置请求计数器，因为任务已完成
             requestCountRef.current = 0;
 
