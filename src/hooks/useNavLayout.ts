@@ -122,12 +122,6 @@ export const useNavLayout = (): NavLayout => {
           url: '/community',
         },
         {
-          icon: getRouteById('page')!.icon,
-          key: SidebarTabKey.Pages,
-          title: t('tab.pages'),
-          url: '/page',
-        },
-        {
           external: true,
           icon: BookOpenIcon,
           key: 'docs',

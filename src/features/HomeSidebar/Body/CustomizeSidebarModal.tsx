@@ -81,7 +81,6 @@ const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
   { id: 'goals', labelKey: 'tab.goals', routeId: 'goals' },
   { id: 'dashboard', labelKey: 'tab.dashboard', routeId: 'dashboard' },
   { icon: KeyRound, id: 'api', labelKey: 'tab.apiAccess' },
-  { id: 'pages', labelKey: 'tab.pages', routeId: 'page' },
   { id: 'recents', labelKey: 'recents' },
   { id: 'project', labelKey: 'project:sidebar.title' },
   { id: 'private', labelKey: 'navPanel.privateAgents' },
@@ -218,7 +217,6 @@ const SortableItem = memo<{
   if (!item) return null;
 
   const route = item.routeId ? getRouteById(item.routeId) : undefined;
-  const icon = item.icon || route?.icon;
   const isHidden = !item.alwaysVisible && hiddenSections.includes(id);
 
   return (
