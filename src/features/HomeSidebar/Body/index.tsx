@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useActiveWorkspaceId } from '@/business/client/hooks/useActiveWorkspaceId';
 import { isDesktop } from '@/const/version';
+import Billboard from '@/features/Billboard';
 import Recents from '@/features/Home/Recents';
 import NavItem from '@/features/NavPanel/components/NavItem';
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
@@ -19,6 +20,7 @@ import { useNavLayout } from '@/hooks/useNavLayout';
 import type { NativeContextMenuItem } from '@/libs/contextMenu/types';
 import { electronSystemService } from '@/services/electron/system';
 import { useGlobalStore } from '@/store/global';
+import { SidebarTabKey } from '@/store/global/initialState';
 import { systemStatusSelectors } from '@/store/global/selectors';
 import { SIDEBAR_SPACER_ID } from '@/store/global/selectors/systemStatus';
 import { useUserStore } from '@/store/user';
@@ -258,6 +260,9 @@ const Body = memo(() => {
   // emit a flex spacer wherever the spacer sentinel appears.
   const content = useMemo(() => {
     const elements: ReactElement[] = [];
+    const billboardAnchor =
+      visibleKeys.find((key) => key === SidebarTabKey.Image && !navLinkItems.get(key)?.hidden) ??
+      visibleKeys.find((key) => bottomMenuItems.some((item) => item.key === key && !item.hidden));
     let accGroup: { element: ReactElement; key: string }[] = [];
 
     const flushAccordion = () => {
@@ -280,6 +285,10 @@ const Body = memo(() => {
     };
 
     for (const key of visibleKeys) {
+      if (key === billboardAnchor) {
+        flushAccordion();
+        elements.push(<Billboard key="billboard" />);
+      }
       if (key === SIDEBAR_SPACER_ID) {
         flushAccordion();
         elements.push(
@@ -300,9 +309,18 @@ const Body = memo(() => {
       }
     }
     flushAccordion();
+    // Keep announcements reachable even when all bottom navigation entries are hidden.
+    if (!billboardAnchor) elements.push(<Billboard key="billboard" />);
 
     return elements;
-  }, [visibleKeys, renderSidebarItem, sidebarExpandedKeys, handleAccordionExpandedChange]);
+  }, [
+    visibleKeys,
+    navLinkItems,
+    bottomMenuItems,
+    renderSidebarItem,
+    sidebarExpandedKeys,
+    handleAccordionExpandedChange,
+  ]);
 
   return (
     <Flexbox flex={1} gap={1} paddingInline={4} style={{ minHeight: '100%' }}>

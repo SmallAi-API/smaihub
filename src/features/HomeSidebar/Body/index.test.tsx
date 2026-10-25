@@ -24,6 +24,7 @@ const mocks = vi.hoisted(() => ({
   electronOpenExternalLink: vi.fn(),
   globalState: undefined as unknown as MockGlobalState,
   isDesktop: false,
+  showBillboard: false,
   navLayout: {
     bottomMenuItems: [] as MockNavItem[],
     topNavItems: [] as MockNavItem[],
@@ -108,6 +109,20 @@ vi.mock('@/features/Home/Recents', () => ({
   default: ({ itemKey }: { itemKey: string }) => <div data-testid={`sidebar-item-${itemKey}`} />,
 }));
 
+vi.mock('@/features/Billboard', async () => {
+  const { useState } = await import('react');
+  const MockBillboard = () => {
+    const [visible, setVisible] = useState(true);
+    return mocks.showBillboard && visible ? (
+      <section aria-label="Announcement">
+        News
+        <button onClick={() => setVisible(false)}>Close announcement</button>
+      </section>
+    ) : null;
+  };
+  return { default: MockBillboard };
+});
+
 vi.mock('./Agent', () => ({
   default: ({ itemKey }: { itemKey: string }) => <div data-testid={`sidebar-item-${itemKey}`} />,
 }));
@@ -129,6 +144,7 @@ beforeEach(() => {
   mocks.electronOpenExternalLink.mockReset();
   mocks.windowOpen.mockReset();
   mocks.isDesktop = false;
+  mocks.showBillboard = false;
   mocks.navLayout = {
     bottomMenuItems: [],
     topNavItems: [],
@@ -149,6 +165,55 @@ afterEach(() => {
 });
 
 describe('Home sidebar body', () => {
+  it('places announcements immediately above generation after the flexible spacer', () => {
+    mocks.showBillboard = true;
+    mocks.navLayout.bottomMenuItems = [
+      { key: 'image', title: 'Generate', url: '/image' },
+      { key: 'community', title: 'Community', url: '/community' },
+    ];
+    mocks.globalState.status.sidebarItems = ['agent', '__spacer__', 'image', 'community'];
+
+    render(<Body />);
+
+    const card = screen.getByRole('region', { name: 'Announcement' });
+    expect(card.previousElementSibling).toHaveAttribute('data-sidebar-bottom-spacer');
+    expect(card.nextElementSibling).toHaveAttribute('href', '/image');
+    expect(card.nextElementSibling?.nextElementSibling).toHaveAttribute('href', '/community');
+  });
+
+  it('keeps announcements above the remaining bottom entries when generation is hidden', () => {
+    mocks.showBillboard = true;
+    mocks.navLayout.bottomMenuItems = [
+      { key: 'image', title: 'Generate', url: '/image' },
+      { key: 'community', title: 'Community', url: '/community' },
+    ];
+    mocks.globalState.status.sidebarItems = ['agent', '__spacer__', 'image', 'community'];
+    mocks.globalState.status.hiddenSidebarSections = ['image'];
+
+    render(<Body />);
+
+    expect(screen.getByRole('region', { name: 'Announcement' }).nextElementSibling).toHaveAttribute(
+      'href',
+      '/community',
+    );
+    expect(screen.queryByText('Generate')).not.toBeInTheDocument();
+  });
+
+  it('reclaims the announcement slot when the card is dismissed', () => {
+    mocks.showBillboard = true;
+    mocks.navLayout.bottomMenuItems = [{ key: 'image', title: 'Generate', url: '/image' }];
+    mocks.globalState.status.sidebarItems = ['agent', '__spacer__', 'image'];
+    render(<Body />);
+
+    expect(screen.getByRole('region', { name: 'Announcement' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Close announcement' }));
+
+    expect(screen.queryByRole('region', { name: 'Announcement' })).not.toBeInTheDocument();
+    expect(screen.getByText('Generate').closest('a')?.previousElementSibling).toHaveAttribute(
+      'data-sidebar-bottom-spacer',
+    );
+  });
+
   it('uses persisted sidebar accordion expanded keys', () => {
     mocks.globalState.status.sidebarExpandedKeys = ['agent'];
 

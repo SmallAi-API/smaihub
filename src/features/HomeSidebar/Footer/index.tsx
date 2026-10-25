@@ -15,7 +15,6 @@ import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useHasActiveWorkspace } from '@/business/client/hooks/useHasActiveWorkspace';
-import Billboard from '@/features/Billboard';
 import { useBillboardMenuItems } from '@/features/Billboard/MenuItems';
 import { useActiveNavKey } from '@/features/NavPanel/useActiveNavKey';
 import ThemeButton from '@/features/User/UserPanel/ThemeButton';
@@ -243,8 +242,6 @@ const Footer = memo(() => {
           )}
         </Flexbox>
       )}
-
-      {isHomeSidebar && <Billboard />}
     </>
   );
 });

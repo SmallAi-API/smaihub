@@ -34,18 +34,18 @@ interface BillboardCarouselProps {
 
 const styles = createStaticStyles(({ css }) => ({
   card: css`
-    /* Anchored to the nav panel (its content box is the positioned ancestor), so
-       the card always matches the sidebar width, even while it is resized. */
-    position: absolute;
-    z-index: 10;
-    inset-block-end: 52px;
-    inset-inline: 8px;
     transform-origin: bottom left;
 
     overflow: hidden;
     display: flex;
     flex-direction: column;
 
+    /* Reserve space above generation instead of overlaying the sidebar's navigation. */
+    flex-shrink: 0;
+
+    min-width: 0;
+    margin-block: 4px 8px;
+    margin-inline: 4px;
     border: 1px solid ${cssVar.colorBorderSecondary};
     border-radius: ${cssVar.borderRadiusLG};
 
