@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { isBackendPath, isFileProxyUrl, isSameOrigin } from './protocol';
+import { isBackendPath, isFileProxyUrl, isSameOrigin, OIDC_AUTH_HEADER } from './protocol';
+
+describe('OIDC_AUTH_HEADER', () => {
+  it('matches the remote backend authentication header', () => {
+    expect(OIDC_AUTH_HEADER).toBe('Oidc-Auth');
+  });
+});
 
 describe('isBackendPath', () => {
   it.each(['/trpc', '/webapi', '/api/auth', '/market', '/f'])(
@@ -50,6 +56,8 @@ describe('isFileProxyUrl', () => {
     'https://app.lobehub.com/f/file_abc123?download=1',
     'http://localhost:3010/f/file_abc123',
     'app://renderer/f/file_abc123',
+    'https://www.smallai.asia/f',
+    'https://www.smallai.asia/f/?download=1',
   ])('should match file proxy URL %s', (url) => {
     expect(isFileProxyUrl(url)).toBe(true);
   });
@@ -63,6 +71,9 @@ describe('isFileProxyUrl', () => {
     // Lookalikes.
     'https://www.smallai.asia/files/abc',
     'https://www.smallai.asia/fabricated',
+    'https://www.smallai.asia/agent?file=/f/file_abc123',
+    'https://www.smallai.asia/f%2Ffile_abc123',
+    '/f/file_abc123',
     // Malformed input is never a match.
     'not-a-url',
     '',
@@ -84,6 +95,10 @@ describe('isSameOrigin', () => {
     );
   });
 
+  it('normalizes host casing and default ports when comparing origins', () => {
+    expect(isSameOrigin('https://WWW.SMALLAI.ASIA:443/f/a', 'https://www.smallai.asia')).toBe(true);
+  });
+
   it.each([
     // Different host — the presigned-storage hop.
     ['https://smaihub-1301925107.cos.ap-hongkong.myqcloud.com/x.png', 'https://www.smallai.asia'],
@@ -93,6 +108,12 @@ describe('isSameOrigin', () => {
     ['http://localhost:9876/f/a', 'http://localhost:3010'],
     // Subdomain is a distinct origin.
     ['https://cdn.smallai.asia/f/a', 'https://www.smallai.asia'],
+    ['https://www.smallai.asia.evil.example/f/a', 'https://www.smallai.asia'],
+    ['https://www.smallai.asia@evil.example/f/a', 'https://www.smallai.asia'],
+    // Opaque origins serialize to "null" and must never authorize each other.
+    ['app://renderer/f/a', 'app://other'],
+    ['file:///tmp/a', 'file:///tmp/b'],
+    ['data:text/plain,a', 'data:text/plain,b'],
     // Malformed input on either side.
     ['not-a-url', 'https://www.smallai.asia'],
     ['https://www.smallai.asia/f/a', ''],
