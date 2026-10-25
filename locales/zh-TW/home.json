@@ -194,5 +194,13 @@
   "starter.modelInUse": "已經在使用 {{name}}",
   "starter.modelSwitched": "已切換至 {{name}}",
   "starter.newLabel": "新建",
-  "starter.write": "寫作"
+  "starter.write": "寫作",
+  "usage.billingQuota": "計費額度",
+  "usage.details": "詳細資訊",
+  "usage.refresh": "刷新額度",
+  "usage.remainingProgress": "剩餘金鑰額度",
+  "usage.topics": "主題",
+  "usage.unlimited": "無限制",
+  "usage.unlimitedHint": "此金鑰沒有額度限制。帳戶餘額和計劃限制仍然適用。",
+  "usage.updatedAt": "更新於 {{time}}"
 }
