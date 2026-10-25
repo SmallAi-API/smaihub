@@ -10,7 +10,12 @@ export const UsageCardSkeleton = () => (
         <Skeleton height={12} width={96} />
         <Skeleton height={22} width={'58%'} />
       </Block>
-      <Skeleton height={4} width={'100%'} />
+      <Flexbox horizontal align={'center'} gap={8}>
+        <Flexbox flex={1}>
+          <Skeleton height={8} width={'100%'} />
+        </Flexbox>
+        <Skeleton height={16} width={32} />
+      </Flexbox>
     </Flexbox>
     <Flexbox gap={8}>
       <Flexbox horizontal align={'center'} justify={'space-between'}>

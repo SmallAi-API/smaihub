@@ -102,9 +102,10 @@ export const UsageCard = ({ data }: UsageCardProps) => {
         {!data.unlimitedQuota && (
           <Progress
             aria-label={t('usage.remainingProgress')}
+            format={(percent) => `${Math.round(percent)}%`}
             percent={remainingPercent(data.totalAvailable, data.totalGranted)}
-            showInfo={false}
-            size={4}
+            status={'active'}
+            variant={'inset'}
           />
         )}
       </Flexbox>
