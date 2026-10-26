@@ -74,12 +74,9 @@ describe('settings useCategory', () => {
       SettingsTabs.Appearance,
       SettingsTabs.Hotkey,
     ]);
-    // Environments is there with no lab switch: a code environment is a
-    // definition, written down whether or not there is a drive to run it on.
     expect(generalGroup?.items.map((item) => item.key)).toEqual([
       SettingsTabs.Stats,
       SettingsTabs.Devices,
-      SettingsTabs.Environments,
     ]);
     expect(
       result.current.find((group) => group.key === SettingsGroupKey.Agent)?.items.map((i) => i.key),
@@ -130,9 +127,23 @@ describe('settings useCategory', () => {
     expect(accountGroup?.items.map((item) => item.key)).toContain(SettingsTabs.Integrations);
   });
 
+  it.each([false, true])(
+    'hides Environments when persistent sandboxes are %s',
+    (enablePersistentSandbox) => {
+      useUserStore.setState({
+        preference: {
+          ...initialUserStoreState.preference,
+          lab: { ...initialUserStoreState.preference.lab, enablePersistentSandbox },
+        },
+      });
+
+      expect(getItemKeys()).not.toContain(SettingsTabs.Environments);
+    },
+  );
+
   // The drives are what a persistent sandbox run keeps files on, so the tab
   // that sets them out follows the same lab switch as the composer's picker.
-  it('shows Storage beside Environments once persistent sandboxes are switched on', () => {
+  it('shows Drive once persistent sandboxes are switched on', () => {
     expect(getItemKeys()).not.toContain(SettingsTabs.Drive);
 
     useUserStore.setState({
@@ -146,7 +157,6 @@ describe('settings useCategory', () => {
     expect(generalGroup?.items.map((item) => item.key)).toEqual([
       SettingsTabs.Stats,
       SettingsTabs.Devices,
-      SettingsTabs.Environments,
       SettingsTabs.Drive,
     ]);
   });

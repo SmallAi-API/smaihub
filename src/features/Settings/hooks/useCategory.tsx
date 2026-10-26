@@ -11,7 +11,6 @@ import {
   BrainCircuit,
   ChartColumnBigIcon,
   Coins,
-  ContainerIcon,
   CreditCard,
   Database,
   EllipsisIcon,
@@ -152,13 +151,6 @@ export const useCategory = () => {
         icon: MonitorSmartphoneIcon,
         key: SettingsTabs.Devices,
         label: t('tab.devices'),
-      },
-      // Always there: a code environment is a definition, written down before
-      // anything runs it, and useful with or without a drive to run it on.
-      {
-        icon: ContainerIcon,
-        key: SettingsTabs.Environments,
-        label: t('tab.environments'),
       },
       // The drives a cloud-sandbox run keeps files on, with their usage and
       // the way to a plan — behind the same lab switch the composer's folder

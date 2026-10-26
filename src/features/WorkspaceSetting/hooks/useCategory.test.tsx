@@ -108,7 +108,7 @@ describe('workspace settings useCategory', () => {
     ]);
   });
 
-  it('groups devices, subscription accounts and environments under Resources', () => {
+  it('groups devices and subscription accounts under Resources', () => {
     const { result } = renderHook(() => useWorkspaceSettingCategory(), { wrapper });
     const keys = result.current.map((group) => group.key);
     const resourceGroup = result.current.find(
@@ -124,12 +124,25 @@ describe('workspace settings useCategory', () => {
     expect(resourceGroup?.items.map((item) => item.key)).toEqual([
       WorkspaceSettingsTabs.Devices,
       WorkspaceSettingsTabs.SubscriptionAccounts,
-      WorkspaceSettingsTabs.Environments,
     ]);
     expect(generalGroup?.items.map((item) => item.key)).not.toContain(
       WorkspaceSettingsTabs.Devices,
     );
   });
+
+  it.each([false, true])(
+    'hides Environments when persistent sandboxes are %s',
+    (enablePersistentSandbox) => {
+      useUserStore.setState({
+        preference: {
+          ...initialUserStoreState.preference,
+          lab: { ...initialUserStoreState.preference.lab, enablePersistentSandbox },
+        },
+      });
+
+      expect(getItemKeys()).not.toContain(WorkspaceSettingsTabs.Environments);
+    },
+  );
 
   // Accounts are shared capacity every agent routes onto, so managing them is
   // an admin task like the other workspace infrastructure.
