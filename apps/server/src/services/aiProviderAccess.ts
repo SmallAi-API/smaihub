@@ -11,6 +11,8 @@ import {
   filterHiddenProviderModels,
 } from '@/utils/aiProvider';
 
+import { smaiPricingService } from './smaiPricing';
+
 interface AiProviderModelListOptions {
   enabled?: boolean;
   limit?: number;
@@ -95,9 +97,12 @@ export const getUserScopedAiProviderRuntimeState = async (
     throw new Error('Unable to resolve user-scoped model access');
   }
 
-  const enabledAiModels = isHiddenBuiltinModelsResolved
+  const visibleAiModels = isHiddenBuiltinModelsResolved
     ? filterHiddenBuiltinModels(runtimeState.enabledAiModels, hiddenBuiltinModels)
     : [];
+  const enabledAiModels = runtimeState.enabledAiProviders.some(({ id }) => id === 'smai')
+    ? await smaiPricingService.applyToModels(visibleAiModels, runtimeState.runtimeConfig.smai)
+    : visibleAiModels;
 
   return {
     ...runtimeState,

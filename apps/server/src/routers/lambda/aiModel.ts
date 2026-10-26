@@ -22,6 +22,7 @@ import { serverDatabase } from '@/libs/trpc/lambda/middleware';
 import { getServerGlobalConfig } from '@/server/globalConfig';
 import { KeyVaultsGateKeeper } from '@/server/modules/KeyVaultsEncrypt';
 import { getUserScopedAiProviderModelList } from '@/server/services/aiProviderAccess';
+import { smaiPricingService } from '@/server/services/smaiPricing';
 import { type ProviderConfig } from '@/types/user/settings';
 
 const AI_MODEL_UNIQUE_CONSTRAINT = 'ai_models_id_provider_id_user_id_pk';
@@ -183,9 +184,22 @@ export const aiModelRouter = router({
         type: input.type,
       };
 
-      return getUserScopedAiProviderModelList(ctx.userId, input.id, options, (scopedOptions) =>
-        ctx.aiInfraRepos.getAiProviderModelList(input.id, scopedOptions),
+      const models = await getUserScopedAiProviderModelList(
+        ctx.userId,
+        input.id,
+        options,
+        (scopedOptions) => ctx.aiInfraRepos.getAiProviderModelList(input.id, scopedOptions),
       );
+      if (input.id !== 'smai' || models.length === 0) return models;
+      try {
+        const config = await ctx.aiInfraRepos.getAiProviderDetail(
+          input.id,
+          KeyVaultsGateKeeper.getUserKeyVaults,
+        );
+        return await smaiPricingService.applyToModels(models, config);
+      } catch {
+        return models;
+      }
     }),
 
   removeAiModel: aiModelProcedure

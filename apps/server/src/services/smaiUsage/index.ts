@@ -3,7 +3,10 @@ import { createHmac, randomBytes } from 'node:crypto';
 import { ssrfSafeFetch } from '@lobechat/ssrf-safe-fetch';
 import { z } from 'zod';
 
+import { normalizeSmaiBaseURL } from '@/server/utils/smai';
 import type { SmaiUsageData, SmaiUsageResult } from '@/types/smaiUsage';
+
+export { normalizeSmaiBaseURL as normalizeSmaiUsageBaseURL } from '@/server/utils/smai';
 
 const USAGE_CACHE_MS = 15_000;
 const STATUS_CACHE_MS = 15 * 60_000;
@@ -36,18 +39,6 @@ interface CacheEntry<T> {
   expiresAt: number;
   value: T;
 }
-
-/** Keep a proxy's path prefix, removing only the model API's trailing version. */
-export const normalizeSmaiUsageBaseURL = (baseURL?: string): string => {
-  const url = new URL(baseURL?.trim() || 'https://api.smai.ai');
-  if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) {
-    throw new Error('Unsupported provider URL');
-  }
-  url.search = '';
-  url.hash = '';
-  url.pathname = url.pathname.replace(/\/+$/, '').replace(/\/v\d+[a-z]*$/i, '');
-  return url.toString().replace(/\/$/, '');
-};
 
 const retryAfterMilliseconds = (value: string | null, now: number): number => {
   const seconds = value?.trim() ? Number(value) : Number.NaN;
@@ -140,7 +131,7 @@ export class SmaiUsageService {
     if (!apiKey || /[,\s]/.test(apiKey)) return { available: false, reason: 'not_configured' };
     let baseURL: string;
     try {
-      baseURL = normalizeSmaiUsageBaseURL(rawURL);
+      baseURL = normalizeSmaiBaseURL(rawURL);
     } catch {
       return { available: false, reason: 'not_configured' };
     }

@@ -14,6 +14,7 @@
     "./providers/deepseek/modelId": "./src/providers/deepseek/modelId.ts",
     "./providers/moonshot/modelId": "./src/providers/moonshot/modelId.ts",
     "./providers/openai/modelId": "./src/providers/openai/modelId.ts",
+    "./providers/smai/pricing": "./src/providers/smai/pricing.ts",
     "./resolveImageSinglePrice": "./src/core/usageConverters/utils/resolveImageSinglePrice.ts",
     "./resolveVideoSinglePrice": "./src/core/usageConverters/utils/resolveVideoSinglePrice.ts",
     "./types/error": "./src/types/error.ts",

@@ -1,3 +1,4 @@
+import { ssrfSafeFetch } from '@lobechat/ssrf-safe-fetch';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AiModelModel } from '@/database/models/aiModel';
@@ -14,6 +15,7 @@ vi.mock('@/business/server/aiProvider', () => ({
 vi.mock('@/database/models/aiModel');
 vi.mock('@/database/models/user');
 vi.mock('@/database/repositories/aiInfra');
+vi.mock('@lobechat/ssrf-safe-fetch', () => ({ ssrfSafeFetch: vi.fn() }));
 vi.mock('@/server/globalConfig', () => ({
   getServerGlobalConfig: vi.fn().mockReturnValue({
     aiProvider: {},
@@ -158,6 +160,90 @@ describe('aiModelRouter', () => {
       limit: undefined,
       offset: undefined,
     });
+  });
+
+  it('loads current SMAI prices in settings without changing the saved model list', async () => {
+    const oldModels = [
+      {
+        enabled: true,
+        id: 'gpt-6.1-sol',
+        pricing: {
+          units: [{ name: 'textInput', rate: 75, strategy: 'fixed', unit: 'millionTokens' }],
+        },
+      },
+    ];
+    const getDetail = vi
+      .fn()
+      .mockResolvedValue({ keyVaults: { baseURL: 'https://settings.smai.test/v1' } });
+    const batchUpdate = vi.fn();
+    vi.mocked(AiInfraRepos).mockImplementation(function () {
+      return {
+        getAiProviderDetail: getDetail,
+        getAiProviderModelList: vi.fn().mockResolvedValue(oldModels),
+      } as any;
+    });
+    vi.mocked(AiModelModel).mockImplementation(function () {
+      return { batchUpdateAiModels: batchUpdate } as any;
+    });
+    vi.mocked(ssrfSafeFetch).mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          data: [
+            {
+              billing_expr: 'tier("default", p * 2 + c * 10)',
+              billing_mode: 'tiered_expr',
+              enable_groups: ['default'],
+              model_name: 'gpt-6.1-sol',
+              model_ratio: 37.5,
+              quota_type: 0,
+            },
+          ],
+          success: true,
+        }),
+      ),
+    );
+
+    const result = await aiModelRouter.createCaller(mockCtx).getAiProviderModelList({ id: 'smai' });
+
+    expect(result[0].pricing?.units).toContainEqual({
+      name: 'textInput',
+      rate: 2,
+      strategy: 'fixed',
+      unit: 'millionTokens',
+    });
+    expect(oldModels[0].pricing.units[0].rate).toBe(75);
+    expect(result[0].enabled).toBe(true);
+    expect(batchUpdate).not.toHaveBeenCalled();
+    expect(getDetail).toHaveBeenCalled();
+  });
+
+  it('does not load pricing configuration when the scoped SMAI model list is empty', async () => {
+    const getDetail = vi.fn();
+    vi.mocked(AiInfraRepos).mockImplementation(function () {
+      return {
+        getAiProviderDetail: getDetail,
+        getAiProviderModelList: vi.fn().mockResolvedValue([]),
+      } as any;
+    });
+
+    expect(
+      await aiModelRouter.createCaller(mockCtx).getAiProviderModelList({ id: 'smai' }),
+    ).toEqual([]);
+    expect(getDetail).not.toHaveBeenCalled();
+  });
+
+  it('still loads models when their provider pricing configuration cannot be read', async () => {
+    const models = [{ id: 'gpt-6.1-sol' }];
+    vi.mocked(AiInfraRepos).mockImplementation(function () {
+      return {
+        getAiProviderDetail: vi.fn().mockRejectedValue(new Error('unavailable')),
+        getAiProviderModelList: vi.fn().mockResolvedValue(models),
+      } as any;
+    });
+
+    expect(
+      await aiModelRouter.createCaller(mockCtx).getAiProviderModelList({ id: 'smai' }),
+    ).toEqual(models);
   });
 
   it('should remove ai model', async () => {
