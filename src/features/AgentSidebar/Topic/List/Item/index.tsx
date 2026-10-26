@@ -599,6 +599,16 @@ const TopicItemRow = memo<TopicItemRowProps>(
           slots={{ titlePrefix: draftPrefix }}
           title={title === '...' ? <DotsLoading gap={3} size={4} /> : title}
           titleColor={cssVar.colorText}
+          actions={() => (
+            <Actions
+              fav={fav}
+              id={id}
+              // Archiving a topic mid-run would hide work that is still going.
+              showInlineArchive={!shouldShowRunningIcon}
+              status={status}
+              title={title}
+            />
+          )}
           extra={
             <>
               {scopedTopic && !suppressAgentAvatar && ownIconNode}
