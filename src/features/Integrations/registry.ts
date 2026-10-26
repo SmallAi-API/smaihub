@@ -22,6 +22,8 @@ export interface IntegrationDefinition {
 export const INTEGRATIONS: IntegrationDefinition[] = [];
 
 export const registerIntegration = (definition: IntegrationDefinition) => {
+  // Hide Linear from settings while keeping its connection implementation available.
+  if (definition.id === 'linear') return;
   if (!INTEGRATIONS.some((item) => item.id === definition.id)) INTEGRATIONS.push(definition);
 };
 

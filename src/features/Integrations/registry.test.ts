@@ -16,8 +16,12 @@ describe('integrations registry', () => {
     expect(isIntegrationId('slack')).toBe(false);
     expect(isIntegrationId(undefined)).toBe(false);
     expect(findIntegration('github')?.name).toBe('GitHub');
-    expect(isIntegrationId('linear')).toBe(true);
-    expect(findIntegration('linear')?.name).toBe('Linear');
+  });
+
+  it('hides Linear from the directory and settings sub-routes even if its definition is loaded', () => {
+    expect(INTEGRATIONS.some((item) => item.id === 'linear')).toBe(false);
+    expect(isIntegrationId('linear')).toBe(false);
+    expect(findIntegration('linear')).toBeUndefined();
   });
 
   it('keeps upcoming integrations out of the routable set', () => {
