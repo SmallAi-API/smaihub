@@ -10,6 +10,10 @@ const field = (key: string): FieldSchema | undefined =>
   settingsProperties().find((property) => property.key === key);
 
 describe('WeChat channel schema', () => {
+  it('omits group keyword monitoring from the private-chat-only channel settings', () => {
+    expect(field('watchKeywords')).toBeUndefined();
+  });
+
   it('collects a burst by default so an image and its sentence form one turn', () => {
     // WeChat delivers "one picture + one sentence" as two webhooks a few
     // hundred ms apart. Under the plain queue the image starts its own run and
