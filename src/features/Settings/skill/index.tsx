@@ -1,18 +1,23 @@
 'use client';
 
-import { createStaticStyles } from '@lobehub/ui';
+import { ActionIcon, createStaticStyles, Flexbox } from '@lobehub/ui';
 import isEqual from 'fast-deep-equal';
-import { memo, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { ChevronLeft } from 'lucide-react';
+import { memo, useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 
 import NavHeader from '@/features/NavHeader';
 import { useFeatureGatedTools } from '@/hooks/useFeatureGatedTools';
 import { useToolStore } from '@/store/tool';
 import { agentSkillsSelectors, builtinToolSelectors } from '@/store/tool/selectors';
+import { isMobileSurface } from '@/utils/mobileSurface';
 
 import LeftPanel from './features/LeftPanel';
 import SkillDetail, { type ToolDetailType } from './features/SkillDetail';
 import { type SkillViewMode } from './features/SkillList';
+import { encodeMobileSelection, MOBILE_SELECTION_PARAM } from './mobileSelection';
+import { useMobileToolSelection } from './useMobileToolSelection';
 
 export interface SelectedTool {
   identifier: string;
@@ -41,10 +46,49 @@ interface ToolSettingsProps {
   viewMode: SkillViewMode;
 }
 
+const PUSHED_DETAIL_STATE = 'skillDetailPushed';
+
 export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
-  const [searchParams] = useSearchParams();
+  const { t } = useTranslation('common');
+  const mobile = isMobileSurface();
+  const [searchParams, setSearchParams] = useSearchParams();
   const querySkillIdentifier = searchParams.get('skill');
   const [selected, setSelected] = useState<SelectedTool | null>(null);
+  const mobileSelected = useMobileToolSelection(mobile);
+
+  // Mobile: opening a detail is a history entry, so back returns to the list.
+  const openMobileDetail = useCallback(
+    (next: SelectedTool, replace = false) =>
+      setSearchParams(
+        (prev) => {
+          const params = new URLSearchParams(prev);
+          params.set(MOBILE_SELECTION_PARAM, encodeMobileSelection(next));
+          params.delete('skill');
+          return params;
+        },
+        // A pushed detail remembers it, so closing it can step back to the list.
+        { replace, state: replace ? undefined : { [PUSHED_DETAIL_STATE]: true } },
+      ),
+    [setSearchParams],
+  );
+  const location = useLocation();
+  const navigate = useNavigate();
+  const closeMobileDetail = () => {
+    // Pop the entry this page pushed, so history keeps one list entry; a
+    // deep-linked detail has none to pop and is replaced by the list instead.
+    if ((location.state as Record<string, unknown> | null)?.[PUSHED_DETAIL_STATE]) {
+      navigate(-1);
+      return;
+    }
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        params.delete(MOBILE_SELECTION_PARAM);
+        return params;
+      },
+      { replace: true },
+    );
+  };
 
   const builtinTools = useFeatureGatedTools((s) => s.builtinTools);
   const builtinSkills = useToolStore((s) => s.builtinSkills, isEqual);
@@ -56,6 +100,8 @@ export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
   );
 
   useEffect(() => {
+    // Mobile opens on the list; its detail selection lives in the URL.
+    if (mobile) return;
     if (selected) {
       if (
         selected.type === 'builtin' &&
@@ -79,7 +125,15 @@ export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
         setSelected({ identifier: firstSkill.identifier, type: 'builtin-skill' });
       }
     }
-  }, [builtinTools, builtinSkills, installedBuiltinIds, querySkillIdentifier, selected, viewMode]);
+  }, [
+    builtinTools,
+    builtinSkills,
+    installedBuiltinIds,
+    mobile,
+    querySkillIdentifier,
+    selected,
+    viewMode,
+  ]);
 
   useEffect(() => {
     if (viewMode !== 'skill' || !querySkillIdentifier) return;
@@ -87,12 +141,49 @@ export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
     const skill = [...marketAgentSkills, ...userAgentSkills].find(
       (item) => item.identifier === querySkillIdentifier,
     );
-    if (skill) setSelected({ identifier: skill.id, type: 'agent-skill' });
-  }, [marketAgentSkills, querySkillIdentifier, userAgentSkills, viewMode]);
+    if (!skill) return;
+    // Mobile turns the deep link into the detail entry once (dropping `skill`),
+    // so a later store refresh cannot reopen a detail the user closed.
+    if (mobile) openMobileDetail({ identifier: skill.id, type: 'agent-skill' }, true);
+    else setSelected({ identifier: skill.id, type: 'agent-skill' });
+  }, [
+    marketAgentSkills,
+    mobile,
+    openMobileDetail,
+    querySkillIdentifier,
+    userAgentSkills,
+    viewMode,
+  ]);
 
   const handleSelect = (identifier: string, type: ToolDetailType) => {
-    setSelected({ identifier, type });
+    if (mobile) openMobileDetail({ identifier, type });
+    else setSelected({ identifier, type });
   };
+
+  // Mobile: the settings layout owns the header; list and detail take turns
+  // full-width instead of a 300px list squeezing the detail.
+  if (mobile)
+    return mobileSelected ? (
+      <Flexbox className={styles.detail}>
+        <Flexbox horizontal align={'center'} paddingBlock={4} paddingInline={8}>
+          <ActionIcon icon={ChevronLeft} title={t('back')} onClick={closeMobileDetail} />
+        </Flexbox>
+        <SkillDetail
+          identifier={mobileSelected.identifier}
+          type={mobileSelected.type}
+          onDelete={closeMobileDetail}
+        />
+      </Flexbox>
+    ) : (
+      <div className={styles.root}>
+        <LeftPanel
+          fullWidth
+          viewMode={viewMode}
+          onDeleteSelected={closeMobileDetail}
+          onSelect={handleSelect}
+        />
+      </div>
+    );
 
   return (
     <>

@@ -19,6 +19,8 @@ const styles = stylex.create({
     flexDirection: 'column',
     gap: '32px',
     justifyContent: 'center',
+    // A flex item grows to its widest line by default; let it shrink to a phone.
+    minWidth: 0,
     paddingBlock: '48px',
     paddingInline: '24px',
   },
@@ -35,7 +37,8 @@ const styles = stylex.create({
   kinds: {
     display: 'grid',
     gap: '8px',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    // `min()` lets a phone fall back to one column instead of overflowing.
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(180px, 100%), 1fr))',
     maxWidth: '600px',
     width: '100%',
   },
