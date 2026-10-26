@@ -396,7 +396,7 @@ export const computeChatCost = (
   usage: ModelTokensUsage,
   options?: ComputeChatCostOptions,
 ): PricingComputationResult | undefined => {
-  if (!pricing) return undefined;
+  if (!pricing?.units.length) return undefined;
 
   const breakdown: PricingUnitBreakdown[] = [];
   const issues: PricingComputationIssue[] = [];

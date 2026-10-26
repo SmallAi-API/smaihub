@@ -8,6 +8,10 @@ import { detectModelProvider, processMultiProviderModelList } from '../../utils/
 import { responsesAPIModels } from '../openai/modelId';
 import { resolveProviderRouteModels } from '../utils/resolveProviderRouteModels';
 import { createSMAIVideo, pollSMAIVideoStatus } from './createVideo';
+import type { SMAIPricing } from './pricing';
+import { convertSMAIPricing } from './pricing';
+
+export type { SMAIPricing } from './pricing';
 
 // SmaiAI 默认 API 地址
 const DEFAULT_BASE_URL = 'https://api.smai.ai';
@@ -17,18 +21,6 @@ export interface SMAIModelCard {
   id: string;
   object: string;
   owned_by: string;
-  supported_endpoint_types?: string[];
-}
-
-export interface SMAIPricing {
-  completion_ratio?: number;
-  description?: string;
-  enable_groups: string[];
-  model_name: string;
-  model_price?: number;
-  model_ratio?: number;
-  /** 0: 按 token 计费，1: 按次计费 */
-  quota_type: number;
   supported_endpoint_types?: string[];
 }
 
@@ -137,50 +129,6 @@ export const params = {
       });
     }
 
-    const calculatePricing = (pricing: SMAIPricing) => {
-      let inputPrice: number | undefined;
-      let outputPrice: number | undefined;
-
-      if (pricing.quota_type === 0) {
-        // 按 token 计费
-        if (pricing.model_price && pricing.model_price > 0) {
-          // model_price 是直接的价格值，需确认其单位。
-          // 假设：model_price 是每 1,000 token 的价格（即 $/1K tokens）。
-          // 要换算为每 1,000,000 token 的价格（$/1M tokens），需乘以 1,000,000 / 1,000 = 1,000。
-          // 由于基准价为 $0.002/1K tokens，乘以 2 即得到 $2/1M tokens。
-          // 因此 inputPrice = model_price * 2 将价格换算为 LobeChat 使用的 $/1M tokens。
-          inputPrice = pricing.model_price * 2;
-        } else if (pricing.model_ratio) {
-          // model_ratio × $0.002/1K = model_ratio × $2/1M
-          inputPrice = pricing.model_ratio * 2; // 换算为 $/1M tokens
-        }
-
-        if (inputPrice !== undefined) {
-          // 计算输出价格
-          outputPrice = inputPrice * (pricing.completion_ratio || 1);
-
-          return {
-            units: [
-              {
-                name: 'textInput',
-                rate: inputPrice,
-                strategy: 'fixed',
-                unit: 'millionTokens',
-              },
-              {
-                name: 'textOutput',
-                rate: outputPrice,
-                strategy: 'fixed',
-                unit: 'millionTokens',
-              },
-            ],
-          };
-        }
-      }
-      // quota_type === 1 按次计费，当前暂不支持
-      return undefined;
-    };
-
     // 处理模型列表：根据优先级规则确定每个模型所属的 provider
     const enrichedModelList = modelList.map((model) => {
       const enhancedModel: any = { ...model };
@@ -188,10 +136,7 @@ export const params = {
       // 添加定价信息
       const pricing = pricingMap.get(model.id);
       if (pricing) {
-        const pricingData = calculatePricing(pricing);
-        if (pricingData) {
-          enhancedModel.pricing = pricingData;
-        }
+        enhancedModel.pricing = convertSMAIPricing(pricing);
       }
 
       return enhancedModel;
@@ -201,11 +146,10 @@ export const params = {
     const additionalModels: any[] = [];
     pricingMap.forEach((pricing, modelName) => {
       if (!existingModelIds.has(modelName)) {
-        const pricingData = calculatePricing(pricing);
         additionalModels.push({
           ...(pricing.description && { description: pricing.description }),
           id: modelName,
-          ...(pricingData && { pricing: pricingData }),
+          pricing: convertSMAIPricing(pricing),
         });
       }
     });

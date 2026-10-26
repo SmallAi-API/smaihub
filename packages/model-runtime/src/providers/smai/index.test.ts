@@ -52,6 +52,38 @@ describe('SMAI Runtime', () => {
       },
     });
 
+    it('uses expression prices instead of the legacy fallback ratios returned alongside them', async () => {
+      const mockClient = buildClient();
+      mockFetch.mockResolvedValue({
+        json: async () => ({
+          data: [
+            {
+              billing_expr: 'tier("默认", p * 2 + cr * 0.1 + cc * 2.5 + c * 10)',
+              billing_mode: 'tiered_expr',
+              completion_ratio: 2,
+              enable_groups: ['default'],
+              model_name: 'test-model',
+              model_price: 0,
+              model_ratio: 37.5,
+              quota_type: 0,
+            },
+          ],
+          success: true,
+        }),
+        ok: true,
+      });
+
+      const result = await params.models({ client: mockClient as any });
+
+      expect(result[0].pricing?.units).toEqual(
+        expect.arrayContaining([
+          { name: 'textInput', rate: 2, strategy: 'fixed', unit: 'millionTokens' },
+          { name: 'textOutput', rate: 10, strategy: 'fixed', unit: 'millionTokens' },
+          { name: 'textInput_cacheRead', rate: 0.1, strategy: 'fixed', unit: 'millionTokens' },
+        ]),
+      );
+    });
+
     it('should fetch upstream pricing directly on the server with auth header', async () => {
       const mockClient = buildClient();
 
@@ -62,7 +94,7 @@ describe('SMAI Runtime', () => {
               completion_ratio: 1.5,
               enable_groups: ['default'],
               model_name: 'test-model',
-              model_price: 10,
+              model_ratio: 10,
               quota_type: 0,
             },
           ],
@@ -117,7 +149,7 @@ describe('SMAI Runtime', () => {
               {
                 enable_groups: ['default'],
                 model_name: 'test-model',
-                model_price: 10,
+                model_ratio: 10,
                 quota_type: 0,
               },
             ],
@@ -184,7 +216,7 @@ describe('SMAI Runtime', () => {
             {
               enable_groups: ['default'],
               model_name: 'pricing-only-model',
-              model_price: 15,
+              model_ratio: 15,
               quota_type: 0,
             },
           ],
@@ -198,6 +230,70 @@ describe('SMAI Runtime', () => {
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('pricing-only-model');
       expect(mockProcessMultiProviderModelList).toHaveBeenCalledWith(expect.any(Array), 'smai');
+    });
+
+    it('replaces model-list prices with an authoritative empty price for unsupported expressions', async () => {
+      const mockClient = buildClient();
+      mockClient.models.list.mockResolvedValue({
+        data: [
+          {
+            created: 123,
+            id: 'test-model',
+            object: 'model',
+            owned_by: 'openai',
+            pricing: { units: [{ name: 'textInput', rate: 75 }] },
+          },
+        ],
+      } as any);
+      mockFetch.mockResolvedValue({
+        json: async () => ({
+          data: [
+            {
+              billing_expr: 'tier("base", p * 2) * (hour("Asia/Shanghai") < 12 ? 2 : 1)',
+              billing_mode: 'tiered_expr',
+              model_name: 'test-model',
+              model_ratio: 37.5,
+              quota_type: 0,
+            },
+          ],
+          success: true,
+        }),
+        ok: true,
+      });
+
+      const result = await params.models({ client: mockClient as any });
+
+      // {} / undefined would let the remote refresh preserve the old DB price.
+      expect(result[0].pricing).toEqual({ units: [] });
+    });
+
+    it('uses the same expression conversion for models found only in the pricing API', async () => {
+      const mockClient = buildClient();
+      mockFetch.mockResolvedValue({
+        json: async () => ({
+          data: [
+            {
+              billing_expr: 'tier("base", p * 2.85 + c * 14.2)',
+              billing_mode: 'tiered_expr',
+              completion_ratio: 5,
+              model_name: 'kimi-k3',
+              model_ratio: 10,
+              quota_type: 0,
+            },
+          ],
+          success: true,
+        }),
+        ok: true,
+      });
+
+      const result = await params.models({ client: mockClient as any });
+
+      expect(result.find((model) => model.id === 'kimi-k3')?.pricing?.units).toContainEqual({
+        name: 'textInput',
+        rate: 2.85,
+        strategy: 'fixed',
+        unit: 'millionTokens',
+      });
     });
   });
 
