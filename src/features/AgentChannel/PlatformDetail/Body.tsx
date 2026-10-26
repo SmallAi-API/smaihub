@@ -128,17 +128,12 @@ interface SchemaFieldProps {
 const renderFieldLabel = (field: FieldSchema, t: (key: string) => string) => {
   const hint = field.tooltip;
 
-  if (!hint && !field.devOnly && !field.paidFeature) return t(field.label);
+  if (!hint && !field.devOnly) return t(field.label);
 
   return (
     <Flexbox horizontal align="center" gap={8}>
       {t(field.label)}
       {hint && <InfoTooltip size={'small'} title={t(hint)} />}
-      {field.paidFeature && (
-        <Tag color="gold" size={'small'}>
-          {t('channel.paidFeature.badge')}
-        </Tag>
-      )}
       {field.devOnly && <Tag color="gold">Dev Only</Tag>}
     </Flexbox>
   );
