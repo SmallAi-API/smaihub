@@ -40,8 +40,8 @@ vi.mock('@/utils/file-system', () => ({
 }));
 
 vi.mock('@/modules/updater/configs', () => ({
-  coerceStoredUpdateChannel: (channel?: string | null) =>
-    channel === 'canary' ? 'canary' : 'stable',
+  UPDATE_CHANNEL: 'stable',
+  coerceStoredUpdateChannel: () => 'stable',
 }));
 
 // Mock store constants
@@ -102,16 +102,17 @@ describe('StoreManager', () => {
       runStoreMigrations(store);
 
       expect(store.set).toHaveBeenCalledWith('updateChannel', 'stable');
-      expect(store.set).toHaveBeenCalledWith(APPLIED_STORE_MIGRATIONS_KEY, [
-        getStoreMigrations()[0].id,
-      ]);
+      expect(store.set).toHaveBeenCalledWith(
+        APPLIED_STORE_MIGRATIONS_KEY,
+        getStoreMigrations().map(({ id }) => id),
+      );
     });
 
     it('should skip already applied migrations', () => {
-      const appliedMigrationId = getStoreMigrations()[0].id;
+      const appliedMigrationIds = getStoreMigrations().map(({ id }) => id);
       const store = {
         get: vi.fn((key: string) => {
-          if (key === APPLIED_STORE_MIGRATIONS_KEY) return [appliedMigrationId];
+          if (key === APPLIED_STORE_MIGRATIONS_KEY) return appliedMigrationIds;
           if (key === 'updateChannel') return 'nightly';
         }),
         set: vi.fn(),

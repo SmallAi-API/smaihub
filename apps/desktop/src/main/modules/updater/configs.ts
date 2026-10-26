@@ -11,17 +11,17 @@ const normalizeEnvValue = (value: string | undefined) => {
 
 const runtimeEnv = getDesktopEnv();
 
-// Build-time default channel, can be overridden at runtime via store
+// Preserve the build identity separately from the stable-only update policy.
 const rawChannel =
   normalizeEnvValue(runtimeEnv.UPDATE_CHANNEL) ||
   normalizeEnvValue(process.env.UPDATE_CHANNEL) ||
   'stable';
 /** Raw build channel for display (stable, nightly, canary, beta) */
 export const BUILD_CHANNEL: string = rawChannel;
-export const coerceStoredUpdateChannel = (channel?: string | null): UpdateChannel =>
-  channel === 'canary' ? 'canary' : 'stable';
-
-export const UPDATE_CHANNEL: UpdateChannel = coerceStoredUpdateChannel(rawChannel);
+export const UPDATE_CHANNEL: UpdateChannel = 'stable';
+/** Legacy preferences and build overrides must not opt this app into prereleases. */
+export const coerceStoredUpdateChannel = (_channel?: string | null): UpdateChannel =>
+  UPDATE_CHANNEL;
 
 // S3 base URL for all channels
 // e.g., https://releases.lobehub.com

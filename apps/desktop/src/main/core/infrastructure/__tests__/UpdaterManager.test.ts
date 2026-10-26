@@ -248,13 +248,13 @@ describe('UpdaterManager', () => {
       );
     });
 
-    it('should allow a persisted canary channel to roll back to an older canary build', async () => {
+    it('uses the stable feed and excludes prereleases for a legacy canary preference', async () => {
       vi.mocked(mockApp.storeManager.get).mockReturnValue('canary');
 
       await updaterManager.initialize();
 
-      expect(autoUpdater.channel).toBe('canary');
-      expect(autoUpdater.allowPrerelease).toBe(true);
+      expect(autoUpdater.channel).toBe('stable');
+      expect(autoUpdater.allowPrerelease).toBe(false);
       expect(autoUpdater.allowDowngrade).toBe(true);
     });
 
@@ -310,12 +310,12 @@ describe('UpdaterManager', () => {
       expect(mockQuit).not.toHaveBeenCalled();
     });
 
-    it('drives canary through Sparkle with the arch-specific appcast', async () => {
+    it('uses the stable Sparkle appcast for a legacy canary preference', async () => {
       vi.mocked(mockApp.storeManager.get).mockReturnValue('canary');
       await updaterManager.initialize();
 
       expect(bridge.init).toHaveBeenCalledWith({
-        appcastUrl: `https://mock.update.server/canary/appcast-${process.arch}.xml`,
+        appcastUrl: `https://mock.update.server/stable/appcast-${process.arch}.xml`,
       });
 
       await updaterManager.checkForUpdates();
@@ -336,7 +336,7 @@ describe('UpdaterManager', () => {
       expect(autoUpdater.checkForUpdates).not.toHaveBeenCalled();
     });
 
-    it('switches the Sparkle feed between stable and canary', async () => {
+    it('keeps the stable Sparkle feed when Canary is requested', async () => {
       await updaterManager.initialize();
       updaterManager.switchChannel('canary');
       await vi.advanceTimersByTimeAsync(0);
@@ -346,29 +346,28 @@ describe('UpdaterManager', () => {
       expect(bridge.init).toHaveBeenLastCalledWith({
         appcastUrl: `https://mock.update.server/stable/appcast-${process.arch}.xml`,
       });
-      expect(bridge.checkForUpdates).toHaveBeenCalledTimes(2);
+      expect(bridge.checkForUpdates).toHaveBeenCalledTimes(1);
       expect(autoUpdater.setFeedURL).not.toHaveBeenCalled();
     });
 
-    it('discards the old channel download and rechecks after its native cycle completes', async () => {
-      vi.mocked(mockApp.storeManager.get).mockReturnValue('canary');
+    it('keeps an in-flight stable download when Canary is requested', async () => {
       bridge.checkForUpdates.mockImplementation(() => {});
       await updaterManager.initialize();
       const check = updaterManager.checkForUpdates();
-      sparkleEvents?.({ type: 'update-available', version: '9.9.9-canary.1' });
-      updaterManager.switchChannel('stable');
+      sparkleEvents?.({ type: 'update-available', version: '9.9.9' });
+      updaterManager.switchChannel('canary');
       sparkleEvents?.({ type: 'download-progress', phase: 'download', percent: 50 });
-      sparkleEvents?.({ type: 'update-downloaded', version: '9.9.9-canary.1' });
+      sparkleEvents?.({ type: 'update-downloaded', version: '9.9.9' });
       await check;
-      expect(mockBroadcast).not.toHaveBeenCalledWith('updateReady', expect.anything());
-      expect(mockBroadcast).not.toHaveBeenCalledWith('updateDownloadProgress', expect.anything());
+      expect(mockBroadcast).toHaveBeenCalledWith(
+        'updateReady',
+        expect.objectContaining({ version: '9.9.9' }),
+      );
       expect(bridge.init).toHaveBeenLastCalledWith({
         appcastUrl: `https://mock.update.server/stable/appcast-${process.arch}.xml`,
       });
-      expect(bridge.checkForUpdates).toHaveBeenCalledTimes(2);
-      sparkleEvents?.({ type: 'update-not-available' });
-      await vi.advanceTimersByTimeAsync(0);
-      expect(updaterManager.getUpdaterState().stage).toBe('latest');
+      expect(bridge.checkForUpdates).toHaveBeenCalledTimes(1);
+      expect(updaterManager.getUpdaterState().stage).toBe('downloaded');
     });
 
     it('reports a missing Sparkle bridge without falling back to electron-updater', async () => {
@@ -383,7 +382,7 @@ describe('UpdaterManager', () => {
       expect(autoUpdater.checkForUpdates).not.toHaveBeenCalled();
     });
 
-    it('defers install-later to Sparkle on canary', async () => {
+    it('defers install-later to Sparkle after normalizing a legacy canary preference', async () => {
       vi.mocked(mockApp.storeManager.get).mockReturnValue('canary');
       await updaterManager.initialize();
 
@@ -422,10 +421,12 @@ describe('UpdaterManager', () => {
   });
 
   describe('switchChannel', () => {
-    it('should allow rollback whenever canary is the target channel', async () => {
+    it('keeps stable updates when a runtime caller requests Canary', async () => {
       await updaterManager.initialize();
       updaterManager.switchChannel('canary');
 
+      expect(autoUpdater.channel).toBe('stable');
+      expect(autoUpdater.allowPrerelease).toBe(false);
       expect(autoUpdater.allowDowngrade).toBe(true);
     });
 
@@ -863,11 +864,11 @@ describe('UpdaterManager', () => {
       );
     });
 
-    it('clears the guard on channel switch', () => {
+    it('clears the guard when the stable channel is reapplied', () => {
       fireDownloaded('2.2.6');
       updaterManager.installLater();
 
-      updaterManager.switchChannel('canary');
+      updaterManager.switchChannel('stable');
 
       mockBroadcast.mockClear();
       fireDownloaded('2.2.6');

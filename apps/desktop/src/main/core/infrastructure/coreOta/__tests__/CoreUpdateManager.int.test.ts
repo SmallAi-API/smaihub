@@ -66,7 +66,7 @@ vi.mock('@/modules/updater/configs', () => ({
   BUILD_CHANNEL: 'stable',
   UPDATE_CHANNEL: 'stable',
   UPDATE_SERVER_URL: 'https://updates.test/stable',
-  coerceStoredUpdateChannel: (channel?: string) => (channel === 'canary' ? 'canary' : 'stable'),
+  coerceStoredUpdateChannel: () => 'stable',
 }));
 
 const makeApp = () => ({
@@ -249,20 +249,12 @@ describe('CoreUpdateManager initialize', () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 
-  it('enables Canary OTA after leaving macOS Stable and clears it when switching back', async () => {
+  it('keeps macOS Stable on full updates when a caller requests Canary OTA', async () => {
     Object.defineProperty(process, 'platform', { value: 'darwin' });
     const { manager } = await loadManager();
     manager.startScheduledChecks();
     manager.switchChannel('canary');
-    expect(manager.enabled).toBe(true);
-    manager.switchChannel('stable');
     expect(manager.enabled).toBe(false);
-    expect(readPointer(otaRoot(), ABI)).toMatchObject({
-      current: null,
-      previous: null,
-      staged: null,
-      channel: 'stable',
-    });
     await manager.checkForUpdates({ manual: true });
     expect(fetchImpl).not.toHaveBeenCalled();
   });
@@ -1115,7 +1107,7 @@ describe('CoreUpdateManager checkForUpdates', () => {
     expect(manager.getStatus().staged).toBeNull();
   });
 
-  it('reverts pointer.current when the channel switches after a relaunch stage', async () => {
+  it('preserves a staged stable relaunch update when Canary is requested', async () => {
     serveLatest(mainChanged('1.0.1', 1));
     const { manager } = await loadManager();
     await manager.checkForUpdates();
@@ -1124,8 +1116,8 @@ describe('CoreUpdateManager checkForUpdates', () => {
     manager.switchChannel('canary');
     await flushGc(manager);
 
-    expect(readPointer(otaRoot(), ABI)).toMatchObject({ current: null, previous: null });
-    await vi.waitFor(() => expect(existsSync(coreDir('1.0.1'))).toBe(false));
+    expect(readPointer(otaRoot(), ABI)).toMatchObject({ current: '1.0.1', channel: 'stable' });
+    expect(existsSync(coreDir('1.0.1'))).toBe(true);
   });
 
   it('auto-applies a reload-mode stage after five idle minutes, even when staged while idle', async () => {
@@ -1209,7 +1201,7 @@ describe('CoreUpdateManager checkForUpdates', () => {
     );
   });
 
-  it('drops the staged version when the channel switches', async () => {
+  it('preserves a staged stable renderer update when Canary is requested', async () => {
     serveLatest(rendererOnly('1.0.1', 1));
     const { manager } = await loadManager();
     await manager.checkForUpdates();
@@ -1218,9 +1210,9 @@ describe('CoreUpdateManager checkForUpdates', () => {
     manager.switchChannel('canary');
     await flushGc(manager);
 
-    expect(manager.getStatus().staged).toBeNull();
-    expect(readPointer(otaRoot(), ABI).staged).toBeNull();
-    expect(existsSync(coreDir('1.0.1'))).toBe(false);
+    expect(manager.getStatus().staged).toBe('1.0.1');
+    expect(readPointer(otaRoot(), ABI).channel).toBe('stable');
+    expect(existsSync(coreDir('1.0.1'))).toBe(true);
   });
 });
 

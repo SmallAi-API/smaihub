@@ -435,14 +435,6 @@ export const SETTINGS_SEARCH_ITEMS: SettingsSearchItem[] = [
     tab: SettingsTabs.Advanced,
     visible: (ctx) => ctx.enableGatewayMode,
   },
-  {
-    anchor: 'advanced-update-channel',
-    descKey: 'tab.advanced.updateChannel.desc',
-    keywords: ['update', 'version', 'canary', 'stable'],
-    labelKey: 'tab.advanced.updateChannel.title',
-    tab: SettingsTabs.Advanced,
-    visible: (ctx) => ctx.isDesktop,
-  },
   // Labs — derived from the LAB_FEATURES catalog the page renders, so a new
   // lab flag becomes searchable without a second registration. Anchors use
   // `labs-${flag}`, matching the SettingsSearchAnchor wrap on each toggle.

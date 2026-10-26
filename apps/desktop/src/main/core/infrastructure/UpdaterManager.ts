@@ -9,7 +9,12 @@ import { app as electronApp, BrowserWindow } from 'electron';
 import semver from 'semver';
 
 import { isDev, isWindows } from '@/const/env';
-import { UPDATE_CHANNEL, UPDATE_SERVER_URL, updaterConfig } from '@/modules/updater/configs';
+import {
+  coerceStoredUpdateChannel,
+  UPDATE_CHANNEL,
+  UPDATE_SERVER_URL,
+  updaterConfig,
+} from '@/modules/updater/configs';
 import { createUpdateEngine, type UpdateEngine } from '@/modules/updater/engine';
 import { extractRestoreRoute } from '@/modules/updater/utils';
 import { createLogger } from '@/utils/logger';
@@ -107,8 +112,7 @@ export class UpdaterManager {
       return;
     }
 
-    // Read persisted channel from store (defaults to build-time UPDATE_CHANNEL)
-    this.currentChannel = this.app.storeManager.get('updateChannel') ?? UPDATE_CHANNEL;
+    this.currentChannel = coerceStoredUpdateChannel(this.app.storeManager.get('updateChannel'));
 
     try {
       this.engine = await createUpdateEngine(this.currentChannel);
@@ -132,6 +136,10 @@ export class UpdaterManager {
    * Switch to a different update channel at runtime
    */
   public switchChannel = (channel: UpdateChannel) => {
+    if (channel !== UPDATE_CHANNEL) {
+      logger.warn(`Ignoring unsupported update channel: ${channel}`);
+      return;
+    }
     logger.info(`Switching update channel: ${this.currentChannel} -> ${channel}`);
 
     this.currentChannel = channel;

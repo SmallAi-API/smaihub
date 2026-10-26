@@ -14,7 +14,6 @@ import {
   type StartupUpdateProgress,
 } from '@/const/shell';
 import {
-  BUILD_CHANNEL,
   coerceStoredUpdateChannel,
   UPDATE_CHANNEL,
   UPDATE_SERVER_URL,
@@ -538,7 +537,7 @@ export class CoreUpdateManager {
   }
 
   private coreChannel(channel: UpdateChannel): CoreChannel {
-    return BUILD_CHANNEL === 'beta' && channel === 'canary' ? 'beta' : channel;
+    return coerceStoredUpdateChannel(channel);
   }
 
   private feedUrl() {

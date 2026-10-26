@@ -53,7 +53,7 @@ export default class UpdaterCtr extends ControllerModule {
   }
   @IpcMethod()
   async getUpdateChannel(): Promise<UpdateChannel> {
-    return this.app.storeManager.get('updateChannel') ?? UPDATE_CHANNEL;
+    return UPDATE_CHANNEL;
   }
 
   /**
@@ -68,8 +68,7 @@ export default class UpdaterCtr extends ControllerModule {
 
   @IpcMethod()
   async setUpdateChannel(channel: UpdateChannel): Promise<void> {
-    const validChannels = new Set<UpdateChannel>(['stable', 'canary']);
-    if (!validChannels.has(channel)) {
+    if (channel !== UPDATE_CHANNEL) {
       logger.warn(`Invalid update channel: ${channel}, ignoring`);
       return;
     }

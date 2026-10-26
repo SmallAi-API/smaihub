@@ -54,6 +54,12 @@ describe('settings search index', () => {
     expect(TAB_SEARCH_EN_KEYWORDS[SettingsTabs.ServiceModel]).not.toContain('tts settings');
   });
 
+  it('does not offer the retired update-channel setting in search', () => {
+    expect(SETTINGS_SEARCH_ITEMS.some((item) => item.anchor === 'advanced-update-channel')).toBe(
+      false,
+    );
+  });
+
   it('keeps an English floor for labs and oauth apps tabs', () => {
     expect(TAB_SEARCH_EN_KEYWORDS[SettingsTabs.Labs]).toContain('experiment');
     expect(TAB_SEARCH_EN_KEYWORDS[SettingsTabs.OAuthApps]).toContain('oauth');

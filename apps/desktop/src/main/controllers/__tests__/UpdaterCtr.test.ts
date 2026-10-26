@@ -87,10 +87,10 @@ describe('UpdaterCtr', () => {
   });
 
   describe('update channel', () => {
-    it('should return stored update channel', async () => {
+    it('should report stable even when a legacy canary preference remains', async () => {
       mockStoreGet.mockReturnValueOnce('canary');
 
-      await expect(updaterCtr.getUpdateChannel()).resolves.toBe('canary');
+      await expect(updaterCtr.getUpdateChannel()).resolves.toBe('stable');
     });
 
     it('should return default update channel when store is empty', async () => {
@@ -99,18 +99,16 @@ describe('UpdaterCtr', () => {
       await expect(updaterCtr.getUpdateChannel()).resolves.toBe('stable');
     });
 
-    it('should keep canary input unchanged', async () => {
-      await updaterCtr.setUpdateChannel('canary');
+    it('should allow stable updates', async () => {
+      await updaterCtr.setUpdateChannel('stable');
 
-      expect(mockStoreSet).toHaveBeenCalledWith('updateChannel', 'canary');
-      expect(mockRendererSwitchChannel).toHaveBeenCalledWith('canary');
-      expect(mockSwitchChannel).toHaveBeenCalledWith('canary');
+      expect(mockStoreSet).toHaveBeenCalledWith('updateChannel', 'stable');
+      expect(mockRendererSwitchChannel).toHaveBeenCalledWith('stable');
+      expect(mockSwitchChannel).toHaveBeenCalledWith('stable');
     });
 
-    it('should ignore invalid legacy input', async () => {
-      await updaterCtr.setUpdateChannel(
-        'nightly' as unknown as Parameters<UpdaterCtr['setUpdateChannel']>[0],
-      );
+    it.each(['canary', 'nightly', 'beta'])('should reject the %s channel', async (channel) => {
+      await updaterCtr.setUpdateChannel(channel as Parameters<UpdaterCtr['setUpdateChannel']>[0]);
 
       expect(mockStoreSet).not.toHaveBeenCalled();
       expect(mockRendererSwitchChannel).not.toHaveBeenCalled();
