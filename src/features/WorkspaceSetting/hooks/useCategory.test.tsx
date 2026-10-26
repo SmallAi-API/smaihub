@@ -108,7 +108,7 @@ describe('workspace settings useCategory', () => {
     ]);
   });
 
-  it('groups devices and subscription accounts under Resources', () => {
+  it('groups devices, subscription accounts and environments under Resources', () => {
     const { result } = renderHook(() => useWorkspaceSettingCategory(), { wrapper });
     const keys = result.current.map((group) => group.key);
     const resourceGroup = result.current.find(
@@ -124,6 +124,7 @@ describe('workspace settings useCategory', () => {
     expect(resourceGroup?.items.map((item) => item.key)).toEqual([
       WorkspaceSettingsTabs.Devices,
       WorkspaceSettingsTabs.SubscriptionAccounts,
+      WorkspaceSettingsTabs.Environments,
     ]);
     expect(generalGroup?.items.map((item) => item.key)).not.toContain(
       WorkspaceSettingsTabs.Devices,
@@ -131,7 +132,7 @@ describe('workspace settings useCategory', () => {
   });
 
   it.each([false, true])(
-    'hides Environments when persistent sandboxes are %s',
+    'shows Environments when persistent sandboxes are %s',
     (enablePersistentSandbox) => {
       useUserStore.setState({
         preference: {
@@ -140,7 +141,8 @@ describe('workspace settings useCategory', () => {
         },
       });
 
-      expect(getItemKeys()).not.toContain(WorkspaceSettingsTabs.Environments);
+      expect(getItemKeys()).toContain(WorkspaceSettingsTabs.Environments);
+      expect(getItemKeys()).not.toContain(WorkspaceSettingsTabs.Drive);
     },
   );
 

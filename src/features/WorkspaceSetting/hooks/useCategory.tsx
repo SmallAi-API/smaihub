@@ -10,13 +10,13 @@ import {
   Building2,
   ChartColumnBigIcon,
   Coins,
+  ContainerIcon,
   CreditCard,
   Database,
   EllipsisIcon,
   FlaskConical,
   GaugeIcon,
   HandCoins,
-  HardDriveIcon,
   Info,
   KeyboardIcon,
   KeyIcon,
@@ -80,7 +80,6 @@ export const useWorkspaceSettingCategory = (): WorkspaceSettingCategoryGroup[] =
   const { allowed: canCreateContent } = usePermission('create_content');
   const enableOAuthApps = useUserStore(labPreferSelectors.enableOAuthApps);
   const enableIntegrations = useUserStore(labPreferSelectors.enableIntegrations);
-  const enablePersistentSandbox = useUserStore(labPreferSelectors.enablePersistentSandbox);
   const { hideDocs } = useServerConfigStore(featureFlagsSelectors);
   const [avatar, username] = useUserStore((s) => [
     userProfileSelectors.userAvatar(s),
@@ -188,8 +187,8 @@ export const useWorkspaceSettingCategory = (): WorkspaceSettingCategoryGroup[] =
           title: t('workspaceSetting.group.workspace'),
         },
         // What the workspace's agents run on and spend: machines, coding-agent
-        // subscriptions and the drive. Each item keeps its own gate; the group
-        // only puts the shared capacity in one place.
+        // subscriptions and code environments. Each item keeps its
+        // own gate; the group only puts the shared capacity in one place.
         {
           items: [
             {
@@ -204,12 +203,10 @@ export const useWorkspaceSettingCategory = (): WorkspaceSettingCategoryGroup[] =
               key: WorkspaceSettingsTabs.SubscriptionAccounts,
               label: t('tab.subscriptionAccounts'),
             },
-            // The public drive and the member's own, with the pool's usage —
-            // behind the same lab switch as the composer's folder picker.
-            enablePersistentSandbox && {
-              icon: HardDriveIcon,
-              key: WorkspaceSettingsTabs.Drive,
-              label: t('tab.drive'),
+            {
+              icon: ContainerIcon,
+              key: WorkspaceSettingsTabs.Environments,
+              label: t('tab.environments'),
             },
           ].filter(Boolean) as WorkspaceSettingCategoryItem[],
           key: WorkspaceSettingsGroupKey.Resource,
@@ -362,7 +359,6 @@ export const useWorkspaceSettingCategory = (): WorkspaceSettingCategoryGroup[] =
       tSubscription,
       enableOAuthApps,
       enableIntegrations,
-      enablePersistentSandbox,
       canManageWorkspace,
       canViewBilling,
       canCreateContent,

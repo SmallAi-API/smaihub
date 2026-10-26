@@ -129,12 +129,6 @@ const ALL_LAB_FEATURES: LabFeatureItem[] = [
     stage: 'alpha',
   },
   {
-    flag: 'enablePersistentSandbox',
-    i18nKey: 'persistentSandbox',
-    searchKeywords: ['persistent sandbox', 'workspace', 'sandbox storage'],
-    stage: 'alpha',
-  },
-  {
     flag: 'enableArtifactDeployment',
     i18nKey: 'artifactDeployment',
     searchKeywords: ['artifact', 'deploy', 'publish'],

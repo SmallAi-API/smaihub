@@ -11,13 +11,13 @@ import {
   BrainCircuit,
   ChartColumnBigIcon,
   Coins,
+  ContainerIcon,
   CreditCard,
   Database,
   EllipsisIcon,
   EthernetPort,
   FlaskConical,
   Gift,
-  HardDriveIcon,
   Info,
   KeyboardIcon,
   KeyRound,
@@ -83,7 +83,6 @@ export const useCategory = () => {
   const remoteServerUrl = useElectronStore(electronSyncSelectors.remoteServerUrl);
   const enableOAuthApps = useUserStore(labPreferSelectors.enableOAuthApps);
   const enableIntegrations = useUserStore(labPreferSelectors.enableIntegrations);
-  const enablePersistentSandbox = useUserStore(labPreferSelectors.enablePersistentSandbox);
 
   const avatarUrl = useMemo(() => {
     if (!avatar) return undefined;
@@ -152,13 +151,10 @@ export const useCategory = () => {
         key: SettingsTabs.Devices,
         label: t('tab.devices'),
       },
-      // The drives a cloud-sandbox run keeps files on, with their usage and
-      // the way to a plan — behind the same lab switch the composer's folder
-      // picker is, since without it no run ever touches a drive.
-      enablePersistentSandbox && {
-        icon: HardDriveIcon,
-        key: SettingsTabs.Drive,
-        label: t('tab.drive'),
+      {
+        icon: ContainerIcon,
+        key: SettingsTabs.Environments,
+        label: t('tab.environments'),
       },
       (enableBusinessFeatures || isDesktop) && {
         icon: BellIcon,
@@ -328,7 +324,6 @@ export const useCategory = () => {
     showProvider,
     enableOAuthApps,
     enableIntegrations,
-    enablePersistentSandbox,
     avatarUrl,
     username,
   ]);
