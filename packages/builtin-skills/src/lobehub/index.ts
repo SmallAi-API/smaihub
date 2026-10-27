@@ -4,6 +4,8 @@ import { systemPrompt } from './content';
 import { toResourceMeta } from './helpers';
 import { LobeHubIdentifier, LobeHubManifest } from './manifest';
 import agent from './references/agent';
+import agentGroup from './references/agent-group';
+import { artifact } from './references/artifact';
 import bot from './references/bot';
 import botDiscord from './references/bot-discord';
 import botFeishu from './references/bot-feishu';
@@ -35,6 +37,8 @@ export const LobeHubSkill: BuiltinSkill = {
   content: systemPrompt,
   resources: toResourceMeta({
     'references/agent': agent,
+    'references/agent-group': agentGroup,
+    'references/artifact': artifact,
     'references/bot': bot,
     'references/bot/discord': botDiscord,
     'references/bot/feishu': botFeishu,
