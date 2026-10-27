@@ -84,6 +84,13 @@ export const FeatureFlagsSchema = z.object({
    */
   dashboard: FeatureFlagValue.optional(),
 
+  /**
+   * Multi-agent Channels: the sidebar section, Channel pages and every Channel API, including
+   * Agent history reads (`lobe-channel`, `lh channel`). Off: none of it is reachable. Work that
+   * was already queued still finishes. Array values are user ids, checked per member.
+   */
+  channel: FeatureFlagValue.optional(),
+
   /** Assistant video generation skill only; independent video creation stays available. */
   video_generation_skill: FeatureFlagValue.optional(),
 
@@ -162,6 +169,9 @@ export const DEFAULT_FEATURE_FLAGS: IFeatureFlags = {
 
   // Off until an admin publishes a user allowlist or flips it to true.
   dashboard: false,
+
+  // Off until an admin publishes a user allowlist or flips it to true.
+  channel: false,
   video_generation_skill: false,
 
   agent_onboarding: isDev,
@@ -200,6 +210,7 @@ export const mapFeatureFlagsEnvToState = (
     enableBotWake: evaluateFeatureFlag(config.bot_wake, userId),
     enableLlmRelay: evaluateFeatureFlag(config.agent_llm_relay, userId),
     enableDashboard: evaluateFeatureFlag(config.dashboard, userId),
+    enableChannels: evaluateFeatureFlag(config.channel, userId),
     enableVideoGenerationSkill: evaluateFeatureFlag(config.video_generation_skill, userId),
     showProvider: evaluateFeatureFlag(config.provider_settings, userId),
 
