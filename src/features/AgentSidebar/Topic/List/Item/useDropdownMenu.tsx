@@ -88,6 +88,9 @@ export const useTopicItemDropdownMenu = ({
   const { scope, refresh } = useScopedTopics();
   const fallbackAgentId = useAgentStore((s) => s.activeAgentId);
   const activeAgentId = scopedTopic?.agentId ?? fallbackAgentId;
+  const isHeterogeneous = useAgentStore(
+    (s) => !!activeAgentId && !!s.agentMap?.[activeAgentId]?.agencyConfig?.heterogeneousProvider,
+  );
   const addTab = useElectronStore((s) => s.addTab);
   const appOrigin = useAppOrigin();
   const enableTopicBugReport = useUserStore(labPreferSelectors.enableTopicBugReport);
@@ -150,11 +153,7 @@ export const useTopicItemDropdownMenu = ({
         label:
           completionLabel ??
           (isCompleted ? t('actions.unmarkCompleted') : t('actions.markCompleted')),
-        onClick: async () => {
-          if (isCompleted) await unmarkTopicCompleted(id);
-          else await markTopicCompleted(id);
-          if (scope) await refresh();
-        },
+        onClick: toggleCompleted,
         sfSymbol: isCompleted ? 'tray.and.arrow.up' : 'archivebox',
       },
       {
@@ -402,8 +401,7 @@ export const useTopicItemDropdownMenu = ({
     autoRenameTopicTitle,
     duplicateTopic,
     favoriteTopic,
-    markTopicCompleted,
-    unmarkTopicCompleted,
+    toggleCompleted,
     removeTopic,
     updateTopicTitle,
     openTopicInNewWindow,
@@ -413,5 +411,7 @@ export const useTopicItemDropdownMenu = ({
     t,
     handleOpenShareModal,
   ]);
-  return { dropdownMenu };
+  const canInlineArchive = !!id && canEditTopic && isHeterogeneous;
+
+  return { canInlineArchive, dropdownMenu, isCompleted, toggleCompleted };
 };

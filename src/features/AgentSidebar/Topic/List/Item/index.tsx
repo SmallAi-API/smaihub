@@ -595,7 +595,6 @@ const TopicItemRow = memo<TopicItemRowProps>(
       <TopicItemContextMenu fav={fav} id={id} status={status} title={title}>
         <NavItem
           draggable
-          actions={() => <Actions fav={fav} id={id} status={status} title={title} />}
           active={isTopicActive}
           description={workingDirectoryNode}
           href={href}
