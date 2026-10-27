@@ -32,6 +32,7 @@ import { formatTokenNumber } from '@/utils/format';
 import { getProviderLogoUrl } from '@/utils/providerLogo';
 
 import NewModelBadgeI18n, { NewModelBadge as NewModelBadgeCore } from './NewModelBadge';
+import RoutingBadge from './RoutingBadge';
 
 export const TAG_CLASSNAME = 'lobe-model-info-tags';
 
@@ -263,6 +264,8 @@ interface ModelItemRenderProps extends ChatModelCard, Pick<FlexboxProps, 'classN
   nameSuffix?: ReactNode;
   newBadgeLabel?: string;
   proBadgeLabel?: string;
+  /** The provider the row belongs to, which some markers read the id against */
+  provider?: string;
   /** Muted text right after the model name, e.g. the current reasoning effort */
   secondaryText?: string;
   showInfoTag?: boolean;
@@ -281,6 +284,7 @@ export const ModelItemRender = memo<ModelItemRenderProps>(
     nameSuffix,
     newBadgeLabel,
     proBadgeLabel,
+    provider,
     secondaryText,
     video,
     vision,
@@ -329,6 +333,7 @@ export const ModelItemRender = memo<ModelItemRenderProps>(
             </Text>
           )}
           {nameSuffix}
+          <RoutingBadge id={id} provider={provider} />
           {newBadgeLabel ? (
             <NewModelBadgeCore label={newBadgeLabel} releasedAt={releasedAt} />
           ) : (

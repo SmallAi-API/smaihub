@@ -50,6 +50,8 @@
     "./jina": "./src/aiModels/jina.ts",
     "./kimiCodingPlan": "./src/aiModels/kimiCodingPlan.ts",
     "./lmstudio": "./src/aiModels/lmstudio.ts",
+    "./longcat": "./src/aiModels/longcat.ts",
+    "./magpie": "./src/aiModels/magpie.ts",
     "./meta": "./src/aiModels/meta.ts",
     "./minimax": "./src/aiModels/minimax.ts",
     "./minimaxCodingPlan": "./src/aiModels/minimaxCodingPlan.ts",
