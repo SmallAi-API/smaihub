@@ -4,15 +4,10 @@ import type {
   VerifyAgentPlanConfig,
   VerifyCheckItem,
   VerifyCodingScope,
-  VerifyEvidenceType,
-  VerifyInteractionCost,
-  VerifyInteractionCostOperators,
-  VerifyInteractionCostPhase,
   VerifyRunOrigin,
   VerifySurface,
   VerifyVerdict,
 } from '@lobechat/types';
-import { toRecord } from '@lobechat/utils/object';
 import {
   Block,
   Button,
@@ -72,19 +67,28 @@ import {
 } from '../utils';
 import {
   EvidenceComparisonCard,
-  type EvidenceComparisonMeta,
   isFilenameLike,
   meaningfulEvidenceCaption,
-  readEvidenceComparison,
 } from './EvidenceComparisonCard';
+import InteractionCostPanel, { readInteractionCost } from './InteractionCost';
 import {
   CollapsibleMarkdownEvidence,
   DocumentViewer,
-  filenameFromUrl,
   markdownTextEvidenceTypes,
   rendersAsMarkdown,
 } from './MarkdownEvidence';
 import { originTopicHref } from './originLink';
+import {
+  type EvidenceCategory,
+  evidenceCategory,
+  evidenceComparison,
+  evidenceDisplayName,
+  imageEvidenceTypes,
+  isInlineEvidence,
+  isInlineVisualEvidence,
+  isTerminalEvidence,
+} from './ReportViewer/model';
+import { TerminalEvidenceCard } from './TerminalEvidence';
 import { readVisualizationManifest } from './visualization';
 import { VisualizationRenderer } from './VisualizationRenderer';
 
@@ -903,36 +907,6 @@ const SURFACE_ICON: Record<VerifySurface, typeof Check> = {
   mobile: Smartphone,
   web: Globe,
 };
-
-const imageEvidenceTypes = new Set(['gif', 'screenshot']);
-/** Player media — a `<video>`/`<audio>` element, not an image box. */
-const playerEvidenceTypes = new Set(['audio', 'video']);
-/** Media that renders/plays inline in the check body, no click-to-open. */
-const isInlineVisualEvidence = (evidence: VerifyEvidenceWithUrl) =>
-  Boolean(
-    evidence.fileUrl &&
-    (imageEvidenceTypes.has(evidence.type) || playerEvidenceTypes.has(evidence.type)),
-  );
-
-/**
- * Evidence with a directly renderable payload in the check body, no
- * click-to-open. File-backed documents stay behind the file card on purpose —
- * an uploaded artifact is long by definition, and rendering it inline drowns
- * the check list.
- */
-const isInlineEvidence = (evidence: VerifyEvidenceWithUrl) =>
-  Boolean(evidence.content) || isInlineVisualEvidence(evidence);
-
-/** Coarse attachment bucket for the type marker: image / video / audio / everything else. */
-type EvidenceCategory = 'audio' | 'file' | 'image' | 'video';
-const evidenceCategory = (type: VerifyEvidenceType): EvidenceCategory =>
-  type === 'video'
-    ? 'video'
-    : type === 'audio'
-      ? 'audio'
-      : imageEvidenceTypes.has(type)
-        ? 'image'
-        : 'file';
 const CATEGORY_ICON: Record<EvidenceCategory, typeof FileText> = {
   audio: AudioLines,
   file: FileText,
@@ -950,258 +924,6 @@ const liveStatusLabelKey = {
   verifying: 'report.status.verifying',
 } as const;
 
-const OPERATOR_KEYS = ['K', 'P', 'M', 'H', 'T_chars', 'R_ms'] as const;
-type OperatorKey = (typeof OPERATOR_KEYS)[number];
-
-const OPERATOR_DEFAULT_SECONDS: Record<OperatorKey, number> = {
-  H: 0.4,
-  K: 0.2,
-  M: 1.35,
-  P: 1.1,
-  R_ms: 0.001,
-  T_chars: 0.2,
-};
-
-const finiteNumber = (value: unknown): number | undefined =>
-  typeof value === 'number' && Number.isFinite(value) ? value : undefined;
-
-const finiteString = (value: unknown): string | undefined =>
-  typeof value === 'string' && value.length > 0 ? value : undefined;
-
-const readOperators = (value: unknown): VerifyInteractionCostOperators => {
-  const record = toRecord(value);
-  if (!record) return {};
-
-  return {
-    H: finiteNumber(record.H),
-    K: finiteNumber(record.K),
-    M: finiteNumber(record.M),
-    P: finiteNumber(record.P),
-    R_ms: finiteNumber(record.R_ms),
-    T_chars: finiteNumber(record.T_chars),
-  };
-};
-
-const readTimingSeconds = (value: unknown): Record<string, number> | undefined => {
-  const record = toRecord(value);
-  if (!record) return undefined;
-
-  const entries = Object.entries(record).flatMap(([key, field]) => {
-    const seconds = finiteNumber(field);
-    return seconds === undefined ? [] : [[key, seconds] as const];
-  });
-
-  return entries.length > 0 ? Object.fromEntries(entries) : undefined;
-};
-
-const readPhase = (value: unknown, index: number): VerifyInteractionCostPhase | null => {
-  const record = toRecord(value);
-  if (!record) return null;
-
-  const seconds = finiteNumber(record.seconds);
-  const activeSeconds = finiteNumber(record.activeSeconds);
-  const waitSeconds = finiteNumber(record.waitSeconds);
-  const hasTiming =
-    seconds !== undefined || activeSeconds !== undefined || waitSeconds !== undefined;
-  if (!hasTiming) return null;
-
-  return {
-    actionCount: finiteNumber(record.actionCount),
-    activeSeconds,
-    checkItemId: finiteString(record.checkItemId),
-    id: finiteString(record.id) ?? `phase-${index + 1}`,
-    label: finiteString(record.label),
-    operators: readOperators(record.operators),
-    seconds,
-    waitSeconds,
-  };
-};
-
-const readInteractionCost = (metadata: unknown): VerifyInteractionCost | null => {
-  const cost = toRecord(toRecord(metadata)?.interactionCost);
-  if (!cost) return null;
-
-  const totalSeconds = finiteNumber(cost.totalSeconds);
-  if (totalSeconds === undefined) return null;
-
-  return {
-    actionCount: finiteNumber(cost.actionCount),
-    activeSeconds: finiteNumber(cost.activeSeconds) ?? 0,
-    model: finiteString(cost.model) ?? 'goms-klm',
-    operators: readOperators(cost.operators),
-    phases: Array.isArray(cost.phases)
-      ? cost.phases
-          .map((phase, index) => readPhase(phase, index))
-          .filter((phase): phase is VerifyInteractionCostPhase => Boolean(phase))
-      : [],
-    scope: finiteString(cost.scope),
-    sourceTrace: finiteString(cost.sourceTrace),
-    timingSeconds: readTimingSeconds(cost.timingSeconds),
-    totalSeconds,
-    waitSeconds: finiteNumber(cost.waitSeconds) ?? 0,
-  };
-};
-
-const formatSeconds = (seconds: number): string =>
-  `${seconds >= 10 ? seconds.toFixed(1) : seconds.toFixed(2)}s`;
-
-const phaseSeconds = (phase: VerifyInteractionCostPhase): number =>
-  phase.seconds ?? (phase.activeSeconds ?? 0) + (phase.waitSeconds ?? 0);
-
-const operatorSeconds = (
-  key: OperatorKey,
-  value: number,
-  timingSeconds?: Record<string, number>,
-): number => {
-  if (key === 'R_ms') return value / 1000;
-  if (key === 'T_chars') {
-    return (
-      value * (timingSeconds?.T_chars ?? timingSeconds?.T_char ?? OPERATOR_DEFAULT_SECONDS[key])
-    );
-  }
-
-  return value * (timingSeconds?.[key] ?? OPERATOR_DEFAULT_SECONDS[key]);
-};
-
-const operatorValue = (key: OperatorKey, value: number): string => {
-  if (key === 'R_ms') return formatSeconds(value / 1000);
-  if (key === 'T_chars') return `${Math.round(value)} chars`;
-  return Number.isInteger(value) ? String(value) : value.toFixed(2);
-};
-
-const phaseOperatorSegments = (
-  phase: VerifyInteractionCostPhase,
-  timingSeconds?: Record<string, number>,
-): { key: OperatorKey; seconds: number; value: number }[] =>
-  OPERATOR_KEYS.flatMap((key) => {
-    const value = phase.operators?.[key];
-    if (value === undefined || value <= 0) return [];
-
-    const seconds = operatorSeconds(key, value, timingSeconds);
-    return seconds > 0 ? [{ key, seconds, value }] : [];
-  });
-
-const evidenceDisplayName = (
-  evidence: VerifyEvidenceWithUrl,
-  t: TFunction<'verify'>,
-  index: number,
-) =>
-  evidence.fileName ||
-  (evidence.fileUrl ? filenameFromUrl(evidence.fileUrl) : '') ||
-  evidence.description ||
-  t('report.evidence.inlineFallback', { index });
-
-type EvidenceComparison = EvidenceComparisonMeta;
-
-const evidenceComparison = (evidence: VerifyEvidenceWithUrl): EvidenceComparison | null => {
-  // Only inline media pairs — a text artifact can't sit in a visual diptych.
-  if (!isInlineVisualEvidence(evidence)) return null;
-  return readEvidenceComparison(evidence.metadata);
-};
-
-const InteractionCostPanel = memo<{ cost: VerifyInteractionCost }>(({ cost }) => {
-  const { t } = useTranslation('verify');
-  const phases = cost.phases ?? [];
-  const maxPhaseSeconds = Math.max(...phases.map(phaseSeconds), 0);
-  const metrics = [
-    {
-      label: t('report.interaction.total'),
-      value: formatSeconds(cost.totalSeconds),
-    },
-    {
-      label: t('report.interaction.active'),
-      value: formatSeconds(cost.activeSeconds),
-    },
-    {
-      label: t('report.interaction.wait'),
-      value: formatSeconds(cost.waitSeconds),
-    },
-  ];
-
-  return (
-    <section className={styles.interactionCost}>
-      <div className={styles.interactionCostHeader}>
-        <span className={styles.interactionCostModel}>{cost.model}</span>
-      </div>
-
-      <div className={styles.interactionMetrics}>
-        {metrics.map((metric) => (
-          <div className={styles.interactionMetric} key={metric.label}>
-            <span className={styles.interactionMetricLabel}>{metric.label}</span>
-            <span className={styles.interactionMetricValue}>{metric.value}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className={styles.operatorList}>
-        {OPERATOR_KEYS.map((key) => {
-          const value = cost.operators[key];
-          if (value === undefined) return null;
-
-          return (
-            <span className={styles.operatorChip} data-operator={key} key={key}>
-              <span>{t(`report.interaction.operator.${key}`)}</span>
-              <b>{operatorValue(key, value)}</b>
-            </span>
-          );
-        })}
-      </div>
-
-      {phases.length > 0 && (
-        <div className={styles.phaseList}>
-          {phases.map((phase) => {
-            const seconds = phaseSeconds(phase);
-            const activeSeconds = phase.activeSeconds ?? 0;
-            const waitSeconds = phase.waitSeconds ?? 0;
-            const activeWidth = maxPhaseSeconds > 0 ? (activeSeconds / maxPhaseSeconds) * 100 : 0;
-            const waitWidth = maxPhaseSeconds > 0 ? (waitSeconds / maxPhaseSeconds) * 100 : 0;
-            const segments = phaseOperatorSegments(phase, cost.timingSeconds);
-
-            return (
-              <div className={styles.phaseRow} key={phase.id}>
-                <span className={styles.phaseName} title={phase.label ?? phase.id}>
-                  {phase.label ?? phase.id}
-                </span>
-                <span className={styles.phaseTrack}>
-                  {segments.length > 0 ? (
-                    segments.map((segment) => (
-                      <span
-                        className={styles.phaseSegment}
-                        data-operator={segment.key}
-                        key={segment.key}
-                        style={{
-                          width: `${
-                            maxPhaseSeconds > 0 ? (segment.seconds / maxPhaseSeconds) * 100 : 0
-                          }%`,
-                        }}
-                        title={`${t(`report.interaction.operator.${segment.key}`)} ${formatSeconds(
-                          segment.seconds,
-                        )}`}
-                      />
-                    ))
-                  ) : (
-                    <>
-                      <span className={styles.phaseSegment} style={{ width: `${activeWidth}%` }} />
-                      <span
-                        className={styles.phaseSegment}
-                        data-operator={'R_ms'}
-                        style={{ width: `${waitWidth}%` }}
-                      />
-                    </>
-                  )}
-                </span>
-                <span className={styles.phaseValue}>{formatSeconds(seconds)}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </section>
-  );
-});
-
-InteractionCostPanel.displayName = 'InteractionCostPanel';
-
 /** One evidence artifact rendered by its type: zoomable image/gif, video, doc, text. */
 const EvidenceItem = memo<{
   evidence: VerifyEvidenceWithUrl;
@@ -1215,9 +937,11 @@ const EvidenceItem = memo<{
   // Inline media (image/gif/video) speaks for itself — the raw filename header
   // is visual noise, so only keep a meaningful caption (description) for it.
   const isMedia = isInlineVisualEvidence(e);
-  const isDocument = Boolean(e.fileUrl) && !isMedia && e.type !== 'audio';
+  const isTerminal = isTerminalEvidence(e);
+  const isDocument = Boolean(e.fileUrl) && !isMedia && e.type !== 'audio' && !isTerminal;
   const isInlineProse = Boolean(e.content) && markdownTextEvidenceTypes.has(e.type);
   const hideLabel =
+    isTerminal ||
     isDocument ||
     isMedia ||
     (markdownTextEvidenceTypes.has(e.type) && isFilenameLike(label)) ||
@@ -1230,14 +954,17 @@ const EvidenceItem = memo<{
           {label}
         </Text>
       )}
-      {description && !flat && !isInlineProse && (
+      {description && !flat && !isInlineProse && !isTerminal && (
         // Inline prose is excluded: its authored description becomes the fold
         // row's title below, so a standalone line here would say it twice.
         <Text fontSize={13} type={'secondary'}>
           {description}
         </Text>
       )}
-      {e.fileUrl && imageEvidenceTypes.has(e.type) ? (
+      {isTerminal ? (
+        // The card titles itself with the command and shows the description under it.
+        <TerminalEvidenceCard defaultExpanded={flat} evidence={e} />
+      ) : e.fileUrl && imageEvidenceTypes.has(e.type) ? (
         <Flexbox align={flat ? undefined : 'flex-start'} style={{ maxWidth: '100%' }}>
           <Image
             preview
@@ -1500,6 +1227,9 @@ const CheckRow = memo<{ defaultOpen: boolean; row: CheckRowData }>(({ defaultOpe
                       <span className={styles.surfaceChip} key={spec.type} title={spec.hint}>
                         <Icon icon={CATEGORY_ICON[evidenceCategory(spec.type)]} size={12} />
                         {t(`report.evidence.medium.${spec.type}`)}
+                        {/* Says why an authored example or a bare log leaves it uncovered. */}
+                        {spec.provenance === 'execution' &&
+                          ` · ${t('report.plan.requiredEvidenceExecution')}`}
                       </span>
                     ))}
                   </span>
