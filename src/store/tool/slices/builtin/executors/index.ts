@@ -6,6 +6,7 @@
  * the store does not pull every tool runtime into the initial SPA graph.
  */
 
+import { GoalIdentifier, LegacyGoalIdentifier } from '@lobechat/builtin-tool-goal';
 import { isToolEnabledByFeatureFlags } from '@lobechat/builtin-tools/featureGates';
 
 import { getServerConfigStoreState } from '@/store/serverConfig';
@@ -132,6 +133,10 @@ const registerExecutors = (executors: IBuiltinToolExecutor[]): void => {
   for (const executor of executors) {
     executorRegistry.set(executor.identifier, executor);
   }
+
+  // Goal calls approved after the rename still name the tool `lobe-goal`.
+  const goalExecutor = executorRegistry.get(GoalIdentifier);
+  if (goalExecutor) executorRegistry.set(LegacyGoalIdentifier, goalExecutor);
 };
 
 export const registerBuiltinToolExecutors = async (): Promise<void> => {

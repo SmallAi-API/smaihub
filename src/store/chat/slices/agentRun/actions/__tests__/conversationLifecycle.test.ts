@@ -3913,7 +3913,7 @@ describe('ConversationLifecycle actions', () => {
         });
 
         expect(executeGatewayAgentSpy).toHaveBeenCalledWith(
-          expect.objectContaining({ selectedToolIds: ['lobe-goal'] }),
+          expect.objectContaining({ selectedToolIds: ['builtin-goal'] }),
         );
       });
 
