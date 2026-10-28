@@ -91,6 +91,8 @@ export const FeatureFlagsSchema = z.object({
    */
   channel: FeatureFlagValue.optional(),
 
+  topic_preview: FeatureFlagValue.optional(),
+
   /** Assistant video generation skill only; independent video creation stays available. */
   video_generation_skill: FeatureFlagValue.optional(),
 
@@ -172,6 +174,9 @@ export const DEFAULT_FEATURE_FLAGS: IFeatureFlags = {
 
   // Off until an admin publishes a user allowlist or flips it to true.
   channel: false,
+
+  // Off until the backend replaces the preview read; allowlist first.
+  topic_preview: false,
   video_generation_skill: false,
 
   agent_onboarding: isDev,
@@ -211,6 +216,7 @@ export const mapFeatureFlagsEnvToState = (
     enableLlmRelay: evaluateFeatureFlag(config.agent_llm_relay, userId),
     enableDashboard: evaluateFeatureFlag(config.dashboard, userId),
     enableChannels: evaluateFeatureFlag(config.channel, userId),
+    enableTopicPreview: evaluateFeatureFlag(config.topic_preview, userId),
     enableVideoGenerationSkill: evaluateFeatureFlag(config.video_generation_skill, userId),
     showProvider: evaluateFeatureFlag(config.provider_settings, userId),
 
