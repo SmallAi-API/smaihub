@@ -1,3 +1,7 @@
+/** Decision model selecting the Agents that reply in a channel. */
+export const DEFAULT_CHANNEL_ROUTING_MODEL = 'jev-1.14.0';
+export const DEFAULT_CHANNEL_ROUTING_PROVIDER = 'typesafe';
+
 export const DEFAULT_EMBEDDING_PROVIDER = 'smai';
 
 export const DEFAULT_MODEL = 'gpt-5.6-terra';
