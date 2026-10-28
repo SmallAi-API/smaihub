@@ -8,7 +8,7 @@ import {
   resolveConnectorCatalogItem,
 } from '@lobechat/const';
 import type { BuiltinSkillManifest, LobeBuiltinTool } from '@lobechat/types';
-import { Center, createStaticStyles, Empty } from '@lobehub/ui';
+import { Center, createStaticStyles, cx, Empty } from '@lobehub/ui';
 import { SkillsIcon } from '@lobehub/ui/icons';
 import isEqual from 'fast-deep-equal';
 import { ChevronDownIcon, ChevronRightIcon } from 'lucide-react';
@@ -40,6 +40,7 @@ import ComposioSkillItem from './ComposioSkillItem';
 import LobehubSkillItem from './LobehubSkillItem';
 import McpSkillItem from './McpSkillItem';
 import type { ToolDetailType } from './SkillDetail';
+import { useSkillListVariant } from './SkillListRow';
 
 const styles = createStaticStyles(({ css, cssVar }) => ({
   container: css`
@@ -75,6 +76,19 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
       color: ${cssVar.colorText};
     }
   `,
+  sectionHeaderPage: css`
+    gap: 8px;
+
+    padding-block: 24px 8px;
+    padding-inline: 12px;
+
+    font-size: 13px;
+    font-weight: 600;
+  `,
+  sectionCount: css`
+    font-weight: 400;
+    color: ${cssVar.colorTextDescription};
+  `,
 }));
 
 export type SkillViewMode = 'connector' | 'skill';
@@ -90,6 +104,7 @@ const SkillList = memo<SkillListProps>(
   ({ onSelect, onDeleteSelected, selectedIdentifier, viewMode = 'connector' }) => {
     const { t } = useTranslation('setting');
     const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+    const isPage = useSkillListVariant() === 'page';
 
     const isLobehubSkillEnabled = useServerConfigStore(serverConfigSelectors.enableLobehubSkill);
     const isComposioEnabled = useServerConfigStore(serverConfigSelectors.enableComposio);
@@ -418,8 +433,25 @@ const SkillList = memo<SkillListProps>(
       });
     };
 
-    const renderSection = (key: string, label: string, children: React.ReactNode) => {
+    const renderSection = (
+      key: string,
+      label: string,
+      children: React.ReactNode,
+      count?: number,
+    ) => {
       const isCollapsed = collapsed.has(key);
+      // The page list is short enough to scan whole, so its groups are plain
+      // headings with a count instead of collapsible sidebar sections.
+      if (isPage)
+        return (
+          <>
+            <div className={cx(styles.sectionHeader, styles.sectionHeaderPage)}>
+              {label}
+              {count !== undefined && <span className={styles.sectionCount}>{count}</span>}
+            </div>
+            {children}
+          </>
+        );
       return (
         <>
           <div className={styles.sectionHeader} onClick={() => toggleSection(key)}>
@@ -463,6 +495,7 @@ const SkillList = memo<SkillListProps>(
               return (
                 <BuiltinSkillItem
                   avatar={item.builtinTool.avatar}
+                  description={item.builtinTool.description}
                   identifier={item.builtinTool.identifier}
                   isSelected={selectedIdentifier === item.builtinTool.identifier}
                   key={item.builtinTool.identifier}
@@ -473,6 +506,7 @@ const SkillList = memo<SkillListProps>(
                 />
               );
             }),
+            builtinToolItems.length,
           )}
 
         {hasBuiltinSkills &&
@@ -529,6 +563,7 @@ const SkillList = memo<SkillListProps>(
                 />
               );
             }),
+            communitySkillItems.length,
           )}
 
         {/* Skill view: community agent skills only (OAuth connectors are in the Connectors view) */}
@@ -544,6 +579,7 @@ const SkillList = memo<SkillListProps>(
             'communityTools',
             t('skillGroup.communityTools', 'Community Tools'),
             renderCommunityMCPs(),
+            communityMCPs.length,
           )}
 
         {hasCustomConnectors &&
@@ -554,6 +590,7 @@ const SkillList = memo<SkillListProps>(
               {renderCustomConnectors()}
               {renderCustomMCPs()}
             </>,
+            customConnectors.length + customMCPs.length,
           )}
 
         {hasAgentConnectors &&
@@ -568,6 +605,7 @@ const SkillList = memo<SkillListProps>(
                 onSelect={onSelect ? () => onSelect(c.id, 'agent-connector') : undefined}
               />
             )),
+            agentBoundConnectors.length,
           )}
 
         {hasCustomSkills &&

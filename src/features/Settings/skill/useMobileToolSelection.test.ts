@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useServerConfigStore } from '@/store/serverConfig';
 
+import { isStackedLayout } from './mobileSelection';
 import { useMobileToolSelection } from './useMobileToolSelection';
 
 vi.mock('@/store/serverConfig', async () => {
@@ -123,7 +124,19 @@ describe('useMobileToolSelection', () => {
     expect(result.current.location.search).toContain('open=');
   });
 
-  it('leaves desktop selection and URL handling alone', () => {
+  it.each([false, true])('protects connector details when mobile is %s', (mobile) => {
+    setVideoEnabled(true);
+    const { result } = renderSelection(videoQuery, isStackedLayout(mobile, 'connector'));
+
+    expect(result.current.selection?.identifier).toBe(VideoGenerationIdentifier);
+
+    act(() => setVideoEnabled(false));
+
+    expect(result.current.selection).toBeUndefined();
+    expect(result.current.location.search).toBe('');
+  });
+
+  it('leaves non-stacked desktop skill selection and URL handling alone', () => {
     const { result } = renderSelection(videoQuery, false);
 
     expect(result.current.selection).toBeUndefined();

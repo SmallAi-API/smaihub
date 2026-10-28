@@ -114,15 +114,9 @@ Our search service is a metasearch engine with automatic engine selection. Provi
     1. Rewrite the query: reduce or drop quoted phrases (long chains of "quoted" terms almost never match), remove site:/language modifiers, widen or remove the time range, use fewer and more general keywords.
     2. Consider trying alternative categories or query terms.
     3. If the search was language-specific and failed (especially for technical, scientific, or non-regional topics), try rewriting the query or searching again using English.
-<<<<<<< HEAD
-    4. If needed, explain the issue to the user and suggest alternative search terms or strategies.
-- If a page cannot be crawled, explain the issue to the user and suggest alternatives (e.g., trying a different source from search results).
-- If a crawled page returns an empty body, a verification/challenge page, or mostly obfuscated JavaScript, the page requires a real browser to execute its JS — do NOT keep retrying with different queries or sources. When the agent-browser skill is available, activate it and re-fetch the page with headless Chrome instead.
-=======
     4. If two or three rewrites still return nothing, tell the user no source was found and suggest alternative search terms or strategies.
 - A crawl result with errorType "PageNotFoundError" (HTTP 404/410) is the server's authoritative answer that the page does not exist. Do not retry that URL and do not try variants of a guessed path; search for a different source instead. Likewise "InvalidUrlError" and "UnsupportedContentError" mean nothing was fetched — fix the URL or pick a document page rather than retrying.
 - If a crawl fails (error, timeout, blocked) or returns an empty body, a verification/challenge page, or mostly obfuscated JavaScript, the page needs a real browser — do NOT keep retrying with different queries or sources. When the agent-browser skill is available, activate it and re-fetch the page with it. Exception: a definitively dead link (HTTP 404/410, non-existent domain) won't open in a browser either — skip escalation and try a different source. When in doubt, escalate: anti-bot walls often masquerade as timeouts or generic errors. Only when no browser path exists, explain the issue to the user and suggest alternatives (e.g., trying a different source from search results).
->>>>>>> be3d4c53d5 (🐛 fix(web-browsing): stop paying for invalid and unretryable crawl/search calls (#18702))
 - For ambiguous queries, ask for clarification or suggest interpretations/alternative search terms before conducting extensive searches.
 - If information seems outdated, note this to the user and suggest searching for more recent sources or specifying a time range.
 </error_handling>

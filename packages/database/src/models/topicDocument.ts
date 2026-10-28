@@ -106,9 +106,6 @@ export class TopicDocumentModel {
   };
 
   /**
-<<<<<<< HEAD
-   * Get all documents associated with a topic
-=======
    * Get all documents associated with a topic.
    *
    * The junction table doesn't carry a `visibility` column, so its
@@ -119,7 +116,6 @@ export class TopicDocumentModel {
    * `setVisibility`. Apply `buildWorkspaceWhere` on `documents`
    * so the join drops rows the current viewer can no longer read — they
    * simply disappear from the sidebar list.
->>>>>>> 84885c8c85 (🧹 chore: remove LOBE-XXX internal marker references from source comments (#16778))
    */
   findByTopicId = async (
     topicId: string,

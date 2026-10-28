@@ -1,8 +1,8 @@
 'use client';
 
-import { ActionIcon, createStaticStyles, Flexbox } from '@lobehub/ui';
+import { ActionIcon, Button, createStaticStyles, Flexbox } from '@lobehub/ui';
 import isEqual from 'fast-deep-equal';
-import { ChevronLeft } from 'lucide-react';
+import { ArrowLeft, ChevronLeft } from 'lucide-react';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
@@ -16,7 +16,7 @@ import { isMobileSurface } from '@/utils/mobileSurface';
 import LeftPanel from './features/LeftPanel';
 import SkillDetail, { type ToolDetailType } from './features/SkillDetail';
 import { type SkillViewMode } from './features/SkillList';
-import { encodeMobileSelection, MOBILE_SELECTION_PARAM } from './mobileSelection';
+import { encodeMobileSelection, isStackedLayout, MOBILE_SELECTION_PARAM } from './mobileSelection';
 import { useMobileToolSelection } from './useMobileToolSelection';
 
 export interface SelectedTool {
@@ -28,6 +28,20 @@ const styles = createStaticStyles(({ css }) => ({
   detail: css`
     overflow-y: auto;
     flex: 1;
+  `,
+  page: css`
+    overflow-y: auto;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+
+    height: 100%;
+  `,
+  pageBody: css`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 960px;
   `,
   root: css`
     overflow: hidden;
@@ -49,15 +63,16 @@ interface ToolSettingsProps {
 const PUSHED_DETAIL_STATE = 'skillDetailPushed';
 
 export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'setting']);
   const mobile = isMobileSurface();
+  const stacked = isStackedLayout(mobile, viewMode);
   const [searchParams, setSearchParams] = useSearchParams();
   const querySkillIdentifier = searchParams.get('skill');
   const [selected, setSelected] = useState<SelectedTool | null>(null);
-  const mobileSelected = useMobileToolSelection(mobile);
+  const stackedSelected = useMobileToolSelection(stacked);
 
-  // Mobile: opening a detail is a history entry, so back returns to the list.
-  const openMobileDetail = useCallback(
+  // Stacked: opening a detail is a history entry, so back returns to the list.
+  const openStackedDetail = useCallback(
     (next: SelectedTool, replace = false) =>
       setSearchParams(
         (prev) => {
@@ -73,7 +88,7 @@ export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
   );
   const location = useLocation();
   const navigate = useNavigate();
-  const closeMobileDetail = () => {
+  const closeStackedDetail = () => {
     // Pop the entry this page pushed, so history keeps one list entry; a
     // deep-linked detail has none to pop and is replaced by the list instead.
     if ((location.state as Record<string, unknown> | null)?.[PUSHED_DETAIL_STATE]) {
@@ -100,8 +115,8 @@ export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
   );
 
   useEffect(() => {
-    // Mobile opens on the list; its detail selection lives in the URL.
-    if (mobile) return;
+    // Stacked pages open on the list; their detail selection lives in the URL.
+    if (stacked) return;
     if (selected) {
       if (
         selected.type === 'builtin' &&
@@ -129,9 +144,9 @@ export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
     builtinTools,
     builtinSkills,
     installedBuiltinIds,
-    mobile,
     querySkillIdentifier,
     selected,
+    stacked,
     viewMode,
   ]);
 
@@ -144,34 +159,34 @@ export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
     if (!skill) return;
     // Mobile turns the deep link into the detail entry once (dropping `skill`),
     // so a later store refresh cannot reopen a detail the user closed.
-    if (mobile) openMobileDetail({ identifier: skill.id, type: 'agent-skill' }, true);
+    if (stacked) openStackedDetail({ identifier: skill.id, type: 'agent-skill' }, true);
     else setSelected({ identifier: skill.id, type: 'agent-skill' });
   }, [
     marketAgentSkills,
-    mobile,
-    openMobileDetail,
+    openStackedDetail,
     querySkillIdentifier,
+    stacked,
     userAgentSkills,
     viewMode,
   ]);
 
   const handleSelect = (identifier: string, type: ToolDetailType) => {
-    if (mobile) openMobileDetail({ identifier, type });
+    if (stacked) openStackedDetail({ identifier, type });
     else setSelected({ identifier, type });
   };
 
   // Mobile: the settings layout owns the header; list and detail take turns
   // full-width instead of a 300px list squeezing the detail.
   if (mobile)
-    return mobileSelected ? (
+    return stackedSelected ? (
       <Flexbox className={styles.detail}>
         <Flexbox horizontal align={'center'} paddingBlock={4} paddingInline={8}>
-          <ActionIcon icon={ChevronLeft} title={t('back')} onClick={closeMobileDetail} />
+          <ActionIcon icon={ChevronLeft} title={t('back')} onClick={closeStackedDetail} />
         </Flexbox>
         <SkillDetail
-          identifier={mobileSelected.identifier}
-          type={mobileSelected.type}
-          onDelete={closeMobileDetail}
+          identifier={stackedSelected.identifier}
+          type={stackedSelected.type}
+          onDelete={closeStackedDetail}
         />
       </Flexbox>
     ) : (
@@ -179,10 +194,45 @@ export const ToolSettings = memo<ToolSettingsProps>(({ viewMode }) => {
         <LeftPanel
           fullWidth
           viewMode={viewMode}
-          onDeleteSelected={closeMobileDetail}
+          onDeleteSelected={closeStackedDetail}
           onSelect={handleSelect}
         />
       </div>
+    );
+
+  // Desktop connectors: a full-width list; a row opens its detail as a second
+  // level page whose back link names the list it returns to.
+  if (stacked)
+    return (
+      <>
+        <NavHeader />
+        <div className={styles.page}>
+          <div className={styles.pageBody}>
+            {stackedSelected ? (
+              <>
+                <Flexbox horizontal align={'center'} paddingBlock={12} paddingInline={4}>
+                  <Button icon={ArrowLeft} type={'text'} onClick={closeStackedDetail}>
+                    {t('skillView.connectors', { ns: 'setting' })}
+                  </Button>
+                </Flexbox>
+                <SkillDetail
+                  identifier={stackedSelected.identifier}
+                  type={stackedSelected.type}
+                  onDelete={closeStackedDetail}
+                />
+              </>
+            ) : (
+              <LeftPanel
+                fullWidth
+                page
+                viewMode={viewMode}
+                onDeleteSelected={closeStackedDetail}
+                onSelect={handleSelect}
+              />
+            )}
+          </div>
+        </div>
+      </>
     );
 
   return (

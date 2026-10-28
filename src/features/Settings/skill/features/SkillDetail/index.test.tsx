@@ -84,6 +84,7 @@ vi.mock('@lobechat/const', () => ({
 
 vi.mock('@lobehub/ui', async (importOriginal) => ({
   ...(await importOriginal<object>()),
+  ...(await import('~base-ui-stubs')).baseUiStubs,
   confirmModal: mocks.confirmModal,
 }));
 

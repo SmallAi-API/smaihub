@@ -52,11 +52,7 @@ Flat layout — `apps/`, `packages/`, and `src/` all sit at the repo root. No
 git submodules.
 
 ```
-<<<<<<< HEAD
-lobe-chat/
-=======
 (repo root)
->>>>>>> 0fcc21895e (🧹 chore(skills): audit pass — normalize, dedupe, and fix project-overview (#15193))
 ├── apps/
 │   ├── cli/                  # LobeHub CLI
 │   ├── desktop/              # Electron desktop app

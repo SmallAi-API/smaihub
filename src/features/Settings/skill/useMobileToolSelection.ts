@@ -6,12 +6,12 @@ import { useServerConfigStore } from '@/store/serverConfig';
 
 import { MOBILE_SELECTION_PARAM, parseMobileSelection } from './mobileSelection';
 
-/** The mobile detail is selected by its URL, independently of desktop state. */
-export const useMobileToolSelection = (mobile: boolean) => {
+/** Stacked details use the URL, independently of the desktop skill split's state. */
+export const useMobileToolSelection = (stacked: boolean) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const featureFlags = useServerConfigStore((s) => s.featureFlags);
   const serverConfigInit = useServerConfigStore((s) => s.serverConfigInit);
-  const selection = mobile
+  const selection = stacked
     ? parseMobileSelection(searchParams.get(MOBILE_SELECTION_PARAM))
     : undefined;
   const disabled =
