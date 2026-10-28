@@ -1243,7 +1243,7 @@
   "serviceModel.advanced.title": "高级",
   "serviceModel.contextLimit.placeholder": "上下文限制",
   "serviceModel.customModel": "指定模型",
-  "serviceModel.desc": "LobeHub 后台任务用的模型。默认跟随系统推荐，有新模型时自动升级。",
+  "serviceModel.desc": "用于后台任务的模型。它们默认遵循系统推荐，并在新模型到达时自动升级。",
   "serviceModel.group.agent": "助理与目标",
   "serviceModel.group.content": "内容处理",
   "serviceModel.group.memory": "记忆",

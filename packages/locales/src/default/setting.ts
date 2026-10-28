@@ -1556,7 +1556,7 @@ export default {
   'serviceModel.contextLimit.placeholder': 'Context limit',
   'serviceModel.customModel': 'Choose a model',
   'serviceModel.desc':
-    'Models LobeHub uses for background tasks. They follow the system recommendation by default and upgrade automatically when new models arrive.',
+    'Models uses for background tasks. They follow the system recommendation by default and upgrade automatically when new models arrive.',
   'serviceModel.group.agent': 'Agents & Goals',
   'serviceModel.group.content': 'Content Processing',
   'serviceModel.group.memory': 'Memory',
