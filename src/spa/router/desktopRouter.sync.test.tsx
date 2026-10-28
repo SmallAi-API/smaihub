@@ -354,6 +354,19 @@ describe('desktop router shared definition', () => {
     expect(source).not.toContain("typeof window === 'undefined' || __ELECTRON__");
   });
 
+  it.each(['/download', '/download/'])(
+    'opens %s outside the main layout without treating it as a workspace slug',
+    (pathname) => {
+      const matches = matchRoutes(webDesktopRoutes, pathname);
+
+      expect(matches?.[0]?.route.path).toBe('/download');
+      expect(matches?.at(-1)?.route.index).toBe(true);
+      expect(matches?.at(-1)?.route.element).toBeTruthy();
+      expect(matches?.some((match) => match.route.path === ':workspaceSlug')).toBe(false);
+      expect(matches?.at(-1)?.params).toEqual({});
+    },
+  );
+
   it('keeps platform differences limited to root composition and runtime-only routes', () => {
     const webRoot = webDesktopRoutes.find((route) => route.path === '/');
     const electronRoot = electronDesktopRoutes.find((route) => route.path === '/');

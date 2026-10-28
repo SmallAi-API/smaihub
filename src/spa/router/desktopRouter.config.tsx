@@ -57,6 +57,23 @@ const webOnlyRoutes: RouteObject[] = [
     path: '/verify-im',
   },
 
+  // Keep the download landing outside the main layout so `:workspaceSlug`
+  // does not claim this public URL.
+  {
+    children: [
+      {
+        element: dynamicElement(() => import('@/routes/(download)/download'), 'Desktop > Download'),
+        index: true,
+      },
+    ],
+    element: dynamicLayout(
+      () => import('@/routes/(download)/download/_layout/RouteLayout'),
+      'Desktop > Download > Layout',
+    ),
+    errorElement: <ErrorBoundary />,
+    path: '/download',
+  },
+
   // Acceptance renders outside the main layout, so it brings its own workspace
   // context: `/acceptance` is personal, `/:workspaceSlug/acceptance` is scoped.
   {
