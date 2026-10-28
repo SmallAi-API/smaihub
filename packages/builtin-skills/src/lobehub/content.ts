@@ -94,7 +94,7 @@ workspace. Your run starts in the scope it was launched from.
 2. Run commands via \`runCommand\` — the \`lh\` prefix is automatically handled
 3. Add \`--json\` for structured output on commands that support it (most \`list\` / \`view\`
    commands do; many write commands do not)
-4. Use \`lh <module> <command> --help\` for the exact flags of a command
+4. Use \`lh <module> <command> --help\` (or \`lh man <module> <command>\`) for the exact flags of a command
 5. If the CLI rejects a command or flag shown in these references (\`unknown command\` /
    \`unknown option\`), the installed \`lh\` is a different version from this guide. Run
    \`lh <module> <command> --help\` once and use what it lists — do not retry guessed variants
