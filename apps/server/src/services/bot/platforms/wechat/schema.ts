@@ -1,6 +1,7 @@
 import { DEFAULT_BOT_DEBOUNCE_MS, MAX_BOT_DEBOUNCE_MS } from '@lobechat/const';
 
-import { displayToolCallsField } from '../const';
+import { displayToolCallsField, watchKeywordsField } from '../const';
+import { replyStyleFields } from '../replyStyle';
 import type { FieldSchema } from '../types';
 
 export const schema: FieldSchema[] = [
@@ -54,6 +55,8 @@ export const schema: FieldSchema[] = [
         type: 'boolean',
       },
       displayToolCallsField,
+      watchKeywordsField,
+      ...replyStyleFields,
     ],
     type: 'object',
   },
