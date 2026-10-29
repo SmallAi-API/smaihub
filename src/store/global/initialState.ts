@@ -574,6 +574,7 @@ export const createNavigationRef = (): GlobalNavigationRef => ({ current: null }
 export interface GlobalState {
   hasNewVersion?: boolean;
   isMobile?: boolean;
+  isNavPanelResizing?: boolean;
   /**
    * 服务端版本过旧，不支持 /api/version 接口
    * 需要提示用户更新服务端
