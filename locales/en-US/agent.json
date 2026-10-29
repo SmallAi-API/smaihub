@@ -457,6 +457,8 @@
   "channel.removeFailed": "Failed to remove bot",
   "channel.removed": "Bot removed",
   "channel.reply.instant": "Changes here take effect as soon as you make them. There is nothing to save.",
+  "channel.reply.section.display": "How replies look",
+  "channel.reply.section.style": "Style and emoji",
   "channel.replyEmojiLabel": "Emoji",
   "channel.replyEmojiPlaceholder": "e.g. <:doge:1234567890>",
   "channel.replyEmojiUsageLabel": "When to use",
