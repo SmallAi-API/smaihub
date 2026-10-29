@@ -80,6 +80,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
   { id: 'tasks', labelKey: 'tab.tasks', routeId: 'tasks' },
   { id: 'goals', labelKey: 'tab.goals', routeId: 'goals' },
   { id: 'dashboard', labelKey: 'tab.dashboard', routeId: 'dashboard' },
+  { id: 'favorites', labelKey: 'favorite.section' },
   { icon: KeyRound, id: 'api', labelKey: 'tab.apiAccess' },
   { id: 'recents', labelKey: 'recents' },
   { id: 'project', labelKey: 'project:sidebar.title' },
