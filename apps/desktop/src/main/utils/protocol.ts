@@ -1,25 +1,47 @@
 import { app } from 'electron';
 
-import { type McpSchema, type ProtocolUrlParsed } from '../types/protocol';
+import { getDesktopEnv } from '@/env';
 
-export type AppChannel = 'stable' | 'beta' | 'nightly';
+import type { McpSchema, ProtocolUrlParsed } from '../types/protocol';
+
+export type AppChannel = 'stable' | 'beta' | 'nightly' | 'canary';
+
+/**
+ * The distribution's scheme, lowercased: `new URL()` lowercases the scheme it
+ * parses, so a mixed-case value would never match an incoming link. The build
+ * rejects non-lowercase values (electron-builder.mjs); this keeps the runtime
+ * consistent even if one slips through.
+ */
+const getSchemeOverride = () => getDesktopEnv().DESKTOP_PROTOCOL_SCHEME?.toLowerCase();
 
 export const getProtocolScheme = (): string => {
+  // A distribution owns its scheme outright, including channel suffixes.
+  const override = getSchemeOverride();
+  if (override) return override;
+
+  // Canary shares the stable product name, so use the baked-in build channel
+  // before falling back to names and executable paths.
+  const channel = getDesktopEnv().UPDATE_CHANNEL;
+  if (channel === 'stable') return 'smai';
+  if (channel === 'beta' || channel === 'nightly' || channel === 'canary') {
+    return `smai-${channel}`;
+  }
+
   // In Electron environment, version can be determined in multiple ways
   const bundleId = app.name;
   const appPath = app.getPath('exe');
 
   // Determine by bundle identifier
-  if (bundleId?.toLowerCase().includes('nightly')) return 'lobehub-nightly';
-  if (bundleId?.toLowerCase().includes('beta')) return 'lobehub-beta';
-  if (bundleId?.includes('dev')) return 'lobehub-dev';
+  if (bundleId?.toLowerCase().includes('nightly')) return 'smai-nightly';
+  if (bundleId?.toLowerCase().includes('beta')) return 'smai-beta';
+  if (bundleId?.includes('dev')) return 'smai-dev';
 
   // Determine by executable file path
-  if (appPath?.toLowerCase().includes('nightly')) return 'lobehub-nightly';
-  if (appPath?.toLowerCase().includes('beta')) return 'lobehub-beta';
-  if (appPath?.includes('dev')) return 'lobehub-dev';
+  if (appPath?.toLowerCase().includes('nightly')) return 'smai-nightly';
+  if (appPath?.toLowerCase().includes('beta')) return 'smai-beta';
+  if (appPath?.includes('dev')) return 'smai-dev';
 
-  return 'lobehub';
+  return 'smai';
 };
 
 export const getVersionInfo = (): { channel: AppChannel; protocolScheme: string } => {
@@ -30,6 +52,8 @@ export const getVersionInfo = (): { channel: AppChannel; protocolScheme: string 
     appChannel = 'nightly';
   } else if (protocolScheme.includes('beta')) {
     appChannel = 'beta';
+  } else if (protocolScheme.includes('canary')) {
+    appChannel = 'canary';
   }
 
   return {
@@ -81,14 +105,15 @@ function validateMcpSchema(schema: any): schema is McpSchema {
 }
 
 /**
- * Parse lobehub:// protocol URL (supports multi-version protocols)
+ * Parse smai:// protocol URL (supports multi-version protocols)
  *
  * Supported URL formats:
- * - lobehub://plugin/install?id=figma&schema=xxx&marketId=lobehub
- * - lobehub://plugin/configure?id=xxx&...
- * - lobehub-bet://plugin/install?id=figma&schema=xxx&marketId=lobehub
- * - lobehub-nightly://plugin/install?id=figma&schema=xxx&marketId=lobehub
- * - lobehub-dev://plugin/install?id=figma&schema=xxx&marketId=lobehub
+ * - smai://plugin/install?id=figma&schema=xxx&marketId=lobehub
+ * - smai://plugin/configure?id=xxx&...
+ * - smai-beta://plugin/install?id=figma&schema=xxx&marketId=lobehub
+ * - smai-nightly://plugin/install?id=figma&schema=xxx&marketId=lobehub
+ * - smai-canary://plugin/install?id=figma&schema=xxx&marketId=lobehub
+ * - smai-dev://plugin/install?id=figma&schema=xxx&marketId=lobehub
  *
  * @param url Protocol URL
  * @returns Parse result, including basic structure and all query parameters
@@ -98,13 +123,15 @@ export const parseProtocolUrl = (url: string): ProtocolUrlParsed | null => {
     const parsedUrl = new URL(url);
 
     // Support multiple protocol schemes
-    const validProtocols = ['lobehub:', 'lobehub-dev:', 'lobehub-nightly:', 'lobehub-beta:'];
+    const validProtocols = ['smai:', 'smai-dev:', 'smai-nightly:', 'smai-beta:', 'smai-canary:'];
+    const override = getSchemeOverride();
+    if (override) validProtocols.push(`${override}:`);
     if (!validProtocols.includes(parsedUrl.protocol)) {
       return null;
     }
 
     // For custom protocols, after URL parsing:
-    // lobehub://plugin/install -> hostname: "plugin", pathname: "/install"
+    // smai://plugin/install -> hostname: "plugin", pathname: "/install"
     const urlType = parsedUrl.hostname; // "plugin"
     const pathParts = parsedUrl.pathname.split('/').filter(Boolean); // ["install"]
 
@@ -147,10 +174,10 @@ export function generateRFCProtocolUrl(params: {
   marketId?: string;
   /** MCP Schema object */
   schema: McpSchema;
-  /** Protocol scheme (default: lobehub) */
+  /** Protocol scheme (default: current distribution and channel) */
   scheme?: string;
 }): string {
-  const { id, schema, marketId, scheme = 'lobehub' } = params;
+  const { id, schema, marketId, scheme = getProtocolScheme() } = params;
 
   // Validate schema.identifier matches id
   if (schema.identifier !== id) {
@@ -195,7 +222,7 @@ export function generateRFCProtocolUrl(params: {
  *     identifier: 'edgeone-mcp',
  *     name: 'EdgeOne MCP',
  *     author: 'Higress Team',
- *     description: 'EdgeOne API integration for LobeChat',
+ *     description: 'EdgeOne API integration for smai.ai',
  *     version: '1.0.0',
  *     config: {
  *       type: 'stdio',
@@ -205,6 +232,6 @@ export function generateRFCProtocolUrl(params: {
  *   },
  *   marketId: 'higress'
  * });
- * // Result: lobehub://plugin/install?id=edgeone-mcp&schema=%7B%22identifier%22%3A...&marketId=higress
+ * // Result: smai://plugin/install?id=edgeone-mcp&schema=%7B%22identifier%22%3A...&marketId=higress
  * ```
  */

@@ -53,6 +53,7 @@ import { useTopicId } from '../hooks/useTopicId';
 import { formatLockedControlTooltip } from '../utils/lockedControlTooltip';
 import DeviceOptionRow from './DeviceOptionRow';
 import { getDevicePoolStatus } from './devicePoolStatus';
+import { getDeviceReconnectUrl } from './deviceReconnect';
 import OptionRow from './OptionRow';
 import { useSandboxNetworkToggle } from './useSandboxNetworkToggle';
 import { useTopicAwareTargetSelect } from './useTopicAwareTargetSelect';
@@ -320,7 +321,7 @@ const HeteroDeviceSwitcher = memo<HeteroDeviceSwitcherProps>(({ agentId }) => {
         if (isDesktop && deviceId === currentDeviceId) {
           await useElectronStore.getState().connectGateway();
         } else {
-          window.location.href = `lobehub://device/reconnect?deviceId=${encodeURIComponent(deviceId)}`;
+          window.location.href = getDeviceReconnectUrl(deviceId);
         }
 
         // The deep link crosses browser → desktop → gateway → server, so give

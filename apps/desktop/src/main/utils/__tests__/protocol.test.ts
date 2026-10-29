@@ -1,10 +1,96 @@
-import { describe, expect, it } from 'vitest';
+import { app } from 'electron';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type McpSchema } from '../../types/protocol';
-import { generateRFCProtocolUrl, parseProtocolUrl } from '../protocol';
+import type { McpSchema } from '../../types/protocol';
+import {
+  generateRFCProtocolUrl,
+  getProtocolScheme,
+  getVersionInfo,
+  parseProtocolUrl,
+} from '../protocol';
+
+const desktopEnv = vi.hoisted(() => ({
+  DESKTOP_PROTOCOL_SCHEME: undefined as string | undefined,
+  UPDATE_CHANNEL: undefined as string | undefined,
+}));
+
+vi.mock('@/env', () => ({ getDesktopEnv: () => desktopEnv }));
+vi.mock('electron', () => ({
+  app: { getPath: vi.fn(() => '/mock/smai.ai'), name: 'smai.ai' },
+}));
+
+beforeEach(() => {
+  app.name = 'smai.ai';
+});
+
+afterEach(() => {
+  desktopEnv.DESKTOP_PROTOCOL_SCHEME = undefined;
+  desktopEnv.UPDATE_CHANNEL = undefined;
+});
 
 describe('Protocol', () => {
+  describe('smai channel identity', () => {
+    it.each([
+      [undefined, 'smai'],
+      ['stable', 'smai'],
+      ['beta', 'smai-beta'],
+      ['nightly', 'smai-nightly'],
+      ['canary', 'smai-canary'],
+    ])('uses %s build channel to select %s', (channel, scheme) => {
+      desktopEnv.UPDATE_CHANNEL = channel;
+      expect(getProtocolScheme()).toBe(scheme);
+    });
+
+    it.each([
+      ['smai.ai-Beta', 'smai-beta'],
+      ['smai.ai-Nightly', 'smai-nightly'],
+      ['smai-desktop-dev', 'smai-dev'],
+    ])('recognizes the channel from %s when no build channel is set', (name, scheme) => {
+      app.name = name;
+      expect(getProtocolScheme()).toBe(scheme);
+    });
+
+    it('reports the canary channel even though it shares the stable product name', () => {
+      desktopEnv.UPDATE_CHANNEL = 'canary';
+      expect(getVersionInfo()).toEqual({ channel: 'canary', protocolScheme: 'smai-canary' });
+    });
+
+    it.each(['smai', 'smai-dev', 'smai-beta', 'smai-nightly', 'smai-canary'])(
+      'accepts %s deep links without an override',
+      (scheme) => {
+        expect(parseProtocolUrl(`${scheme}://plugin/install?id=figma`)).toMatchObject({
+          action: 'install',
+          params: { id: 'figma' },
+          urlType: 'plugin',
+        });
+      },
+    );
+  });
+
   describe('generateRFCProtocolUrl', () => {
+    it.each([
+      ['beta', undefined, 'smai-beta'],
+      ['canary', undefined, 'smai-canary'],
+      ['nightly', 'acme', 'acme'],
+    ])('generates a link for channel %s and override %s', (channel, override, scheme) => {
+      desktopEnv.UPDATE_CHANNEL = channel;
+      desktopEnv.DESKTOP_PROTOCOL_SCHEME = override;
+      const url = generateRFCProtocolUrl({
+        id: 'test',
+        schema: {
+          author: 'Test',
+          config: { command: 'test', type: 'stdio' },
+          description: 'Test',
+          identifier: 'test',
+          name: 'Test',
+          version: '1.0.0',
+        },
+      });
+
+      expect(new URL(url).protocol).toBe(`${scheme}:`);
+      expect(parseProtocolUrl(url)?.params.id).toBe('test');
+    });
+
     it('should generate valid RFC protocol URL for stdio type', () => {
       const schema: McpSchema = {
         identifier: 'edgeone-mcp',
@@ -27,7 +113,7 @@ describe('Protocol', () => {
         marketId: 'higress',
       });
 
-      expect(url).toMatch(/^lobehub:\/\/plugin\/install\?/);
+      expect(url).toMatch(/^smai:\/\/plugin\/install\?/);
       expect(url).toContain('id=edgeone-mcp');
       expect(url).toContain('marketId=higress');
 
@@ -62,7 +148,7 @@ describe('Protocol', () => {
         marketId: 'smithery',
       });
 
-      expect(url).toMatch(/^lobehub:\/\/plugin\/install\?/);
+      expect(url).toMatch(/^smai:\/\/plugin\/install\?/);
       expect(url).toContain('id=awesome-api');
       expect(url).toContain('marketId=smithery');
     });
@@ -125,7 +211,7 @@ describe('Protocol', () => {
     });
 
     it('should parse URLs with any action', () => {
-      const result = parseProtocolUrl('lobehub://plugin/configure?id=test');
+      const result = parseProtocolUrl('smai://plugin/configure?id=test');
       expect(result).toBeTruthy();
       expect(result?.urlType).toBe('plugin');
       expect(result?.action).toBe('configure');
@@ -133,7 +219,7 @@ describe('Protocol', () => {
     });
 
     it('should parse URLs with any query parameters', () => {
-      const result = parseProtocolUrl('lobehub://plugin/install?custom=value&another=param');
+      const result = parseProtocolUrl('smai://plugin/install?custom=value&another=param');
       expect(result).toBeTruthy();
       expect(result?.urlType).toBe('plugin');
       expect(result?.action).toBe('install');
@@ -142,7 +228,7 @@ describe('Protocol', () => {
     });
 
     it('should handle URLs without query parameters', () => {
-      const result = parseProtocolUrl('lobehub://plugin/install');
+      const result = parseProtocolUrl('smai://plugin/install');
       expect(result).toBeTruthy();
       expect(result?.urlType).toBe('plugin');
       expect(result?.action).toBe('install');
@@ -150,7 +236,7 @@ describe('Protocol', () => {
     });
 
     it('should return null for URLs without action', () => {
-      const result = parseProtocolUrl('lobehub://plugin/');
+      const result = parseProtocolUrl('smai://plugin/');
       expect(result).toBeNull();
     });
   });
@@ -184,10 +270,11 @@ describe('Protocol', () => {
 
     it('should handle different protocol schemes', () => {
       const testCases = [
-        'lobehub://plugin/install?test=value',
-        'lobehub-dev://plugin/install?test=value',
-        'lobehub-beta://plugin/install?test=value',
-        'lobehub-nightly://plugin/install?test=value',
+        'smai://plugin/install?test=value',
+        'smai-dev://plugin/install?test=value',
+        'smai-beta://plugin/install?test=value',
+        'smai-nightly://plugin/install?test=value',
+        'smai-canary://plugin/install?test=value',
       ];
 
       testCases.forEach((url) => {
@@ -198,6 +285,38 @@ describe('Protocol', () => {
         expect(parsed?.params.test).toBe('value');
         expect(parsed?.originalUrl).toBe(url);
       });
+    });
+  });
+
+  describe('distribution scheme override', () => {
+    it('uses the configured scheme instead of the channel heuristics', () => {
+      desktopEnv.DESKTOP_PROTOCOL_SCHEME = 'acme';
+
+      expect(getProtocolScheme()).toBe('acme');
+    });
+
+    it('accepts deep links on the configured scheme', () => {
+      desktopEnv.DESKTOP_PROTOCOL_SCHEME = 'acme';
+
+      expect(parseProtocolUrl('acme://plugin/install?id=figma')).toMatchObject({
+        action: 'install',
+        urlType: 'plugin',
+      });
+    });
+
+    it('matches a mixed-case override against the lowercased scheme URL parsing yields', () => {
+      desktopEnv.DESKTOP_PROTOCOL_SCHEME = 'Acme';
+
+      expect(getProtocolScheme()).toBe('acme');
+      expect(parseProtocolUrl('Acme://plugin/install?id=figma')).toMatchObject({
+        action: 'install',
+        urlType: 'plugin',
+      });
+    });
+
+    it('still rejects schemes that are neither smai nor configured', () => {
+      expect(parseProtocolUrl('acme://plugin/install?id=figma')).toBeNull();
+      expect(parseProtocolUrl('lobehub://plugin/install?id=figma')).toBeNull();
     });
   });
 });

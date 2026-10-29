@@ -40,7 +40,22 @@ const channel = process.env.UPDATE_CHANNEL;
 const arch = os.arch();
 const hasAppleCertificate = Boolean(process.env.CSC_LINK);
 
-const macAppId = 'com.smallai.smaihub-desktop';
+/**
+ * Distribution identity. A downstream build (private deployment, white-label)
+ * sets these through env instead of forking this file; unset keeps smai's
+ * values.
+ *
+ * `appId` is not cosmetic: the updater and the OS key the installed app's
+ * identity off it, so a distribution must pick one before its first release and
+ * never change it. The packaged `productName` (which names the per-user data
+ * directory) is stamped into package.json by
+ * `scripts/electronWorkflow/setDesktopVersion.ts` from the same
+ * DESKTOP_PRODUCT_NAME; `brandName` here is the channel-less form for
+ * user-facing strings.
+ */
+const appId = process.env.DESKTOP_APP_ID || 'com.smallai.smaihub-desktop';
+const brandName = process.env.DESKTOP_PRODUCT_NAME || 'smai.ai';
+const executableName = process.env.DESKTOP_EXECUTABLE_NAME || 'smai.ai';
 // Communication notifications need the restricted
 // `com.apple.developer.usernotifications.communication` entitlement, and
 // macOS refuses to launch an app carrying it without a provisioning profile
@@ -66,7 +81,7 @@ if (macCommunicationEntitlements) {
   );
   const communicationKeys = [
     '    <key>com.apple.application-identifier</key>',
-    `    <string>${macTeamId}.${macAppId}</string>`,
+    `    <string>${macTeamId}.${appId}</string>`,
     '    <key>com.apple.developer.team-identifier</key>',
     `    <string>${macTeamId}</string>`,
     '    <key>com.apple.developer.usernotifications.communication</key>',
@@ -132,9 +147,25 @@ if (!hasAppleCertificate) {
 
 // 根据版本类型确定协议 scheme
 const getProtocolScheme = () => {
+  // Schemes are registered OS-wide, so a distribution needs its own: two builds
+  // claiming `smai://` on one machine race for the handler, and the loser's
+  // deep links and OAuth handoffs open the other app. Must match the value the
+  // main process is built with (see vite.main.config.ts).
+  const scheme = process.env.DESKTOP_PROTOCOL_SCHEME;
+  if (scheme) {
+    // URL parsing lowercases schemes, so the main process can only ever match a
+    // lowercase one — fail the build rather than ship an app that drops its own
+    // deep links.
+    if (!/^[a-z][\d+.a-z-]*$/.test(scheme)) {
+      throw new Error(
+        `DESKTOP_PROTOCOL_SCHEME "${scheme}" must be a lowercase URL scheme (a-z, then a-z, 0-9, "+", "-", ".")`,
+      );
+    }
+    return scheme;
+  }
   if (isCanary) return 'smai-canary';
   if (isNightly) return 'smai-nightly';
-
+  if (channel === 'beta') return 'smai-beta';
   return 'smai';
 };
 
@@ -306,7 +337,7 @@ const config = {
       }
     }
   },
-  appId: macAppId,
+  appId,
   appImage: {
     artifactName: '${productName}-${version}.${ext}',
   },
@@ -383,7 +414,7 @@ const config = {
       CFBundleIconName: 'AppIcon',
       CFBundleURLTypes: [
         {
-          CFBundleURLName: 'smai.ai Protocol',
+          CFBundleURLName: `${brandName} Protocol`,
           CFBundleURLSchemes: [protocolScheme],
         },
       ],
@@ -394,8 +425,7 @@ const config = {
         "Application requests access to the user's Documents folder.",
       NSDownloadsFolderUsageDescription:
         "Application requests access to the user's Downloads folder.",
-      NSLocalNetworkUsageDescription:
-        'LobeHub connects to self-hosted servers, model providers, and other services on your local network.',
+      NSLocalNetworkUsageDescription: `${brandName} connects to self-hosted servers, model providers, and other services on your local network.`,
       NSMicrophoneUsageDescription: "Application requests access to the device's microphone.",
       NSScreenCaptureUsageDescription:
         'Application requests access to record and analyze screen content for AI assistance.',
@@ -432,7 +462,7 @@ const config = {
   },
   protocols: [
     {
-      name: 'smai.ai Protocol',
+      name: `${brandName} Protocol`,
       schemes: [protocolScheme],
     },
   ],
@@ -495,7 +525,7 @@ const config = {
   ],
 
   win: {
-    executableName: 'smai.ai',
+    executableName,
   },
 };
 
