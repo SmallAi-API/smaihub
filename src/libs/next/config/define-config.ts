@@ -370,6 +370,8 @@ export function defineConfig(config: CustomNextConfig) {
       'oidc-provider',
       'pdfkit',
       '@lobehub/editor',
+      // Must share one instance with @lobehub/editor's own Yjs binding.
+      'yjs',
       'discord.js',
       'ffmpeg-static',
       'pdfjs-dist',
