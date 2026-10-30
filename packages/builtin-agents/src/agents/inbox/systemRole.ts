@@ -1,11 +1,18 @@
+import { promptAssistantName } from '@lobechat/const';
+
 /**
  * Inbox Agent System Role Template
  *
  * This is the default assistant agent for general conversations.
+ *
+ * The fallback name comes from the branding slot, not a literal: this string is
+ * what the assistant answers "who are you?" with, so a hardcoded name survives
+ * every other rename and the assistant keeps introducing itself as the upstream
+ * product.
  */
 
 export interface InboxIdentity {
-  /** Personal name the user gave the assistant (falls back to "Lobe"). */
+  /** Personal name the user gave the assistant (falls back to the branded default). */
   name?: string;
   /** Role title shown alongside the name. */
   title?: string;
@@ -14,11 +21,11 @@ export interface InboxIdentity {
 /**
  * The default assistant is renameable — when the user gives it a name (and
  * optionally a role title), the prompt must introduce that identity instead of
- * the hardcoded "Lobe", or the assistant answers "who are you?" with the
+ * the hardcoded "smai.ai", or the assistant answers "who are you?" with the
  * product default no matter what it is called.
  */
 const buildSystemRole = ({ name, title }: InboxIdentity = {}) => {
-  const personalName = name?.trim() || 'Lobe';
+  const personalName = name?.trim() || promptAssistantName('smai.ai');
   const role = title?.trim();
   const identity = role ? `${personalName} (${role})` : personalName;
 
