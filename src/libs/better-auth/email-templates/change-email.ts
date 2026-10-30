@@ -1,3 +1,7 @@
+// lobe-design-ignore-file LOBE-RAW-COLOR, LOBE-FONT-FAMILY, LOBE-FONT-SIZE-SCALE: Standalone email HTML requires inline styles; retain the user-specified magic-link/verification design without SPA theme dependencies.
+// lobe-design-ignore-file LOBE-CJK-LATIN-SPACE: Plain-text emails contain literal newline escapes, not adjacent Latin words.
+import { BRANDING_NAME, COPYRIGHT } from '@lobechat/business-const';
+
 /**
  * Change email verification template
  * Sent to users when they request to change their email address
@@ -30,7 +34,7 @@ export const getChangeEmailVerificationTemplate = (params: {
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 32px;">
       <div style="display: inline-flex; align-items: center; justify-content: center; background-color: #ffffff; border-radius: 12px; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-        <span style="font-size: 18px; font-weight: 700; color: #000000; letter-spacing: -0.5px;">smai.ai</span>
+        <span style="font-size: 18px; font-weight: 700; color: #000000; letter-spacing: -0.5px;">${BRANDING_NAME}</span>
       </div>
     </div>
 
@@ -52,7 +56,7 @@ export const getChangeEmailVerificationTemplate = (params: {
         ${userName ? `<p style="margin: 0 0 16px 0;">您好 <strong>${userName}</strong>，</p>` : ''}
 
         <p style="margin: 0 0 24px 0;">
-          我们收到了将您的 smai.ai 账户邮箱更换为此地址的请求。请点击下方按钮确认更换。
+          我们收到了将您的 ${BRANDING_NAME} 账户邮箱更换为此地址的请求。请点击下方按钮确认更换。
         </p>
 
         <!-- Button -->
@@ -92,14 +96,14 @@ export const getChangeEmailVerificationTemplate = (params: {
     <!-- Footer -->
     <div style="text-align: center; margin-top: 32px;">
       <p style="color: #a1a1aa; font-size: 13px; margin: 0;">
-        © 2026 smai.ai 保留所有权利。
+        ${COPYRIGHT} 保留所有权利。
       </p>
     </div>
   </div>
 </body>
 </html>
     `,
-    subject: '确认您的新邮箱 - smai.ai',
-    text: `您请求更换 smai.ai 账户邮箱，请点击此链接确认：${url}\n\n此链接将在 ${expirationText} 后失效。\n\n如果您没有请求更换邮箱，可以忽略此邮件。`,
+    subject: `确认您的新邮箱 - ${BRANDING_NAME}`,
+    text: `您请求更换 ${BRANDING_NAME} 账户邮箱，请点击此链接确认：${url}\n\n此链接将在 ${expirationText} 后失效。\n\n如果您没有请求更换邮箱，可以忽略此邮件。`,
   };
 };

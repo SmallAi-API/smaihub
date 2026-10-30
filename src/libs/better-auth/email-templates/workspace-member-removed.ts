@@ -1,3 +1,7 @@
+// lobe-design-ignore-file LOBE-RAW-COLOR, LOBE-FONT-FAMILY, LOBE-FONT-SIZE-SCALE: Standalone email HTML requires inline styles; retain the user-specified magic-link/verification design without SPA theme dependencies.
+// lobe-design-ignore-file LOBE-CJK-LATIN-SPACE: Plain-text emails contain literal newline escapes, not adjacent Latin words.
+import { BRANDING_NAME, COPYRIGHT } from '@lobechat/business-const';
+
 export const getWorkspaceMemberRemovedEmailTemplate = (params: {
   reason: 'downgrade' | 'removed_by_owner';
   workspaceName: string;
@@ -6,22 +10,18 @@ export const getWorkspaceMemberRemovedEmailTemplate = (params: {
 
   const isDowngrade = reason === 'downgrade';
 
-  const subject = isDowngrade
-    ? `You have been removed from ${workspaceName} on LobeHub`
-    : `You have been removed from ${workspaceName} on LobeHub`;
+  const subject = `您已被移出 ${workspaceName} 工作区 - ${BRANDING_NAME}`;
 
-  const heading = isDowngrade
-    ? `Removed from <strong>${workspaceName}</strong>`
-    : `Removed from <strong>${workspaceName}</strong>`;
+  const heading = `您已被移出 <strong>${workspaceName}</strong>`;
 
   const body = isDowngrade
-    ? `The workspace <strong>${workspaceName}</strong> has been downgraded, and all team members have been removed as a result. Your personal data and workspaces are not affected.`
-    : `The owner of <strong>${workspaceName}</strong> has removed you from the workspace. Your personal data and workspaces are not affected.`;
+    ? `由于 <strong>${workspaceName}</strong> 工作区已降级，所有团队成员均已被移出。您的个人数据和个人工作区不受影响。`
+    : `<strong>${workspaceName}</strong> 的所有者已将您移出工作区。您的个人数据和个人工作区不受影响。`;
 
   return {
     html: `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,8 +33,7 @@ export const getWorkspaceMemberRemovedEmailTemplate = (params: {
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 32px;">
       <div style="display: inline-flex; align-items: center; justify-content: center; background-color: #ffffff; border-radius: 12px; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-        <span style="font-size: 24px; line-height: 1; margin-right: 10px;">🤯</span>
-        <span style="font-size: 18px; font-weight: 700; color: #000000; letter-spacing: -0.5px;">LobeHub</span>
+        <span style="font-size: 18px; font-weight: 700; color: #000000; letter-spacing: -0.5px;">${BRANDING_NAME}</span>
       </div>
     </div>
 
@@ -55,9 +54,9 @@ export const getWorkspaceMemberRemovedEmailTemplate = (params: {
         </p>
 
         <!-- Info Note -->
-        <div style="background-color: #f0f9ff; border-radius: 12px; padding: 16px; margin-bottom: 24px; border: 1px solid #bae6fd;">
-          <p style="color: #0c4a6e; font-size: 14px; margin: 0; text-align: center;">
-            If you believe this was a mistake, please contact the workspace owner.
+        <div style="background-color: #f9fafb; border-radius: 12px; padding: 16px; margin-bottom: 24px; border: 1px solid #f3f4f6;">
+          <p style="color: #6b7280; font-size: 14px; margin: 0; text-align: center;">
+            如果您认为这是误操作，请联系工作区所有者。
           </p>
         </div>
       </div>
@@ -68,7 +67,7 @@ export const getWorkspaceMemberRemovedEmailTemplate = (params: {
       <!-- Footer note -->
       <div style="text-align: center;">
         <p style="color: #9ca3af; font-size: 13px; margin: 0;">
-          You can continue using LobeHub with your personal workspace.
+          您仍可使用个人工作区继续使用 ${BRANDING_NAME}。
         </p>
       </div>
     </div>
@@ -76,7 +75,7 @@ export const getWorkspaceMemberRemovedEmailTemplate = (params: {
     <!-- Footer -->
     <div style="text-align: center; margin-top: 32px;">
       <p style="color: #a1a1aa; font-size: 13px; margin: 0;">
-        This is an automated message from LobeHub.
+        ${COPYRIGHT} 保留所有权利。
       </p>
     </div>
   </div>
@@ -85,7 +84,7 @@ export const getWorkspaceMemberRemovedEmailTemplate = (params: {
     `,
     subject,
     text: isDowngrade
-      ? `The workspace "${workspaceName}" has been downgraded, and all team members have been removed as a result. Your personal data and workspaces are not affected. If you believe this was a mistake, please contact the workspace owner.`
-      : `The owner of "${workspaceName}" has removed you from the workspace. Your personal data and workspaces are not affected. If you believe this was a mistake, please contact the workspace owner.`,
+      ? `由于“${workspaceName}”工作区已降级，所有团队成员均已被移出。您的个人数据和个人工作区不受影响。\n\n如果您认为这是误操作，请联系工作区所有者。\n\n您仍可使用个人工作区继续使用 ${BRANDING_NAME}。`
+      : `“${workspaceName}”的所有者已将您移出工作区。您的个人数据和个人工作区不受影响。\n\n如果您认为这是误操作，请联系工作区所有者。\n\n您仍可使用个人工作区继续使用 ${BRANDING_NAME}。`,
   };
 };

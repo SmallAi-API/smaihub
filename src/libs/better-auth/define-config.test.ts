@@ -142,6 +142,7 @@ describe('defineConfig', () => {
   });
 
   afterEach(() => {
+    vi.doUnmock('@lobechat/business-const');
     vi.restoreAllMocks();
     process.env = originalEnv;
   });
@@ -155,9 +156,19 @@ describe('defineConfig', () => {
       expect.objectContaining({
         origin: ['https://example.com'],
         rpID: 'example.com',
-        rpName: 'LobeHub',
+        rpName: (await import('@lobechat/business-const')).BRANDING_NAME,
       }),
     );
+  });
+
+  it('uses the shared brand constant in the native passkey prompt', async () => {
+    vi.doMock('@lobechat/business-const', () => ({ BRANDING_NAME: 'Acme AI' }));
+    await import('@lobechat/business-const');
+    const { defineConfig } = await import('./define-config');
+
+    defineConfig({ plugins: [] });
+
+    expect(mocks.passkey).toHaveBeenCalledWith(expect.objectContaining({ rpName: 'Acme AI' }));
   });
 
   it('should revoke existing sessions after password reset by default', async () => {

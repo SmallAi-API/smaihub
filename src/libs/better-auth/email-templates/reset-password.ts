@@ -1,3 +1,7 @@
+// lobe-design-ignore-file LOBE-RAW-COLOR, LOBE-FONT-FAMILY, LOBE-FONT-SIZE-SCALE: Standalone email HTML requires inline styles; retain the user-specified magic-link/verification design without SPA theme dependencies.
+// lobe-design-ignore-file LOBE-CJK-LATIN-SPACE: Plain-text emails contain literal newline escapes, not adjacent Latin words.
+import { BRANDING_NAME, COPYRIGHT } from '@lobechat/business-const';
+
 /**
  * Password reset email template
  * Sent to users when they request a password reset
@@ -21,7 +25,7 @@ export const getResetPasswordEmailTemplate = (params: { url: string }) => {
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 32px;">
       <div style="display: inline-flex; align-items: center; justify-content: center; background-color: #ffffff; border-radius: 12px; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-        <span style="font-size: 18px; font-weight: 700; color: #000000; letter-spacing: -0.5px;">smai.ai</span>
+        <span style="font-size: 18px; font-weight: 700; color: #000000; letter-spacing: -0.5px;">${BRANDING_NAME}</span>
       </div>
     </div>
 
@@ -41,13 +45,13 @@ export const getResetPasswordEmailTemplate = (params: { url: string }) => {
       <!-- Content -->
       <div style="color: #374151; font-size: 16px; line-height: 1.6;">
         <p style="margin: 0 0 24px 0; text-align: center;">
-          您最近请求重置 smai.ai 账户的密码。请点击下方按钮继续操作。
+          您最近请求重置 ${BRANDING_NAME} 账户的密码。请点击下方按钮继续操作。
         </p>
 
         <!-- Button -->
         <div style="text-align: center; margin: 32px 0;">
           <a href="${url}" target="_blank"
-             style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 16px 36px; border-radius: 14px; font-weight: 600; font-size: 16px; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+             style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 16px 36px; border-radius: 14px; font-weight: 600; font-size: 16px; transition: transform 0.1s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
             重置密码
           </a>
         </div>
@@ -77,14 +81,14 @@ export const getResetPasswordEmailTemplate = (params: { url: string }) => {
     <!-- Footer -->
     <div style="text-align: center; margin-top: 32px;">
       <p style="color: #a1a1aa; font-size: 13px; margin: 0;">
-        © ${new Date().getFullYear()} smai.ai 保留所有权利。
+        ${COPYRIGHT} 保留所有权利。
       </p>
     </div>
   </div>
 </body>
 </html>
     `,
-    subject: '重置密码 - smai.ai',
+    subject: `重置密码 - ${BRANDING_NAME}`,
     text: `点击此链接重置您的密码：${url}`,
   };
 };

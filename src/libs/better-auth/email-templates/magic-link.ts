@@ -1,3 +1,7 @@
+// lobe-design-ignore-file LOBE-RAW-COLOR, LOBE-FONT-FAMILY, LOBE-FONT-SIZE-SCALE: Standalone email HTML requires inline styles; retain the user-specified magic-link/verification design without SPA theme dependencies.
+// lobe-design-ignore-file LOBE-CJK-LATIN-SPACE: Plain-text emails contain literal newline escapes, not adjacent Latin words.
+import { BRANDING_NAME, COPYRIGHT } from '@lobechat/business-const';
+
 /**
  * Magic link sign-in email template
  * Sent when user requests passwordless login
@@ -16,7 +20,7 @@ export const getMagicLinkEmailTemplate = (params: { expiresInSeconds: number; ur
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>登录 smai.ai</title>
+  <title>登录 ${BRANDING_NAME}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5; color: #1a1a1a;">
   <!-- Container -->
@@ -25,7 +29,7 @@ export const getMagicLinkEmailTemplate = (params: { expiresInSeconds: number; ur
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 32px;">
       <div style="display: inline-flex; align-items: center; justify-content: center; background-color: #ffffff; border-radius: 12px; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-        <span style="font-size: 18px; font-weight: 700; color: #000000; letter-spacing: -0.5px;">smai.ai</span>
+        <span style="font-size: 18px; font-weight: 700; color: #000000; letter-spacing: -0.5px;">${BRANDING_NAME}</span>
       </div>
     </div>
 
@@ -35,7 +39,7 @@ export const getMagicLinkEmailTemplate = (params: { expiresInSeconds: number; ur
       <!-- Header -->
       <div style="text-align: center; margin-bottom: 32px;">
         <h1 style="color: #111827; font-size: 24px; font-weight: 700; margin: 0 0 12px 0; letter-spacing: -0.5px;">
-          登录 smai.ai
+          登录 ${BRANDING_NAME}
         </h1>
         <p style="color: #6b7280; font-size: 16px; margin: 0; line-height: 1.5;">
           点击下方链接登录您的账户。
@@ -48,7 +52,7 @@ export const getMagicLinkEmailTemplate = (params: { expiresInSeconds: number; ur
         <!-- Button -->
         <div style="text-align: center; margin: 32px 0;">
           <a href="${url}" target="_blank"
-             style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 16px 36px; border-radius: 14px; font-weight: 600; font-size: 16px; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+             style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 16px 36px; border-radius: 14px; font-weight: 600; font-size: 16px; transition: transform 0.1s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
             立即登录
           </a>
         </div>
@@ -82,14 +86,14 @@ export const getMagicLinkEmailTemplate = (params: { expiresInSeconds: number; ur
     <!-- Footer -->
     <div style="text-align: center; margin-top: 32px;">
       <p style="color: #a1a1aa; font-size: 13px; margin: 0;">
-        © ${new Date().getFullYear()} smai.ai 保留所有权利。
+        ${COPYRIGHT} 保留所有权利。
       </p>
     </div>
   </div>
 </body>
 </html>
     `,
-    subject: '您的 smai.ai 登录链接',
+    subject: `您的 ${BRANDING_NAME} 登录链接`,
     text: `使用此链接登录：${url}\n\n此链接将在 ${expirationText} 后失效。`,
   };
 };
