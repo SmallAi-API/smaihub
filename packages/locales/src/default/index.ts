@@ -18,6 +18,7 @@ import electron from './electron';
 import error from './error';
 import eval_ from './eval';
 import file from './file';
+import fileShare from './fileShare';
 import home from './home';
 import hotkey from './hotkey';
 import image from './image';
@@ -77,6 +78,7 @@ const resources = {
   error,
   'eval': eval_,
   file,
+  fileShare,
   home,
   hotkey,
   image,
