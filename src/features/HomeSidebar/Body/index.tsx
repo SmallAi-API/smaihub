@@ -57,6 +57,7 @@ const ACCORDION_KEYS = new Set<string>([
 /** Keys rendered in the header — must be excluded from the body to avoid duplicates
  * when migrating users whose persisted sidebarItems still include them. */
 const HEADER_KEYS = new Set<string>(['home', 'search']);
+const SECTION_GAP = 8;
 
 const accordionComponents: Record<string, (key: string) => ReactElement> = {
   [GroupKey.Agent]: (key) => <Agent itemKey={key} key={key} />,
@@ -260,25 +261,25 @@ const Body = memo(() => {
     [sidebarExpandedKeys, updateSystemStatus],
   );
 
-  // Render the flat list in `sidebarItems` order: group consecutive accordion
-  // items into an Accordion, interleave non-accordion keys as nav links, and
-  // emit a flex spacer wherever the spacer sentinel appears.
+  // Consecutive sections share one spacing group, including Channels' independent
+  // accordion. Nav links and the spacer keep their positions and compact spacing.
   const content = useMemo(() => {
     const elements: ReactElement[] = [];
     const billboardAnchor =
       visibleKeys.find((key) => key === SidebarTabKey.Image && !navLinkItems.get(key)?.hidden) ??
       visibleKeys.find((key) => bottomMenuItems.some((item) => item.key === key && !item.hidden));
     let accGroup: { element: ReactElement; key: string }[] = [];
+    let sectionGroup: ReactElement[] = [];
 
     const flushAccordion = () => {
       if (accGroup.length > 0) {
         const accordionKeys = accGroup.map((item) => item.key);
 
-        elements.push(
+        sectionGroup.push(
           <AccordionRoot
             indicatorPlacement="inline"
-            key={`acc-${elements.length}`}
-            style={{ gap: 8 }}
+            key={`acc-${sectionGroup.length}`}
+            style={{ gap: SECTION_GAP }}
             value={sidebarExpandedKeys}
             onValueChange={(keys) => handleAccordionExpandedChange(accordionKeys, keys as string[])}
           >
@@ -289,13 +290,25 @@ const Body = memo(() => {
       }
     };
 
+    const flushSections = () => {
+      flushAccordion();
+      if (sectionGroup.length > 0) {
+        elements.push(
+          <Flexbox gap={SECTION_GAP} key={`sections-${elements.length}`}>
+            {sectionGroup}
+          </Flexbox>,
+        );
+        sectionGroup = [];
+      }
+    };
+
     for (const key of visibleKeys) {
       if (key === billboardAnchor) {
         flushAccordion();
         elements.push(<Billboard key="billboard" />);
       }
       if (key === SIDEBAR_SPACER_ID) {
-        flushAccordion();
+        flushSections();
         elements.push(
           <div
             aria-hidden
@@ -310,15 +323,17 @@ const Body = memo(() => {
         // Channels sit right below Agents, in their own accordion.
         if (key === GroupKey.Agent) {
           flushAccordion();
-          elements.push(<ChannelList key="channels" />);
+          sectionGroup.push(<ChannelList key="channels" />);
         }
       } else {
-        flushAccordion();
         const link = renderSidebarItem(key);
-        if (link) elements.push(link);
+        if (link) {
+          flushSections();
+          elements.push(link);
+        }
       }
     }
-    flushAccordion();
+    flushSections();
     // Keep announcements reachable even when all bottom navigation entries are hidden.
     if (!billboardAnchor) elements.push(<Billboard key="billboard" />);
 
