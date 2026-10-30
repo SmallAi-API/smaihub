@@ -1,10 +1,12 @@
-import { DashboardIdentifier } from '@lobechat/builtin-tool-dashboard';
+import { DashboardIdentifier, LegacyDashboardIdentifier } from '@lobechat/builtin-tool-dashboard';
 import { VideoGenerationIdentifier } from '@lobechat/builtin-tool-video-generation';
 import type { IFeatureFlagsState } from '@lobechat/types';
 
 /** Builtin tools that exist only while a runtime feature flag is on for the user. */
 export const FEATURE_GATED_TOOLS: Record<string, keyof IFeatureFlagsState> = {
   [DashboardIdentifier]: 'enableDashboard',
+  // A legacy pinned or replayed id must stay behind the same flag.
+  [LegacyDashboardIdentifier]: 'enableDashboard',
   [VideoGenerationIdentifier]: 'enableVideoGenerationSkill',
 };
 
