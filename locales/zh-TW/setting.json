@@ -1315,6 +1315,8 @@
   "settingAgent.description.placeholder": "請輸入助手描述",
   "settingAgent.description.title": "助手描述",
   "settingAgent.devicePolicy.noPublicDevice": "沒有公共設備",
+  "settingAgent.devicePolicy.privateDeviceFixed": "固定環境只能使用公共工作區設備",
+  "settingAgent.devicePolicy.privateDevicePublicAgent": "私人設備僅供私人代理使用 — 其他成員無法訪問它們",
   "settingAgent.devicePolicy.selectTarget": "選擇環境",
   "settingAgent.devicePolicy.title": "執行環境",
   "settingAgent.export.dialogTitle": "匯出代理人檔案",

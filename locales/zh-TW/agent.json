@@ -457,6 +457,8 @@
   "channel.removeFailed": "移除頻道失敗",
   "channel.removed": "頻道已移除",
   "channel.reply.instant": "這裡的更改會立即生效。無需保存。",
+  "channel.reply.section.display": "回覆的外觀",
+  "channel.reply.section.style": "樣式和表情符號",
   "channel.replyEmojiLabel": "表情符號",
   "channel.replyEmojiPlaceholder": "例如 <:doge:1234567890>",
   "channel.replyEmojiUsageLabel": "何時使用",

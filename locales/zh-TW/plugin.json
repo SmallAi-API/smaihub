@@ -461,6 +461,7 @@
   "builtins.lobe-notebook.apiName.getDocument": "取得文件",
   "builtins.lobe-notebook.apiName.updateDocument": "更新文件",
   "builtins.lobe-notebook.title": "筆記本",
+  "builtins.lobe-page-agent.apiName.bash": "在頁面上工作",
   "builtins.lobe-page-agent.apiName.batchUpdate": "批次更新節點",
   "builtins.lobe-page-agent.apiName.compareSnapshots": "比較快照",
   "builtins.lobe-page-agent.apiName.convertToList": "轉換為清單",
