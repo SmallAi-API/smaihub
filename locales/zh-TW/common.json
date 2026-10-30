@@ -62,6 +62,7 @@
   "betaFeedback.wechat.desc": "使用微信掃描以加入群組。",
   "betaFeedback.wechat.title": "微信群組",
   "blog": "產品部落格",
+  "bootLoadingHint": "設置舞台…",
   "branching": "建立子主題",
   "branchingRequiresSavedTopic": "當前話題未保存，保存後才可以使用子話題功能",
   "cancel": "取消",
