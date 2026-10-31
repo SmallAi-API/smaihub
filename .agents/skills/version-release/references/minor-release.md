@@ -32,7 +32,7 @@ Used to publish a new minor version (e.g. `v2.2.0`), roughly every 4 weeks. The 
 
 5. **While the PR is open** — `release-pr-version.yml` commits `package.json` to the title version if it is not already there.
 
-6. **After merge** — `auto-tag-release` reads the title version, tags `v{x.y.z}` on the merge commit, and creates the GitHub Release.
+6. **After merge** — create and publish the GitHub Release manually on the merge commit, preserving the release intent in its body.
 
 ## Scripts
 

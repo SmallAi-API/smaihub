@@ -18,6 +18,7 @@ For every version-release execution, also read and apply `../microcopy/SKILL.md`
 
 ## Choose the Workflow
 
+- **Desktop Stable sources** (Cloud selection, hotfix baselines, rebuild/import) → [references/desktop-stable-sources.md](references/desktop-stable-sources.md). For release branches and PRs, also read the relevant Minor or Patch workflow below.
 - **Minor release** → `references/minor-release.md`
 - **Patch release** (weekly, hotfix, model launch, or DB migration) → `references/patch-release-scenarios.md`
 - **Release PR body / GitHub Release notes** → `references/release-notes-style.md`

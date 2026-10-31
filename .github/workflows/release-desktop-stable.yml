@@ -30,8 +30,34 @@ on:
         required: true
         type: string
       cloud_ref:
-        description: 'Cloud commit SHA (40 lowercase hex characters); empty uses latest HEAD'
+        description: 'Cloud SHA for import, or verify the SHA already bound in the hotfix Release'
         required: false
+        type: string
+        default: ''
+      release_mode:
+        description: 'Rebuild pinned sources, resume a PR-bound hotfix, or import historical sources only'
+        required: true
+        type: choice
+        options: [rebuild, hotfix, import]
+        default: rebuild
+      source_ref:
+        description: 'Product source ref; defaults to the target version tag and must resolve to its SHA'
+        type: string
+        default: ''
+      base_version:
+        description: 'Optional verification of the delivered baseline already bound in the hotfix Release'
+        type: string
+        default: ''
+      cloud_override_reason:
+        description: 'Optional verification of the Cloud repair reason already bound in the hotfix Release'
+        type: string
+        default: ''
+      evidence_run_id:
+        description: 'Original build run ID for historical import'
+        type: string
+        default: ''
+      evidence_run_attempt:
+        description: 'Original build attempt for historical import'
         type: string
         default: ''
       build_mac:
@@ -46,6 +72,11 @@ on:
         default: true
       build_windows:
         description: 'Build Windows'
+        required: false
+        type: boolean
+        default: true
+      build_linux:
+        description: 'Build Linux'
         required: false
         type: boolean
         default: true
@@ -76,92 +107,127 @@ jobs:
   check-stable:
     name: Check Release Version
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+      pull-requests: read
     outputs:
-      cloud_ref: ${{ steps.cloud-ref.outputs.cloud_ref }}
+      cloud_ref: ${{ steps.cloud-ref.outputs.cloud_sha }}
+      oss_sha: ${{ steps.cloud-ref.outputs.oss_sha }}
+      sources_hash: ${{ steps.cloud-ref.outputs.sources_hash }}
+      build_required: ${{ steps.cloud-ref.outputs.build_required }}
       is_stable: ${{ steps.check.outputs.is_stable }}
       version: ${{ steps.check.outputs.version }}
       is_manual: ${{ steps.check.outputs.is_manual }}
       release_notes: ${{ steps.check.outputs.release_notes }}
     steps:
+      - name: Checkout release tooling
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.workflow_sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
       - name: Check release info
         id: check
+        env:
+          RELEASE_BODY: ${{ github.event.release.body || '' }}
         run: |
           # 判断触发方式
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             # 手动触发: 使用输入的版本号
             version="${{ inputs.version }}"
             version="${version#v}"
-            echo "is_manual=true" >> $GITHUB_OUTPUT
-            echo "version=${version}" >> $GITHUB_OUTPUT
-            echo "release_notes=" >> $GITHUB_OUTPUT
+            {
+              echo "is_manual=true"
+              echo "version=${version}"
+              echo "release_notes="
+            } >> "$GITHUB_OUTPUT"
             echo "🔧 Manual trigger: version=${version}"
           else
             # Release 触发: 从 tag 提取版本号
             version="${{ github.event.release.tag_name }}"
             version="${version#v}"
-            echo "is_manual=false" >> $GITHUB_OUTPUT
-            echo "version=${version}" >> $GITHUB_OUTPUT
-            release_body="${{ github.event.release.body }}"
+            {
+              echo "is_manual=false"
+              echo "version=${version}"
+            } >> "$GITHUB_OUTPUT"
+            release_body="${RELEASE_BODY:-}"
             {
               echo "release_notes<<EOF"
               printf '%s\n' "$release_body"
               echo "EOF"
-            } >> $GITHUB_OUTPUT
+            } >> "$GITHUB_OUTPUT"
           fi
 
           # 检查是否为 stable 版本 (不含任何 '-' 后缀)
           if [[ "$version" == *"-"* ]]; then
-            echo "is_stable=false" >> $GITHUB_OUTPUT
+            echo "is_stable=false" >> "$GITHUB_OUTPUT"
             echo "⏭️ Skipping: $version is not a stable release"
           else
-            echo "is_stable=true" >> $GITHUB_OUTPUT
+            echo "is_stable=true" >> "$GITHUB_OUTPUT"
             echo "✅ Stable release detected: $version"
           fi
+
+      # Restrict the Cloud token to the configured overlay repository.
+      - name: Resolve overlay repository
+        id: overlay-repo
+        if: steps.check.outputs.is_stable == 'true'
+        env:
+          OVERLAY_REPOSITORY: ${{ vars.OVERLAY_REPOSITORY }}
+        run: |
+          echo "owner=${OVERLAY_REPOSITORY%%/*}" >> "$GITHUB_OUTPUT"
+          echo "name=${OVERLAY_REPOSITORY#*/}" >> "$GITHUB_OUTPUT"
+
+      - name: Create overlay token
+        id: overlay-token
+        if: steps.check.outputs.is_stable == 'true'
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.LOBEHUB_BOT_APP_ID }}
+          private-key: ${{ secrets.LOBEHUB_BOT_APP_PRIVATE_KEY }}
+          owner: ${{ steps.overlay-repo.outputs.owner }}
+          repositories: ${{ steps.overlay-repo.outputs.name }}
 
       - name: Resolve Cloud revision
         id: cloud-ref
         if: steps.check.outputs.is_stable == 'true'
         env:
-          REQUESTED_CLOUD_REF: ${{ inputs.cloud_ref || '' }}
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ steps.check.outputs.version }}
+          RELEASE_MODE: ${{ github.event_name == 'release' && 'auto' || inputs.release_mode }}
+          SOURCE_REF: ${{ inputs.source_ref || '' }}
+          CLOUD_REF: ${{ inputs.cloud_ref || '' }}
+          BASE_VERSION: ${{ inputs.base_version || '' }}
+          CLOUD_OVERRIDE_REASON: ${{ inputs.cloud_override_reason || '' }}
+          EVIDENCE_RUN_ID: ${{ inputs.evidence_run_id || '' }}
+          EVIDENCE_RUN_ATTEMPT: ${{ inputs.evidence_run_attempt || '' }}
+          WRITE_SOURCES: ${{ github.event_name == 'release' || inputs.release_mode == 'import' || !inputs.skip_github_release || !inputs.skip_s3_upload }}
           CLOUD_REPOSITORY: ${{ vars.OVERLAY_REPOSITORY }}
-          CLOUD_TOKEN: ${{ secrets.LOBEHUB_CLOUD_TOKEN }}
+          CLOUD_TOKEN: ${{ steps.overlay-token.outputs.token }}
         run: |
-          set -euo pipefail
-          # No business overlay configured (or the overlay is this repo itself): the build is an
-          # OSS-stub build, so the renderer OTA baseline is just this repo's commit. Keep a valid
-          # 40-hex value — desktop-publish-s3 validates cloudRef before writing base.json.
-          if [ -z "${CLOUD_REPOSITORY:-}" ] || [ -z "${CLOUD_TOKEN:-}" ] \
-            || [ "$CLOUD_REPOSITORY" = "$GITHUB_REPOSITORY" ]; then
-            echo "::notice::No business overlay configured; using $GITHUB_SHA as cloud_ref"
-            echo "cloud_ref=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          if [ -n "$REQUESTED_CLOUD_REF" ]; then
-            if [[ ! "$REQUESTED_CLOUD_REF" =~ ^[0-9a-f]{40}$ ]]; then
-              echo "::error::cloud_ref must be a full 40-character lowercase commit SHA"
-              exit 1
-            fi
-            cloud_ref="$REQUESTED_CLOUD_REF"
-          else
-            # checkout persist-credentials extraheader would send GITHUB_TOKEN and 404 the private cloud repo
-            cloud_ref=$(git -c http.https://github.com/.extraheader= ls-remote "https://x-access-token:${CLOUD_TOKEN}@github.com/${CLOUD_REPOSITORY}.git" HEAD | cut -f1)
-          fi
-          if [[ ! "$cloud_ref" =~ ^[0-9a-f]{40}$ ]]; then
-            echo "Unable to resolve Cloud revision"
-            exit 1
-          fi
-          echo "cloud_ref=$cloud_ref" >> "$GITHUB_OUTPUT"
+          node .github/scripts/desktopReleaseCli.mjs resolve
+
+      - name: Preserve source selection diagnostics
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: desktop-sources-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/desktop-release-sources.json
+          if-no-files-found: ignore
 
   # ============================================
   # 配置构建矩阵 (检查自托管 Runner)
   # ============================================
   configure-build:
     needs: [check-stable]
-    if: needs.check-stable.outputs.is_stable == 'true'
+    if: needs.check-stable.outputs.build_required == 'true'
     name: Configure Build Matrix
     runs-on: ubuntu-latest
     outputs:
-      include: ${{ steps.set-matrix.outputs.include }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      complete_matrix: ${{ steps.set-matrix.outputs.complete_matrix }}
     steps:
       - name: Generate Matrix
         id: set-matrix
@@ -171,7 +237,12 @@ jobs:
 
           # Windows
           if [[ "${{ github.event_name }}" != "workflow_dispatch" ]] || [[ "${{ inputs.build_windows }}" == "true" ]]; then
-            static_matrix=$(echo "$static_matrix" | jq -c '. + [{"os": "windows-latest", "name": "windows-latest"}]')
+            static_matrix=$(echo "$static_matrix" | jq -c '. + [{"os": "windows-2025", "name": "windows-2025"}]')
+          fi
+
+          # Linux
+          if [[ "${{ github.event_name }}" != "workflow_dispatch" ]] || [[ "${{ inputs.build_linux }}" == "true" ]]; then
+            static_matrix=$(echo "$static_matrix" | jq -c '. + [{"os": "ubuntu-latest", "name": "ubuntu-latest"}]')
           fi
 
           # macOS (ARM64)
@@ -182,55 +253,82 @@ jobs:
             static_matrix=$(echo "$static_matrix" | jq -c --argjson entry "$arm_entry" '. + [$entry]')
           fi
 
-          # macOS (Intel x64)
           if [[ "${{ github.event_name }}" != "workflow_dispatch" ]] || [[ "${{ inputs.build_mac_intel }}" == "true" ]]; then
             echo "Using GitHub-Hosted Runner for macOS Intel x64"
             intel_entry='{"os": "macos-15-intel", "name": "macos-intel"}'
             static_matrix=$(echo "$static_matrix" | jq -c --argjson entry "$intel_entry" '. + [$entry]')
           fi
 
-          # Fail early instead of passing an empty value to strategy.matrix.
-          if [[ "$(jq 'length' <<< "$static_matrix")" -eq 0 ]]; then
-            echo "::error::No desktop build targets were selected"
-            exit 1
-          fi
-
-          # Export the include array itself. The consumer builds the matrix
-          # mapping explicitly, which keeps the job-level expression valid.
-          echo "include=$static_matrix" >> "$GITHUB_OUTPUT"
-          echo "Generated desktop build matrix: $static_matrix"
+          # 输出
+          count=$(jq 'length' <<< "$static_matrix")
+          [ "$count" -gt 0 ] || { echo '::error::Select at least one build platform'; exit 1; }
+          {
+            echo "matrix={\"include\":$static_matrix}"
+            echo "complete_matrix=$([ "$count" -eq 4 ] && echo true || echo false)"
+          } >> "$GITHUB_OUTPUT"
 
   # ============================================
   # 多平台构建
   # ============================================
   build:
     needs: [check-stable, configure-build]
-    if: needs.check-stable.outputs.is_stable == 'true'
+    if: needs.check-stable.outputs.build_required == 'true'
     name: Build Desktop App
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      matrix:
-        include: ${{ fromJSON(needs.configure-build.outputs.include) }}
+      matrix: ${{ fromJson(needs.configure-build.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout release tooling
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.workflow_sha }}
 
-      # Without these, the r0 core is silently skipped and publish-s3 fails much later
-      # with "no r0 core artifacts found".
-      - name: Validate core OTA signing inputs
-        env:
-          RENDERER_OTA_PRIVATE_KEY: ${{ secrets.RENDERER_OTA_PRIVATE_KEY }}
-          RENDERER_OTA_PUBLIC_KEY: ${{ secrets.RENDERER_OTA_PUBLIC_KEY }}
-          UPDATE_SERVER_URL: ${{ secrets.UPDATE_SERVER_URL }}
+      - name: Preserve release tooling
         shell: bash
         run: |
           set -euo pipefail
-          for name in RENDERER_OTA_PRIVATE_KEY RENDERER_OTA_PUBLIC_KEY UPDATE_SERVER_URL; do
-            if [ -z "${!name:-}" ]; then
-              echo "::error::$name is required to sign and publish the r0 core"
-              exit 1
-            fi
-          done
+          mkdir -p "$RUNNER_TEMP/desktop-release-tooling"
+          cp -R .github "$RUNNER_TEMP/desktop-release-tooling/"
+          tooling_sha="$(git rev-parse HEAD)"
+          echo "DESKTOP_TOOLING_SHA=$tooling_sha" >> "$GITHUB_ENV"
+
+      - name: Checkout product sources
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.check-stable.outputs.oss_sha }}
+
+      - name: Verify product sources and restore tooling
+        shell: bash
+        env:
+          RELEASE_OSS_SHA: ${{ needs.check-stable.outputs.oss_sha }}
+          CLOUD_REF: ${{ needs.check-stable.outputs.cloud_ref }}
+          SOURCES_HASH: ${{ needs.check-stable.outputs.sources_hash }}
+        run: |
+          set -euo pipefail
+          [ "$(git rev-parse HEAD)" = "$RELEASE_OSS_SHA" ] || { echo '::error::Product source SHA mismatch'; exit 1; }
+          mkdir -p .github
+          cp -R "$RUNNER_TEMP/desktop-release-tooling/.github/." .github/
+          node .github/scripts/desktopReleaseCli.mjs verify-checkout
+
+      - name: Resolve overlay repository
+        id: overlay-repo
+        shell: bash
+        env:
+          OVERLAY_REPOSITORY: ${{ vars.OVERLAY_REPOSITORY }}
+        run: |
+          set -euo pipefail
+          echo "owner=${OVERLAY_REPOSITORY%%/*}" >> "$GITHUB_OUTPUT"
+          echo "name=${OVERLAY_REPOSITORY#*/}" >> "$GITHUB_OUTPUT"
+
+      - name: Create overlay token
+        id: overlay-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.LOBEHUB_BOT_APP_ID }}
+          private-key: ${{ secrets.LOBEHUB_BOT_APP_PRIVATE_KEY }}
+          owner: ${{ steps.overlay-repo.outputs.owner }}
+          repositories: ${{ steps.overlay-repo.outputs.name }}
 
       - name: Setup build environment
         id: setup
@@ -238,8 +336,9 @@ jobs:
         with:
           cloud-ref: ${{ needs.check-stable.outputs.cloud_ref }}
           cloud-repository: ${{ vars.OVERLAY_REPOSITORY }}
-          cloud-token: ${{ secrets.LOBEHUB_CLOUD_TOKEN }}
+          cloud-token: ${{ steps.overlay-token.outputs.token }}
           node-version: ${{ env.NODE_VERSION }}
+          require-pinned-cloud: 'true'
 
       - name: Resolve core seq
         id: core_seq
@@ -323,97 +422,41 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-
-          function Assert-File([string]$path) {
-            if (-not (Test-Path -Path $path -PathType Leaf)) {
-              throw "Missing required file: $path"
-            }
-          }
-
-          function Assert-Dir([string]$path) {
-            if (-not (Test-Path -Path $path -PathType Container)) {
-              throw "Missing required directory: $path"
-            }
-          }
-
-          function Assert-MinSize([string]$path, [Int64]$minBytes) {
-            $size = (Get-Item -LiteralPath $path).Length
-            if ($size -lt $minBytes) {
-              throw "File too small: $path (actual=$size, required>=$minBytes)"
-            }
-          }
-
-          # 1) Validate renderer output exists (supports current Vite output and legacy Next export)
-          $rendererRoot = ''
-          $rendererEntry = ''
-          if (Test-Path -Path 'apps/desktop/dist/renderer' -PathType Container) {
-            $rendererRoot = 'apps/desktop/dist/renderer'
-            $rendererEntry = "$rendererRoot/apps/desktop/index.html"
-            Assert-File $rendererEntry
-            Assert-Dir "$rendererRoot/assets"
-          } elseif (Test-Path -Path 'apps/desktop/dist/next' -PathType Container) {
-            $rendererRoot = 'apps/desktop/dist/next'
-            $rendererEntry = "$rendererRoot/index.html"
-            Assert-File $rendererEntry
-            Assert-Dir "$rendererRoot/_next/static"
-          } else {
-            throw 'Missing required renderer output directory: apps/desktop/dist/renderer or apps/desktop/dist/next'
-          }
-
-          $rendererFileCount = (Get-ChildItem -Path $rendererRoot -Recurse -File | Measure-Object).Count
-          if ($rendererFileCount -lt 20) {
-            throw "Renderer export looks incomplete: file count=$rendererFileCount"
-          }
-
-          # 1.1) Validate renderer runtime flavor (must not include Turbopack runtime)
-          $rendererIndexHtml = Get-Content -LiteralPath $rendererEntry -Raw
-          if ($rendererIndexHtml -match 'turbopack-[a-z0-9]+\.js') {
-            throw 'Renderer index still references Turbopack runtime.'
-          }
-
-          $turbopackChunks = Get-ChildItem -Path $rendererRoot -Recurse -File -Filter 'turbopack-*.js' -ErrorAction SilentlyContinue
-          if ($turbopackChunks) {
-            $badChunks = ($turbopackChunks | Select-Object -ExpandProperty Name) -join ', '
-            throw "Renderer output still contains Turbopack chunks: $badChunks"
-          }
-
-          # 2) Validate packaged app output exists
-          # app.asar only carries the shell; main/preload/renderer ship as the OTA-able core in
-          # resources/core.asar, with the CLI unpacked beside it in resources/core.asar.unpacked.
           $releaseRoot = 'apps/desktop/release'
           $resourcesRoot = "$releaseRoot/win-unpacked/resources"
-          $asarPath = "$resourcesRoot/app.asar"
-          Assert-File $asarPath
-          $coreAsarPath = "$resourcesRoot/core.asar"
-          Assert-File $coreAsarPath
-          # The CLI is the only unpacked entry; it must stay a real file to be spawnable.
-          Assert-File "$resourcesRoot/core.asar.unpacked/cli/dist/index.js"
-
-          # core.asar is packed from core-dist, which the OTA upload step reads next.
-          # Verifying the staging dir keeps this check readable and covers the same payload.
-          $coreRoot = 'apps/desktop/core-dist'
-          Assert-File "$coreRoot/manifest.json"
-          Assert-File "$coreRoot/package.json"
-          Assert-Dir "$coreRoot/dist/main"
-          Assert-File "$coreRoot/dist/renderer/apps/desktop/index.html"
-
-          # 3) Validate update manifest and installer output
-          Assert-File "$releaseRoot/latest.yml"
-          $installer = Get-ChildItem -Path $releaseRoot -File -Filter '*.exe' | Sort-Object Length -Descending | Select-Object -First 1
-          if (-not $installer) {
-            throw "Missing Windows installer (*.exe) in $releaseRoot"
+          $rendererRoot = if (Test-Path 'apps/desktop/dist/renderer') { 'apps/desktop/dist/renderer' } elseif (Test-Path 'apps/desktop/dist/next') { 'apps/desktop/dist/next' } else { throw 'Missing renderer output' }
+          if (-not (Test-Path "$rendererRoot/index.html") -and -not (Test-Path "$rendererRoot/apps/desktop/index.html")) { throw 'Missing renderer entry' }
+          foreach ($path in @(
+            "$resourcesRoot/app.asar",
+            "$resourcesRoot/core.asar",
+            "$resourcesRoot/core.asar.unpacked/cli/dist/index.js",
+            "$releaseRoot/latest.yml",
+            'apps/desktop/core-dist/manifest.json',
+            'apps/desktop/core-dist/package.json',
+            'apps/desktop/core-dist/dist/renderer/apps/desktop/index.html'
+          )) {
+            if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Missing required file: $path" }
           }
-
-          if ($installer.Length -lt 10485760) {
-            throw "Installer looks too small: $($installer.FullName) (size=$($installer.Length))"
-          }
-
-          Write-Host "Renderer files: $rendererFileCount"
-          Write-Host "app.asar (shell) size: $((Get-Item -LiteralPath $asarPath).Length)"
-          Write-Host "Core files: $((Get-ChildItem -Path $coreRoot -Recurse -File | Measure-Object).Count)"
-          Write-Host "core.asar size: $((Get-Item -LiteralPath $coreAsarPath).Length)"
-          Write-Host "Installer: $($installer.Name) ($($installer.Length) bytes)"
+          if (-not (Get-ChildItem -LiteralPath $releaseRoot -Filter '*.exe' -File)) { throw 'Missing Windows installer' }
           Write-Host 'Package integrity verification passed.'
+
+      # Linux 构建
+      - name: Build artifact on Linux
+        id: build_linux
+        if: runner.os == 'Linux'
+        run: npm run desktop:package:app
+        env:
+          UPDATE_CHANNEL: stable
+          UPDATE_SERVER_URL: ${{ secrets.UPDATE_SERVER_URL }}
+          RENDERER_OTA_PUBLIC_KEY: ${{ secrets.RENDERER_OTA_PUBLIC_KEY }}
+          CORE_SEQ: ${{ steps.core_seq.outputs.seq }}
+          RELEASE_NOTES: ${{ needs.check-stable.outputs.release_notes }}
+          APP_URL: http://localhost:3015
+          DATABASE_URL: 'postgresql://postgres@localhost:5432/postgres'
+          KEY_VAULTS_SECRET: 'oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE='
+          NEXT_PUBLIC_DESKTOP_PROJECT_ID: ${{ secrets.UMAMI_STABLE_DESKTOP_PROJECT_ID }}
+          NEXT_PUBLIC_DESKTOP_UMAMI_BASE_URL: ${{ secrets.UMAMI_STABLE_DESKTOP_BASE_URL }}
+          NODE_OPTIONS: --max-old-space-size=8192
 
       - name: Upload artifacts
         id: upload
@@ -437,7 +480,7 @@ jobs:
   # ============================================
   merge-mac-files:
     needs: [build, check-stable, configure-build]
-    if: needs.check-stable.outputs.is_stable == 'true'
+    if: needs.check-stable.outputs.build_required == 'true'
     name: Merge macOS Release Files
     runs-on: ubuntu-latest
     permissions:
@@ -445,6 +488,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.workflow_sha }}
 
       - name: Setup environment
         uses: ./.github/actions/setup-env
@@ -487,10 +532,16 @@ jobs:
     name: Publish to GitHub Release
     runs-on: ubuntu-latest
     # 手动触发时可选择跳过
-    if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.skip_github_release) }}
+    if: ${{ needs.check-stable.outputs.build_required == 'true' && !(github.event_name == 'workflow_dispatch' && inputs.skip_github_release) }}
     permissions:
       contents: write
     steps:
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.LOBEHUB_BOT_APP_ID }}
+          private-key: ${{ secrets.LOBEHUB_BOT_APP_PRIVATE_KEY }}
+
       - name: Download merged artifacts
         uses: actions/download-artifact@v7
         with:
@@ -500,98 +551,108 @@ jobs:
       - name: List final artifacts
         run: ls -R release
 
-      - name: Preflight release assets
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "Preparing release upload for tag:"
-          echo "  ${{ github.event_name == 'workflow_dispatch' && format('v{0}', needs.check-stable.outputs.version) || github.event.release.tag_name }}"
-          echo ""
-          echo "Collected files:"
-          find release -maxdepth 1 -type f -print0 | xargs -0 -I{} sh -c 'printf "  - %s (%s bytes)\n" "$(basename "{}")" "$(stat -c%s "{}" 2>/dev/null || stat -f%z "{}")"'
-          echo ""
-          echo "Summary:"
-          find release -maxdepth 1 -type f | wc -l | xargs -I{} echo "  total files: {}"
-          find release -maxdepth 1 -type f -name "*.exe*" | wc -l | xargs -I{} echo "  exe files: {}"
-          find release -maxdepth 1 -type f -name "*.dmg*" | wc -l | xargs -I{} echo "  dmg files: {}"
-          find release -maxdepth 1 -type f -name "latest*" | wc -l | xargs -I{} echo "  latest* manifests: {}"
-
       - name: Upload to Release (attempt 1/3)
         id: upload_release_1
         continue-on-error: true
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           # 手动触发时使用输入的版本号创建 tag
           tag_name: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', needs.check-stable.outputs.version) || github.event.release.tag_name }}
-          # 手动触发时创建为 draft
-          draft: ${{ github.event_name == 'workflow_dispatch' }}
+          # Source resolution already requires an existing release; do not unpublish it on a rebuild.
+          draft: false
+          token: ${{ steps.app-token.outputs.token }}
           fail_on_unmatched_files: true
           files: |
+            release/stable*
             release/latest*
-            release/*.exe*
             release/*.dmg*
             release/*.zip*
-          token: ${{ github.token }}
+            release/*.exe*
+            release/*.AppImage
+            release/*.deb*
+            release/*.snap*
+            release/*.rpm*
+            release/*.tar.gz*
 
       - name: Upload to Release (attempt 2/3)
         id: upload_release_2
         if: steps.upload_release_1.outcome == 'failure'
         continue-on-error: true
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', needs.check-stable.outputs.version) || github.event.release.tag_name }}
-          draft: ${{ github.event_name == 'workflow_dispatch' }}
+          draft: false
+          token: ${{ steps.app-token.outputs.token }}
           fail_on_unmatched_files: true
           files: |
+            release/stable*
             release/latest*
-            release/*.exe*
             release/*.dmg*
             release/*.zip*
-          token: ${{ github.token }}
+            release/*.exe*
+            release/*.AppImage
+            release/*.deb*
+            release/*.snap*
+            release/*.rpm*
+            release/*.tar.gz*
 
       - name: Upload to Release (attempt 3/3)
         id: upload_release_3
         if: steps.upload_release_1.outcome == 'failure' && steps.upload_release_2.outcome == 'failure'
         continue-on-error: true
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', needs.check-stable.outputs.version) || github.event.release.tag_name }}
-          draft: ${{ github.event_name == 'workflow_dispatch' }}
+          draft: false
+          token: ${{ steps.app-token.outputs.token }}
           fail_on_unmatched_files: true
           files: |
+            release/stable*
             release/latest*
-            release/*.exe*
             release/*.dmg*
             release/*.zip*
-          token: ${{ github.token }}
+            release/*.exe*
+            release/*.AppImage
+            release/*.deb*
+            release/*.snap*
+            release/*.rpm*
+            release/*.tar.gz*
 
       - name: Assert release upload success
         if: steps.upload_release_1.outcome == 'failure' && steps.upload_release_2.outcome == 'failure' && steps.upload_release_3.outcome == 'failure'
         shell: bash
         run: |
-          echo "::error::Release upload failed after 3 attempts."
-          echo "::error::Likely causes: transient GitHub Release API failure (5xx/Unicorn) or asset conflict."
-          echo "::error::Inspect the 3 upload attempts above for the first non-HTML API error."
+          echo '::error::Release upload failed after 3 attempts.'
           exit 1
-
   # ============================================
   # 发布到 S3 更新服务器
   # ============================================
-
   publish-s3:
     needs: [merge-mac-files, check-stable]
     name: Publish to S3
     runs-on: ubuntu-latest
+    outputs:
+      core_published: ${{ steps.publish.outputs.core-published }}
+      installers_published: ${{ steps.publish.outputs.installers-published }}
     # 手动触发时可选择跳过
-    if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.skip_s3_upload) }}
+    if: ${{ needs.check-stable.outputs.build_required == 'true' && !(github.event_name == 'workflow_dispatch' && inputs.skip_s3_upload) }}
     steps:
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.LOBEHUB_BOT_APP_ID }}
+          private-key: ${{ secrets.LOBEHUB_BOT_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          ref: ${{ github.workflow_sha }}
       - uses: ./.github/actions/desktop-publish-s3
+        id: publish
         with:
           channel: stable
           cloud-ref: ${{ needs.check-stable.outputs.cloud_ref }}
           version: ${{ needs.check-stable.outputs.version }}
-          artifact-name: merged-release
           aws-access-key-id: ${{ secrets.UPDATE_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.UPDATE_AWS_SECRET_ACCESS_KEY }}
           s3-bucket: ${{ secrets.UPDATE_S3_BUCKET }}
@@ -602,13 +663,19 @@ jobs:
     needs: [publish-s3, check-stable]
     name: Publish Sparkle Appcast
     runs-on: macos-15
+    if: needs.check-stable.outputs.build_required == 'true'
+    outputs:
+      published: ${{ steps.publish.outputs.published }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.workflow_sha }}
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           package-manager-cache: false
       - uses: ./.github/actions/desktop-publish-sparkle
+        id: publish
         with:
           channel: stable
           version: ${{ needs.check-stable.outputs.version }}
@@ -620,3 +687,31 @@ jobs:
           s3-bucket: ${{ secrets.UPDATE_S3_BUCKET }}
           s3-region: ${{ secrets.UPDATE_S3_REGION }}
           s3-endpoint: ${{ secrets.UPDATE_S3_ENDPOINT }}
+
+  record-delivery:
+    name: Record successful desktop delivery
+    needs: [check-stable, configure-build, build, publish-github, publish-s3, publish-sparkle]
+    if: always() && needs.check-stable.outputs.build_required == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.workflow_sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
+      - name: Record publication proof
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ needs.check-stable.outputs.version }}
+          SOURCES_HASH: ${{ needs.check-stable.outputs.sources_hash }}
+          CORE_PUBLISHED: ${{ needs.publish-s3.outputs.core_published }}
+          INSTALLERS_PUBLISHED: ${{ needs.publish-s3.outputs.installers_published }}
+          SPARKLE_PUBLISHED: ${{ needs.publish-sparkle.outputs.published }}
+          RELEASE_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && (inputs.skip_github_release || inputs.skip_s3_upload) }}
+          BUILT_PLATFORMS: ${{ needs.configure-build.outputs.complete_matrix == 'true' && '["darwin-arm64","darwin-x64","linux-x64","win32-x64"]' || '[]' }}
+          PUBLICATION_OUTCOMES: '{"build":"${{ needs.build.result }}","github":"${{ needs.publish-github.result }}","s3":"${{ needs.publish-s3.result }}","sparkle":"${{ needs.publish-sparkle.result }}"}'
+        run: node .github/scripts/desktopReleaseCli.mjs publish

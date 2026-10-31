@@ -2,6 +2,8 @@
 
 All Patch Release scenarios automatically bump the patch version (e.g. 2.1.31 → 2.1.32). PR titles do not need to include a version number.
 
+For Desktop Stable releases, read [Desktop Stable Sources](./desktop-stable-sources.md) for Cloud selection, delivered baselines, PR metadata, rebuilds and historical imports.
+
 ---
 
 ## 1. Weekly Release (canary → main)
@@ -39,7 +41,7 @@ gh pr create \
 ```
 
 4. **While the PR is open**: `release-pr-version.yml` commits `package.json` to latest stable tag + patch.
-5. **After merge**: auto-tag-release detects `release/*` branch → tags latest stable tag +1.
+5. **After merge**: create and publish the GitHub Release manually with the release intent preserved in its body; the Stable workflow then resolves the pinned sources.
 
 ---
 
@@ -58,19 +60,19 @@ git checkout -b hotfix/v{version}-{short-hash}
 git push -u origin hotfix/v{version}-{short-hash}
 ```
 
-2. **Create PR to main** with a gitmoji prefix title (e.g. `🐛 fix: description`)
+2. **Select a delivered desktop baseline and create PR to main** with a gitmoji prefix title (e.g. `🐛 fix: description`). Prefer `hotfix:branch --base` or add the generated metadata from [Desktop Stable Sources](./desktop-stable-sources.md); branch name alone does not pin Cloud.
 
 3. **Write a short hotfix changelog** — See `changelog-example/hotfix.md`. Keep it minimal: scope line, 1-3 fix bullets (symptom + fix in one sentence), upgrade note, owner. No long root-cause section — that lives in the commit message.
    - **Hotfix owner**: Use the actual PR author (retrieve via `gh pr view <number> --json author --jq '.author.login'`), never hardcode a username.
 
 4. **While the PR is open**: `release-pr-version.yml` commits `package.json` to latest stable tag + patch.
 
-5. **After merge**: auto-tag-release detects `hotfix/*` branch → tags latest stable tag +1.
+5. **After merge**: create and publish the GitHub Release manually with the generated hotfix intent preserved in its body; the Stable workflow verifies the delivered baseline before building.
 
 ### Script
 
 ```bash
-bun run hotfix:branch
+bun run hotfix:branch --base v2.2.21
 ```
 
 ---
@@ -82,8 +84,8 @@ New AI model or provider support, typically contributed via community PRs.
 ### How it works
 
 - Community contributors submit PRs with titles like `✨ feat: add xxx model` or `💄 style: support xxx models`
-- These PR title prefixes (`feat` / `style`) are in the auto-tag trigger list
-- No special branch naming or manual release steps required — merging the PR triggers auto patch +1
+- These PR title prefixes (`feat` / `style`) identify ordinary patch work.
+- No special branch naming is required. A main-targeted model patch carries the delivered desktop baseline metadata from [Desktop Stable Sources](./desktop-stable-sources.md); after merge, publish the Release manually.
 
 ### When an agent is involved
 
@@ -115,6 +117,8 @@ git push -u origin release/db-migration-{name}
 
 3. **Create PR to main** with the migration changelog as the PR body
 
+   Add the generated desktop baseline metadata from [Desktop Stable Sources](./desktop-stable-sources.md). A `release/db-migration-*` branch is a targeted patch, not a weekly release selecting latest Cloud.
+
 ```bash
 gh pr create \
   --title "👷 build: {migration description}" \
@@ -124,4 +128,4 @@ gh pr create \
 ```
 
 4. **While the PR is open**: `release-pr-version.yml` commits `package.json` to latest stable tag + patch.
-5. **After merge**: auto-tag-release detects `release/*` branch → tags latest stable tag +1.
+5. **After merge**: create and publish the GitHub Release manually with the migration intent preserved in its body.
