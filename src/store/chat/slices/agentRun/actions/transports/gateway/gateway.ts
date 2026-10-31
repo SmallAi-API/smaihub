@@ -952,11 +952,8 @@ export class GatewayActionImpl {
      * without issuing a second legacy resume request.
      */
     precreatedResult?: ExecAgentResult;
-    /**
-     * Project working directory the NEW topic is born in — the blank
-     * conversation a project group's "+" staged. The caller reads it before the
-     * send adopts its minted topic, since that switch clears the staging.
-     */
+    /** Directory, else project, a project "+" staged the NEW topic in (read before adopt clears it). */
+    projectId?: string;
     projectWorkingDirectoryId?: string;
     /** Server operation whose visible output ended before this fresh turn. */
     replacesOperationId?: string;
@@ -1039,6 +1036,7 @@ export class GatewayActionImpl {
       parentMessageId,
       parentOperationId,
       precreatedResult,
+      projectId,
       projectWorkingDirectoryId,
       replacesOperationId,
       resumeApproval,
@@ -1179,7 +1177,7 @@ export class GatewayActionImpl {
                 executionContext,
                 initialTopicMetadata,
                 messageContext,
-                projectWorkingDirectoryId: isCreateNewTopic ? projectWorkingDirectoryId : undefined,
+                newTopicProject: isCreateNewTopic ? { projectId, projectWorkingDirectoryId } : {},
               }),
               ...desktopDeviceHints,
               clientOperations,
