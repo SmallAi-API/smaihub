@@ -1,14 +1,17 @@
-import { createStaticStyles } from '@lobehub/ui';
+import { cssVar } from '@lobehub/ui/stylex/cssVar.stylex';
+import * as stylex from '@stylexjs/stylex';
 
-export const styles = createStaticStyles(({ css, cssVar }) => ({
-  // 主容器 - 非 PWA 模式（无顶部边框）
-  mainContainer: css`
-    position: relative;
-  `,
+export const styles = stylex.create({
+  // Main container - non-PWA mode (no top border)
+  mainContainer: {
+    position: 'relative',
+  },
 
-  // 主容器 - PWA 模式（带顶部边框）
-  mainContainerPWA: css`
-    position: relative;
-    border-block-start: 1px solid ${cssVar.colorBorder};
-  `,
-}));
+  // Main container - PWA mode (with top border)
+  mainContainerPWA: {
+    position: 'relative',
+    borderBlockStartWidth: '1px',
+    borderBlockStartStyle: 'solid',
+    borderBlockStartColor: cssVar.colorBorder,
+  },
+});

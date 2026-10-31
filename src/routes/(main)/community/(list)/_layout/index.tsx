@@ -1,4 +1,5 @@
 import { Flexbox } from '@lobehub/ui';
+import * as stylex from '@stylexjs/stylex';
 import { Outlet } from 'react-router';
 
 import WideScreenContainer from '@/features/WideScreenContainer';
@@ -12,9 +13,13 @@ const Layout = () => {
   return (
     <>
       <Header />
-      <Flexbox className={styles.mainContainer} height={'100%'} width={'100%'}>
+      <Flexbox
+        className={stylex.props(styles.mainContainer).className}
+        height={'100%'}
+        width={'100%'}
+      >
         <WideScreenContainer
-          className={styles.contentContainer}
+          className={stylex.props(styles.contentContainer).className}
           gap={16}
           minWidth={MAX_WIDTH}
           style={{ paddingBottom: 56, paddingTop: 16 }}
@@ -28,7 +33,6 @@ const Layout = () => {
               <Outlet />
             </RouteSkeletonChromeProvider>
           </Flexbox>
-          <div className={styles.spacer} />
         </WideScreenContainer>
       </Flexbox>
     </>
