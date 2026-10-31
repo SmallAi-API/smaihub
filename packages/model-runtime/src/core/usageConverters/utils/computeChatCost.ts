@@ -382,6 +382,11 @@ const resolveQuantity = (
   usage: ModelTokensUsage,
   context: UnitQuantityResolverContext,
 ) => {
+  // Character-billed units (e.g. TTS) count input characters instead of tokens.
+  if (unit.unit === 'millionCharacters') {
+    return unit.name === 'textInput' ? usage.inputCharacters : undefined;
+  }
+
   const resolver = UNIT_QUANTITY_RESOLVERS[unit.name as PricingUnitName];
   const quantity = resolver?.(usage, context);
   return typeof quantity === 'number' ? quantity : undefined;
@@ -433,7 +438,7 @@ export const computeChatCost = (
     if (quantity === undefined) continue;
 
     if (unit.strategy === 'fixed') {
-      if (unit.unit !== 'millionTokens')
+      if (unit.unit !== 'millionTokens' && unit.unit !== 'millionCharacters')
         throw new Error(`Unsupported chat pricing unit: ${unit.unit}`);
 
       const fixedUnit = unit as FixedPricingUnit;
