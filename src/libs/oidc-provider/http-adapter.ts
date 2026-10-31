@@ -25,8 +25,26 @@ export const convertHeadersToNodeHeaders = (nextHeaders: Headers): Record<string
 };
 
 /**
- * 创建用于 OIDC Provider 的 Node.js HTTP 请求对象
- * @param req Next.js 请求对象
+ * oidc-provider runs with `proxy = true` and builds every endpoint URL (device
+ * verification, discovery endpoints, ...) from the forwarded host. Behind a
+ * rewrite such as lobehub.com → the Vercel deployment, that host is the
+ * deployment's own domain, so the CLI was told to open `*.vercel.app`. Pin the
+ * host to APP_URL, the same origin the issuer is built from.
+ */
+const pinHostToAppUrl = (headers: Record<string, string>): Record<string, string> => {
+  const appUrl = new URL(appEnv.APP_URL!);
+
+  return {
+    ...headers,
+    'host': appUrl.host,
+    'x-forwarded-host': appUrl.host,
+    'x-forwarded-proto': appUrl.protocol.replace(':', ''),
+  };
+};
+
+/**
+ * Create a Node.js HTTP request object for OIDC Provider
+ * @param req Next.js request object
  */
 const DISCOVERY_PROVIDER_PATH = '/.well-known/openid-configuration';
 
@@ -64,7 +82,7 @@ export const createNodeRequest = async (req: NextRequest): Promise<IncomingMessa
    */
   const nodeRequest = Object.assign(bodyStream, {
     // Basic properties
-    headers: convertHeadersToNodeHeaders(req.headers),
+    headers: pinHostToAppUrl(convertHeadersToNodeHeaders(req.headers)),
 
     method: req.method,
     // Add extra properties expected by the Node.js server
