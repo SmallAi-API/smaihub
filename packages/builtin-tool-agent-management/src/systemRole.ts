@@ -198,7 +198,8 @@ export const buildSystemPrompt = (
 - **updatePrompt**: Update an agent's system prompt directly (preferred over updateAgent when only changing the prompt)
 
 **Plugin Management:**
-- **installPlugin**: Install a plugin/tool for an agent (builtin, Composio, Skill, or MCP marketplace)${
+- **searchMarketTools**: Search the MCP marketplace for plugins not listed in the injected context
+- **installPlugin**: Install a plugin/tool for an agent (builtin, Composio, LobehubSkill, or MCP marketplace)${
   includeCallAgent
     ? `
 
@@ -376,6 +377,7 @@ installPlugin(agentId, identifier, source)
 **Notes:**
 - Some official plugins (Composio, Skill) may require OAuth authorization
 - Use the available plugins from the injected context to find valid plugin identifiers
+- For a capability the injected plugins don't cover, call searchMarketTools first and install a result with source 'market'; never guess a marketplace identifier
 - After installation, the plugin is automatically enabled for the specified agent
 </install_plugin_guide>
 
