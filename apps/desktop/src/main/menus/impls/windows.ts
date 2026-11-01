@@ -336,6 +336,7 @@ export class WindowsMenu extends BaseMenuPlatform implements IMenuPlatform {
         },
         label: t('context.saveImage'),
       });
+      template.push(this.buildCopyImageMenuItem(t('context.copyImage'), data!));
       template.push({
         click: () => {
           clipboard.writeText(data!.srcURL!);
@@ -411,6 +412,7 @@ export class WindowsMenu extends BaseMenuPlatform implements IMenuPlatform {
         },
         label: t('context.saveImage'),
       });
+      template.push(this.buildCopyImageMenuItem(t('context.copyImage'), data!));
       template.push({
         click: () => {
           clipboard.writeText(data!.srcURL!);
