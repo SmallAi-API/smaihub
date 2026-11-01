@@ -916,7 +916,13 @@ class TaskExecutor extends BaseExecutor<typeof TaskApiName> {
   };
 
   runTask = async (
-    params: { continueTopicId?: string; identifier?: string; prompt?: string },
+    params: {
+      continueTopicId?: string;
+      identifier?: string;
+      model?: string;
+      prompt?: string;
+      provider?: string;
+    },
     ctx?: BuiltinToolContext,
   ): Promise<BuiltinToolResult> => {
     const identifier = params.identifier?.trim() || ctx?.taskId || undefined;
@@ -933,7 +939,9 @@ class TaskExecutor extends BaseExecutor<typeof TaskApiName> {
       const target = (await taskService.find(identifier)).data;
       const result = await taskService.run(target.id, {
         continueTopicId: params.continueTopicId,
+        model: params.model,
         prompt: params.prompt,
+        provider: params.provider,
       });
 
       const topicId = (result as { topicId?: string } | undefined)?.topicId;
@@ -969,7 +977,7 @@ class TaskExecutor extends BaseExecutor<typeof TaskApiName> {
   };
 
   runTasks = async (
-    params: { identifiers: string[] },
+    params: { identifiers: string[]; model?: string; provider?: string },
     _ctx?: BuiltinToolContext,
   ): Promise<BuiltinToolResult> => {
     const identifiers = Array.isArray(params.identifiers)
@@ -1014,7 +1022,9 @@ class TaskExecutor extends BaseExecutor<typeof TaskApiName> {
     }
     for (const task of byId.values()) {
       try {
-        const result = await taskService.run(task.id);
+        const result = await (params.model || params.provider
+          ? taskService.run(task.id, { model: params.model, provider: params.provider })
+          : taskService.run(task.id));
         results.push({
           identifier: task.identifier,
           taskId: task.id,
