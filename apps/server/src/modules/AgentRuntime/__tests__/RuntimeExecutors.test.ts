@@ -3460,9 +3460,7 @@ describe('RuntimeExecutors', { timeout: 60_000 }, () => {
 
       expect(mockMessageModel.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          metadata: {
-            toolExecutionTimeMs: 100,
-          },
+          metadata: { toolExecutionTimeMs: 100, toolResultStop: false, toolResultSuccess: true },
         }),
       );
     });
@@ -3796,10 +3794,19 @@ describe('RuntimeExecutors', { timeout: 60_000 }, () => {
     });
 
     describe('skipCreateToolMessage (resumption after human approval)', () => {
+      beforeEach(() => {
+        mockMessageModel.findById.mockImplementation(async (id: string) => ({
+          id,
+          role: 'tool',
+          content: '',
+        }));
+        mockMessageModel.findMessagePlugin.mockImplementation(async (id: string) => ({
+          toolCallId: id.replace('pending-tool-msg-', 'tool-call-'),
+        }));
+      });
       it('should update existing tool message instead of creating a new one', async () => {
         const executors = createRuntimeExecutors(ctx);
         const state = createMockState();
-
         const instruction = {
           payload: {
             parentMessageId: 'pending-tool-msg-1',
@@ -3814,23 +3821,19 @@ describe('RuntimeExecutors', { timeout: 60_000 }, () => {
           },
           type: 'call_tool' as const,
         };
-
         await executors.call_tool!(instruction, state);
-
         expect(mockMessageModel.create).not.toHaveBeenCalled();
         expect(mockMessageModel.updateToolMessage).toHaveBeenCalledWith(
           'pending-tool-msg-1',
           expect.objectContaining({
             content: 'Tool result',
-            metadata: { toolExecutionTimeMs: 100 },
+            metadata: { toolExecutionTimeMs: 100, toolResultStop: false, toolResultSuccess: true },
           }),
         );
       });
-
       it('should return the existing toolMessageId as parentMessageId for the next LLM step', async () => {
         const executors = createRuntimeExecutors(ctx);
         const state = createMockState();
-
         const instruction = {
           payload: {
             parentMessageId: 'pending-tool-msg-42',
@@ -3845,17 +3848,13 @@ describe('RuntimeExecutors', { timeout: 60_000 }, () => {
           },
           type: 'call_tool' as const,
         };
-
         const result = await executors.call_tool!(instruction, state);
-
         const nextPayload = result.nextContext?.payload as { parentMessageId?: string } | undefined;
         expect(nextPayload?.parentMessageId).toBe('pending-tool-msg-42');
       });
-
       it('should fall back to creating a new tool message when skipCreateToolMessage is false', async () => {
         const executors = createRuntimeExecutors(ctx);
         const state = createMockState();
-
         const instruction = {
           payload: {
             parentMessageId: 'assistant-msg-7',
@@ -3870,15 +3869,12 @@ describe('RuntimeExecutors', { timeout: 60_000 }, () => {
           },
           type: 'call_tool' as const,
         };
-
         await executors.call_tool!(instruction, state);
-
         expect(mockMessageModel.create).toHaveBeenCalledTimes(1);
         expect(mockMessageModel.updateToolMessage).not.toHaveBeenCalled();
       });
     });
   });
-
   describe('request_human_approve executor', () => {
     const createMockState = (overrides?: Partial<AgentState>): AgentState => ({
       cost: createMockCost(),
@@ -4999,17 +4995,13 @@ describe('RuntimeExecutors', { timeout: 60_000 }, () => {
       expect(mockMessageModel.create).toHaveBeenNthCalledWith(
         1,
         expect.objectContaining({
-          metadata: {
-            toolExecutionTimeMs: 150,
-          },
+          metadata: { toolExecutionTimeMs: 150, toolResultStop: false, toolResultSuccess: true },
         }),
       );
       expect(mockMessageModel.create).toHaveBeenNthCalledWith(
         2,
         expect.objectContaining({
-          metadata: {
-            toolExecutionTimeMs: 250,
-          },
+          metadata: { toolExecutionTimeMs: 250, toolResultStop: false, toolResultSuccess: true },
         }),
       );
     });
