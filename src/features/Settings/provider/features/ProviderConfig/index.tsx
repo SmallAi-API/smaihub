@@ -50,8 +50,8 @@ import { getProviderLogoUrl } from '@/utils/providerLogo';
 
 import { KeyVaultsConfigKey, LLMProviderApiTokenKey, LLMProviderBaseUrlKey } from '../../const';
 import { isResponsesApiSupportedSdkType } from '../providerSettings';
-import { type CheckErrorRender } from './Checker';
 import Checker from './Checker';
+import { type CheckErrorRender } from './Checker';
 import EnableSwitch from './EnableSwitch';
 import OAuthDeviceFlowAuth from './OAuthDeviceFlowAuth';
 import UpdateProviderInfo from './UpdateProviderInfo';

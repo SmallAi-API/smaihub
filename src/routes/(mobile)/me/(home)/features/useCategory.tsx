@@ -1,10 +1,22 @@
-import { Book, CircleUserRound, Settings2 } from 'lucide-react';
+import { LOBE_CHAT_CLOUD, UTM_SOURCE } from '@lobechat/business-const';
+import { DOCUMENTS, DOWNLOAD_URL, FEEDBACK, OFFICIAL_URL } from '@lobechat/const';
+import {
+  Book,
+  CircleUserRound,
+  Cloudy,
+  Download,
+  Feather,
+  FileClockIcon,
+  Settings2,
+} from 'lucide-react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
 import useBusinessMeCells from '@/business/client/features/User/useBusinessMeCells';
 import { type CellProps } from '@/components/Cell';
-import { DOCUMENTS } from '@/const/index';
+import { openChangelogModal } from '@/components/ChangelogModal';
+import { usePlatform } from '@/hooks/usePlatform';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
 import { authSelectors } from '@/store/user/selectors';
