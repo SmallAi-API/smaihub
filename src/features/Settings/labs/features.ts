@@ -28,7 +28,6 @@ type LabFeatureI18nKey =
   | 'integrations'
   | 'messageTextSelectionActions'
   | 'oauthApps'
-  | 'persistentSandbox'
   | 'projects'
   | 'selfLearning'
   | 'topicBugReport';
