@@ -73,6 +73,7 @@ describe('settings useCategory', () => {
       SettingsTabs.Profile,
       SettingsTabs.Appearance,
       SettingsTabs.Hotkey,
+      SettingsTabs.Integrations,
     ]);
     expect(generalGroup?.items.map((item) => item.key)).toEqual([
       SettingsTabs.Stats,
@@ -114,15 +115,7 @@ describe('settings useCategory', () => {
     expect(getItemKeys()).not.toContain(SettingsTabs.OAuthApps);
   });
 
-  it('hides Integrations by default and shows it in the Account group once the Labs flag is on', () => {
-    expect(getItemKeys()).not.toContain(SettingsTabs.Integrations);
-
-    useUserStore.setState({
-      preference: {
-        ...initialUserStoreState.preference,
-        lab: { ...initialUserStoreState.preference.lab, enableIntegrations: true },
-      },
-    });
+  it('shows Integrations in the Account group without any Labs flag', () => {
     const { result } = renderHook(() => useCategory(), { wrapper: createWrapper(true) });
     const accountGroup = result.current.find((group) => group.key === SettingsGroupKey.Account);
     expect(accountGroup?.items.map((item) => item.key)).toContain(SettingsTabs.Integrations);
