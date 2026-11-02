@@ -22,6 +22,7 @@ const cases = [
   ['same-base beta', '2.2.19-beta.1', '2.2.19', 'stable-ahead'],
   ['next-patch canary', '2.2.20-canary.1', '2.2.19', null],
   ['exact stable', '2.2.19', '2.2.19', null],
+  ['bare stable tag', '2.2.19-canary.1', '2.2.19', 'stable-ahead', { TEST_TAG_PREFIX: '' }],
   ['older stable', '2.2.18', '2.2.19', 'stable-ahead'],
   ['newer stable', '2.2.20', '2.2.19', null],
   ['two-digit patch', '2.2.9-canary.1', '2.2.19', 'stable-ahead'],
@@ -51,7 +52,7 @@ for (const [name, shellVersion, stableVersion, reason, overrides] of cases) {
 node() { printf '%s\\n' 'test-abi'; }
 git() {
   if [ -n "$TEST_STABLE" ]; then
-    printf 'abc\\trefs/tags/v%s\\n' "$TEST_STABLE"
+    printf 'abc\\trefs/tags/%s%s\\n' "$TEST_TAG_PREFIX" "$TEST_STABLE"
   fi
   printf 'abc\\trefs/tags/v2.2.1\\nabc\\trefs/tags/v99.0.0-canary.1\\n' | {
     if [ -n "$TEST_STABLE" ]; then cat; else cat >/dev/null; fi
@@ -68,6 +69,7 @@ ${script}`,
             GITHUB_OUTPUT: output,
             SHELL_VERSION: shellVersion,
             TEST_STABLE: stableVersion,
+            TEST_TAG_PREFIX: 'v',
             ...overrides,
           },
         },

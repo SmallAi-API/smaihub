@@ -29,35 +29,8 @@ on:
         description: 'Version to build (e.g., 2.0.0)'
         required: true
         type: string
-      cloud_ref:
-        description: 'Cloud SHA for import, or verify the SHA already bound in the hotfix/recovery Release'
-        required: false
-        type: string
-        default: ''
-      release_mode:
-        description: 'Rebuild pinned sources, resume a PR-bound hotfix/recovery, or import historical sources only'
-        required: true
-        type: choice
-        options: [rebuild, hotfix, recovery, import]
-        default: rebuild
       source_ref:
         description: 'Product source ref; defaults to the target version tag and must resolve to its SHA'
-        type: string
-        default: ''
-      base_version:
-        description: 'Optional verification of the delivered baseline already bound in the hotfix Release'
-        type: string
-        default: ''
-      cloud_override_reason:
-        description: 'Optional verification of the Cloud repair reason already bound in the hotfix/recovery Release'
-        type: string
-        default: ''
-      evidence_run_id:
-        description: 'Original build run ID for historical import'
-        type: string
-        default: ''
-      evidence_run_attempt:
-        description: 'Original build attempt for historical import'
         type: string
         default: ''
       build_mac:
@@ -118,6 +91,7 @@ jobs:
       build_required: ${{ steps.cloud-ref.outputs.build_required }}
       is_stable: ${{ steps.check.outputs.is_stable }}
       version: ${{ steps.check.outputs.version }}
+      tag: ${{ steps.cloud-ref.outputs.tag }}
       is_manual: ${{ steps.check.outputs.is_manual }}
       release_notes: ${{ steps.check.outputs.release_notes }}
     steps:
@@ -170,42 +144,16 @@ jobs:
             echo "✅ Stable release detected: $version"
           fi
 
-      # Restrict the Cloud token to the configured overlay repository.
-      - name: Resolve overlay repository
-        id: overlay-repo
-        if: steps.check.outputs.is_stable == 'true'
-        env:
-          OVERLAY_REPOSITORY: ${{ vars.OVERLAY_REPOSITORY }}
-        run: |
-          echo "owner=${OVERLAY_REPOSITORY%%/*}" >> "$GITHUB_OUTPUT"
-          echo "name=${OVERLAY_REPOSITORY#*/}" >> "$GITHUB_OUTPUT"
-
-      - name: Create overlay token
-        id: overlay-token
-        if: steps.check.outputs.is_stable == 'true'
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ vars.LOBEHUB_BOT_APP_ID }}
-          private-key: ${{ secrets.LOBEHUB_BOT_APP_PRIVATE_KEY }}
-          owner: ${{ steps.overlay-repo.outputs.owner }}
-          repositories: ${{ steps.overlay-repo.outputs.name }}
-
-      - name: Resolve Cloud revision
+      - name: Resolve release sources
         id: cloud-ref
         if: steps.check.outputs.is_stable == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_VERSION: ${{ steps.check.outputs.version }}
-          RELEASE_MODE: ${{ github.event_name == 'release' && 'auto' || inputs.release_mode }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || '' }}
+          RELEASE_MODE: repository
           SOURCE_REF: ${{ inputs.source_ref || '' }}
-          CLOUD_REF: ${{ inputs.cloud_ref || '' }}
-          BASE_VERSION: ${{ inputs.base_version || '' }}
-          CLOUD_OVERRIDE_REASON: ${{ inputs.cloud_override_reason || '' }}
-          EVIDENCE_RUN_ID: ${{ inputs.evidence_run_id || '' }}
-          EVIDENCE_RUN_ATTEMPT: ${{ inputs.evidence_run_attempt || '' }}
-          WRITE_SOURCES: ${{ github.event_name == 'release' || inputs.release_mode == 'import' || !inputs.skip_github_release || !inputs.skip_s3_upload }}
-          CLOUD_REPOSITORY: ${{ vars.OVERLAY_REPOSITORY }}
-          CLOUD_TOKEN: ${{ steps.overlay-token.outputs.token }}
+          WRITE_SOURCES: ${{ github.event_name == 'release' || !inputs.skip_github_release || !inputs.skip_s3_upload }}
         run: |
           node .github/scripts/desktopReleaseCli.mjs resolve
 
@@ -311,34 +259,11 @@ jobs:
           cp -R "$RUNNER_TEMP/desktop-release-tooling/.github/." .github/
           node .github/scripts/desktopReleaseCli.mjs verify-checkout
 
-      - name: Resolve overlay repository
-        id: overlay-repo
-        shell: bash
-        env:
-          OVERLAY_REPOSITORY: ${{ vars.OVERLAY_REPOSITORY }}
-        run: |
-          set -euo pipefail
-          echo "owner=${OVERLAY_REPOSITORY%%/*}" >> "$GITHUB_OUTPUT"
-          echo "name=${OVERLAY_REPOSITORY#*/}" >> "$GITHUB_OUTPUT"
-
-      - name: Create overlay token
-        id: overlay-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ vars.LOBEHUB_BOT_APP_ID }}
-          private-key: ${{ secrets.LOBEHUB_BOT_APP_PRIVATE_KEY }}
-          owner: ${{ steps.overlay-repo.outputs.owner }}
-          repositories: ${{ steps.overlay-repo.outputs.name }}
-
       - name: Setup build environment
         id: setup
         uses: ./.github/actions/desktop-build-setup
         with:
-          cloud-ref: ${{ needs.check-stable.outputs.cloud_ref }}
-          cloud-repository: ${{ vars.OVERLAY_REPOSITORY }}
-          cloud-token: ${{ steps.overlay-token.outputs.token }}
           node-version: ${{ env.NODE_VERSION }}
-          require-pinned-cloud: 'true'
 
       - name: Resolve core seq
         id: core_seq
@@ -536,12 +461,6 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/create-github-app-token@v2
-        id: app-token
-        with:
-          app-id: ${{ vars.LOBEHUB_BOT_APP_ID }}
-          private-key: ${{ secrets.LOBEHUB_BOT_APP_PRIVATE_KEY }}
-
       - name: Download merged artifacts
         uses: actions/download-artifact@v7
         with:
@@ -556,11 +475,10 @@ jobs:
         continue-on-error: true
         uses: softprops/action-gh-release@v3
         with:
-          # 手动触发时使用输入的版本号创建 tag
-          tag_name: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', needs.check-stable.outputs.version) || github.event.release.tag_name }}
+          tag_name: ${{ needs.check-stable.outputs.tag }}
           # Source resolution already requires an existing release; do not unpublish it on a rebuild.
           draft: false
-          token: ${{ steps.app-token.outputs.token }}
+          token: ${{ github.token }}
           fail_on_unmatched_files: true
           files: |
             release/stable*
@@ -580,9 +498,9 @@ jobs:
         continue-on-error: true
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', needs.check-stable.outputs.version) || github.event.release.tag_name }}
+          tag_name: ${{ needs.check-stable.outputs.tag }}
           draft: false
-          token: ${{ steps.app-token.outputs.token }}
+          token: ${{ github.token }}
           fail_on_unmatched_files: true
           files: |
             release/stable*
@@ -602,9 +520,9 @@ jobs:
         continue-on-error: true
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', needs.check-stable.outputs.version) || github.event.release.tag_name }}
+          tag_name: ${{ needs.check-stable.outputs.tag }}
           draft: false
-          token: ${{ steps.app-token.outputs.token }}
+          token: ${{ github.token }}
           fail_on_unmatched_files: true
           files: |
             release/stable*
@@ -637,15 +555,8 @@ jobs:
     # 手动触发时可选择跳过
     if: ${{ needs.check-stable.outputs.build_required == 'true' && !(github.event_name == 'workflow_dispatch' && inputs.skip_s3_upload) }}
     steps:
-      - uses: actions/create-github-app-token@v2
-        id: app-token
-        with:
-          app-id: ${{ vars.LOBEHUB_BOT_APP_ID }}
-          private-key: ${{ secrets.LOBEHUB_BOT_APP_PRIVATE_KEY }}
-
       - uses: actions/checkout@v7
         with:
-          token: ${{ steps.app-token.outputs.token }}
           ref: ${{ github.workflow_sha }}
       - uses: ./.github/actions/desktop-publish-s3
         id: publish
@@ -707,6 +618,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_VERSION: ${{ needs.check-stable.outputs.version }}
+          RELEASE_TAG: ${{ needs.check-stable.outputs.tag }}
           SOURCES_HASH: ${{ needs.check-stable.outputs.sources_hash }}
           CORE_PUBLISHED: ${{ needs.publish-s3.outputs.core_published }}
           INSTALLERS_PUBLISHED: ${{ needs.publish-s3.outputs.installers_published }}

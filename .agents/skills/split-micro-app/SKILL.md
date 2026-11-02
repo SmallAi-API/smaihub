@@ -178,18 +178,17 @@ lobehub-cloud (`.github/workflows/deploy-share.yml`), not OSS. Never add a deplo
 repo that can only produce the fallback.
 
 **OSS PRs can still verify with the real overlay.** Same-repo OSS PRs clone the overlay repo @
-HEAD via `.github/actions/business-overlay` (the clone+overlay step extracted from
-`desktop-build-setup`: overlay files land in `$GITHUB_WORKSPACE/..`, which works because the
+HEAD via `.github/actions/business-overlay` (overlay files land in
+`$GITHUB_WORKSPACE/..`, which works because the
 repo is named `lobehub` so the checkout already sits at the submodule path), then
 `cd .. && pnpm install` and run the overlay repo's own `bun run build:share` — the tsconfig /
 stub knowledge stays over there. **The OSS workflow never hardcodes the private repo
 name**: it comes from the Actions repository variable `OVERLAY_REPOSITORY`; the token reuses
-the pre-existing `LOBEHUB_CLOUD_TOKEN` secret (deliberately not renamed — the desktop release
-workflows already reference it, and a rename would mean reconfiguring the org secret). When
+the existing `LOBEHUB_CLOUD_TOKEN` secret. Desktop release workflows build this repository
+directly and do not use that secret or the overlay. When
 either is unset (fork PRs always), the workflow falls back to the
 OSS-stub build + wrangler dry-run as a pure compile/size guard. Keep new public-facing CI
-wording on the neutral "business overlay" vocabulary — the older desktop release workflows
-still leak the internal naming and are the known remaining exception. One trap: an overlay
+wording on the neutral "business overlay" vocabulary. One trap: an overlay
 build's `build-inputs.txt` is overlay-root-relative (`repoRoot =
 dirname(SHARE_TSCONFIG_PROJECT)`), so OSS files appear as `lobehub/src/...` — strip that
 prefix before exact-matching against the OSS repo's own diff (`sed 's#^lobehub/##'` in the

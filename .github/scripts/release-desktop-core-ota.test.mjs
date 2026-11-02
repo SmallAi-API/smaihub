@@ -25,7 +25,7 @@ test('retries transient COS timeouts while loading the shipped shell.json', asyn
   assert.match(fetchBlock, /shell\.json/);
 });
 
-test('falls back to the repo commit when no business overlay is configured', async () => {
+test('records the repository commit without requiring a business overlay', async () => {
   const source = await readFile(workflowPath, 'utf8');
   assert.doesNotMatch(source, /CLOUD_REPOSITORY:\?/);
   assert.match(source, /cloud_ref=\$GITHUB_SHA/);

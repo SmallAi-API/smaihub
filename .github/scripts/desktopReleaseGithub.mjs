@@ -47,14 +47,23 @@ export function createGithubStore(options) {
   async function release(version, required = true) {
     const normalized = normalizeVersion(version);
     if (releaseCache.has(normalized)) return releaseCache.get(normalized);
-    try {
-      const result = await (await request(`${root}/releases/tags/v${normalized}`)).json();
-      if (result.tag_name !== `v${normalized}`) throw new Error('Release tag mismatch');
-      releaseCache.set(normalized, result);
-      return result;
-    } catch (error) {
-      if (!required && error.status === 404) return null;
-      throw error;
+    const tags =
+      options.releaseTag && normalizeVersion(options.releaseTag) === normalized
+        ? [options.releaseTag]
+        : [`v${normalized}`, normalized];
+    for (const tag of tags) {
+      try {
+        const result = await (await request(`${root}/releases/tags/${tag}`)).json();
+        if (result.tag_name !== tag) throw new Error('Release tag mismatch');
+        releaseCache.set(normalized, result);
+        return result;
+      } catch (error) {
+        if (error.status !== 404) throw error;
+        if (tag === tags.at(-1)) {
+          if (!required) return null;
+          throw error;
+        }
+      }
     }
   }
 
@@ -195,7 +204,8 @@ export function createGithubStore(options) {
       for (let page = 1; page <= 10 && delivered.length < 20; page++) {
         const batch = await (await request(`${root}/releases?per_page=100&page=${page}`)).json();
         for (const entry of batch) {
-          if (entry.draft || entry.prerelease || !/^v\d+\.\d+\.\d+$/.test(entry.tag_name)) continue;
+          if (entry.draft || entry.prerelease || !/^v?\d+\.\d+\.\d+$/.test(entry.tag_name))
+            continue;
           const version = normalizeVersion(entry.tag_name);
           releaseCache.set(version, entry);
           if (!(await store.readSources(version)) || !(await store.readPublication(version)))

@@ -72,7 +72,8 @@ export async function startGithubFixture() {
         state.comparison || { status: 'identical', total_commits: 0, files: [] },
       );
     if (route.startsWith('/releases/tags/')) {
-      const release = releases.get(route.slice('/releases/tags/v'.length));
+      const tag = decodeURIComponent(route.slice('/releases/tags/'.length));
+      const release = [...releases.values()].find((entry) => entry.tag_name === tag);
       return json(
         response,
         release ? 200 : 404,
@@ -95,7 +96,11 @@ export async function startGithubFixture() {
           return json(response, 422, { errors: [{ code: 'already_exists', field: 'name' }] });
         const chunks = [];
         for await (const chunk of request) chunks.push(chunk);
-        const asset = addAsset(release.tag_name.slice(1), name, Buffer.concat(chunks).toString());
+        const asset = addAsset(
+          release.tag_name.replace(/^v/, ''),
+          name,
+          Buffer.concat(chunks).toString(),
+        );
         return json(response, 201, asset);
       }
       const start = (Number(url.searchParams.get('page') || 1) - 1) * 100;

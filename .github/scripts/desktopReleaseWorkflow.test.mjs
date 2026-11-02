@@ -20,10 +20,6 @@ const workflow = await readFile(
   new URL('../workflows/release-desktop-stable.yml', import.meta.url),
   'utf8',
 );
-const setup = await readFile(
-  new URL('../actions/desktop-build-setup/action.yml', import.meta.url),
-  'utf8',
-);
 const requestWorkflow = await readFile(
   new URL('../workflows/desktop-release-request.yml', import.meta.url),
   'utf8',
@@ -149,7 +145,7 @@ test('the shipped Stable resolver reuses its old Cloud when the current HEAD has
     'bash',
     [
       '-c',
-      `git() { printf '%s\\tHEAD\\n' "$NEW_CLOUD"; }\n${shippedStep(workflow, 'Resolve Cloud revision')}`,
+      `git() { printf '%s\\tHEAD\\n' "$NEW_CLOUD"; }\n${shippedStep(workflow, 'Resolve release sources')}`,
     ],
     {
       cwd: repository,
@@ -182,29 +178,53 @@ test('the shipped Stable resolver reuses its old Cloud when the current HEAD has
   assert.equal(values.cloud_sha || values.cloud_ref, fixtureCloud);
 });
 
-test('the shipped setup refuses missing Stable Cloud credentials or an unpinned ref before installing', async () => {
-  const script = shippedStep(setup, 'Validate pinned Stable sources');
-  for (const overrides of [{ CLOUD_REF: '' }, { CLOUD_REF: 'main' }, { CLOUD_TOKEN: '' }]) {
-    await assert.rejects(
-      exec('bash', ['-c', script], {
-        env: {
-          ...process.env,
-          REQUIRE_PINNED_CLOUD: 'true',
-          CLOUD_REF: fixtureCloud,
-          CLOUD_TOKEN: 'test-only',
-          ...overrides,
-        },
-      }),
-    );
-  }
-  await exec('bash', ['-c', script], {
-    env: {
-      ...process.env,
-      REQUIRE_PINNED_CLOUD: 'true',
-      CLOUD_REF: fixtureCloud,
-      CLOUD_TOKEN: 'test-only',
+test('Canary derives the next version from the newest stable tag regardless of its prefix', async (t) => {
+  const canary = await readFile(
+    new URL('../workflows/release-desktop-canary.yml', import.meta.url),
+    'utf8',
+  );
+  const root = await mkdtemp(path.join(os.tmpdir(), 'canary-version-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const output = path.join(root, 'output');
+  await exec(
+    'bash',
+    [
+      '-e',
+      '-o',
+      'pipefail',
+      '-c',
+      `
+git() {
+  if [ "$1" = tag ] && [ "$#" = 2 ]; then
+    printf '%s\\n' v1.6.9 v1.7.1 1.7.2 1.7.0 v1.7.3-canary.4
+  elif [ "$1" = tag ]; then
+    printf '%s\\n' v1.7.3-canary.4
+  fi
+}
+${shippedStep(canary, 'Calculate canary version')}`,
+    ],
+    {
+      env: { ...process.env, GITHUB_OUTPUT: output },
     },
-  });
+  );
+  assert.match(await readFile(output, 'utf8'), /version=1\.7\.3-canary\.5/);
+  for (const name of ['Calculate canary version', 'Generate canary release notes']) {
+    const selector = shippedStep(canary, name)
+      .split('\n')
+      .find((line) => /^latest_(tag|stable)=/.test(line));
+    assert.ok(selector);
+    const { stdout } = await exec('bash', [
+      '-e',
+      '-o',
+      'pipefail',
+      '-c',
+      `
+git() { printf '%s\\n' v1.6.9 v1.7.1 1.7.2 1.7.0 v1.7.3-canary.4; }
+${selector}
+printf '%s' "\${latest_tag:-\${latest_stable}}"`,
+    ]);
+    assert.equal(stdout, '1.7.2');
+  }
 });
 
 test('the shipped source checkout guard validates the product SHA before restoring the new tooling', async (t) => {

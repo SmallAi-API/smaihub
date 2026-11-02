@@ -23,6 +23,7 @@ export function storeFromEnv(env) {
   return createGithubStore({
     apiUrl: env.GITHUB_API_URL,
     repository: env.GITHUB_REPOSITORY,
+    releaseTag: env.RELEASE_TAG,
     token: env.GH_TOKEN || env.GITHUB_TOKEN,
     cloudRepository: env.CLOUD_REPOSITORY,
     cloudToken: env.CLOUD_TOKEN,
@@ -158,7 +159,7 @@ export async function runReleaseCli(command, env = process.env) {
   if (command !== 'resolve') throw new Error(`Unknown release command: ${command}`);
   // Resolve through the commits API so annotated tags are peeled as well.
   const targetRelease = await store.release(version);
-  const tagSha = await store.resolveCommit(`v${version}`);
+  const tagSha = await store.resolveCommit(targetRelease.tag_name);
   const ossSha = env.SOURCE_REF ? await store.resolveCommit(env.SOURCE_REF) : tagSha;
   if (ossSha !== tagSha)
     throw new Error(
@@ -231,6 +232,7 @@ export async function runReleaseCli(command, env = process.env) {
     persisted: result.persisted,
     build_required: mode !== 'import',
     version,
+    tag: targetRelease.tag_name,
   });
 }
 

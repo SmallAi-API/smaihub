@@ -218,7 +218,7 @@ jobs:
           echo "shell_abi=$SHELL_ABI" >> "$GITHUB_OUTPUT"
           echo "HEAD shellAbi:    $SHELL_ABI"
           echo "Shipped shellAbi: ${BASE_SHELL_ABI:-<none>}"
-          LATEST_STABLE=$(git ls-remote --tags --refs origin 'v*' | sed -n 's|.*refs/tags/v\([0-9]*\.[0-9]*\.[0-9]*\)$|\1|p' | sort -V | tail -n 1)
+          LATEST_STABLE=$(git ls-remote --tags --refs origin | sed -nE 's|.*refs/tags/v?([0-9]+\.[0-9]+\.[0-9]+)$|\1|p' | sort -V | tail -n 1)
           echo "Shipped shell:    ${SHELL_VERSION:-<none>} (latest stable: ${LATEST_STABLE:-<none>})"
           # 2.2.19-canary.39 在 v2.2.19 发布后已落后于 stable，继续叠 -core.N 会让版本号断档，必须全量发一次 2.2.20-canary.1
           STABLE_AHEAD=false
@@ -262,28 +262,12 @@ jobs:
           echo "version=$APP_VERSION-core.$SEQ" >> "$GITHUB_OUTPUT"
           echo "Next core: $APP_VERSION-core.$SEQ (seq $SEQ)"
 
-      - name: Resolve Cloud revision
+      - name: Resolve repository revision
         id: cloud-ref
         if: steps.gate.outputs.allowed == 'true'
-        env:
-          CLOUD_REPOSITORY: ${{ vars.OVERLAY_REPOSITORY }}
-          CLOUD_TOKEN: ${{ secrets.LOBEHUB_CLOUD_TOKEN }}
         run: |
           set -euo pipefail
-          # No business overlay configured (or the overlay is this repo itself): OSS-stub build,
-          # so the cloud ref is just this repo's commit. Keep a valid 40-hex value.
-          if [ -z "${CLOUD_REPOSITORY:-}" ] || [ -z "${CLOUD_TOKEN:-}" ] \
-            || [ "$CLOUD_REPOSITORY" = "$GITHUB_REPOSITORY" ]; then
-            echo "::notice::No business overlay configured; using $GITHUB_SHA as cloud_ref"
-            echo "cloud_ref=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          cloud_ref=$(bash "$GITHUB_WORKSPACE/.github/scripts/gitWithRetry.sh" -c http.https://github.com/.extraheader= ls-remote "https://x-access-token:${CLOUD_TOKEN}@github.com/${CLOUD_REPOSITORY}.git" HEAD | cut -f1)
-          if [[ ! "$cloud_ref" =~ ^[0-9a-f]{40}$ ]]; then
-            echo "Unable to resolve Cloud revision"
-            exit 1
-          fi
-          echo "cloud_ref=$cloud_ref" >> "$GITHUB_OUTPUT"
+          echo "cloud_ref=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
 
       - name: Report gate result
         if: always()
@@ -311,9 +295,6 @@ jobs:
         id: setup
         uses: ./.github/actions/desktop-build-setup
         with:
-          cloud-ref: ${{ needs.gate.outputs.cloud_ref }}
-          cloud-repository: ${{ vars.OVERLAY_REPOSITORY }}
-          cloud-token: ${{ secrets.LOBEHUB_CLOUD_TOKEN }}
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Set package version

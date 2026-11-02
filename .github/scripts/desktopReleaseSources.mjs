@@ -46,7 +46,9 @@ const validateEvidence = (value) => {
 export function validateSources(value) {
   if (!value || value.schemaVersion !== 1 || value.channel !== 'stable')
     throw new Error('Unsupported stable source record schema/channel');
-  if (!['latest', 'inherit', 'historical-import', 'recovery'].includes(value.selection))
+  if (
+    !['latest', 'inherit', 'historical-import', 'recovery', 'repository'].includes(value.selection)
+  )
     throw new Error('Invalid source selection');
   const record = {
     schemaVersion: 1,
@@ -58,6 +60,9 @@ export function validateSources(value) {
     baseVersion: value.baseVersion === null ? null : normalizeVersion(value.baseVersion),
     evidence: validateEvidence(value.evidence),
   };
+  // Keep cloudSha for the existing OTA manifests; repository builds have one source SHA.
+  if (record.selection === 'repository' && record.cloudSha !== record.ossSha)
+    throw new Error('Repository sources must use the product SHA for cloudSha');
   if (record.selection === 'inherit') {
     if (!record.baseVersion || record.baseVersion === record.version)
       throw new Error('A hotfix must reference a different base version');
@@ -140,8 +145,14 @@ export async function resolveSources(input, dependencies) {
   const version = normalizeVersion(input.version);
   const ossSha = assertSha(input.ossSha, 'OSS');
   if (input.cloudSha) assertSha(input.cloudSha, 'Cloud');
-  if (!['initialize', 'rebuild', 'hotfix', 'import', 'recovery'].includes(input.mode))
+  if (!['initialize', 'rebuild', 'hotfix', 'import', 'recovery', 'repository'].includes(input.mode))
     throw new Error('An explicit release mode is required');
+  const repositoryOnly = input.mode === 'repository';
+  if (repositoryOnly) {
+    if (input.cloudSha && input.cloudSha !== ossSha)
+      throw new Error('Repository builds cannot select a different Cloud SHA');
+    input = { ...input, cloudSha: ossSha };
+  }
   const stored = await dependencies.store.readSources(version);
   if (stored !== null) {
     const sources = validateSources(stored);
@@ -152,7 +163,7 @@ export async function resolveSources(input, dependencies) {
     throw new Error(`Missing source record for v${version}; use an explicit historical import`);
 
   const evidence = validateEvidence(input.evidence);
-  if (input.mode !== 'import' && evidence.runAttempt !== 1)
+  if (!repositoryOnly && input.mode !== 'import' && evidence.runAttempt !== 1)
     throw new Error(
       'Missing source record: only the first attempt may initialize; use an explicit historical import',
     );
@@ -162,7 +173,11 @@ export async function resolveSources(input, dependencies) {
   let baseSourcesHash;
   let overrideReason;
   let recoveryBaseSha;
-  if (input.mode === 'initialize') {
+  if (repositoryOnly) {
+    // A missing lock can be initialized on a retry: both sources are fixed by the target tag.
+    cloudSha = ossSha;
+    selection = 'repository';
+  } else if (input.mode === 'initialize') {
     if (input.firstRelease !== true || evidence.runAttempt !== 1)
       throw new Error('Missing record: only the initial release attempt may initialize sources');
     if (input.cloudSha || input.baseVersion)
@@ -200,7 +215,7 @@ export async function resolveSources(input, dependencies) {
     selection = 'historical-import';
   }
   assertSha(cloudSha, 'Cloud');
-  await dependencies.assertCloudCommit(cloudSha);
+  if (!repositoryOnly) await dependencies.assertCloudCommit(cloudSha);
   const candidate = validateSources({
     schemaVersion: 1,
     channel: 'stable',
