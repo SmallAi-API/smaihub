@@ -481,7 +481,6 @@ jobs:
           token: ${{ github.token }}
           fail_on_unmatched_files: true
           files: |
-            release/stable*
             release/latest*
             release/*.dmg*
             release/*.zip*
@@ -503,7 +502,6 @@ jobs:
           token: ${{ github.token }}
           fail_on_unmatched_files: true
           files: |
-            release/stable*
             release/latest*
             release/*.dmg*
             release/*.zip*
@@ -525,7 +523,6 @@ jobs:
           token: ${{ github.token }}
           fail_on_unmatched_files: true
           files: |
-            release/stable*
             release/latest*
             release/*.dmg*
             release/*.zip*

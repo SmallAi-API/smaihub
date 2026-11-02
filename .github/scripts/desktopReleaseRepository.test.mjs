@@ -148,6 +148,7 @@ test('Desktop workflows use the repository token and never require an overlay', 
   );
   assert.deepEqual(Object.keys(action.inputs), ['node-version']);
   assert.equal(stable.jobs['publish-github'].permissions.contents, 'write');
+  assert.doesNotMatch(stable.jobs['publish-github'].steps[2].with.files, /release\/stable\*/);
   for (const step of stable.jobs['publish-github'].steps.filter((step) =>
     step.uses?.startsWith('softprops/action-gh-release@'),
   )) {
