@@ -72,7 +72,7 @@ export const createOIDCProvider = async (db: LobeChatDatabase): Promise<Provider
 
     // 新增：客户端 CORS 控制逻辑
     clientBasedCORS(ctx, origin, client) {
-      // The review toolbar runs on whatever origin the delivered product is
+      // The acceptance toolbar runs on whatever origin the delivered product is
       // previewed on; its token is scoped to one acceptance by audience.
       if (isAcceptanceReviewClient(client?.clientId)) return true;
 
