@@ -69,6 +69,21 @@ export const convertOpenAISchemaToGoogleSchema = (openAISchema: GenerateObjectSc
   const convertSchema = (schema: any): any => {
     if (!schema) return schema;
 
+    // Gemini has no `null` type: a nullable union (`anyOf: [X, { type: 'null' }]` or
+    // `type: [X, 'null']`) becomes X with `nullable: true`. Otherwise `anyOf` was dropped and
+    // the node fell back to STRING, so Gemini returned numbers as strings.
+    const { anyOf, ...rest } = schema;
+    const nonNullBranches = anyOf?.filter((branch: any) => branch?.type !== 'null');
+    if (nonNullBranches?.length === 1 && nonNullBranches.length < anyOf.length) {
+      return { ...convertSchema({ ...rest, ...nonNullBranches[0] }), nullable: true };
+    }
+    const nonNullTypes = Array.isArray(schema.type)
+      ? schema.type.filter((type: string) => type !== 'null')
+      : undefined;
+    if (nonNullTypes?.length === 1 && nonNullTypes.length < schema.type.length) {
+      return { ...convertSchema({ ...schema, type: nonNullTypes[0] }), nullable: true };
+    }
+
     // convertType handles single string types; for array types (nullable)
     // default to STRING which is safe for Gemini Schema proto.
     const typeArg: string = Array.isArray(schema.type) ? 'string' : schema.type;
