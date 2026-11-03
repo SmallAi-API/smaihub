@@ -4,6 +4,7 @@ import {
   ActionIcon,
   createStaticStyles,
   cssVar,
+  cx,
   type DropdownItem,
   DropdownMenu,
   Flexbox,
@@ -49,6 +50,7 @@ import {
   PR_STATE_VISUAL,
 } from '@/features/AgentSidebar/Topic/List/Item/metaCardData';
 import { useRepoType } from '@/features/ChatInput/ControlBar/useRepoType';
+import { useImLayout } from '@/features/NavRail/useImLayout';
 import { getPortalViewWidth } from '@/features/Portal/portalWidth';
 import TopicCommentsSidebar from '@/features/Portal/TopicComments/Sidebar';
 import RightPanel from '@/features/RightPanel';
@@ -99,6 +101,7 @@ import { TopicSearchPane } from './Search';
 import { useExtraWorkingSidebarTabs } from './useExtraWorkingSidebarTabs';
 import { useRetainAfterHide } from './useRetainAfterHide';
 import { useSandboxFilesDirectory } from './useSandboxFilesDirectory';
+import { useSidebarTabFocus } from './useSidebarTabFocus';
 import { useTabContextMenuItems } from './useTabContextMenuItems';
 import WorkspaceTab from './WorkspaceTab';
 import WorksSection from './WorksSection';
@@ -150,6 +153,18 @@ const styles = createStaticStyles(({ css }) => ({
 
     background: ${cssVar.colorBgContainer};
     box-shadow: ${cssVar.boxShadowTertiary};
+  `,
+  // `im_layout`: docked as a full-height right column (the agent's profile),
+  // not a floating card, so it reads as the conversation's side panel.
+  overviewPanelDocked: css`
+    max-height: none;
+    height: 100%;
+    margin: 0;
+    border: none;
+    border-inline-start: 1px solid ${cssVar.colorBorderSecondary};
+    border-radius: 0;
+
+    box-shadow: none;
   `,
   overviewSlot: css`
     overflow: hidden;
@@ -208,6 +223,7 @@ interface AgentWorkingSidebarProps {
 
 const AgentWorkingSidebar = memo<AgentWorkingSidebarProps>(({ availableWidth }) => {
   const { t } = useTranslation(['chat', 'setting']);
+  const imLayout = useImLayout();
   // Keep the panel frame + tabs on the navigation commit; the pane contents
   // mount in a deferred follow-up pass behind a skeleton.
   const contentReady = useDeferredMount();
@@ -750,77 +766,14 @@ const AgentWorkingSidebar = memo<AgentWorkingSidebarProps>(({ availableWidth }) 
     pinnedTabsSet,
     unpinTab,
   });
-  const tabsRef = useRef<HTMLDivElement>(null);
-  const pendingTabFocusRef = useRef<string | undefined>(undefined);
-  const pendingTabFocusTimeoutRef = useRef<number | undefined>(undefined);
-
-  const scrollActiveTabIntoView = useCallback(() => {
-    const tabs = tabsRef.current;
-    const activeTabButton = tabs?.querySelector<HTMLButtonElement>('button[aria-pressed="true"]');
-    const activeTabItem = activeTabButton?.parentElement;
-    if (!tabs || !activeTabItem) return;
-
-    const tabsRect = tabs.getBoundingClientRect();
-    const activeTabRect = activeTabItem.getBoundingClientRect();
-    if (activeTabRect.left < tabsRect.left) {
-      tabs.scrollLeft += activeTabRect.left - tabsRect.left;
-    } else if (activeTabRect.right > tabsRect.right) {
-      tabs.scrollLeft += activeTabRect.right - tabsRect.right;
-    }
-  }, []);
-
-  const focusPendingTab = useCallback(() => {
-    const pendingTab = pendingTabFocusRef.current;
-    if (!pendingTab) return;
-
-    const tabButton = Array.from(
-      tabsRef.current?.querySelectorAll<HTMLButtonElement>('button[data-tab-key]') ?? [],
-    ).find((button) => button.dataset.tabKey === pendingTab);
-    if (!tabButton) return;
-
-    if (pendingTabFocusTimeoutRef.current !== undefined) {
-      window.clearTimeout(pendingTabFocusTimeoutRef.current);
-      pendingTabFocusTimeoutRef.current = undefined;
-    }
-    tabButton.focus();
-    pendingTabFocusRef.current = undefined;
-  }, []);
-
-  const requestTabFocus = useCallback(
-    (tab: string) => {
-      pendingTabFocusRef.current = tab;
-      if (pendingTabFocusTimeoutRef.current !== undefined) {
-        window.clearTimeout(pendingTabFocusTimeoutRef.current);
-      }
-      // Base UI normally resolves this through onOpenChangeComplete. A short
-      // fallback also covers background Electron windows where transition
-      // completion is frame-throttled indefinitely.
-      pendingTabFocusTimeoutRef.current = window.setTimeout(() => {
-        if (pendingTabFocusRef.current === tab) focusPendingTab();
-      }, 300);
-    },
-    [focusPendingTab],
-  );
-
-  useEffect(() => {
-    scrollActiveTabIntoView();
-  }, [
-    activeTab,
-    availableTabsSignature,
-    openedTabsSignature,
-    scrollActiveTabIntoView,
-    storedWidth,
-    tabRequest?.nonce,
-  ]);
-
-  useEffect(
-    () => () => {
-      if (pendingTabFocusTimeoutRef.current !== undefined) {
-        window.clearTimeout(pendingTabFocusTimeoutRef.current);
-      }
-    },
-    [],
-  );
+  const { focusPendingTab, pendingTabFocusRef, requestTabFocus, scrollActiveTabIntoView, tabsRef } =
+    useSidebarTabFocus({
+      activeTab,
+      availableTabsSignature,
+      openedTabsSignature,
+      storedWidth,
+      tabRequestNonce: tabRequest?.nonce,
+    });
 
   // Review's tree-nav rail lives here (not inside Review) so the panel can widen
   // when the two-pane layout is on. Hidden by default — the panel shows only the
@@ -942,13 +895,15 @@ const AgentWorkingSidebar = memo<AgentWorkingSidebarProps>(({ availableWidth }) 
     toggleTerminalPanel,
   ]);
 
-  const overviewWidth = Math.min(OVERVIEW_PANEL_WIDTH, widthBudget - 32);
+  // The floating card keeps a 16px margin on each side; the docked panel has none.
+  const overviewGutter = imLayout ? 0 : 32;
+  const overviewWidth = Math.min(OVERVIEW_PANEL_WIDTH, widthBudget - overviewGutter);
   const overviewPanel = (
     <OverviewSlot>
       <AnimatePresence initial={false}>
         {showWorkingOverview && overviewFits && (
           <m.div
-            animate={{ width: overviewWidth + 32 }}
+            animate={{ width: overviewWidth + overviewGutter }}
             className={styles.overviewSlot}
             exit={{ transition: overviewExitTransition, width: 0 }}
             initial={{ width: 0 }}
@@ -956,7 +911,7 @@ const AgentWorkingSidebar = memo<AgentWorkingSidebarProps>(({ availableWidth }) 
           >
             <m.div
               animate={{ opacity: 1, x: 0 }}
-              className={styles.overviewPanel}
+              className={cx(styles.overviewPanel, imLayout && styles.overviewPanelDocked)}
               exit={{ opacity: 0, transition: overviewExitTransition, x: 12 }}
               initial={{ opacity: 0, x: 12 }}
               role={'complementary'}
