@@ -2056,6 +2056,7 @@ export default {
   'taskDetail.goalTimeline.title': 'Round progress',
   'taskDetail.activities': 'Activities',
   'taskDetail.activitiesEmpty': 'No activity yet',
+  'taskDetail.activitiesLoadMore': 'Show earlier activity ({{count}})',
   'taskDetail.artifacts': 'Artifacts',
   'taskDetail.untitled': 'Untitled',
   'taskDetail.artifactMenu.delete': 'Remove from task',
