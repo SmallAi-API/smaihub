@@ -106,7 +106,6 @@
   "moveToTrash": "將頻道移至垃圾桶",
   "moveToTrashConfirm": "要將“{{title}}”移至垃圾桶嗎？回覆將停止。您可以從垃圾桶中恢復頻道及其歷史記錄。代理人和檔案將被保留。",
   "moveToTrashSuccess": "頻道已移至垃圾桶",
-  "nameAutoPlaceholder": "留空以根據成員命名",
   "nameOptional": "頻道名稱（可選）",
   "noDevice": "沒有設備",
   "noDevices": "沒有設備連接。請連接一個，然後在這裡選擇。",
