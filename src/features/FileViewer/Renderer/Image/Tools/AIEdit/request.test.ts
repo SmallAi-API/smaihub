@@ -30,6 +30,22 @@ describe('resolveAIEditModel', () => {
     });
   });
 
+  it('prefers the default provider and model over earlier editable alternatives', () => {
+    expect(
+      resolveAIEditModel(
+        providers([
+          ['fal', [card('flux-kontext', { imageUrl: {} })]],
+          ['lobehub', [card('gemini-3.1-flash-image:image', { imageUrls: {} })]],
+          ['smai', [card('gemini-3.1-flash-image:image', { imageUrls: {} })]],
+        ]),
+      ),
+    ).toEqual({
+      model: 'gemini-3.1-flash-image:image',
+      provider: 'smai',
+      referenceParam: 'imageUrls',
+    });
+  });
+
   it('skips a last selected model that cannot take a reference image', () => {
     expect(resolveAIEditModel(enabled, { model: 'text-only', provider: 'lobehub' })).toEqual({
       model: 'gemini-3.1-flash-image:image',

@@ -4,9 +4,9 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { type ImageStore } from '@/store/image';
 import { initialState } from '@/store/image/initialState';
+import { DEFAULT_AI_IMAGE_MODEL, DEFAULT_AI_IMAGE_PROVIDER } from '@/utils/defaultImageModel';
 import { merge } from '@/utils/merge';
 
-import { DEFAULT_AI_IMAGE_MODEL, DEFAULT_AI_IMAGE_PROVIDER } from './initialState';
 import { imageGenerationConfigSelectors } from './selectors';
 
 // Mock external dependencies

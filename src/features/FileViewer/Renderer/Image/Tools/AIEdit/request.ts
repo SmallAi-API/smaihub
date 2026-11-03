@@ -1,8 +1,5 @@
-import {
-  DEFAULT_AI_IMAGE_MODEL,
-  DEFAULT_AI_IMAGE_PROVIDER,
-} from '@/store/image/slices/generationConfig/initialState';
 import type { EnabledProviderWithModels } from '@/types/aiProvider';
+import { DEFAULT_AI_IMAGE_MODEL, DEFAULT_AI_IMAGE_PROVIDER } from '@/utils/defaultImageModel';
 
 export type AIEditOperation = 'erase' | 'removeBackground';
 
