@@ -66,7 +66,7 @@ export default {
     'On the Bot page, Reset Token and copy it, then turn on Message Content Intent.',
   'channel.quickSetup.discord.invite.title': 'Invite the bot to your server',
   'channel.quickSetup.discord.invite.desc':
-    'The invite link already carries the permissions the bot needs.',
+    "The invite link already carries the permissions the bot needs. For a private channel, also add the bot in that channel's Settings → Permissions.",
   'channel.quickSetup.telegram.botfather.title': 'Create a bot with BotFather',
   'channel.quickSetup.telegram.botfather.desc': 'Send /newbot and pick a name and username.',
   'channel.quickSetup.telegram.token.title': 'Copy the token',
@@ -191,12 +191,18 @@ export default {
   'channel.connectStarting': 'Bot is starting. Please wait a moment.',
   'channel.connectSuccess': 'Bot connected successfully',
   'channel.connecting': 'Connecting...',
+  'channel.connectionError.application_mismatch':
+    "The Application ID doesn't match the bot token. Copy both from the same app in the Discord Developer Portal.",
   'channel.connectionError.application_not_found':
     'The bot application does not exist. Check the application ID in the platform console.',
+  'channel.connectionError.bot_not_installed':
+    "The bot isn't in any server yet. Open the invite link in the setup steps, add the bot to your server, then test again.",
   'channel.connectionError.connection_closed':
-    'The platform connection was interrupted. LobeHub will try to reconnect automatically.',
+    'The platform connection was interrupted. smai.ai will try to reconnect automatically.',
   'channel.connectionError.invalid_credentials':
     'The bot credentials are invalid. Check the application ID, secret, and access tokens.',
+  'channel.connectionError.message_content_intent_disabled':
+    "Message Content Intent is off, so the bot can't read messages. Turn it on under Bot → Privileged Gateway Intents in the Discord Developer Portal and save.",
   'channel.connectionError.missing_credentials':
     'Required bot credentials are missing. Complete the bot configuration and try again.',
   'channel.connectionError.permission_denied':
@@ -206,7 +212,7 @@ export default {
   'channel.connectionError.session_expired':
     'The bot session has expired. Save the bot again to reconnect it.',
   'channel.connectionError.upstream_unavailable':
-    'The platform service is temporarily unavailable. LobeHub will try again later.',
+    'The platform service is temporarily unavailable. smai.ai will try again later.',
   'channel.endpointUrl': 'Webhook URL',
   'channel.endpointUrlHint':
     'Please copy this URL and paste it into the <bold>{{fieldName}}</bold> field in the {{name}} Developer Portal.',
@@ -344,7 +350,7 @@ export default {
   'channel.slack.webhookMigrationDesc':
     'Socket Mode provides real-time event delivery via WebSocket without exposing a public HTTP endpoint. To migrate, enable Socket Mode in your Slack app settings, generate an App-Level Token, then switch the Connection Mode to WebSocket under Connection options on the Connect tab.',
   'channel.secretTokenHint':
-    'Used to verify webhook requests from Telegram. Leave blank and LobeHub derives one for this bot — verification is always on.',
+    'Used to verify webhook requests from Telegram. Leave blank and smai.ai derives one for this bot — verification is always on.',
   'channel.secretTokenPlaceholder': 'Leave blank to auto-generate',
   'channel.telegram.description': 'Connect this agent to Telegram for private and group chats.',
   'channel.testConnection': 'Test Connection',
@@ -858,11 +864,11 @@ export default {
   'share.settings.link.modelDisabledTitle': 'Switch model providers to enable sharing',
   'share.settings.link.changeModel': 'Change model',
   'share.settings.modelRestriction.title':
-    'Sharing is on: models are limited to the LobeHub provider',
+    'Sharing is on: models are limited to the smai.ai provider',
   'share.settings.modelRestriction.description':
     'To choose a model from another provider, turn off sharing first.',
   'share.settings.link.modelDisabled':
-    'Your current model uses another provider. Choose a model provided by LobeHub, then turn on sharing.',
+    'Your current model uses another provider. Choose a model provided by smai.ai, then turn on sharing.',
   'share.settings.link.slugError.invalid':
     'Use lowercase letters, numbers and hyphens only, and don’t start or end with a hyphen.',
   'share.settings.link.slugError.reserved': 'This word is reserved. Please pick another one.',
@@ -1035,7 +1041,7 @@ export default {
   'share.visitor.profile.terms.visibilityCreator':
     'The creator has turned on topic access and may read the messages in your topics.',
   'share.visitor.profile.terms.visibilityPrivate': 'Only you can see your topics.',
-  'share.visitor.topBar.home': 'Go to my LobeHub',
+  'share.visitor.topBar.home': 'Go to my smai.ai',
   'share.visitor.topics.empty': 'No topics yet',
   'share.visitor.topics.new': 'New topic',
   'share.visitor.topics.title': 'Topics',
