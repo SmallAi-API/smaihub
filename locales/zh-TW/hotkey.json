@@ -27,6 +27,8 @@
   "openChatSettings.title": "打開會話設定",
   "openHotkeyHelper.desc": "查看所有快捷鍵的使用說明",
   "openHotkeyHelper.title": "打開快捷鍵幫助",
+  "openTaskFilter.desc": "開啟任務頁面上的篩選選單",
+  "openTaskFilter.title": "篩選任務",
   "prevTab.desc": "在桌面應用程式中循環到上一個標籤；在開頭處回繞到最後一個標籤",
   "prevTab.title": "上一個標籤",
   "regenerateMessage.desc": "重新生成最後一條消息",
