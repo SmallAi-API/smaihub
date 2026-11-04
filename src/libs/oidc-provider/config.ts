@@ -1,3 +1,4 @@
+import { BRANDING_NAME } from '@lobechat/business-const';
 import { ACCEPTANCE_CLIENT_ID, ACCEPTANCE_REVIEW_SCOPE } from '@lobechat/const';
 import { type ClientMetadata } from 'oidc-provider';
 import urlJoin from 'url-join';
@@ -18,8 +19,8 @@ export const defaultClients: ClientMetadata[] = [
   {
     application_type: 'web',
     client_id: 'lobehub-desktop',
-    client_name: 'smai.ai Desktop',
-    // 仅支持授权码流程
+    client_name: `${BRANDING_NAME} Desktop`,
+    // Only supports authorization code flow
     grant_types: ['authorization_code', 'refresh_token'],
 
     logo_uri: 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com/logo/smai.ai.png',
@@ -46,8 +47,8 @@ export const defaultClients: ClientMetadata[] = [
   {
     application_type: 'native', // 移动端使用 native 类型
     client_id: 'lobehub-mobile',
-    client_name: 'smai.ai Mobile',
-    // 支持授权码流程和刷新令牌
+    client_name: `${BRANDING_NAME} Mobile`,
+    // Supports authorization code flow and refresh token
     grant_types: ['authorization_code', 'refresh_token'],
     logo_uri: '/logo.png',
     // 移动端不需要 post_logout_redirect_uris，因为注销通常在应用内处理

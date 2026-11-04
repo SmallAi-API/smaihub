@@ -4,7 +4,7 @@ import qs from 'query-string';
 
 import { DEFAULT_LANG } from '@/const/locale';
 import { OG_URL } from '@/const/url';
-import { isCustomORG } from '@/const/version';
+import { isCustomBranding, isCustomORG } from '@/const/version';
 import { type Locales } from '@/locales/resources';
 import { locales } from '@/locales/resources';
 import { getCanonicalUrl } from '@/server/utils/url';
