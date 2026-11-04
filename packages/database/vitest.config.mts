@@ -64,6 +64,8 @@ export default defineConfig({
         inline: ['vitest-canvas-mock'],
       },
     },
+    // Migrates PGlite once per run so each DB test file restores a snapshot.
+    globalSetup: './tests/pgliteSnapshot.globalSetup.ts',
     setupFiles: './tests/setup-db.ts',
   },
 });
