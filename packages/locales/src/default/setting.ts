@@ -49,9 +49,9 @@ export default {
   'completionSound.title': 'In-app completion sound',
   'completionSound.enabled': 'Play completion sound',
   'completionSound.desc':
-    'Play a chime when a chat finishes while LobeHub is in the foreground. The sound, volume and imports stay on this device and are not synced.',
+    'Play a chime when a chat finishes while smai.ai is in the foreground. The sound, volume and imports stay on this device and are not synced.',
   'completionSound.sound': 'Sound',
-  'completionSound.builtin.lobehub': 'LobeHub chime',
+  'completionSound.builtin.lobehub': 'smai.ai chime',
   'completionSound.builtin.glassBell': 'Glass bell',
   'completionSound.builtin.softTone': 'Soft tone',
   'completionSound.builtin.xylophone': 'Xylophone',
@@ -66,13 +66,13 @@ export default {
   'completionSound.banner.title': 'Background notification',
   'completionSound.banner.label': 'Notification sound',
   'completionSound.banner.desc':
-    'Sound the notification banner carries when a chat finishes while LobeHub is in the background. macOS Focus and per-app notification settings still apply.',
+    'Sound the notification banner carries when a chat finishes while smai.ai is in the background. macOS Focus and per-app notification settings still apply.',
   'completionSound.banner.system': 'System default',
-  'completionSound.banner.lobehub': 'LobeHub chime',
+  'completionSound.banner.lobehub': 'smai.ai chime',
   'completionSound.banner.previewTitle': 'Notification preview',
   'completionSound.banner.previewBody': 'This is how a finished chat will sound in the background.',
   'completionSound.banner.systemMuted':
-    'macOS has notification sounds turned off for LobeHub, so background notifications stay silent. Turn them back on in System Settings › Notifications › LobeHub.',
+    'macOS has notification sounds turned off for smai.ai, so background notifications stay silent. Turn them back on in System Settings › Notifications › smai.ai',
   '_cloud.officialProvider': '{{name}} Official Model Service',
   'about.title': 'About',
   'agentImport.action': 'Copy to Workspace...',
@@ -476,7 +476,7 @@ export default {
   'heterogeneousStatus.account.label': 'Account',
   'heterogeneousStatus.apiMode.configureProvider': 'Go to provider settings',
   'heterogeneousStatus.apiMode.localOnly': 'Available only for Desktop local execution',
-  'heterogeneousStatus.apiMode.defaultProvider': 'LobeHub',
+  'heterogeneousStatus.apiMode.defaultProvider': 'smai.ai',
   'heterogeneousStatus.apiMode.model': 'Model',
   'heterogeneousStatus.apiMode.modelPlaceholder': 'Select a model',
   'heterogeneousStatus.apiMode.noProviders':
@@ -567,7 +567,7 @@ export default {
   'heterogeneousStatus.device.offline': '{{device}} is offline. Check again once it reconnects.',
   'heterogeneousStatus.device.openDocs': 'Installation guide',
   'heterogeneousStatus.device.scanFailed':
-    'Couldn’t check {{name}} CLI on {{device}}. Update LobeHub on that device and try again.',
+    'Couldn’t check {{name}} CLI on {{device}}. Update smai.ai on that device and try again.',
   'heterogeneousStatus.device.scanFailedTag': 'Unknown',
   'heterogeneousStatus.device.showDetails': 'Show details',
   'heterogeneousStatus.device.unavailable': '{{name}} CLI not found on {{device}}',
@@ -847,10 +847,10 @@ export default {
   'devices.health.load_one': 'Load · {{count}} core',
   'devices.health.load_other': 'Load · {{count}} cores',
   'devices.health.empty':
-    'No health data yet. It starts recording once this device runs the latest LobeHub desktop app or CLI.',
+    'No health data yet. It starts recording once this device runs the latest smai.ai desktop app or CLI.',
   'devices.health.memory': 'Memory',
   'devices.health.now': 'Now',
-  'devices.health.status.missing': 'No data — asleep, off, or LobeHub not running',
+  'devices.health.status.missing': 'No data — asleep, off, or smai.ai not running',
   'devices.health.status.offline': 'Running but disconnected',
   'devices.health.status.online': 'Online',
   'devices.health.status.pending': 'Not uploaded yet',
@@ -3823,13 +3823,13 @@ When I am ___, I need ___
   'workspace.onboarding.flow.devices.description':
     'Once a team computer is connected, {{name}} can read and write files, run commands and use local tools on it to get work done for the team.',
   'workspace.onboarding.flow.devices.highlight': "and I'll handle the busywork.",
-  'workspace.onboarding.flow.devices.installStep': 'Install and sign in to the LobeHub CLI',
+  'workspace.onboarding.flow.devices.installStep': 'Install and sign in to the smai.ai CLI',
   'workspace.onboarding.flow.devices.connectStep':
     'Connect the computer to the workspace for every member',
   'workspace.onboarding.flow.devices.methodDesktop': 'Desktop app (recommended)',
   'workspace.onboarding.flow.devices.methodCli': 'Command line',
   'workspace.onboarding.flow.devices.desktopInstall':
-    'Download and install the LobeHub desktop app on a team computer',
+    'Download and install the smai.ai desktop app on a team computer',
   'workspace.onboarding.flow.devices.desktopDownload': 'Download desktop app',
   'workspace.onboarding.flow.devices.desktopShare':
     'Sign in with your account, find this computer in your personal Settings → Devices, choose "Share to workspace…", then pick this workspace and make it visible to all members',
@@ -4297,7 +4297,7 @@ When I am ___, I need ___
   'tools.connectorFeedback.askAdminCopied':
     'Request copied. Send it to a workspace owner or admin.',
   'tools.connectorFeedback.askAdminMessage':
-    'Could you connect {{name}} for our LobeHub workspace? {{url}}',
+    'Could you connect {{name}} for our smai.ai workspace? {{url}}',
   'tools.connectorFeedback.connectFailed': 'Connection failed: {{reason}}',
   'tools.connectorFeedback.manageOnly': 'Only workspace owners and admins can change connectors',
   'tools.connectorFeedback.reason.authIncomplete':

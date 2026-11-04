@@ -387,6 +387,7 @@
   "ok": "確定",
   "openOnRight": "在右側打開",
   "openOnRightHint": "放開以在右側並排打開",
+  "openOriginalFile": "開啟原始檔案",
   "operationFailed": "操作失敗，請再試一次",
   "or": "或",
   "pageSizeItem": "{{count}} 個項目",

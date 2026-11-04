@@ -21,6 +21,7 @@
   "autoTitle.separator": "，",
   "blocked.device_approval_pending": "等待設備批准",
   "blocked.device_offline": "等待設備連接",
+  "blocked.device_required": "選擇執行此代理程式的裝置",
   "blocked.directory_locked": "等待釋放此目錄",
   "blocked.member_busy": "等待前一個回覆",
   "blocked.unavailable": "代理人不可用",

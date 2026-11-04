@@ -21,7 +21,7 @@ export default {
   'sharePage.app.browserGuide.title.weibo':
     'Weibo can’t open the app directly. Open this page in your browser to continue.',
   'sharePage.app.fallback.desc':
-    'You may not have the LobeHub app yet, or this browser blocked the jump.',
+    'You may not have the smai.ai app yet, or this browser blocked the jump.',
   'sharePage.app.fallback.dismiss': 'Keep reading',
   'sharePage.app.fallback.download': 'Get the app',
   'sharePage.app.fallback.title': 'App didn’t open?',
@@ -721,7 +721,7 @@ export default {
   'heteroAgent.codexQuota.calendar.title': 'Codex usage calendar',
   'heteroAgent.codexQuota.doesNotExpire': 'Does not expire',
   'heteroAgent.codexQuota.errorConnection':
-    "Couldn't reach the Codex quota endpoint. Check your network or LobeHub proxy settings.",
+    "Couldn't reach the Codex quota endpoint. Check your network or smai.ai proxy settings.",
   'heteroAgent.codexQuota.errorGeneric': "Couldn't load Codex quota. Try again later.",
   'heteroAgent.codexQuota.expiresIn': 'Expires in {{duration}}',
   'heteroAgent.codexQuota.expiresSoon': 'Expires soon',
@@ -853,11 +853,11 @@ export default {
   'heteroAgent.cloudNotConfigured.desc':
     'Configure your Claude Code token in agent profile to start sending messages.',
   'heteroAgent.cloudNotConfigured.title': 'Cloud credentials required',
-  'heteroAgent.apiMode.agentUnsupported': '{{name}} does not support LobeHub Provider binding.',
+  'heteroAgent.apiMode.agentUnsupported': '{{name}} does not support smai.ai Provider binding.',
   'heteroAgent.apiMode.configMissing':
     'Provider binding requires a provider and model. Open the agent profile to configure it.',
   'heteroAgent.apiMode.defaultProviderConfigMissing':
-    'LobeHub requires a compatible model. Open the agent profile to select one.',
+    'smai.ai requires a compatible model. Open the agent profile to select one.',
   'heteroAgent.apiMode.credentialUnsupported':
     'The provider "{{providerId}}" uses an authentication method this agent does not support.',
   'heteroAgent.apiMode.credentialsMissing':
@@ -1086,11 +1086,11 @@ export default {
   'messageAction.regenerate': 'Regenerate',
   'messageAction.select': 'Select',
   'messageLink.openInSideBrowser': 'Open in side browser',
-  'clientLlmWait.title': 'Waiting for a LobeHub client to run {{provider}}',
+  'clientLlmWait.title': 'Waiting for a smai.ai client to run {{provider}}',
   'clientLlmWait.descHere':
     'This run needs {{provider}}, which only your own device can reach. Continue it on this device, or it stops waiting at {{time}}.',
   'clientLlmWait.descElsewhere':
-    'This run needs {{provider}}, which only your own device can reach. Open LobeHub on the device running {{provider}} and the run continues on its own. It stops waiting at {{time}}.',
+    'This run needs {{provider}}, which only your own device can reach. Open smai.ai on the device running {{provider}} and the run continues on its own. It stops waiting at {{time}}.',
   'clientLlmWait.continue': 'Continue on this device',
   'clientLlmWait.notWaiting':
     'This run is no longer waiting. It may have been picked up by another device, stopped, or timed out.',
@@ -1166,7 +1166,7 @@ export default {
   'messages.tokenDetails.average': 'Average unit price',
   'messages.tokenDetails.cliCredits.title': '{{value}} Credits',
   'messages.tokenDetails.cliCredits.tooltip':
-    'Subscription credits reported by the agent CLI for this turn. The CLI bills in credits instead of reporting tokens; this is separate from your LobeHub usage.',
+    'Subscription credits reported by the agent CLI for this turn. The CLI bills in credits instead of reporting tokens; this is separate from your smai.ai usage.',
   'messages.tokenDetails.cacheRate': 'Cache rate',
   'messages.tokenDetails.input': 'Input',
   'messages.tokenDetails.inputAudio': 'Audio Input',
@@ -1334,7 +1334,7 @@ export default {
   'copilotInstallGuide.installWithBrew': 'Homebrew (macOS / Linux)',
   'copilotInstallGuide.installWithNpm': 'Recommended install',
   'copilotInstallGuide.menuNotification.title': 'GitHub Copilot CLI not found',
-  'copilotInstallGuide.reason': 'LobeHub could not start GitHub Copilot: {{message}}',
+  'copilotInstallGuide.reason': 'smai.ai could not start GitHub Copilot: {{message}}',
   'copilotInstallGuide.title': 'Install GitHub Copilot CLI',
   'cursorInstallGuide.actions.openDocs': 'Open Install Guide',
   'cursorInstallGuide.actions.openSystemTools': 'Open System Tools',
@@ -1354,7 +1354,7 @@ export default {
     'Factory Droid needs the Droid CLI to run locally. Install it and make sure the `droid` command is available in your PATH.',
   'droidInstallGuide.installWithNpm': 'Recommended install',
   'droidInstallGuide.menuNotification.title': 'Factory Droid CLI not found',
-  'droidInstallGuide.reason': 'LobeHub could not start Factory Droid: {{message}}',
+  'droidInstallGuide.reason': 'smai.ai could not start Factory Droid: {{message}}',
   'droidInstallGuide.title': 'Install Factory Droid CLI',
   'devinInstallGuide.actions.openDocs': 'Open Install Guide',
   'devinInstallGuide.actions.openSystemTools': 'Open System Tools',
@@ -1365,7 +1365,7 @@ export default {
   'devinInstallGuide.installWithBrew': 'Windows PowerShell',
   'devinInstallGuide.installWithNpm': 'macOS / Linux / WSL',
   'devinInstallGuide.menuNotification.title': 'Devin CLI not found',
-  'devinInstallGuide.reason': 'LobeHub could not start Devin: {{message}}',
+  'devinInstallGuide.reason': 'smai.ai could not start Devin: {{message}}',
   'devinInstallGuide.title': 'Install Devin CLI',
   'grokBuildInstallGuide.actions.openDocs': 'Open Install Guide',
   'grokBuildInstallGuide.actions.openSystemTools': 'Open System Tools',
@@ -1912,7 +1912,7 @@ export default {
   'sharePage.file.noPreview.desc': 'Download it to open it on your device.',
   'sharePage.file.noPreview.title': "This file can't be previewed here",
   'sharePage.menu.copyLink': 'Copy Link',
-  'sharePage.menu.goToLobeHub': 'Go to LobeHub',
+  'sharePage.menu.goToLobeHub': 'Go to smai.ai',
   'sharePage.menu.more': 'More',
   'sharePage.menu.report': 'Report',
   'sharePage.meta.artifactDescription': 'An artifact shared from {{appName}}.',

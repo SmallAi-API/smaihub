@@ -38,6 +38,8 @@
   "category.schedule": "排程任務",
   "category.system": "系統通知",
   "category.workspace": "工作區更新",
+  "channel_mentioned": "{{actorLabel}} 在「{{channelTitle}}」頻道中提及了你。",
+  "channel_mentioned_title": "有人在頻道中提及您",
   "checkout_abandoned_subscription": "您已開始升級至 {{plan}}，但尚未完成結帳。您可以隨時回來繼續升級。",
   "checkout_abandoned_subscription_action": "完成升級",
   "checkout_abandoned_subscription_title": "您的升級尚未完成",
