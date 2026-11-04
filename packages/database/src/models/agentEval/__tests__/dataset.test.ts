@@ -270,14 +270,6 @@ describe('AgentEvalDatasetModel', () => {
       expect(results.map((r) => r.identifier)).toEqual(['scoped-dataset']);
     });
 
-    it('should order by createdAt descending', async () => {
-      const results = await datasetModel.query();
-
-      // 最新的应该在前面
-      // Order may vary, just check we got results
-      expect(results.length).toBeGreaterThanOrEqual(2);
-    });
-
     it('should include system datasets (userId is null)', async () => {
       const results = await datasetModel.query();
 

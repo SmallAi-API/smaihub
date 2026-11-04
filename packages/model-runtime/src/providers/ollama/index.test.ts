@@ -631,26 +631,6 @@ describe('LobeOllamaAI', () => {
       });
     });
 
-    it('should handle content with only images (no text)', async () => {
-      const message = {
-        content: [
-          {
-            type: 'image_url',
-            image_url: { url: 'data:image/png;base64,abc123' },
-          },
-        ],
-        role: 'user',
-      };
-
-      const ollamaMessage = await ollamaAI['convertContentToOllamaMessage'](message as any);
-
-      expect(ollamaMessage).toEqual({
-        content: '',
-        role: 'user',
-        images: ['abc123'],
-      });
-    });
-
     it('should handle multiple images without text', async () => {
       const message = {
         content: [

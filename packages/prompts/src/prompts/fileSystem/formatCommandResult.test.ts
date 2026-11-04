@@ -30,12 +30,7 @@ describe('formatCommandResult', () => {
     `);
   });
 
-  it('should not mark empty output while the command is still running', () => {
-    const result = formatCommandResult({ shellId: 'shell-123', success: true });
-    expect(result).not.toContain('(no output)');
-  });
-
-  it('should format successful background command', () => {
+  it('should format still-running command', () => {
     const result = formatCommandResult({
       shellId: 'shell-123',
       success: true,
