@@ -1,11 +1,9 @@
-import {
-  SiMastodon,
-  SiReddit,
-  SiSinaweibo,
-  SiTelegram,
-  SiWhatsapp,
-  SiX,
-} from '@icons-pack/react-simple-icons';
+import SiMastodon from '@icons-pack/react-simple-icons/icons/SiMastodon';
+import SiReddit from '@icons-pack/react-simple-icons/icons/SiReddit';
+import SiSinaweibo from '@icons-pack/react-simple-icons/icons/SiSinaweibo';
+import SiTelegram from '@icons-pack/react-simple-icons/icons/SiTelegram';
+import SiWhatsapp from '@icons-pack/react-simple-icons/icons/SiWhatsapp';
+import SiX from '@icons-pack/react-simple-icons/icons/SiX';
 import { camelCase, identity, pickBy } from 'es-toolkit/compat';
 import qs from 'query-string';
 

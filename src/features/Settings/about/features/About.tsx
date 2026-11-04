@@ -1,7 +1,7 @@
 'use client';
 
-import { BRANDING_NAME } from '@lobechat/business-const';
-import { Flexbox } from '@lobehub/ui';
+import { BRANDING_EMAIL, BRANDING_NAME, SOCIAL_URL } from '@lobechat/business-const';
+import { createStaticStyles, Divider, Flexbox } from '@lobehub/ui';
 import { Form } from '@lobehub/ui/form';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
