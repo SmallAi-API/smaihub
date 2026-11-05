@@ -21,6 +21,7 @@ export const toContextSnapshot = ({
   capabilities,
   connectorOwnershipNote,
   discordContext,
+  documentReferences,
   enableAgentMode,
   enableExpertise,
   enableHistoryCount,
@@ -90,6 +91,7 @@ export const toContextSnapshot = ({
   step: {
     agentBuilderContext,
     agentManagementContext,
+    documentReferences,
     groupAgentBuilderContext,
     onboardingContext,
     planTodo,
