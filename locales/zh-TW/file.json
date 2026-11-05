@@ -288,6 +288,7 @@
   "pageEditor.charLimit.blockedTitle": "此頁面有 {{actual}} 個字元，已超過您方案的每頁 {{limit}} 個字元上限。",
   "pageEditor.charLimit.nearDescription": "頁面字數一旦超過上限，就無法儲存。",
   "pageEditor.charLimit.nearTitle": "此頁面已使用 {{actual}} 個字元，您的方案允許每頁最多 {{limit}} 個字元。",
+  "pageEditor.charLimit.overDescription": "頁面超出字元上限時，無法儲存變更。請縮短頁面內容或升級您的方案。",
   "pageEditor.chooseIcon": "選擇圖示",
   "pageEditor.collab.notSynced": "您的最新頁面編輯仍在同步中，因此代理可能尚未看到它們。",
   "pageEditor.collab.offlineRestore.content": "頁面在您離線時從伺服器重新加載，您的未同步編輯不在其中。要恢復您的版本嗎？",
