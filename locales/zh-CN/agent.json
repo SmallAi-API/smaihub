@@ -347,6 +347,8 @@
   "channel.platform.wechat.description": "在日常聊天中提供代理服务——非常适合个人帮助和基于微信的受众。",
   "channel.platform.whatsapp.description": "在熟悉的移动聊天中与客户会面以提供支持和后续服务——非常适合面向客户的团队。",
   "channel.platforms": "平台",
+  "channel.processingMessage": "「处理中」提示",
+  "channel.processingMessageHint": "回复前先发送一条「正在处理」的提示消息。在支持编辑消息的平台上，工具调用进度也会显示在这条消息里。",
   "channel.publicKey": "公钥",
   "channel.publicKeyHint": "用于验证来自 Discord 的交互请求。您应用程序的常规信息页面上的 64 字符十六进制字符串。",
   "channel.publicKeyInvalid": "公钥必须是 64 字符的十六进制字符串。请从 Discord 应用程序的常规信息页面复制它——而不是 OAuth URL，也不是 API 密钥。",
