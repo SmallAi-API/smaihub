@@ -692,20 +692,6 @@ const ConnectAgentContent = memo<ConnectAgentContentProps>(
                     </a>
                   </div>
                 </div>
-                <div className={styles.emptyOption}>
-                  <span className={styles.emptyOptionIcon}>
-                    <Icon icon={TerminalIcon} size={20} />
-                  </span>
-                  <Flexbox gap={3}>
-                    <Text weight={500}>{t('connectAgent.create.connectCli')}</Text>
-                    <Text fontSize={12} type={'secondary'}>
-                      {t('connectAgent.create.noDevicesCliHint')}
-                    </Text>
-                  </Flexbox>
-                  <div className={styles.emptyOptionAction}>
-                    <CommandLine command={t('connectAgent.create.noDevicesCmd')} />
-                  </div>
-                </div>
               </div>
               <Flexbox horizontal justify={'flex-end'} padding={8}>
                 <Button

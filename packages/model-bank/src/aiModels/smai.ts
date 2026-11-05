@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax */
+/* eslint-disable eslint-core/no-restricted-syntax -- Preserve existing Chinese model descriptions. */
 import { gptImage2Schema, gptImage25Schema } from '../const/imageParameters';
 import { type ModelParamsSchema } from '../standard-parameters';
 import {
@@ -2474,6 +2474,16 @@ export const newapiASRModels: AIASRModelCard[] = [
 
 // 图像生成模型
 export const smaiImageModels: AIImageModelCard[] = [
+  {
+    description:
+      "OpenAI's fastest GPT Image 2.6 model, for high-quality everyday image generation.",
+    displayName: 'GPT Image 2.6',
+    enabled: true,
+    id: 'gpt-image-2.6',
+    parameters: gptImage25Schema,
+    releasedAt: '2026-11-05',
+    type: 'image',
+  },
   {
     description:
       "OpenAI's fastest GPT Image 2.5 model, for high-quality everyday image generation.",
