@@ -959,10 +959,11 @@ export default {
     'This link now opens a different agent. Switching to it — try again once it opens. Your draft is kept.',
   'input.agentSlugUnconfirmed':
     'Couldn’t confirm which agent this link opens. Check your connection, then try again.',
-  'input.concurrencyLimit':
-    'You have too many agent tasks running at once. Send again when one finishes.',
-  'input.concurrencyLimitWithCount':
-    'Your plan runs up to {{count}} agent tasks at once. Send again when one finishes.',
+  'input.concurrencyLimit.desc': 'Send again when one finishes.',
+  'input.concurrencyLimit.title': 'Too many agent tasks running at once',
+  'input.concurrencyLimit.titleWithCount_one': 'Your plan runs up to {{count}} agent task at once',
+  'input.concurrencyLimit.titleWithCount_other':
+    'Your plan runs up to {{count}} agent tasks at once',
   'input.costEstimate.creditsPerMillionTokens': '${{credits}}/M tokens',
   'input.costEstimate.hint': 'Estimated cost: ~${{credits}}',
   'input.costEstimate.inputLabel': 'Input',
@@ -973,8 +974,6 @@ export default {
     'Estimated from current context, tools, and model pricing. Actual cost may vary.',
   'input.disclaimer': 'Agents can make mistakes. Use your judgment for critical info.',
   'input.errorMsg': 'Send failed: {{errorMsg}}. Retry, or send again later.',
-  'input.inputCompletionError.desc':
-    'Input suggestions stopped after an error. Retry, or adjust the suggestion model in Settings.',
   'input.inputCompletionError.retry': 'Retry',
   'input.inputCompletionError.settings': 'Settings',
   'input.inputCompletionError.title': 'Input suggestions paused',
@@ -1163,7 +1162,7 @@ export default {
   'messages.modelCard.pricing.inputTokens': 'Input ${{amount}}/M',
   'messages.modelCard.pricing.outputTokens': 'Output ${{amount}}/M',
   'messages.modelCard.pricing.writeCacheInputTokens': 'Cache write ${{amount}}/M',
-  'messages.tokenDetails.average': 'Average unit price',
+  'messages.tokenDetails.average': 'Average price per 1M tokens',
   'messages.tokenDetails.cliCredits.title': '{{value}} Credits',
   'messages.tokenDetails.cliCredits.tooltip':
     'Subscription credits reported by the agent CLI for this turn. The CLI bills in credits instead of reporting tokens; this is separate from your smai.ai usage.',
