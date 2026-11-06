@@ -5,7 +5,9 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import IntegrationCard from './IntegrationCard';
+import { isDirectorySettling } from './loading';
 import { type IntegrationId, INTEGRATIONS, UPCOMING_INTEGRATIONS } from './registry';
+import { IntegrationsOverviewSkeleton } from './Skeleton';
 import { useGithubIntegration } from './useGithubIntegration';
 
 const styles = createStaticStyles(({ css, cssVar }) => ({
@@ -57,6 +59,15 @@ const Overview = memo<OverviewProps>(({ onOpen }) => {
     github: github.enabled,
   };
   const enabled = INTEGRATIONS.filter((item) => enabledById[item.id]);
+
+  // Wait for the registered connection lookup before showing the Enabled strip.
+  if (isDirectorySettling([github]))
+    return (
+      <IntegrationsOverviewSkeleton
+        available={INTEGRATIONS.length}
+        upcoming={UPCOMING_INTEGRATIONS.length}
+      />
+    );
 
   return (
     <Flexbox gap={24}>
