@@ -13,14 +13,15 @@ interface MockGlobalState {
 }
 
 interface MockNavItem {
-  external?: boolean;
+  activeTab?: string;
   key: string;
   popoverImageSrc?: string;
   title: string;
-  url?: string;
+  url: string;
 }
 
 const mocks = vi.hoisted(() => ({
+  activeTab: 'home',
   electronOpenExternalLink: vi.fn(),
   globalState: undefined as unknown as MockGlobalState,
   isDesktop: false,
@@ -76,8 +77,18 @@ vi.mock('react-router', () => ({
 }));
 
 vi.mock('@/features/NavPanel/components/NavItem', () => ({
-  default: ({ title, onClick }: { onClick?: (e: React.MouseEvent) => void; title: string }) => (
-    <div onClick={onClick}>{title}</div>
+  default: ({
+    active,
+    title,
+    onClick,
+  }: {
+    active?: boolean;
+    onClick?: (e: React.MouseEvent) => void;
+    title: string;
+  }) => (
+    <div data-active={active} onClick={onClick}>
+      {title}
+    </div>
   ),
 }));
 
@@ -94,7 +105,7 @@ vi.mock('@/services/electron/system', () => ({
 }));
 
 vi.mock('@/hooks/useActiveTabKey', () => ({
-  useActiveTabKey: () => 'home',
+  useActiveTabKey: () => mocks.activeTab,
 }));
 
 vi.mock('@/hooks/useNavLayout', () => ({
@@ -144,6 +155,7 @@ vi.mock('@/store/global', () => ({
 }));
 
 beforeEach(() => {
+  mocks.activeTab = 'home';
   mocks.updateSystemStatus.mockReset();
   mocks.electronOpenExternalLink.mockReset();
   mocks.windowOpen.mockReset();
@@ -303,6 +315,19 @@ describe('Home sidebar body', () => {
     expect(children[0]).toContainElement(screen.getByTestId('sidebar-item-agent'));
     expect(children[1]).toHaveAttribute('data-testid', 'sidebar-channels');
     expect(children[2]).toContainElement(screen.getByTestId('sidebar-item-recents'));
+  });
+
+  // The Projects entry is keyed `project` like its sidebar layout id, but its page is `/projects`.
+  it('highlights the Projects link on the project list page', () => {
+    mocks.activeTab = 'projects';
+    mocks.navLayout.topNavItems = [
+      { activeTab: 'projects', key: 'project', title: 'Projects', url: '/projects' },
+    ];
+    mocks.globalState.status.sidebarItems = ['project', 'recents', 'agent'];
+
+    render(<Body />);
+
+    expect(screen.getByText('Projects')).toHaveAttribute('data-active', 'true');
   });
 
   it('opens external links via window.open in web mode (regression: docs link must not use SPA Link)', () => {

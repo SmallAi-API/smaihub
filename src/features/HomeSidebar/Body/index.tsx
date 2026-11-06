@@ -25,14 +25,12 @@ import { SidebarTabKey } from '@/store/global/initialState';
 import { systemStatusSelectors } from '@/store/global/selectors';
 import { SIDEBAR_SPACER_ID } from '@/store/global/selectors/systemStatus';
 import { useUserStore } from '@/store/user';
-import { labPreferSelectors } from '@/store/user/selectors';
 import { isModifierClick } from '@/utils/navigation';
 
 import Agent from './Agent';
 import { openCustomizeSidebarModal } from './CustomizeSidebarModal';
 import Favorites from './Favorites';
 import Private from './Private';
-import Project from './Project';
 import { useSyncWorkspaceSidebarPreference } from './useSyncWorkspaceSidebarPreference';
 
 export enum GroupKey {
@@ -48,7 +46,6 @@ export enum GroupKey {
 
 const ACCORDION_KEYS = new Set<string>([
   GroupKey.Favorites,
-  GroupKey.Project,
   GroupKey.Recents,
   GroupKey.Agent,
   GroupKey.Private,
@@ -63,7 +60,6 @@ const accordionComponents: Record<string, (key: string) => ReactElement> = {
   [GroupKey.Agent]: (key) => <Agent itemKey={key} key={key} />,
   [GroupKey.Favorites]: (key) => <Favorites itemKey={key} key={key} />,
   [GroupKey.Private]: (key) => <Private itemKey={key} key={key} />,
-  [GroupKey.Project]: (key) => <Project itemKey={key} key={key} />,
   [GroupKey.Recents]: (key) => <Recents itemKey={key} key={key} />,
 };
 
@@ -96,7 +92,6 @@ const Body = memo(() => {
   // and the section layout syncs per-member — both live in the workspace
   // user preference, so load it alongside the sidebar.
   const useFetchWorkspaceUserPreference = useUserStore((s) => s.useFetchWorkspaceUserPreference);
-  const enableProjects = useUserStore(labPreferSelectors.enableProjects);
   useFetchWorkspaceUserPreference();
   useSyncWorkspaceSidebarPreference(activeWorkspaceId);
   const sidebarItems = useGlobalStore(systemStatusSelectors.sidebarItems(activeWorkspaceId));
@@ -154,10 +149,9 @@ const Body = memo(() => {
       // implicitly owner-private, so a dedicated bucket would be a noisy
       // empty section.
       if (k === GroupKey.Private && !activeWorkspaceId) return false;
-      if (k === GroupKey.Project && !enableProjects) return false;
       return k === GroupKey.Agent || k === SIDEBAR_SPACER_ID || !hiddenSections.includes(k);
     },
-    [hiddenSections, activeWorkspaceId, enableProjects],
+    [hiddenSections, activeWorkspaceId],
   );
 
   const visibleKeys = useMemo(
@@ -232,7 +226,7 @@ const Body = memo(() => {
           }}
         >
           <NavItem
-            active={tab === key}
+            active={tab === (navItem.activeTab ?? key)}
             contextMenuItems={getContextMenuItems(key)}
             icon={navItem.icon}
             title={navItem.title}

@@ -88,7 +88,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
   { id: 'favorites', labelKey: 'favorite.section' },
   { icon: KeyRound, id: 'api', labelKey: 'tab.apiAccess' },
   { id: 'recents', labelKey: 'recents' },
-  { id: 'project', labelKey: 'project:sidebar.title' },
+  { id: 'project', labelKey: 'tab.projects', routeId: 'project' },
   { id: 'private', labelKey: 'navPanel.privateAgents' },
   { alwaysVisible: true, id: 'agent', labelKey: 'navPanel.agent' },
   { id: 'image', labelKey: 'tab.generation', routeId: 'image' },
