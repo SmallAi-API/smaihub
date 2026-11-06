@@ -19,8 +19,8 @@ describe('resolveRequestLocale', () => {
     expect(
       resolveRequestLocale(
         request({
-          cookie: 'LOBE_LOCALE=ja-JP',
-          language: 'ko-KR',
+          cookie: 'LOBE_LOCALE=zh-TW',
+          language: 'en-US',
           url: 'https://lobehub.com/share/t/abc?hl=zh-CN',
         }),
       ),
@@ -28,8 +28,8 @@ describe('resolveRequestLocale', () => {
   });
 
   it('prefers the cookie over the browser', () => {
-    expect(resolveRequestLocale(request({ cookie: 'LOBE_LOCALE=ja-JP', language: 'ko-KR' }))).toBe(
-      'ja-JP',
+    expect(resolveRequestLocale(request({ cookie: 'LOBE_LOCALE=zh-TW', language: 'en-US' }))).toBe(
+      'zh-TW',
     );
   });
 
@@ -50,11 +50,13 @@ describe('resolveRequestLocale', () => {
   });
 
   it('keeps header order when no weights are given', () => {
-    expect(resolveRequestLocale(request({ language: 'ja-JP,en-US' }))).toBe('ja-JP');
+    expect(resolveRequestLocale(request({ language: 'zh-TW,en-US' }))).toBe('zh-TW');
   });
 
   it('skips wildcards and unsupported tags to reach a supported one', () => {
-    expect(resolveRequestLocale(request({ language: '*,xx-YY;q=0.9,ja-JP;q=0.8' }))).toBe('ja-JP');
+    expect(
+      resolveRequestLocale(request({ language: '*,xx-YY;q=0.9,ja-JP;q=0.8,zh-TW;q=0.7' })),
+    ).toBe('zh-TW');
   });
 
   it('matches Accept-Language case-insensitively', () => {
@@ -75,18 +77,41 @@ describe('resolveRequestLocale', () => {
   });
 
   it('defers to the browser when the explicit locale is auto', () => {
-    expect(resolveRequestLocale(request({ cookie: 'LOBE_LOCALE=auto', language: 'ja-JP' }))).toBe(
-      'ja-JP',
+    expect(resolveRequestLocale(request({ cookie: 'LOBE_LOCALE=auto', language: 'zh-TW' }))).toBe(
+      'zh-TW',
     );
     expect(
       resolveRequestLocale(
-        request({ language: 'ja-JP', url: 'https://lobehub.com/share/t/abc?hl=auto' }),
+        request({ language: 'zh-TW', url: 'https://lobehub.com/share/t/abc?hl=auto' }),
       ),
-    ).toBe('ja-JP');
+    ).toBe('zh-TW');
   });
+
+  it.each(['ar', 'ja-JP', 'pt-BR'])(
+    'falls back to English for explicit unsupported locale %s',
+    (locale) => {
+      expect(
+        resolveRequestLocale(
+          request({ language: 'zh-CN', url: `https://lobehub.com/share/t/abc?hl=${locale}` }),
+        ),
+      ).toBe('en-US');
+      expect(
+        resolveRequestLocale(request({ cookie: `LOBE_LOCALE=${locale}`, language: 'zh-CN' })),
+      ).toBe('en-US');
+      expect(resolveRequestLocale(request({ language: locale }))).toBe('en-US');
+    },
+  );
 
   it('falls back to the default with no locale signal at all', () => {
     expect(resolveRequestLocale(request())).toBe('en-US');
     expect(resolveRequestLocale(request({ language: '' }))).toBe('en-US');
+  });
+});
+
+describe('shared vocabulary', () => {
+  it('falls back to the default the gateway and the KV config use', async () => {
+    const { DEFAULT_APP_LOCALE } = await import('@lobehub/edge-contract/request-locale');
+    const { DEFAULT_LANG } = await import('@/const/locale');
+    expect(DEFAULT_LANG).toBe(DEFAULT_APP_LOCALE);
   });
 });

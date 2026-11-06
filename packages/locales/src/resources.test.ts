@@ -15,36 +15,24 @@ describe('normalizeLocale', () => {
     expect(normalizeLocale('zh')).toBe('zh-CN');
   });
 
-  it('should return "de-DE" when locale is "de"', () => {
-    expect(normalizeLocale('de')).toBe('de-DE');
-  });
-
-  it('should return "ru-RU" when locale is "ru"', () => {
-    expect(normalizeLocale('ru')).toBe('ru-RU');
-  });
-
-  it('should return "ar" when locale is "ar-EG"', () => {
-    expect(normalizeLocale('ar')).toBe('ar');
-    expect(normalizeLocale('ar-EG')).toBe('ar');
-  });
+  it.each(['de', 'ru', 'ar', 'ar-EG', 'fr-FR', 'ja-JP', 'ko-KR', 'pt-BR', 'tr-TR', 'vi-VN'])(
+    'falls back to English for unsupported locale %s',
+    (locale) => {
+      expect(normalizeLocale(locale)).toBe('en-US');
+    },
+  );
 
   it('should return "en-US" when locale is "en"', () => {
     expect(normalizeLocale('en')).toBe('en-US');
   });
 
-  it('should return the input locale for other valid locales', () => {
-    expect(normalizeLocale('fr-FR')).toBe('fr-FR');
-    expect(normalizeLocale('ja-JP')).toBe('ja-JP');
-    expect(normalizeLocale('ko-KR')).toBe('ko-KR');
-    expect(normalizeLocale('pt-BR')).toBe('pt-BR');
-    expect(normalizeLocale('tr-TR')).toBe('tr-TR');
-    expect(normalizeLocale('vi-VN')).toBe('vi-VN');
+  it('preserves Traditional Chinese', () => {
     expect(normalizeLocale('zh-TW')).toBe('zh-TW');
   });
 
-  it('should return the input locale for unknown locales', () => {
+  it('falls back to English for unknown locales', () => {
     expect(normalizeLocale('unknown')).toBe('en-US');
-    expect(normalizeLocale('fr')).toBe('fr-FR');
+    expect(normalizeLocale('fr')).toBe('en-US');
   });
 });
 
@@ -58,6 +46,19 @@ describe('matchLocale', () => {
   it('should return the matched locale', () => {
     expect(matchLocale('en')).toBe('en-US');
     expect(matchLocale('zh-Hant')).toBe('zh-TW');
-    expect(matchLocale('ar-EG')).toBe('ar');
+    expect(matchLocale('zh-Hans-CN')).toBe('zh-CN');
+    expect(matchLocale('cn')).toBe('zh-CN');
+  });
+
+  it.each(['ar-EG', 'ja-JP', 'pt-BR'])('rejects unsupported locale %s', (locale) => {
+    expect(matchLocale(locale)).toBeUndefined();
+  });
+});
+
+describe('matchLocale case handling', () => {
+  it('matches a tag whatever its case', () => {
+    expect(matchLocale('zh-cn')).toBe('zh-CN');
+    expect(matchLocale('ZH-tw')).toBe('zh-TW');
+    expect(matchLocale('EN')).toBe('en-US');
   });
 });
