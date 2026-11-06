@@ -108,6 +108,7 @@
   "gpt-image-1.description": "ChatGPT 原生多模態圖片生成模型。",
   "gpt-image-2.5-flare.description": "OpenAI 最快的 GPT 圖像 2.5 模型，用於高品質的日常圖像生成。",
   "gpt-image-2.5-sunburst.description": "GPT 圖像 2.5 模型，適用於編輯精度最重要的工作流程，從文本和圖像輸入生成和編輯圖像。",
+  "gpt-image-2.6.description": "OpenAI 最快的 GPT 圖像 2.6 模型，用於高品質的日常圖像生成。",
   "gpt-image-2.description": "OpenAI 的下一代多模態影像模型，具備原生推理能力，最高可達 4K 解析度，幾乎完美的文字渲染，以及高保真的多語言支持。",
   "gpt-realtime-mini.description": "最新實時語音版本，支持音頻和文本實時輸入輸出。",
   "grok-4-0709.description": "我們最新最強大的旗艦模型，在自然語言處理、數學計算和推理方面表現卓越 —— 是一款完美的全能型選手。",

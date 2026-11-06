@@ -15,6 +15,7 @@ import type {
   AITTSModelCard,
   AIVideoModelCard,
 } from '../types/aiModel';
+import { gptImage26Models } from './smai/gptImage26';
 
 // smai Router Provider - 聚合多个 AI 服务
 // 模型通过动态获取，不预定义具体模型
@@ -2474,16 +2475,7 @@ export const newapiASRModels: AIASRModelCard[] = [
 
 // 图像生成模型
 export const smaiImageModels: AIImageModelCard[] = [
-  {
-    description:
-      "OpenAI's fastest GPT Image 2.6 model, for high-quality everyday image generation.",
-    displayName: 'GPT Image 2.6',
-    enabled: true,
-    id: 'gpt-image-2.6',
-    parameters: gptImage25Schema,
-    releasedAt: '2026-11-05',
-    type: 'image',
-  },
+  ...gptImage26Models,
   {
     description:
       "OpenAI's fastest GPT Image 2.5 model, for high-quality everyday image generation.",

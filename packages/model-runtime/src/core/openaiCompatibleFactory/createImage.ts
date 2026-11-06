@@ -83,7 +83,9 @@ async function generateByImageMode(
     delete userInput.image;
   }
 
-  if (userInput.size === 'auto') {
+  // GIF auto-sizing must reach the upstream explicitly: compatible gateways may otherwise
+  // default to a static-image size that exceeds the pixel budget when expanded into frames.
+  if (userInput.size === 'auto' && userInput.output_format !== 'gif') {
     delete userInput.size;
   }
 

@@ -62,6 +62,18 @@ export const gptImage25Schema: ModelParamsSchema = {
   size: gptImage2Schema.size,
 };
 
+// Keep animation controls separate from 2.5. GIF frame controls follow the Images API contract:
+// https://developers.openai.com/api/docs/guides/image-generation#generate-animated-gif-output
+export const gptImage26Schema: ModelParamsSchema = {
+  imageUrls: gptImage25Schema.imageUrls,
+  prompt: gptImage25Schema.prompt,
+  quality: gptImage25Schema.quality,
+  size: gptImage25Schema.size,
+  outputFormat: { default: 'png', enum: ['png', 'gif'] },
+  frameCount: { default: 9, max: 16, min: 2, step: 1 },
+  frameDurationMs: { default: 200, max: 2000, min: 20, step: 10 },
+};
+
 export const nanoBananaParameters: ModelParamsSchema = {
   aspectRatio: {
     default: '1:1',

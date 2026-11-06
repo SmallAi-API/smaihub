@@ -102,6 +102,8 @@
   "FileParsingStatus.chunks.embeddingStatus.error": "向量化失敗",
   "FileParsingStatus.chunks.embeddingStatus.errorResult": "向量化失敗，請檢查後重試。失敗原因：",
   "FileParsingStatus.chunks.embeddingStatus.processing": "文本塊正在向量化，請耐心等待",
+  "FileParsingStatus.chunks.embeddingStatus.quotaExceeded": "向量儲存空間已滿",
+  "FileParsingStatus.chunks.embeddingStatus.quotaExceededResult": "向量儲存空間已滿，因此此檔案尚未向量化。請升級方案，或刪除不再需要的檔案以釋放空間，然後重試。",
   "FileParsingStatus.chunks.embeddingStatus.success": "當前文本塊均已向量化",
   "FileParsingStatus.chunks.embeddings": "向量化",
   "FileParsingStatus.chunks.status.error": "分塊失敗",

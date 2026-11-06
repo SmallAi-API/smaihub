@@ -69,6 +69,7 @@
   "linear.sync.error.generic": "線性同步失敗。請再試一次。",
   "linear.sync.error.reconnect": "線性連接已過期。請重新連接工作區，然後再試一次。",
   "linear.sync.filter.allProjects": "所有專案",
+  "linear.sync.filter.noProject": "無專案",
   "linear.sync.filter.project": "線性專案",
   "linear.sync.filter.projectHint": "保持所有專案以包含團隊中的每個問題。",
   "linear.sync.filter.states": "要同步的問題狀態",
