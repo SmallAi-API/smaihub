@@ -1,12 +1,18 @@
 'use client';
 
 import { BRANDING_EMAIL, BRANDING_NAME, SOCIAL_URL } from '@lobechat/business-const';
-import { createStaticStyles, Divider, Flexbox } from '@lobehub/ui';
+import { Divider, Flexbox } from '@lobehub/ui';
 import { Form } from '@lobehub/ui/form';
+import { cssVar } from '@lobehub/ui/stylex/cssVar.stylex';
+import * as stylex from '@stylexjs/stylex';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Version from './Version';
+
+const styles = stylex.create({
+  title: { fontSize: '14px', fontWeight: 'bold', color: cssVar.colorTextSecondary },
+});
 
 const About = memo<{ mobile?: boolean }>(({ mobile }) => {
   const { t } = useTranslation('common');
@@ -20,6 +26,83 @@ const About = memo<{ mobile?: boolean }>(({ mobile }) => {
     >
       <Flexbox paddingBlock={20} width={'100%'}>
         <Version mobile={mobile} />
+        <Divider style={{ marginBlock: 0 }} />
+        <AboutList
+          grid
+          ItemRender={ItemCard}
+          items={[
+            {
+              href: BLOG,
+              icon: SiRss,
+              label: t('blog'),
+              value: 'blog',
+            },
+            {
+              href: SOCIAL_URL.github,
+              icon: SiGithub,
+              label: 'GitHub',
+              value: 'feedback',
+            },
+            {
+              href: SOCIAL_URL.discord,
+              icon: SiDiscord,
+              label: 'Discord',
+              value: 'discord',
+            },
+            {
+              href: SOCIAL_URL.x,
+              icon: SiX as any,
+              label: 'X / Twitter',
+              value: 'x',
+            },
+
+            {
+              href: SOCIAL_URL.youtube,
+              icon: SiYoutube,
+              label: 'YouTube',
+              value: 'youtube',
+            },
+          ]}
+        />
+        <Divider style={{ marginBlock: 0 }} />
+        <div {...stylex.props(styles.title)}>{t('contact')}</div>
+        <AboutList
+          ItemRender={ItemLink}
+          items={[
+            {
+              href: OFFICIAL_SITE,
+              label: t('officialSite'),
+              value: 'officialSite',
+            },
+            {
+              href: mailTo(BRANDING_EMAIL.support),
+              label: t('mail.support'),
+              value: 'support',
+            },
+            {
+              href: mailTo(BRANDING_EMAIL.business),
+              label: t('mail.business'),
+              value: 'business',
+            },
+          ]}
+        />
+        <Divider style={{ marginBlock: 0 }} />
+        <div {...stylex.props(styles.title)}>{t('legal')}</div>
+        <AboutList
+          ItemRender={ItemLink}
+          items={[
+            {
+              href: TERMS_URL,
+              label: t('terms'),
+              value: 'terms',
+            },
+            {
+              href: PRIVACY_URL,
+              label: t('privacy'),
+              value: 'privacy',
+            },
+          ]}
+        />
       </Flexbox>
     </Form.Group>
   );
