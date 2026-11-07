@@ -22,9 +22,10 @@ export const styles = stylex.create({
     fontSize: '9px',
     fontWeight: 600,
     lineHeight: '12px',
-    color: cssVar.colorBgContainer,
+    color: '#fff',
     textAlign: 'center',
-    backgroundColor: cssVar.colorText,
+    // Red like the conversation rows' unread badge, so the count reads as unread, not as a label.
+    backgroundColor: cssVar.colorError,
   },
   item: {
     cursor: 'pointer',

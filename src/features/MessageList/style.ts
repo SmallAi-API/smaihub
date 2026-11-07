@@ -15,6 +15,14 @@ export const styles = stylex.create({
     fontSize: '12px',
     color: cssVar.colorTextQuaternary,
   },
+  /** Pinned rows share one tinted block, like WeChat's 置顶, instead of a card per row. */
+  pinnedGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1px',
+    borderRadius: cssVar.borderRadiusLG,
+    backgroundColor: cssVar.colorFillQuaternary,
+  },
   preview: {
     overflow: 'hidden',
     minWidth: 0,
@@ -39,11 +47,16 @@ export const styles = stylex.create({
     backgroundColor: { 'default': null, ':hover': cssVar.colorFillTertiary },
     transition: 'background-color 0.15s',
   },
-  rowPinned: {
-    backgroundColor: { 'default': cssVar.colorFillQuaternary, ':hover': cssVar.colorFillTertiary },
-  },
   rowActive: {
     backgroundColor: { 'default': cssVar.colorFillSecondary, ':hover': cssVar.colorFillSecondary },
+  },
+  /** Title plus preview line, so a row without a preview keeps the same height. */
+  rowText: {
+    minWidth: 0,
+    minHeight: '36px',
+  },
+  rowTextSingleLine: {
+    minHeight: 0,
   },
   running: {
     color: cssVar.colorSuccess,
