@@ -4,6 +4,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { LobeCohereAI, params } from './index';
 
+const createCommandRPlusModel = () => ({
+  name: 'command-r-plus',
+  context_length: 128000,
+  features: ['tools', 'chat'],
+  supports_vision: false,
+});
+
 // Mock the console.error to avoid polluting test output
 vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -190,12 +197,7 @@ describe('LobeCohereAI - custom features', () => {
       mockClient.models.list.mockResolvedValue({
         body: {
           models: [
-            {
-              name: 'command-r-plus',
-              context_length: 128000,
-              features: ['tools', 'chat'],
-              supports_vision: false,
-            },
+            createCommandRPlusModel(),
             {
               name: 'command-r',
               context_length: 128000,
@@ -298,14 +300,7 @@ describe('LobeCohereAI - custom features', () => {
     it('should merge with known model list for display name and enabled status', async () => {
       mockClient.models.list.mockResolvedValue({
         body: {
-          models: [
-            {
-              name: 'command-r-plus',
-              context_length: 128000,
-              features: ['tools', 'chat'],
-              supports_vision: false,
-            },
-          ],
+          models: [createCommandRPlusModel()],
         },
       });
 
@@ -369,14 +364,7 @@ describe('LobeCohereAI - custom features', () => {
     it('should combine capabilities from both API and known model list', async () => {
       mockClient.models.list.mockResolvedValue({
         body: {
-          models: [
-            {
-              name: 'command-r-plus',
-              context_length: 128000,
-              features: ['tools', 'chat'],
-              supports_vision: false,
-            },
-          ],
+          models: [createCommandRPlusModel()],
         },
       });
 

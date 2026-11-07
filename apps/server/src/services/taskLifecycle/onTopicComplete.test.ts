@@ -75,6 +75,26 @@ const baseTask = (overrides: Partial<TaskItem> = {}): TaskItem =>
     ...overrides,
   }) as unknown as TaskItem;
 
+const createDoneParams = () => ({
+  operationId: 'op-1',
+  reason: 'done',
+  taskId: 'task-1',
+  taskIdentifier: 'TASK-1',
+  topicId: 'topic-1',
+});
+
+const createErrorParams = (
+  runTrigger: NonNullable<Parameters<TaskLifecycleService['onTopicComplete']>[0]['runTrigger']>,
+) => ({
+  errorMessage: 'boom',
+  operationId: 'op-1',
+  reason: 'error',
+  runTrigger,
+  taskId: 'task-1',
+  taskIdentifier: 'TASK-1',
+  topicId: 'topic-1',
+});
+
 describe('TaskLifecycleService.onTopicComplete', () => {
   let service: TaskLifecycleService;
   let updateStatus: ReturnType<typeof vi.fn>;
@@ -136,13 +156,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       const task = baseTask({ automationMode: 'heartbeat' });
       findById.mockResolvedValue(task);
 
-      await service.onTopicComplete({
-        operationId: 'op-1',
-        reason: 'done',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createDoneParams());
 
       expect(updateStatus).toHaveBeenCalledWith('task-1', 'scheduled', { error: null });
       expect(updateStatus).not.toHaveBeenCalledWith('task-1', 'paused', expect.anything());
@@ -176,13 +190,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       const task = baseTask({ automationMode: 'schedule' });
       findById.mockResolvedValue(task);
 
-      await service.onTopicComplete({
-        operationId: 'op-1',
-        reason: 'done',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createDoneParams());
 
       expect(updateStatus).toHaveBeenCalledWith('task-1', 'scheduled', { error: null });
     });
@@ -198,13 +206,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       findById.mockResolvedValue(task);
       (service as any).taskTopicModel.countByTask = vi.fn().mockResolvedValue(3);
 
-      await service.onTopicComplete({
-        operationId: 'op-1',
-        reason: 'done',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createDoneParams());
 
       expect(updateStatus).toHaveBeenCalledWith('task-1', 'scheduled', { error: null });
       expect(updateStatus).not.toHaveBeenCalledWith('task-1', 'completed', expect.anything());
@@ -224,13 +226,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       findById.mockResolvedValue(task);
       (service as any).taskTopicModel.countByTask = vi.fn().mockResolvedValue(1);
 
-      await service.onTopicComplete({
-        operationId: 'op-1',
-        reason: 'done',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createDoneParams());
 
       expect(updateStatus).toHaveBeenCalledWith('task-1', 'completed', {
         completedAt: expect.any(Date),
@@ -248,13 +244,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       const countByTask = vi.fn().mockResolvedValue(99);
       (service as any).taskTopicModel.countByTask = countByTask;
 
-      await service.onTopicComplete({
-        operationId: 'op-1',
-        reason: 'done',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createDoneParams());
 
       // Without scheduleStartedAt the helper short-circuits before querying,
       // and the task falls through to the normal scheduled-park branch.
@@ -266,13 +256,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       const task = baseTask({ automationMode: null });
       findById.mockResolvedValue(task);
 
-      await service.onTopicComplete({
-        operationId: 'op-1',
-        reason: 'done',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createDoneParams());
 
       expect(updateStatus).toHaveBeenCalledWith('task-1', 'paused', { error: null });
       expect(updateStatus).not.toHaveBeenCalledWith('task-1', 'scheduled', expect.anything());
@@ -286,13 +270,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       completeIfCompletionRequested.mockResolvedValue({ ...task, status: 'completed' });
       findById.mockResolvedValue(task);
 
-      await service.onTopicComplete({
-        operationId: 'op-1',
-        reason: 'done',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createDoneParams());
 
       // The request is consumed by the same write that completes the task.
       expect(completeIfCompletionRequested).toHaveBeenCalledWith('task-1', 'op-1');
@@ -309,13 +287,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       findById.mockResolvedValue(task);
       completeIfCompletionRequested.mockResolvedValue(null);
 
-      await service.onTopicComplete({
-        operationId: 'op-1',
-        reason: 'done',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createDoneParams());
 
       expect(cascadeOnCompletion).not.toHaveBeenCalled();
       expect(updateStatusIfCurrent).toHaveBeenCalledWith('task-1', 'running', 'paused', {
@@ -382,13 +354,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
         .mockResolvedValue(task);
       (service as any).taskModel.shouldPauseAfterComplete = vi.fn().mockReturnValue(false);
 
-      await service.onTopicComplete({
-        operationId: 'op-1',
-        reason: 'done',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createDoneParams());
 
       expect(updateStatusIfCurrent).toHaveBeenCalledWith('task-1', 'running', 'completed', {
         completedAt: expect.any(Date),
@@ -414,13 +380,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
           .mockResolvedValue(task);
         (service as any).taskModel.shouldPauseAfterComplete = vi.fn().mockReturnValue(true);
 
-        await service.onTopicComplete({
-          operationId: 'op-1',
-          reason: 'done',
-          taskId: 'task-1',
-          taskIdentifier: 'TASK-1',
-          topicId: 'topic-1',
-        });
+        await service.onTopicComplete(createDoneParams());
 
         expect(updateStatusIfCurrent).toHaveBeenCalledWith('task-1', 'running', 'completed', {
           completedAt: expect.any(Date),
@@ -438,13 +398,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
         .fn()
         .mockReturnValue({ topic: { after: true } });
 
-      await service.onTopicComplete({
-        operationId: 'op-1',
-        reason: 'done',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createDoneParams());
 
       expect(updateStatusIfCurrent).toHaveBeenCalledWith('task-1', 'running', 'paused', {
         error: null,
@@ -463,13 +417,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
         findById.mockResolvedValue(task);
         updateStatusIfCurrent.mockResolvedValue(null);
 
-        await service.onTopicComplete({
-          operationId: 'op-1',
-          reason: 'done',
-          taskId: 'task-1',
-          taskIdentifier: 'TASK-1',
-          topicId: 'topic-1',
-        });
+        await service.onTopicComplete(createDoneParams());
 
         expect(updateStatusIfCurrent).toHaveBeenCalledWith('task-1', 'running', 'completed', {
           completedAt: expect.any(Date),
@@ -484,13 +432,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       findById.mockResolvedValue(task);
       (service as any).taskModel.shouldPauseOnTopicComplete = vi.fn().mockReturnValue(false);
 
-      await service.onTopicComplete({
-        operationId: 'op-1',
-        reason: 'done',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createDoneParams());
 
       expect(updateStatus).not.toHaveBeenCalled();
     });
@@ -628,15 +570,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       const task = baseTask({ automationMode: 'schedule', status: 'running' });
       findById.mockResolvedValue(task);
 
-      await service.onTopicComplete({
-        errorMessage: 'boom',
-        operationId: 'op-1',
-        reason: 'error',
-        runTrigger: 'manual',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createErrorParams('manual'));
 
       // Restored to the resting scheduled state so the next cron tick still
       // fires — never paused off the schedule.
@@ -673,15 +607,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       });
       findById.mockResolvedValue(task);
 
-      await service.onTopicComplete({
-        errorMessage: 'boom',
-        operationId: 'op-1',
-        reason: 'error',
-        runTrigger: 'schedule',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createErrorParams('schedule'));
 
       // 1 prior + this one = 2, below the fuse of 3 → retryable, stays scheduled.
       expect(updateStatus).toHaveBeenCalledWith('task-1', 'scheduled', { error: 'boom' });
@@ -699,15 +625,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       });
       findById.mockResolvedValue(task);
 
-      await service.onTopicComplete({
-        errorMessage: 'boom',
-        operationId: 'op-1',
-        reason: 'error',
-        runTrigger: 'schedule',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createErrorParams('schedule'));
 
       // 2 prior + this one = 3 = fuse → pause.
       expect(updateStatus).toHaveBeenCalledWith('task-1', 'paused', { error: 'boom' });
@@ -728,15 +646,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       });
       findById.mockResolvedValue(task);
 
-      await service.onTopicComplete({
-        errorMessage: 'boom',
-        operationId: 'op-1',
-        reason: 'error',
-        runTrigger: 'schedule',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createErrorParams('schedule'));
 
       expect(updateContext).toHaveBeenCalledWith(
         'task-1',
@@ -787,15 +697,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
     it('leaves a Goal Task failure to the coordinator', async () => {
       findById.mockResolvedValue(baseTask({ automationMode: null }));
 
-      await service.onTopicComplete({
-        errorMessage: 'boom',
-        operationId: 'op-1',
-        reason: 'error',
-        runTrigger: 'goal',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createErrorParams('goal'));
 
       expect(createBrief).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
       expect(notifyRunFailed).not.toHaveBeenCalled();
@@ -807,15 +709,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
     it('still notifies for a manual rerun of a Goal Task', async () => {
       findById.mockResolvedValue(baseTask({ automationMode: null }));
 
-      await service.onTopicComplete({
-        errorMessage: 'boom',
-        operationId: 'op-1',
-        reason: 'error',
-        runTrigger: 'manual',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createErrorParams('manual'));
 
       expect(notifyRunFailed).toHaveBeenCalledOnce();
     });
@@ -823,15 +717,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
     it('does not notify for a task deleted mid-run', async () => {
       findById.mockResolvedValue(null);
 
-      await service.onTopicComplete({
-        errorMessage: 'boom',
-        operationId: 'op-1',
-        reason: 'error',
-        runTrigger: 'manual',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createErrorParams('manual'));
 
       expect(notifyRunFailed).not.toHaveBeenCalled();
     });
@@ -923,15 +809,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       runCompleted.mockRejectedValue(new Error('boom'));
       const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-      await expect(
-        service.onTopicComplete({
-          operationId: 'op-1',
-          reason: 'done',
-          taskId: 'task-1',
-          taskIdentifier: 'TASK-1',
-          topicId: 'topic-1',
-        }),
-      ).resolves.toBeUndefined();
+      await expect(service.onTopicComplete(createDoneParams())).resolves.toBeUndefined();
       expect(updateStatus).toHaveBeenCalledWith('task-1', 'paused', { error: null });
       // Logged where production sees it: the follow-up can change task state.
       expect(consoleError).toHaveBeenCalled();
@@ -1045,15 +923,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
       });
       findById.mockResolvedValue(task);
 
-      await service.onTopicComplete({
-        errorMessage: 'boom',
-        operationId: 'op-1',
-        reason: 'error',
-        runTrigger: 'schedule',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createErrorParams('schedule'));
 
       expect(notifyFailed).toHaveBeenCalledWith(
         expect.objectContaining({ consecutiveFailures: 3, paused: true }),
@@ -1063,15 +933,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
     it('manual failure of an automation task → run-failed notification, not an automation one', async () => {
       findById.mockResolvedValue(baseTask({ automationMode: 'schedule' }));
 
-      await service.onTopicComplete({
-        errorMessage: 'boom',
-        operationId: 'op-1',
-        reason: 'error',
-        runTrigger: 'manual',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createErrorParams('manual'));
 
       expect(notifyFailed).not.toHaveBeenCalled();
       expect(notifyRunFailed).toHaveBeenCalledWith(
@@ -1082,15 +944,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
     it('transient heartbeat tick failure → NO notification (high-frequency ticks)', async () => {
       findById.mockResolvedValue(baseTask({ automationMode: 'heartbeat' }));
 
-      await service.onTopicComplete({
-        errorMessage: 'boom',
-        operationId: 'op-1',
-        reason: 'error',
-        runTrigger: 'heartbeat',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createErrorParams('heartbeat'));
 
       expect(notifyFailed).not.toHaveBeenCalled();
     });
@@ -1103,15 +957,7 @@ describe('TaskLifecycleService.onTopicComplete', () => {
         }),
       );
 
-      await service.onTopicComplete({
-        errorMessage: 'boom',
-        operationId: 'op-1',
-        reason: 'error',
-        runTrigger: 'heartbeat',
-        taskId: 'task-1',
-        taskIdentifier: 'TASK-1',
-        topicId: 'topic-1',
-      });
+      await service.onTopicComplete(createErrorParams('heartbeat'));
 
       expect(notifyFailed).toHaveBeenCalledWith(
         expect.objectContaining({ consecutiveFailures: 3, paused: true, runTrigger: 'heartbeat' }),

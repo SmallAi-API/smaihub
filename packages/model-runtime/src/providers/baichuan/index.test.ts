@@ -6,6 +6,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { testProvider } from '../../providerTestUtils';
 import { LobeBaichuanAI, params } from './index';
 
+const createTurboModel = () => ({
+  function_call: true,
+  max_input_length: 32768,
+  max_tokens: 4096,
+  model: 'Baichuan3-Turbo',
+  model_show_name: 'Baichuan3-Turbo',
+});
+
 testProvider({
   Runtime: LobeBaichuanAI,
   provider: ModelProvider.Baichuan,
@@ -272,13 +280,7 @@ describe('LobeBaichuanAI - custom features', () => {
     it('should fetch and process models correctly', async () => {
       mockClient.models.list.mockResolvedValue({
         data: [
-          {
-            function_call: true,
-            max_input_length: 32768,
-            max_tokens: 4096,
-            model: 'Baichuan3-Turbo',
-            model_show_name: 'Baichuan3-Turbo',
-          },
+          createTurboModel(),
           {
             function_call: false,
             max_input_length: 4096,
@@ -361,15 +363,7 @@ describe('LobeBaichuanAI - custom features', () => {
 
     it('should preserve abilities from known model list', async () => {
       mockClient.models.list.mockResolvedValue({
-        data: [
-          {
-            function_call: true,
-            max_input_length: 32768,
-            max_tokens: 4096,
-            model: 'Baichuan3-Turbo',
-            model_show_name: 'Baichuan3-Turbo',
-          },
-        ],
+        data: [createTurboModel()],
       });
 
       const models = await params.models({ client: mockClient as any });
@@ -447,17 +441,7 @@ describe('LobeBaichuanAI - custom features', () => {
 
     it('should filter out null or undefined models', async () => {
       mockClient.models.list.mockResolvedValue({
-        data: [
-          {
-            function_call: true,
-            max_input_length: 32768,
-            max_tokens: 4096,
-            model: 'Baichuan3-Turbo',
-            model_show_name: 'Baichuan3-Turbo',
-          },
-          null,
-          undefined,
-        ],
+        data: [createTurboModel(), null, undefined],
       });
 
       const models = await params.models({ client: mockClient as any });

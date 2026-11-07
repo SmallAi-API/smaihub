@@ -19,6 +19,70 @@ import { createVideoWithCompletionMode } from '../../utils/videoCompletionMode';
 import * as openaiHelpers from '../contextBuilders/openai';
 import { createOpenAICompatibleRuntime } from './index';
 
+const createBasicChatPayload = (): ChatStreamPayload => ({
+  messages: [{ content: 'Hello', role: 'user' }],
+  model: 'mistralai/mistral-7b-instruct:free',
+  temperature: 0,
+});
+
+const createEmptyToolSchema = () => ({
+  name: 'test_tool',
+  schema: { properties: {}, type: 'object' as const },
+});
+
+const createClosedResponseSource = () => ({
+  toReadableStream: () =>
+    new ReadableStream({
+      start(controller) {
+        controller.close();
+      },
+    }),
+});
+
+const createConstrainedPersonSchema = () => ({
+  name: 'person',
+  schema: {
+    maxLength: 100,
+    pattern: '^[a-z]+$',
+    properties: {
+      age: { type: 'number' },
+      name: { type: 'string' },
+    },
+    type: 'object' as const,
+  },
+});
+
+const createPersonExtractorSchema = () => ({
+  name: 'person_extractor',
+  schema: {
+    properties: { age: { type: 'number' }, name: { type: 'string' } },
+    type: 'object' as const,
+  },
+});
+
+const createPersonToolResponse = () => ({
+  choices: [
+    {
+      message: {
+        tool_calls: [
+          {
+            function: {
+              arguments: '{"name":"Alice","age":28}',
+              name: 'person_extractor',
+            },
+            type: 'function' as const,
+          },
+        ],
+      },
+    },
+  ],
+});
+
+const createImagePayload = () => ({
+  model: 'dall-e-3',
+  params: { prompt: 'Test prompt' },
+});
+
 const sleep = async (ms: number) =>
   await new Promise((resolve) => {
     setTimeout(resolve, ms);
@@ -365,11 +429,7 @@ describe('LobeOpenAICompatibleFactory', () => {
       (instance['client'].chat.completions.create as Mock).mockResolvedValue(mockResponse);
 
       // Act
-      const result = await instance.chat({
-        messages: [{ content: 'Hello', role: 'user' }],
-        model: 'mistralai/mistral-7b-instruct:free',
-        temperature: 0,
-      });
+      const result = await instance.chat(createBasicChatPayload());
 
       // Assert
       expect(result).toBeInstanceOf(Response);
@@ -588,11 +648,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           mockStream as any,
         );
 
-        const result = await instance.chat({
-          messages: [{ content: 'Hello', role: 'user' }],
-          model: 'mistralai/mistral-7b-instruct:free',
-          temperature: 0,
-        });
+        const result = await instance.chat(createBasicChatPayload());
 
         const decoder = new TextDecoder();
         const reader = result.body!.getReader();
@@ -882,14 +938,7 @@ describe('LobeOpenAICompatibleFactory', () => {
       it('should add user in payload correctly', async () => {
         const mockCreateMethod = vi.spyOn(instance['client'].chat.completions, 'create');
 
-        await instance.chat(
-          {
-            messages: [{ content: 'Hello', role: 'user' }],
-            model: 'mistralai/mistral-7b-instruct:free',
-            temperature: 0,
-          },
-          { user: 'abc' },
-        );
+        await instance.chat(createBasicChatPayload(), { user: 'abc' });
 
         expect(mockCreateMethod).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -1278,14 +1327,7 @@ describe('LobeOpenAICompatibleFactory', () => {
               }) as any,
           );
 
-        const chatPromise = instance.chat(
-          {
-            messages: [{ content: 'Hello', role: 'user' }],
-            model: 'mistralai/mistral-7b-instruct:free',
-            temperature: 0,
-          },
-          { signal: controller.signal },
-        );
+        const chatPromise = instance.chat(createBasicChatPayload(), { signal: controller.signal });
 
         // Give some time for the request to start
         await sleep(50);
@@ -1331,11 +1373,7 @@ describe('LobeOpenAICompatibleFactory', () => {
 
         // Act
         try {
-          await instance.chat({
-            messages: [{ content: 'Hello', role: 'user' }],
-            model: 'mistralai/mistral-7b-instruct:free',
-            temperature: 0,
-          });
+          await instance.chat(createBasicChatPayload());
         } catch (e) {
           expect(e).toEqual({
             endpoint: defaultBaseURL,
@@ -1457,11 +1495,7 @@ describe('LobeOpenAICompatibleFactory', () => {
 
         // Act
         try {
-          await instance.chat({
-            messages: [{ content: 'Hello', role: 'user' }],
-            model: 'mistralai/mistral-7b-instruct:free',
-            temperature: 0,
-          });
+          await instance.chat(createBasicChatPayload());
         } catch (e) {
           expect(e).toEqual({
             endpoint: defaultBaseURL,
@@ -1492,11 +1526,7 @@ describe('LobeOpenAICompatibleFactory', () => {
 
         // Act
         try {
-          await instance.chat({
-            messages: [{ content: 'Hello', role: 'user' }],
-            model: 'mistralai/mistral-7b-instruct:free',
-            temperature: 0,
-          });
+          await instance.chat(createBasicChatPayload());
         } catch (e) {
           expect(e).toEqual({
             endpoint: 'https://api.***.com/v1',
@@ -1516,11 +1546,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           vi.spyOn(instance['client'].chat.completions, 'create').mockRejectedValue(error);
 
           try {
-            await instance.chat({
-              messages: [{ content: 'Hello', role: 'user' }],
-              model: 'mistralai/mistral-7b-instruct:free',
-              temperature: 0,
-            });
+            await instance.chat(createBasicChatPayload());
           } catch (e) {
             expect(e).toEqual({
               error,
@@ -1538,11 +1564,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         vi.mocked(instance['client'].chat.completions.create).mockRejectedValue(error);
 
         try {
-          await instance.chat({
-            messages: [{ content: 'Hello', role: 'user' }],
-            model: 'mistralai/mistral-7b-instruct:free',
-            temperature: 0,
-          });
+          await instance.chat(createBasicChatPayload());
         } catch (e) {
           // Expect the chat method to throw an error with InvalidMoonshotAPIKey
           expect(e).toMatchObject({
@@ -1570,11 +1592,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         vi.spyOn(instance['client'].chat.completions, 'create').mockRejectedValue(apiError);
 
         try {
-          await instance.chat({
-            messages: [{ content: 'Hello', role: 'user' }],
-            model: 'mistralai/mistral-7b-instruct:free',
-            temperature: 0,
-          });
+          await instance.chat(createBasicChatPayload());
         } catch (e) {
           expect(e).toEqual({
             endpoint: defaultBaseURL,
@@ -1606,11 +1624,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         vi.spyOn(instance['client'].chat.completions, 'create').mockRejectedValue(apiError);
 
         try {
-          await instance.chat({
-            messages: [{ content: 'Hello', role: 'user' }],
-            model: 'mistralai/mistral-7b-instruct:free',
-            temperature: 0,
-          });
+          await instance.chat(createBasicChatPayload());
         } catch (e) {
           expect(e).toEqual({
             endpoint: defaultBaseURL,
@@ -1644,11 +1658,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         vi.spyOn(instance['client'].chat.completions, 'create').mockRejectedValue(apiError);
 
         try {
-          await instance.chat({
-            messages: [{ content: 'Hello', role: 'user' }],
-            model: 'mistralai/mistral-7b-instruct:free',
-            temperature: 0,
-          });
+          await instance.chat(createBasicChatPayload());
         } catch (e) {
           expect(e).toEqual({
             endpoint: defaultBaseURL,
@@ -1673,11 +1683,7 @@ describe('LobeOpenAICompatibleFactory', () => {
 
         // Act
         try {
-          await instance.chat({
-            messages: [{ content: 'Hello', role: 'user' }],
-            model: 'mistralai/mistral-7b-instruct:free',
-            temperature: 0,
-          });
+          await instance.chat(createBasicChatPayload());
         } catch (e) {
           expect(e).toEqual({
             endpoint: defaultBaseURL,
@@ -1725,14 +1731,10 @@ describe('LobeOpenAICompatibleFactory', () => {
         const mockHeaders = { 'Custom-Header': 'TestValue' };
 
         // Execute test
-        const result = await instance.chat(
-          {
-            messages: [{ content: 'Hello', role: 'user' }],
-            model: 'mistralai/mistral-7b-instruct:free',
-            temperature: 0,
-          },
-          { callback: mockCallback, headers: mockHeaders },
-        );
+        const result = await instance.chat(createBasicChatPayload(), {
+          callback: mockCallback,
+          headers: mockHeaders,
+        });
 
         // Verify callback is called
         await result.text(); // Ensure stream is consumed
@@ -1902,14 +1904,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           // Mock responses.create to return a proper stream-like object
           const mockResponsesCreate = vi
             .spyOn(inst['client'].responses, 'create')
-            .mockResolvedValue({
-              toReadableStream: () =>
-                new ReadableStream({
-                  start(controller) {
-                    controller.close();
-                  },
-                }),
-            } as any);
+            .mockResolvedValue(createClosedResponseSource() as any);
 
           // Mock getModelPricing to prevent async issues
           try {
@@ -1940,14 +1935,9 @@ describe('LobeOpenAICompatibleFactory', () => {
           .spyOn(openaiHelpers, 'convertOpenAIResponseInputs')
           .mockResolvedValue([{ role: 'user', content: 'mocked input' }] as any);
 
-        vi.spyOn(inst['client'].responses, 'create').mockResolvedValue({
-          toReadableStream: () =>
-            new ReadableStream({
-              start(controller) {
-                controller.close();
-              },
-            }),
-        } as any);
+        vi.spyOn(inst['client'].responses, 'create').mockResolvedValue(
+          createClosedResponseSource() as any,
+        );
 
         try {
           await inst.chat({
@@ -2104,14 +2094,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           );
 
           // First invocation: model contains the string
-          spy.mockResolvedValueOnce({
-            toReadableStream: () =>
-              new ReadableStream({
-                start(controller) {
-                  controller.close();
-                },
-              }),
-          } as any);
+          spy.mockResolvedValueOnce(createClosedResponseSource() as any);
           try {
             await inst.chat({
               messages: [{ content: 'hi', role: 'user' }],
@@ -2124,14 +2107,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           expect(spy).toHaveBeenCalledTimes(1);
 
           // Second invocation: model matches the RegExp
-          spy.mockResolvedValueOnce({
-            toReadableStream: () =>
-              new ReadableStream({
-                start(controller) {
-                  controller.close();
-                },
-              }),
-          } as any);
+          spy.mockResolvedValueOnce(createClosedResponseSource() as any);
           try {
             await inst.chat({
               messages: [{ content: 'hi', role: 'user' }],
@@ -2185,11 +2161,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         // Execute test
         // Run your test function, ensuring it calls debugStream when conditions are met
         // Hypothetical test function call, you may need to adjust based on actual situation
-        await instance.chat({
-          messages: [{ content: 'Hello', role: 'user' }],
-          model: 'mistralai/mistral-7b-instruct:free',
-          temperature: 0,
-        });
+        await instance.chat(createBasicChatPayload());
 
         // Verify debugStream is called
         expect(debugStreamModule.debugStream).toHaveBeenCalled();
@@ -2497,10 +2469,7 @@ describe('LobeOpenAICompatibleFactory', () => {
       it('should throw error when API response is invalid - no data', async () => {
         vi.spyOn(instance['client'].images, 'generate').mockResolvedValue({} as any);
 
-        const payload = {
-          model: 'dall-e-3',
-          params: { prompt: 'Test prompt' },
-        };
+        const payload = createImagePayload();
 
         await expect((instance as any).createImage(payload)).rejects.toThrow(
           'Invalid image response: missing or empty data array',
@@ -2512,10 +2481,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           data: [],
         } as any);
 
-        const payload = {
-          model: 'dall-e-3',
-          params: { prompt: 'Test prompt' },
-        };
+        const payload = createImagePayload();
 
         await expect((instance as any).createImage(payload)).rejects.toThrow(
           'Invalid image response: missing or empty data array',
@@ -2527,10 +2493,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           data: [null],
         } as any);
 
-        const payload = {
-          model: 'dall-e-3',
-          params: { prompt: 'Test prompt' },
-        };
+        const payload = createImagePayload();
 
         await expect((instance as any).createImage(payload)).rejects.toThrow(
           'Invalid image response: first data item is null or undefined',
@@ -2542,10 +2505,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           data: [{ url: 'https://example.com/generated-image.jpg' }],
         } as any);
 
-        const payload = {
-          model: 'dall-e-3',
-          params: { prompt: 'Test prompt' },
-        };
+        const payload = createImagePayload();
 
         const result = await (instance as any).createImage(payload);
 
@@ -2559,10 +2519,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           data: [{ some_other_field: 'value' }],
         } as any);
 
-        const payload = {
-          model: 'dall-e-3',
-          params: { prompt: 'Test prompt' },
-        };
+        const payload = createImagePayload();
 
         await expect((instance as any).createImage(payload)).rejects.toThrow(
           'Invalid image response: missing both b64_json and url fields',
@@ -2733,13 +2690,7 @@ describe('LobeOpenAICompatibleFactory', () => {
       const payload = {
         messages: [{ content: 'Generate a person object', role: 'user' as const }],
         model: 'gpt-5.4-mini',
-        schema: {
-          name: 'person_extractor',
-          schema: {
-            properties: { age: { type: 'number' }, name: { type: 'string' } },
-            type: 'object' as const,
-          },
-        },
+        schema: createPersonExtractorSchema(),
         thinking: { budget_tokens: 0, type: 'disabled' as const },
       };
 
@@ -2765,13 +2716,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         messages: [{ content: 'Generate a person object', role: 'user' as const }],
         model: 'gpt-5.4-pro',
         reasoning_effort: 'medium' as const,
-        schema: {
-          name: 'person_extractor',
-          schema: {
-            properties: { age: { type: 'number' }, name: { type: 'string' } },
-            type: 'object' as const,
-          },
-        },
+        schema: createPersonExtractorSchema(),
       };
 
       await instance.generateObject(payload);
@@ -2870,10 +2815,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         messages: [{ content: 'Generate data', role: 'user' as const }],
         model: 'gpt-4o',
         responseApi: true,
-        schema: {
-          name: 'test_tool',
-          schema: { properties: {}, type: 'object' as const },
-        },
+        schema: createEmptyToolSchema(),
       };
 
       await expect(instance.generateObject(payload)).rejects.toMatchObject({
@@ -2896,10 +2838,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         messages: [{ content: 'Generate data', role: 'user' as const }],
         model: 'gpt-4o',
         responseApi: true,
-        schema: {
-          name: 'test_tool',
-          schema: { properties: {}, type: 'object' as const },
-        },
+        schema: createEmptyToolSchema(),
       };
 
       await expect(instance.generateObject(payload)).rejects.toMatchObject({
@@ -2971,10 +2910,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         messages: [{ content: 'Generate data', role: 'user' as const }],
         model: 'gpt-4o',
         responseApi: true,
-        schema: {
-          name: 'test_tool',
-          schema: { properties: {}, type: 'object' as const },
-        },
+        schema: createEmptyToolSchema(),
       };
 
       await expect(instance.generateObject(payload)).rejects.toThrow(
@@ -3002,10 +2938,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         messages: [{ content: 'Generate data', role: 'user' as const }],
         model: 'gpt-5.4-mini',
         responseApi: true,
-        schema: {
-          name: 'test_tool',
-          schema: { properties: {}, type: 'object' as const },
-        },
+        schema: createEmptyToolSchema(),
       };
 
       await expect(instance.generateObject(payload)).rejects.toEqual({
@@ -3042,13 +2975,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         const payload = {
           messages: [{ content: 'Generate a person object', role: 'user' as const }],
           model: 'gpt-4o',
-          schema: {
-            name: 'person_extractor',
-            schema: {
-              properties: { age: { type: 'number' }, name: { type: 'string' } },
-              type: 'object' as const,
-            },
-          },
+          schema: createPersonExtractorSchema(),
           // responseApi: false or undefined - uses chat completions API
         };
 
@@ -3175,10 +3102,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           messages: [{ content: 'Generate data', role: 'user' as const }],
           model: 'gpt-4o',
           responseApi: false,
-          schema: {
-            name: 'test_tool',
-            schema: { properties: {}, type: 'object' as const },
-          },
+          schema: createEmptyToolSchema(),
         };
 
         await expect(instance.generateObject(payload)).rejects.toMatchObject({
@@ -3209,10 +3133,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           messages: [{ content: 'Generate data', role: 'user' as const }],
           model: 'gpt-4o',
           responseApi: false,
-          schema: {
-            name: 'test_tool',
-            schema: { properties: {}, type: 'object' as const },
-          },
+          schema: createEmptyToolSchema(),
         };
 
         await expect(instance.generateObject(payload)).rejects.toMatchObject({
@@ -3604,18 +3525,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           messages: [{ content: 'Extract person', role: 'user' as const }],
           model: 'gpt-4o',
           responseApi: true,
-          schema: {
-            name: 'person',
-            schema: {
-              maxLength: 100,
-              pattern: '^[a-z]+$',
-              properties: {
-                age: { type: 'number' },
-                name: { type: 'string' },
-              },
-              type: 'object' as const,
-            },
-          },
+          schema: createConstrainedPersonSchema(),
         };
 
         await instanceWithSchemaHandler.generateObject(payload);
@@ -3657,18 +3567,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         const payload = {
           messages: [{ content: 'Extract person', role: 'user' as const }],
           model: 'test-model',
-          schema: {
-            name: 'person',
-            schema: {
-              maxLength: 100,
-              pattern: '^[a-z]+$',
-              properties: {
-                age: { type: 'number' },
-                name: { type: 'string' },
-              },
-              type: 'object' as const,
-            },
-          },
+          schema: createConstrainedPersonSchema(),
         };
 
         await instanceWithSchemaHandler.generateObject(payload);
@@ -3729,18 +3628,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         const payload = {
           messages: [{ content: 'Extract person', role: 'user' as const }],
           model: 'test-model',
-          schema: {
-            name: 'person',
-            schema: {
-              maxLength: 100,
-              pattern: '^[a-z]+$',
-              properties: {
-                age: { type: 'number' },
-                name: { type: 'string' },
-              },
-              type: 'object' as const,
-            },
-          },
+          schema: createConstrainedPersonSchema(),
         };
 
         await instance.generateObject(payload);
@@ -3895,23 +3783,7 @@ describe('LobeOpenAICompatibleFactory', () => {
       });
 
       it('should use tool calling when configured', async () => {
-        const mockResponse = {
-          choices: [
-            {
-              message: {
-                tool_calls: [
-                  {
-                    function: {
-                      arguments: '{"name":"Alice","age":28}',
-                      name: 'person_extractor',
-                    },
-                    type: 'function' as const,
-                  },
-                ],
-              },
-            },
-          ],
-        };
+        const mockResponse = createPersonToolResponse();
 
         vi.spyOn(instanceWithToolCalling['client'].chat.completions, 'create').mockResolvedValue(
           mockResponse as any,
@@ -3958,23 +3830,7 @@ describe('LobeOpenAICompatibleFactory', () => {
       });
 
       it('should not forward internal thinking to generic OpenAI-compatible generateObject requests', async () => {
-        const mockResponse = {
-          choices: [
-            {
-              message: {
-                tool_calls: [
-                  {
-                    function: {
-                      arguments: '{"name":"Alice","age":28}',
-                      name: 'person_extractor',
-                    },
-                    type: 'function' as const,
-                  },
-                ],
-              },
-            },
-          ],
-        };
+        const mockResponse = createPersonToolResponse();
 
         vi.spyOn(instanceWithToolCalling['client'].chat.completions, 'create').mockResolvedValue(
           mockResponse as any,
@@ -3984,13 +3840,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           messages: [{ content: 'Extract person info', role: 'user' as const }],
           model: 'deepseek-v4-pro',
           reasoning_effort: 'high' as const,
-          schema: {
-            name: 'person_extractor',
-            schema: {
-              properties: { age: { type: 'number' }, name: { type: 'string' } },
-              type: 'object' as const,
-            },
-          },
+          schema: createPersonExtractorSchema(),
           thinking: { budget_tokens: 0, type: 'disabled' as const },
         };
 
@@ -4026,10 +3876,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         const payload = {
           messages: [{ content: 'Generate data', role: 'user' as const }],
           model: 'test-model',
-          schema: {
-            name: 'test_tool',
-            schema: { properties: {}, type: 'object' as const },
-          },
+          schema: createEmptyToolSchema(),
         };
 
         await expect(instanceWithToolCalling.generateObject(payload)).rejects.toThrow(
@@ -4067,10 +3914,7 @@ describe('LobeOpenAICompatibleFactory', () => {
         const payload = {
           messages: [{ content: 'Generate data', role: 'user' as const }],
           model: 'test-model',
-          schema: {
-            name: 'test_tool',
-            schema: { properties: {}, type: 'object' as const },
-          },
+          schema: createEmptyToolSchema(),
         };
 
         await expect(instanceWithToolCalling.generateObject(payload)).rejects.toThrow(

@@ -28,6 +28,15 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
+const stubModelsResponse = (models: unknown[]) =>
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: models }),
+    }),
+  );
+
 describe('LobeOpenRouterAI - custom features', () => {
   describe('Debug Configuration', () => {
     it('should disable debug by default', () => {
@@ -462,13 +471,7 @@ describe('LobeOpenRouterAI - custom features', () => {
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        } as any),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
       const gpt55 = models.find((m) => m.id === 'openai/gpt-5.5');
@@ -510,13 +513,7 @@ describe('LobeOpenRouterAI - custom features', () => {
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        } as any),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
       const geminiPro = models.find((m) => m.id === 'google/gemini-3-pro');
@@ -538,38 +535,21 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'openai/gpt-4',
-          canonical_slug: 'openai/gpt-4',
           name: 'OpenAI: GPT-4',
           created: 1679587200,
           description: 'GPT-4 model',
           context_length: 8192,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'gpt-4',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00003',
             completion: '0.00006',
           },
-          top_provider: {
-            context_length: 8192,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 8192, max_completion_tokens: 4096 },
           supported_parameters: ['tools', 'temperature'],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -581,37 +561,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'anthropic/claude-3-opus',
-          canonical_slug: 'anthropic/claude-3-opus',
           name: 'Anthropic: Claude 3 Opus',
           created: 1679587200,
           context_length: 200000,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text', 'image'],
-            output_modalities: ['text'],
-            tokenizer: 'claude',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text', 'image'] },
           pricing: {
             prompt: '0.000015',
             completion: '0.000075',
           },
-          top_provider: {
-            context_length: 200000,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 200000, max_completion_tokens: 4096 },
           supported_parameters: ['tools', 'reasoning'],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -623,37 +586,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'deepseek/deepseek-chat',
-          canonical_slug: 'deepseek/deepseek-chat',
           name: 'DeepSeek: Chat',
           created: 1679587200,
           context_length: 32768,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'deepseek',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00000014',
             completion: '0.00000028',
           },
-          top_provider: {
-            context_length: 32768,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 32768, max_completion_tokens: 4096 },
           supported_parameters: ['tools'],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -665,37 +611,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'deepseek/deepseek-r1',
-          canonical_slug: 'deepseek/deepseek-r1',
           name: 'DeepSeek: DeepSeek R1',
           created: 1679587200,
           context_length: 64000,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'deepseek',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00000055',
             completion: '0.0000022',
           },
-          top_provider: {
-            context_length: 64000,
-            max_completion_tokens: 8192,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 64000, max_completion_tokens: 8192 },
           supported_parameters: ['reasoning'],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -707,37 +636,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'free/model',
-          canonical_slug: 'free/model',
           name: 'Provider: Free Model',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0',
             completion: '0',
           },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -749,37 +661,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'free/model',
-          canonical_slug: 'free/model',
           name: 'Provider: Free Model (free)',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0',
             completion: '0',
           },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -792,37 +687,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'vision/model',
-          canonical_slug: 'vision/model',
           name: 'Vision Model',
           created: 1679587200,
           context_length: 8192,
-          architecture: {
-            modality: 'text+image->text',
-            input_modalities: ['text', 'image'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text', 'image'] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
           },
-          top_provider: {
-            context_length: 8192,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 8192, max_completion_tokens: 4096 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -834,37 +712,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'function/model',
-          canonical_slug: 'function/model',
           name: 'Function Model',
           created: 1679587200,
           context_length: 8192,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
           },
-          top_provider: {
-            context_length: 8192,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 8192, max_completion_tokens: 4096 },
           supported_parameters: ['tools', 'temperature'],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -876,37 +737,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'reasoning/model',
-          canonical_slug: 'reasoning/model',
           name: 'Reasoning Model',
           created: 1679587200,
           context_length: 8192,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
           },
-          top_provider: {
-            context_length: 8192,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 8192, max_completion_tokens: 4096 },
           supported_parameters: ['reasoning', 'temperature'],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -918,39 +762,22 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'pricing/model',
-          canonical_slug: 'pricing/model',
           name: 'Pricing Model',
           created: 1679587200,
           context_length: 8192,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
             input_cache_read: '0.000001',
             input_cache_write: '0.0000015',
           },
-          top_provider: {
-            context_length: 8192,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 8192, max_completion_tokens: 4096 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -983,37 +810,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'no-cache-pricing/model',
-          canonical_slug: 'no-cache-pricing/model',
           name: 'No Cache Pricing Model',
           created: 1679587200,
           context_length: 8192,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
           },
-          top_provider: {
-            context_length: 8192,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 8192, max_completion_tokens: 4096 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1035,37 +845,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'invalid-pricing/model',
-          canonical_slug: 'invalid-pricing/model',
           name: 'Invalid Pricing Model',
           created: 1679587200,
           context_length: 8192,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '-1',
             completion: '-1',
           },
-          top_provider: {
-            context_length: 8192,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 8192, max_completion_tokens: 4096 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1078,37 +871,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'context/model',
-          canonical_slug: 'context/model',
           name: 'Context Model',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
           },
-          top_provider: {
-            context_length: 8192,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 8192, max_completion_tokens: 4096 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1120,37 +896,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'fallback-context/model',
-          canonical_slug: 'fallback-context/model',
           name: 'Fallback Context Model',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
           },
-          top_provider: {
-            context_length: 0,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 0, max_completion_tokens: 4096 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1162,37 +921,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'maxoutput/model',
-          canonical_slug: 'maxoutput/model',
           name: 'Max Output Model',
           created: 1679587200,
           context_length: 8192,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
           },
-          top_provider: {
-            context_length: 8192,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 8192, max_completion_tokens: 4096 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1204,37 +946,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'null-maxoutput/model',
-          canonical_slug: 'null-maxoutput/model',
           name: 'Null Max Output Model',
           created: 1679587200,
           context_length: 8192,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
           },
-          top_provider: {
-            context_length: 8192,
-            max_completion_tokens: null,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 8192, max_completion_tokens: null },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1247,37 +972,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'released/model',
-          canonical_slug: 'released/model',
           name: 'Released Model',
           created: 1679587200, // 2023-03-23
           context_length: 8192,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
           },
-          top_provider: {
-            context_length: 8192,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 8192, max_completion_tokens: 4096 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1323,37 +1031,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'minimal/model',
-          canonical_slug: 'minimal/model',
           name: 'Minimal Model',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: [],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: [] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
           },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1368,37 +1059,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'simple/model',
-          canonical_slug: 'simple/model',
           name: 'Simple Model Name',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
           },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1410,55 +1084,27 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'model-1',
-          canonical_slug: 'model-1',
           name: 'Provider: Model 1',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: { prompt: '0.00001', completion: '0.00002' },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: ['tools'],
         },
         {
           id: 'model-2',
-          canonical_slug: 'model-2',
           name: 'Provider: Model 2',
           created: 1679587200,
           context_length: 8192,
-          architecture: {
-            modality: 'text+image->text',
-            input_modalities: ['text', 'image'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text', 'image'] },
           pricing: { prompt: '0.00002', completion: '0.00004' },
-          top_provider: {
-            context_length: 8192,
-            max_completion_tokens: 4096,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 8192, max_completion_tokens: 4096 },
           supported_parameters: ['reasoning'],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1476,37 +1122,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'advanced/model',
-          canonical_slug: 'advanced/model',
           name: 'Advanced Model',
           created: 1679587200,
           context_length: 128000,
-          architecture: {
-            modality: 'text+image->text',
-            input_modalities: ['text', 'image'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text', 'image'] },
           pricing: {
             prompt: '0.00003',
             completion: '0.00009',
           },
-          top_provider: {
-            context_length: 128000,
-            max_completion_tokens: 8192,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 128000, max_completion_tokens: 8192 },
           supported_parameters: ['tools', 'reasoning', 'temperature'],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1520,37 +1149,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'empty-modalities/model',
-          canonical_slug: 'empty-modalities/model',
           name: 'Empty Modalities Model',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: [],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: [] },
           pricing: {
             prompt: '0.00001',
             completion: '0.00002',
           },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1562,37 +1174,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'null-pricing/model',
-          canonical_slug: 'null-pricing/model',
           name: 'Null Pricing Model',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: null,
             completion: null,
           },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1609,37 +1204,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'zero-pricing/model',
-          canonical_slug: 'zero-pricing/model',
           name: 'Zero Pricing Model',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0',
             completion: '0',
           },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1656,37 +1234,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'mixed-free/model',
-          canonical_slug: 'mixed-free/model',
           name: 'Mixed Free Model',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0',
             completion: '0.00001',
           },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1700,37 +1261,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'expensive/model',
-          canonical_slug: 'expensive/model',
           name: 'Expensive Model',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '1.5',
             completion: '3.0',
           },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1749,37 +1293,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'test/model',
-          canonical_slug: 'test/model',
           name: 'Test Model',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: undefined,
             completion: undefined,
           },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1791,37 +1318,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'invalid-price/model',
-          canonical_slug: 'invalid-price/model',
           name: 'Invalid Price Model',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '-1',
             completion: '-1',
           },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
@@ -1833,37 +1343,20 @@ describe('LobeOpenRouterAI - custom features', () => {
       const mockModels = [
         {
           id: 'micro-price/model',
-          canonical_slug: 'micro-price/model',
           name: 'Micro Price Model',
           created: 1679587200,
           context_length: 4096,
-          architecture: {
-            modality: 'text->text',
-            input_modalities: ['text'],
-            output_modalities: ['text'],
-            tokenizer: 'default',
-            instruct_type: null,
-          },
+          architecture: { input_modalities: ['text'] },
           pricing: {
             prompt: '0.0000001',
             completion: '0.0000002',
           },
-          top_provider: {
-            context_length: 4096,
-            max_completion_tokens: 2048,
-            is_moderated: false,
-          },
+          top_provider: { context_length: 4096, max_completion_tokens: 2048 },
           supported_parameters: [],
         },
       ];
 
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: async () => ({ data: mockModels }),
-        }),
-      );
+      stubModelsResponse(mockModels);
 
       const models = await params.models();
 
