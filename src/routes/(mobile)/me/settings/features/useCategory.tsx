@@ -6,6 +6,7 @@ import {
   Brain,
   BrainCircuit,
   ChartColumnBigIcon,
+  ChartPieIcon,
   Coins,
   CreditCard,
   Database,
@@ -36,7 +37,7 @@ import { labPreferSelectors } from '@/store/user/selectors';
 
 export enum SettingsGroupKey {
   Agent = 'agent',
-  Developer = 'developer',
+  Connection = 'connection',
   General = 'general',
   Subscription = 'subscription',
   System = 'system',
@@ -82,7 +83,7 @@ export const useCategory = (): CategoryGroup[] => {
       ? [
           makeItem({ icon: Map, key: SettingsTabs.Plans, label: t('subscription:tab.plans') }),
           makeItem({
-            icon: ChartColumnBigIcon,
+            icon: ChartPieIcon,
             key: SettingsTabs.Usage,
             label: t('setting:tab.usage'),
           }),
@@ -116,23 +117,15 @@ export const useCategory = (): CategoryGroup[] => {
       }),
       makeItem({ icon: SkillsIcon, key: SettingsTabs.Skill, label: t('setting:tab.skill') }),
       makeItem({ icon: TagIcon, key: SettingsTabs.Labels, label: t('setting:tab.labels') }),
-      makeItem({ icon: Blocks, key: SettingsTabs.Connector, label: t('setting:tab.connector') }),
       makeItem({ icon: BrainCircuit, key: SettingsTabs.Memory, label: t('setting:tab.memory') }),
       ENABLE_TOOL_CHANNEL_SETTINGS &&
         makeItem({ icon: Wrench, key: SettingsTabs.Tools, label: t('setting:tab.tools') }),
-      makeItem({ icon: KeyRound, key: SettingsTabs.Creds, label: t('setting:tab.creds') }),
-      // showApiKeyManage &&
-      //   makeItem({ icon: KeyIcon, key: SettingsTabs.APIKey, label: t('auth:tab.apikey') }),
     ].filter((item): item is CategoryItem => Boolean(item));
 
-    const developer: CategoryItem[] = [
-      enableOAuthApps &&
-        makeItem({
-          icon: AppWindowIcon,
-          key: SettingsTabs.OAuthApps,
-          label: t('auth:tab.oauthApps'),
-        }),
-    ].filter((item): item is CategoryItem => Boolean(item));
+    const connection: CategoryItem[] = [
+      makeItem({ icon: Blocks, key: SettingsTabs.Connector, label: t('setting:tab.connector') }),
+      makeItem({ icon: KeyRound, key: SettingsTabs.Creds, label: t('setting:tab.creds') }),
+    ];
 
     const system: CategoryItem[] = [
       makeItem({ icon: Database, key: SettingsTabs.Storage, label: t('setting:tab.storage') }),
@@ -141,6 +134,12 @@ export const useCategory = (): CategoryGroup[] => {
         key: SettingsTabs.Advanced,
         label: t('setting:tab.advanced'),
       }),
+      enableOAuthApps &&
+        makeItem({
+          icon: AppWindowIcon,
+          key: SettingsTabs.OAuthApps,
+          label: t('auth:tab.oauthApps'),
+        }),
       !hideDocs && makeItem({ icon: Info, key: SettingsTabs.About, label: t('setting:tab.about') }),
     ].filter((item): item is CategoryItem => Boolean(item));
 
@@ -152,12 +151,8 @@ export const useCategory = (): CategoryGroup[] => {
         title: t('setting:group.subscription'),
       },
       { items: agent, key: SettingsGroupKey.Agent, title: t('setting:group.aiConfig') },
-      { items: system, key: SettingsGroupKey.System, title: t('setting:group.system') },
-      {
-        items: developer,
-        key: SettingsGroupKey.Developer,
-        title: t('setting:group.developer'),
-      },
+      { items: connection, key: SettingsGroupKey.Connection, title: t('setting:group.connection') },
+      { items: system, key: SettingsGroupKey.System, title: t('setting:group.systemDeveloper') },
     ].filter((group) => group.items.length > 0);
   }, [t, enableBusinessFeatures, hideDocs, showProvider, enableOAuthApps, navigate]);
 };

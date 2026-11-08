@@ -26,15 +26,17 @@ vi.mock('react-router', () => ({
   useNavigate: () => navigate,
 }));
 
-const createWrapper = (showProvider: boolean) => {
+const createWrapper = (showProvider: boolean, showApiKeyManage = false) => {
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <Provider
       createStore={() =>
         initServerConfigStore({
+          serverConfig: { aiProvider: {}, enableBusinessFeatures: true, telemetry: {} },
           featureFlags: {
             ...mapFeatureFlagsEnvToState({
               provider_settings: true,
             }),
+            showApiKeyManage,
             showProvider,
           },
         })
@@ -56,6 +58,51 @@ afterEach(() => {
 });
 
 describe('mobile settings useCategory', () => {
+  it('keeps connection settings together without duplicate groups or entries', () => {
+    const { result } = renderHook(() => useCategory(), {
+      wrapper: createWrapper(true),
+    });
+    const groupKeys = result.current.map((group) => group.key);
+    const itemKeys = result.current.flatMap((group) => group.items.map((item) => item.key));
+    const connectionGroup = result.current.find(
+      (group) => group.key === SettingsGroupKey.Connection,
+    );
+
+    expect(groupKeys).toEqual([
+      SettingsGroupKey.General,
+      SettingsGroupKey.Subscription,
+      SettingsGroupKey.Agent,
+      SettingsGroupKey.Connection,
+      SettingsGroupKey.System,
+    ]);
+    expect(new Set(itemKeys).size).toBe(itemKeys.length);
+    expect(connectionGroup?.items.map((item) => item.key)).toEqual([
+      SettingsTabs.Connector,
+      SettingsTabs.Creds,
+    ]);
+  });
+
+  it.each([
+    [false, false],
+    [false, true],
+    [true, false],
+    [true, true],
+  ])('keeps personal API Key hidden (manage=%s, dev=%s)', (showApiKeyManage, isDevMode) => {
+    useUserStore.setState({
+      settings: {
+        ...initialUserStoreState.settings,
+        general: { ...initialUserStoreState.settings.general, isDevMode },
+      },
+    });
+
+    const { result } = renderHook(() => useCategory(), {
+      wrapper: createWrapper(true, showApiKeyManage),
+    });
+    const keys = result.current.flatMap((group) => group.items.map((item) => item.key));
+
+    expect(keys).not.toContain(SettingsTabs.APIKey);
+  });
+
   it('keeps Provider visible and routes to the provider list when provider settings are enabled', () => {
     const { result } = renderHook(() => useCategory(), {
       wrapper: createWrapper(true),
@@ -104,10 +151,8 @@ describe('mobile settings useCategory', () => {
       wrapper: createWrapper(true),
     });
 
-    const developerGroup = result.current.find((group) => group.key === SettingsGroupKey.Developer);
     const systemGroup = result.current.find((group) => group.key === SettingsGroupKey.System);
 
-    expect(developerGroup?.items.map((item) => item.key)).toContain(SettingsTabs.OAuthApps);
-    expect(systemGroup?.items.map((item) => item.key)).not.toContain(SettingsTabs.OAuthApps);
+    expect(systemGroup?.items.map((item) => item.key)).toContain(SettingsTabs.OAuthApps);
   });
 });
