@@ -45,6 +45,7 @@
   "ProviderNetworkError": "與提供者的連接超時或中斷。請檢查您的網絡並重試。",
   "ProviderNoImageGenerated": "提供者未為此請求生成圖像。請嘗試重新表述請求，或選擇支持圖像生成的模型。",
   "ProviderServiceUnavailable": "提供者暫時過載或不可用。請稍後重試。",
+  "ProviderStreamInterrupted": "提供者在完成回應前關閉了連接。這通常是暫時性的，請重試。",
   "QuotaLimitReached": "抱歉，令牌使用量或請求計數已達到此密鑰的配額限制。請增加密鑰的配額或稍後重試。",
   "RateLimitExceeded": "抱歉，令牌使用量或請求計數已達到此密鑰的速率限制。請稍後重試或增加密鑰的配額。",
   "RemoteMediaDownloadTimeout": "提供者在下載附加圖像或文件時超時。請再試一次。",
