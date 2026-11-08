@@ -215,6 +215,7 @@ describe('desktop router shared definition', () => {
         'topic/:topicId?',
         'conversation/:topicId?',
         'channels/:channelId',
+        'channels/:channelId/settings',
         'tasks',
         'settings/:section?',
         'goals',
