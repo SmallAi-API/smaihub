@@ -1,6 +1,8 @@
 {
   "asyncState.desc": "載入時發生錯誤。請再試一次。",
+  "asyncState.hideDetails": "隱藏詳情",
   "asyncState.metricLabel": "載入失敗",
+  "asyncState.showDetails": "顯示詳情",
   "asyncState.title": "載入失敗",
   "chatRequestBlocked.contactSupport": "聯繫支援",
   "chatRequestBlocked.description": "此請求已被我們的安全檢查阻止。如果您認為這是錯誤，請聯繫支援以恢復訪問。",

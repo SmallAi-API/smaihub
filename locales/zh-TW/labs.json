@@ -2,6 +2,8 @@
   "description": "這些功能仍在實驗階段。我們可能會移除它們，並且它們可能存在錯誤。我們希望您在使用過程中提供反饋。",
   "features.agentGraphConfig.desc": "在代理程式設定檔的進階設定中顯示圖形執行階段設定。",
   "features.agentGraphConfig.title": "代理程式圖形執行階段設定",
+  "features.agentIdentity.desc": "為代理提供專屬電子郵件地址，並在代理設定中查看收件匣收到的郵件。",
+  "features.agentIdentity.title": "代理身分",
   "features.agentSelfIteration.desc": "允許代理人反思、建立自我意識，並通過持續的嘗試和互動不斷迭代。",
   "features.agentSelfIteration.title": "代理自我迭代",
   "features.artifactDeployment.desc": "將工件發佈到託管的 URL，並從對話側邊欄管理版本",

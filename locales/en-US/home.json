@@ -230,5 +230,13 @@
   "team.summary.needsHuman": "Waiting on people",
   "team.summary.running": "Running",
   "team.window_one": "{{count}}h",
-  "team.window_other": "{{count}}h"
+  "team.window_other": "{{count}}h",
+  "usage.billingQuota": "Billing credits",
+  "usage.details": "Details",
+  "usage.refresh": "Refresh quota",
+  "usage.remainingProgress": "Remaining key quota",
+  "usage.topics": "Topics",
+  "usage.unlimited": "Unlimited",
+  "usage.unlimitedHint": "This key has no quota limit. Account balance and plan limits still apply.",
+  "usage.updatedAt": "Updated {{time}}"
 }

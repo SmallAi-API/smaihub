@@ -476,6 +476,7 @@
   "channel.records.judge.deny": "低於閾值",
   "channel.records.judge.duty": "這在它的職責範圍內嗎",
   "channel.records.judge.hint": "{{judge}}: {{verdict}}",
+  "channel.records.judge.routing": "是否應由它來回答",
   "channel.records.mark.correct": "正確的判斷",
   "channel.records.mark.failed": "無法保存您的標記。請再試一次。",
   "channel.records.mark.false_wake": "不應該醒來",
