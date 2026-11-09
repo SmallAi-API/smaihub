@@ -24,6 +24,34 @@ runs:
         run_install: false
 
     - name: Install bun
+      id: bun
+      continue-on-error: true
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
+    # setup-bun already retries individual requests. Retry the action as well
+    # when GitHub Release downloads remain unavailable through that window.
+    - name: Wait before retrying Bun download
+      if: steps.bun.outcome == 'failure'
+      shell: bash
+      run: sleep 15
+
+    - name: Retry bun installation
+      id: bun_retry
+      if: steps.bun.outcome == 'failure'
+      continue-on-error: true
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
+    - name: Wait before final Bun download attempt
+      if: steps.bun_retry.outcome == 'failure'
+      shell: bash
+      run: sleep 30
+
+    - name: Final bun installation attempt
+      if: steps.bun_retry.outcome == 'failure'
       uses: oven-sh/setup-bun@v2
       with:
         bun-version: ${{ inputs.bun-version }}

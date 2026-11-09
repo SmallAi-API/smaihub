@@ -18,7 +18,7 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        pnpm install --node-linker=hoisted
+        bash "$GITHUB_WORKSPACE/.github/scripts/retryCommand.sh" pnpm install --node-linker=hoisted
 
     # 移除国内 electron 镜像配置，GitHub Actions 使用官方源更快
     - name: Remove China electron mirror from .npmrc
@@ -63,7 +63,7 @@ runs:
           fi
         done
         cd "$desktop_root"
-        pnpm install --frozen-lockfile
+        bash "$workspace_root/.github/scripts/retryCommand.sh" pnpm install --frozen-lockfile
         DESKTOP_BUILD_ROOT="$desktop_root" node <<'NODE'
         const path = require('node:path');
         const { createRequire } = require('node:module');
