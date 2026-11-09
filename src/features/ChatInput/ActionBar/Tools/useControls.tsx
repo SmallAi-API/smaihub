@@ -5,9 +5,6 @@ import { type AgentPluginMode, getDisabledPluginIds } from '@lobechat/types';
 import {
   Avatar,
   confirmModal,
-  createStaticStyles,
-  cssVar,
-  cx,
   Icon,
   type ItemType,
   Popover,
@@ -17,6 +14,7 @@ import {
   Tag,
 } from '@lobehub/ui';
 import { McpIcon, SkillsIcon } from '@lobehub/ui/icons';
+import * as stylex from '@stylexjs/stylex';
 import isEqual from 'fast-deep-equal';
 import {
   Ban,
@@ -74,7 +72,7 @@ import {
 } from './capabilityTools';
 import ComposioServerItem from './ComposioServerItem';
 import ComposioSkillIcon from './ComposioSkillIcon';
-import { SKILL_ICON_GAP, SKILL_ICON_SIZE, SKILL_TRAILING_CONTROL_SIZE } from './constants';
+import { SKILL_ICON_SIZE } from './constants';
 import LobehubSkillIcon from './LobehubSkillIcon';
 import LobehubSkillServerItem from './LobehubSkillServerItem';
 import MarketAgentSkillPopoverContent from './MarketAgentSkillPopoverContent';
@@ -82,6 +80,7 @@ import MarketSkillIcon from './MarketSkillIcon';
 import SkillRow from './SkillRow';
 import ToolItem from './ToolItem';
 import ToolItemDetailPopover from './ToolItemDetailPopover';
+import { styles } from './useControls.styles';
 
 type SkillPolicyMode = AgentPluginMode;
 
@@ -138,360 +137,6 @@ type SkillMenuItem = NonNullable<ItemType> & {
   popoverContent?: ReactNode;
   searchText?: string;
 };
-
-const styles = createStaticStyles(({ css }) => ({
-  activationGroupHeader: css`
-    cursor: pointer;
-
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    justify-content: space-between;
-
-    width: 100%;
-    min-width: 0;
-    padding-block: 4px;
-  `,
-  activationGroupChevron: css`
-    display: flex;
-    flex: none;
-    align-items: center;
-    justify-content: center;
-
-    width: ${SKILL_TRAILING_CONTROL_SIZE}px;
-    height: ${SKILL_TRAILING_CONTROL_SIZE}px;
-
-    color: ${cssVar.colorTextTertiary};
-  `,
-  activationGroupTitle: css`
-    display: flex;
-    gap: 7px;
-    align-items: center;
-
-    min-width: 0;
-    min-height: 18px;
-  `,
-  activationGroupTitleBlock: css`
-    display: flex;
-    gap: ${SKILL_ICON_GAP}px;
-    align-items: center;
-    min-width: 0;
-  `,
-  activationGroupIcon: css`
-    display: flex;
-    flex: none;
-    align-items: center;
-    justify-content: center;
-
-    width: ${SKILL_ICON_SIZE}px;
-  `,
-  activationGroupTitleBody: css`
-    display: flex;
-    flex: 0 1 auto;
-    gap: 6px;
-    align-items: center;
-
-    min-width: 0;
-  `,
-  activationGroupTitleText: css`
-    overflow: hidden;
-
-    min-width: 0;
-
-    font-size: 14px;
-    font-weight: 500;
-    color: ${cssVar.colorText};
-    text-overflow: ellipsis;
-    text-transform: none;
-    white-space: nowrap;
-  `,
-  count: css`
-    flex: none;
-    color: ${cssVar.colorTextTertiary};
-  `,
-  activationGroupActions: css`
-    display: flex;
-    flex: none;
-    gap: 8px;
-    align-items: center;
-  `,
-  switchWrap: css`
-    display: inline-flex;
-    flex: none;
-    align-items: center;
-  `,
-  iconAuto: css`
-    color: ${cssVar.colorInfo};
-  `,
-  iconDefault: css`
-    color: ${cssVar.colorTextTertiary};
-  `,
-  iconDisabled: css`
-    color: ${cssVar.colorError};
-  `,
-  iconPinned: css`
-    color: ${cssVar.colorInfo};
-  `,
-  policyButton: css`
-    cursor: pointer;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    /* Connector rows hand this button to the menu's extra slot, a plain block
-       wrapper — without vertical-align its strut adds descender space below the
-       button and pushes those rows taller than the rest. */
-    width: ${SKILL_TRAILING_CONTROL_SIZE}px;
-    height: ${SKILL_TRAILING_CONTROL_SIZE}px;
-    padding: 0;
-    border: 0;
-    border-radius: 6px;
-
-    color: ${cssVar.colorTextTertiary};
-    vertical-align: top;
-
-    background: transparent;
-
-    transition:
-      color 0.2s,
-      background 0.2s;
-
-    &:hover {
-      color: ${cssVar.colorTextSecondary};
-      background: ${cssVar.colorFillTertiary};
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.45;
-      background: transparent;
-    }
-  `,
-  deleteButton: css`
-    cursor: pointer;
-
-    display: flex;
-    gap: 10px;
-    align-items: center;
-
-    width: 100%;
-    min-height: 36px;
-    padding-block: 8px;
-    padding-inline: 10px;
-    border: 0;
-    border-radius: 6px;
-
-    font-size: 14px;
-    line-height: 20px;
-    color: ${cssVar.colorError};
-
-    background: transparent;
-
-    transition: background 150ms ${cssVar.motionEaseOut};
-
-    &:hover {
-      background: ${cssVar.colorErrorBg};
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.45;
-      background: transparent;
-    }
-  `,
-  deleteDivider: css`
-    height: 1px;
-    margin-block: 2px;
-    margin-inline: 4px;
-    background: ${cssVar.colorBorderSecondary};
-  `,
-  deleteIcon: css`
-    color: ${cssVar.colorError};
-  `,
-  policyCheck: css`
-    display: flex;
-    flex: none;
-    align-items: center;
-    justify-content: center;
-
-    width: 16px;
-    height: 16px;
-
-    color: ${cssVar.colorInfo};
-  `,
-  policyItem: css`
-    cursor: pointer;
-
-    display: flex;
-    gap: 10px;
-    align-items: center;
-
-    width: 100%;
-    min-height: 36px;
-    padding-block: 8px;
-    padding-inline: 10px;
-    border: 0;
-    border-radius: 6px;
-
-    font-size: 14px;
-    line-height: 20px;
-    color: ${cssVar.colorText};
-
-    background: transparent;
-
-    transition: background 150ms ${cssVar.motionEaseOut};
-
-    &:hover {
-      background: ${cssVar.colorFillTertiary};
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.45;
-      background: transparent;
-    }
-  `,
-  policyItemIcon: css`
-    display: flex;
-    flex: none;
-    align-items: center;
-    justify-content: center;
-
-    width: 16px;
-    height: 16px;
-  `,
-  policyPanel: css`
-    min-width: 132px;
-    padding: 4px;
-    border-radius: ${cssVar.borderRadius};
-
-    background: ${cssVar.colorBgElevated};
-    box-shadow:
-      0 0 15px 0 #00000008,
-      0 2px 30px 0 #00000014;
-  `,
-  /* Capability rows (memory / web search) host their own settings under the
-     activation policy, so the panel takes the width those settings had as
-     standalone popovers instead of the compact 132px policy list. */
-  policyPanelWide: css`
-    width: 320px;
-  `,
-  policyText: css`
-    flex: 1;
-    text-align: start;
-  `,
-  toolLabel: css`
-    display: flex;
-    flex: 1;
-    gap: ${SKILL_ICON_GAP}px;
-    align-items: center;
-
-    min-width: 0;
-  `,
-  toolLabelBody: css`
-    overflow: hidden;
-    display: flex;
-    flex: 0 1 auto;
-    gap: 6px;
-    align-items: center;
-
-    min-width: 0;
-  `,
-  toolLabelText: css`
-    overflow: hidden;
-    flex: 0 1 auto;
-
-    min-width: 0;
-
-    line-height: 1.4;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  `,
-  toolRow: css`
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    justify-content: space-between;
-
-    width: 100%;
-    min-width: 0;
-
-    &:hover [data-tool-trailing],
-    &:focus-within [data-tool-trailing] {
-      pointer-events: auto;
-      opacity: 1;
-    }
-  `,
-  toolTrailing: css`
-    pointer-events: none;
-
-    display: inline-flex;
-    flex: none;
-    gap: 8px;
-    align-items: center;
-
-    opacity: 0;
-
-    transition: opacity 150ms ${cssVar.motionEaseOut};
-
-    @media (hover: none) {
-      pointer-events: auto;
-      opacity: 1;
-    }
-  `,
-  toolTrailingVisible: css`
-    pointer-events: auto;
-    opacity: 1;
-  `,
-  typeTag: css`
-    display: inline-flex;
-    flex: none;
-    align-items: center;
-
-    padding-block: 1px;
-    padding-inline: 4px;
-    border: 1px solid ${cssVar.colorBorderSecondary};
-    border-radius: 4px;
-
-    color: ${cssVar.colorTextTertiary};
-
-    background: ${cssVar.colorFillQuaternary};
-  `,
-  addSkillRow: css`
-    display: flex;
-    gap: ${SKILL_ICON_GAP}px;
-    align-items: center;
-
-    width: calc(100% + 24px);
-    min-height: 32px;
-    margin-inline: -12px;
-    padding-inline: 12px;
-    border: 0;
-    border-radius: 6px;
-
-    font-size: 14px;
-    color: ${cssVar.colorText};
-
-    background: transparent;
-
-    transition: background 150ms ${cssVar.motionEaseOut};
-
-    &:hover {
-      background: ${cssVar.colorFillTertiary};
-    }
-
-    /* The footer adds 8px block padding; cancel it on the last action row so the
-       bottom row sits flush against the popup edge instead of leaving a gap. */
-    &:last-child {
-      margin-block-end: -8px;
-    }
-  `,
-  addSkillLabel: css`
-    flex: 1;
-    text-align: start;
-  `,
-}));
 
 export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = {}) => {
   const { t } = useTranslation('setting');
@@ -637,11 +282,11 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
         (checkedSet.has(id) ? 'pinned' : disabledIdSet.has(id) ? 'disabled' : defaultMode);
       const renderCheck = (value: SkillPolicyMode) =>
         mode === value ? (
-          <span className={cx(styles.policyCheck)}>
+          <span {...stylex.props(styles.policyCheck)}>
             <Icon icon={Check} size={14} />
           </span>
         ) : (
-          <span className={cx(styles.policyCheck)} />
+          <span {...stylex.props(styles.policyCheck)} />
         );
 
       // Right-click / "..." menu is an action list (Pin / Auto / Disable), not a
@@ -655,7 +300,7 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
 
       const renderPolicyItem = (value: SkillPolicyMode, icon: ReactNode) => (
         <button
-          className={cx(styles.policyItem)}
+          {...stylex.props(styles.policyItem)}
           disabled={!canEdit}
           type="button"
           onClick={async (event) => {
@@ -665,15 +310,15 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
             await updateSkillPolicy(id, value);
           }}
         >
-          <span className={cx(styles.policyItemIcon)}>{icon}</span>
-          <span className={cx(styles.policyText)}>{t(policyActionKey[value])}</span>
+          <span {...stylex.props(styles.policyItemIcon)}>{icon}</span>
+          <span {...stylex.props(styles.policyText)}>{t(policyActionKey[value])}</span>
           {renderCheck(value)}
         </button>
       );
 
       const content = (
         <div
-          className={cx(styles.policyPanel, Boolean(panelExtra) && styles.policyPanelWide)}
+          {...stylex.props(styles.policyPanel, Boolean(panelExtra) && styles.policyPanelWide)}
           onClick={(event) => event.stopPropagation()}
           onContextMenu={(event) => event.stopPropagation()}
         >
@@ -682,9 +327,11 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
             renderPolicyItem(
               'pinned',
               <Icon
-                className={cx(mode === 'pinned' ? styles.iconPinned : styles.iconDefault)}
                 icon={Pin}
                 size={15}
+                className={
+                  stylex.props(mode === 'pinned' ? styles.iconPinned : styles.iconDefault).className
+                }
               />,
             )}
           {!deleteOnly &&
@@ -692,9 +339,11 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
             renderPolicyItem(
               'auto',
               <Icon
-                className={cx(mode === 'auto' ? styles.iconAuto : styles.iconDefault)}
                 icon={Zap}
                 size={15}
+                className={
+                  stylex.props(mode === 'auto' ? styles.iconAuto : styles.iconDefault).className
+                }
               />,
             )}
           {!deleteOnly &&
@@ -702,17 +351,20 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
             renderPolicyItem(
               'disabled',
               <Icon
-                className={cx(mode === 'disabled' ? styles.iconDisabled : styles.iconDefault)}
                 icon={Ban}
                 size={15}
+                className={
+                  stylex.props(mode === 'disabled' ? styles.iconDisabled : styles.iconDefault)
+                    .className
+                }
               />,
             )}
           {!deleteOnly && (configureConfig || deleteConfig) && (
-            <div className={cx(styles.deleteDivider)} />
+            <div {...stylex.props(styles.deleteDivider)} />
           )}
           {configureConfig && (
             <button
-              className={cx(styles.policyItem)}
+              {...stylex.props(styles.policyItem)}
               disabled={!canEdit}
               type="button"
               onClick={(event) => {
@@ -722,15 +374,15 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
                 configureConfig.onConfigure();
               }}
             >
-              <span className={cx(styles.policyItemIcon)}>
+              <span {...stylex.props(styles.policyItemIcon)}>
                 <Icon icon={Wrench} size={15} />
               </span>
-              <span className={cx(styles.policyText)}>{t('tools.builtins.configure')}</span>
+              <span {...stylex.props(styles.policyText)}>{t('tools.builtins.configure')}</span>
             </button>
           )}
           {deleteConfig && (
             <button
-              className={cx(styles.deleteButton)}
+              {...stylex.props(styles.deleteButton)}
               disabled={!canEdit}
               type="button"
               onClick={(event) => {
@@ -751,10 +403,14 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
                 });
               }}
             >
-              <span className={cx(styles.policyItemIcon)}>
-                <Icon className={cx(styles.deleteIcon)} icon={Trash2} size={15} />
+              <span {...stylex.props(styles.policyItemIcon)}>
+                <Icon
+                  className={stylex.props(styles.deleteIcon).className}
+                  icon={Trash2}
+                  size={15}
+                />
               </span>
-              <span className={cx(styles.policyText)}>{t('tools.builtins.uninstall')}</span>
+              <span {...stylex.props(styles.policyText)}>{t('tools.builtins.uninstall')}</span>
             </button>
           )}
           {panelExtra}
@@ -774,7 +430,7 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
         >
           <button
             aria-label={t('tools.skillActivateMode.title')}
-            className={cx(styles.policyButton)}
+            {...stylex.props(styles.policyButton)}
             disabled={!canEdit}
             type="button"
             onPointerEnter={closeToolDetailPopovers}
@@ -811,29 +467,29 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
       detailContent?: ReactNode,
     ) => (
       <SkillRow
-        className={cx(styles.toolRow)}
+        className={stylex.props(styles.toolRow, stylex.defaultMarker()).className}
         detailContent={detailContent}
         detailDisabled={policyOpenId !== null}
-        labelClassName={cx(styles.toolLabel)}
+        labelClassName={stylex.props(styles.toolLabel).className}
         label={
           <>
             {icon}
-            <span className={cx(styles.toolLabelBody)}>
-              <span className={cx(styles.toolLabelText)}>{label}</span>
+            <span {...stylex.props(styles.toolLabelBody)}>
+              <span {...stylex.props(styles.toolLabelText)}>{label}</span>
               {extraTag}
             </span>
           </>
         }
         trailing={
           <>
-            {badge && <span className={cx(styles.typeTag)}>{badge}</span>}
+            {badge && <span {...stylex.props(styles.typeTag)}>{badge}</span>}
             {action}
           </>
         }
-        trailingClassName={cx(
-          styles.toolTrailing,
-          policyOpenId === id && styles.toolTrailingVisible,
-        )}
+        trailingClassName={
+          stylex.props(styles.toolTrailing, policyOpenId === id && styles.toolTrailingVisible)
+            .className
+        }
         onContextMenu={() => openSkillPolicyMenu(id)}
       />
     ),
@@ -1744,7 +1400,7 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
   }) => (
     <div
       data-skill-activation-group
-      className={cx(styles.activationGroupHeader)}
+      {...stylex.props(styles.activationGroupHeader)}
       role="button"
       tabIndex={0}
       onClick={(event) => {
@@ -1752,17 +1408,17 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
         onToggle();
       }}
     >
-      <div className={cx(styles.activationGroupTitleBlock)}>
-        <span className={cx(styles.activationGroupIcon)}>{icon}</span>
-        <span className={cx(styles.activationGroupTitleBody)}>
-          <span className={cx(styles.activationGroupTitleText)}>{title}</span>
-          {typeof count === 'number' && <span className={cx(styles.count)}>{count}</span>}
+      <div {...stylex.props(styles.activationGroupTitleBlock)}>
+        <span {...stylex.props(styles.activationGroupIcon)}>{icon}</span>
+        <span {...stylex.props(styles.activationGroupTitleBody)}>
+          <span {...stylex.props(styles.activationGroupTitleText)}>{title}</span>
+          {typeof count === 'number' && <span {...stylex.props(styles.count)}>{count}</span>}
         </span>
       </div>
-      <div className={cx(styles.activationGroupActions)}>
+      <div {...stylex.props(styles.activationGroupActions)}>
         {autoSwitch && (
           <span
-            className={cx(styles.switchWrap)}
+            {...stylex.props(styles.switchWrap)}
             onClick={(event) => {
               event.stopPropagation();
             }}
@@ -1788,7 +1444,7 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
             />
           </span>
         )}
-        <div className={cx(styles.activationGroupChevron)}>
+        <div {...stylex.props(styles.activationGroupChevron)}>
           <Icon icon={open ? ChevronDown : ChevronRight} size={13} />
         </div>
       </div>
@@ -1815,7 +1471,7 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
       <>
         <button
           aria-label={t('plus.addSkills', { ns: 'chat' })}
-          className={cx(styles.addSkillRow)}
+          {...stylex.props(styles.addSkillRow)}
           type="button"
           onClick={(event) => {
             event.stopPropagation();
@@ -1824,11 +1480,11 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
           }}
         >
           <Icon icon={Store} size={SKILL_ICON_SIZE} />
-          <span className={cx(styles.addSkillLabel)}>{t('plus.addSkills', { ns: 'chat' })}</span>
+          <span {...stylex.props(styles.addSkillLabel)}>{t('plus.addSkills', { ns: 'chat' })}</span>
         </button>
         <button
           aria-label={t('tools.plugins.management')}
-          className={cx(styles.addSkillRow)}
+          {...stylex.props(styles.addSkillRow)}
           type="button"
           onClick={(event) => {
             event.stopPropagation();
@@ -1837,7 +1493,7 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
           }}
         >
           <Icon icon={Settings} size={SKILL_ICON_SIZE} />
-          <span className={cx(styles.addSkillLabel)}>{t('tools.plugins.management')}</span>
+          <span {...stylex.props(styles.addSkillLabel)}>{t('tools.plugins.management')}</span>
         </button>
       </>
     ) : undefined;

@@ -1,27 +1,21 @@
-import { createStaticStyles, cssVar, Flexbox, Tag, Text } from '@lobehub/ui';
+import { Flexbox, Tag, Text } from '@lobehub/ui';
+import { cssVar } from '@lobehub/ui/stylex/cssVar.stylex';
+import * as stylex from '@stylexjs/stylex';
 import { memo, type ReactNode } from 'react';
 
-const styles = createStaticStyles(({ css }) => ({
-  container: css`
-    width: 320px;
-    padding: 12px;
-  `,
-  description: css`
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 6;
-
-    font-size: 12px;
-    line-height: 1.5;
-    color: ${cssVar.colorTextSecondary};
-  `,
-  title: css`
-    font-size: 14px;
-    font-weight: 600;
-    color: ${cssVar.colorText};
-  `,
-}));
+const styles = stylex.create({
+  container: { width: '320px', padding: '12px' },
+  description: {
+    overflow: 'hidden',
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: '6',
+    fontSize: '12px',
+    lineHeight: 1.5,
+    color: cssVar.colorTextSecondary,
+  },
+  title: { fontSize: '14px', fontWeight: 600, color: cssVar.colorText },
+});
 
 interface ToolItemDetailPopoverProps {
   description?: ReactNode;
@@ -39,12 +33,12 @@ interface ToolItemDetailPopoverProps {
 const ToolItemDetailPopover = memo<ToolItemDetailPopoverProps>(
   ({ icon, title, description, sourceLabel, meta }) => {
     return (
-      <Flexbox className={styles.container} gap={10}>
+      <Flexbox className={stylex.props(styles.container).className} gap={10}>
         <Flexbox horizontal align={'center'} gap={10}>
           {icon}
           <Flexbox flex={1} gap={2} style={{ minWidth: 0 }}>
             <Flexbox horizontal align={'center'} gap={6}>
-              <Text ellipsis className={styles.title}>
+              <Text ellipsis className={stylex.props(styles.title).className}>
                 {title}
               </Text>
               {sourceLabel && (
@@ -55,7 +49,7 @@ const ToolItemDetailPopover = memo<ToolItemDetailPopoverProps>(
             </Flexbox>
           </Flexbox>
         </Flexbox>
-        {description && <div className={styles.description}>{description}</div>}
+        {description && <div {...stylex.props(styles.description)}>{description}</div>}
         {meta}
       </Flexbox>
     );
