@@ -3,7 +3,11 @@ import { tmpdir } from 'node:os';
 import { basename, join, resolve } from 'node:path';
 
 /**
- * 安全存储临时文件工具类
+ * Utility class for safely storing temporary files. Callers clean up in `finally`.
+ *
+ * It installs no process hooks: an exiting SIGTERM listener would cut short the
+ * runtime's graceful shutdown, and an exiting `uncaughtException` listener turns
+ * any later stray error into a crash. Callers own cleanup; the host owns termination.
  */
 export class TempFileManager {
   private readonly tempDir: string;
@@ -12,8 +16,6 @@ export class TempFileManager {
   constructor(dirname: string) {
     // 创建唯一临时目录 (跨平台安全)
     this.tempDir = mkdtempSync(join(tmpdir(), dirname));
-    // 注册退出清理钩子
-    this.registerCleanupHook();
   }
 
   /**
@@ -44,26 +46,5 @@ export class TempFileManager {
       rmSync(this.tempDir, { force: true, recursive: true });
       this.filePaths.clear();
     }
-  }
-
-  /**
-   * 注册进程退出/异常时的自动清理
-   */
-  private registerCleanupHook(): void {
-    // 正常退出
-    process.on('exit', () => this.cleanup());
-    // 异常退出
-    process.on('uncaughtException', (err) => {
-      console.error('Uncaught exception, cleaning temp files:', err);
-      this.cleanup();
-      process.exit(1);
-    });
-    // 信号终止
-    ['SIGINT', 'SIGTERM'].forEach((signal) => {
-      process.on(signal, () => {
-        this.cleanup();
-        process.exit(0);
-      });
-    });
   }
 }
