@@ -9,7 +9,7 @@ import {
   parseStructuredOutputText,
   parseStructuredToolArguments,
   StructuredOutputError,
-} from '../../core/openaiCompatibleFactory/structuredOutput';
+} from '../../core/openaiCompatible/structuredOutput';
 import { convertIterableToStream, createModelPullStream, OllamaStream } from '../../core/streams';
 import type {
   ChatMethodOptions,

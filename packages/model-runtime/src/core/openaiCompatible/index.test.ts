@@ -5,8 +5,7 @@ import { type Stream } from 'openai/streaming';
 import { type Mock } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type LobeOpenAICompatibleRuntime } from '../../core/BaseAI';
-import { type ChatStreamCallbacks, type ChatStreamPayload } from '../../types/chat';
+import type { ChatStreamCallbacks, ChatStreamPayload } from '../../types/chat';
 import { AgentRuntimeErrorType } from '../../types/error';
 import type { ModelRuntimeDiagnostics } from '../../types/providerDiagnostics';
 import * as debugStreamModule from '../../utils/debugStream';
@@ -16,6 +15,7 @@ import {
   serializeScopedSignature,
 } from '../../utils/signatureScope';
 import { createVideoWithCompletionMode } from '../../utils/videoCompletionMode';
+import type { LobeOpenAICompatibleRuntime } from '../BaseAI';
 import * as openaiHelpers from '../contextBuilders/openai';
 import { createOpenAICompatibleRuntime } from './index';
 

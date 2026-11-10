@@ -1,7 +1,7 @@
 import createDebug from 'debug';
 
-import { type CreateImageOptions } from '../../core/openaiCompatibleFactory';
-import { type CreateImagePayload, type CreateImageResponse } from '../../types/image';
+import type { CreateImageOptions } from '../../core/openaiCompatible';
+import type { CreateImagePayload, CreateImageResponse } from '../../types/image';
 import { AgentRuntimeError } from '../../utils/createError';
 
 const log = createDebug('lobe-image:wenxin');

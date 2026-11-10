@@ -1,8 +1,8 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type CreateImageOptions } from '../../core/openaiCompatibleFactory';
-import { type CreateImagePayload } from '../../types/image';
+import type { CreateImageOptions } from '../../core/openaiCompatible';
+import type { CreateImagePayload } from '../../types/image';
 import { createXAIImage } from './createImage';
 
 // Mock the console.error to avoid polluting test output
