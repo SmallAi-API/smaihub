@@ -25,7 +25,6 @@ import {
   isEchoedErrorText,
   normalizeHeterogeneousMessageError,
 } from '@lobechat/heterogeneous-agents/errors';
-import { formatContextSelections, formatPageSelections } from '@lobechat/prompts';
 import type {
   ChatMessageError,
   ChatToolPayload,
@@ -94,6 +93,8 @@ import { withHeteroContext } from '../viewedTaskPrompt';
 import { markUnfinishedToolsCancelled } from './cancelledTools';
 import { getNativeHeteroSessionBindingKey, isRecoverableResumeError } from './heteroResume';
 import { preserveSkippedIntervention } from './interventionAck';
+import { claimLocalRunFee, type LocalRunFeeClaim, settleLocalRunFee } from './localRunFee';
+import { buildLocalHeterogeneousSystemContext } from './localSystemContext';
 import { createMessageWriteBatcher, type ToolMessageUpdateOperation } from './messageWriteBatcher';
 import { createPendingCreateLedger } from './pendingCreateLedger';
 import { waitForPersistQueue } from './persistQueue';
@@ -231,6 +232,8 @@ export interface HeterogeneousAgentExecutorParams {
   attachedFiles?: HeteroAttachedFileRef[];
   context: ConversationContext;
   contextSelections?: ContextSelection[];
+  /** Continues a run that already paid its fee (restart recovery, continue-after-error). */
+  continuesRun?: boolean;
   heterogeneousProvider: HeterogeneousProviderConfig;
   /** Image attachments from user message — passed to Main for vision support */
   imageList?: Array<{ id: string; url: string }>;
@@ -249,6 +252,8 @@ export interface HeterogeneousAgentExecutorParams {
   /** CC session ID from previous execution in this topic (for --resume) */
   resumeBindingKey?: string;
   resumeSessionId?: string;
+  /** Internal: the fee claim a resume-fallback retry inherits from its run. */
+  runFee?: LocalRunFeeClaim;
   workingDirectory?: string;
   workingDirectoryConfig?: WorkingDirConfig;
   workspaceId?: string | null; // workspace the run started in (null = personal)
@@ -268,34 +273,6 @@ export interface HeterogeneousAgentExecutionOutcome {
    */
   terminalError?: boolean;
 }
-
-const buildLocalHeterogeneousSystemContext = ({
-  agentSystemContext,
-  contextSelections,
-  pageSelections,
-  previousConversation,
-}: {
-  agentSystemContext?: string;
-  contextSelections?: ContextSelection[];
-  pageSelections?: PageSelection[];
-  previousConversation?: string;
-}): string | undefined => {
-  const parts: string[] = [];
-
-  if (agentSystemContext?.trim()) parts.push(agentSystemContext.trim());
-  if (previousConversation) parts.push(previousConversation);
-
-  const selectionContext =
-    contextSelections && contextSelections.length > 0
-      ? formatContextSelections(contextSelections)
-      : pageSelections && pageSelections.length > 0
-        ? formatPageSelections(pageSelections)
-        : '';
-
-  if (selectionContext) parts.push(selectionContext);
-
-  return parts.length > 0 ? parts.join('\n\n') : undefined;
-};
 
 const getTopicMetadataById = (
   store: ChatStore,
@@ -634,6 +611,7 @@ export const executeHeterogeneousAgent = async (
   let ipcRunSessionId: string | undefined;
   let unsubscribe: (() => void) | undefined;
   let completed = false;
+  const runFee: LocalRunFeeClaim = params.runFee ?? {};
   let fallbackPromise: Promise<void> | undefined;
   let resumeFallbackTriggered = false;
 
@@ -1030,7 +1008,12 @@ export const executeHeterogeneousAgent = async (
           { ns: 'chat' },
         ),
       );
-      await executeHeterogeneousAgent(get, { ...params, resumeSessionId: undefined, workspaceId });
+      await executeHeterogeneousAgent(get, {
+        ...params,
+        resumeSessionId: undefined,
+        runFee,
+        workspaceId,
+      });
     })();
 
     return true;
@@ -1866,6 +1849,14 @@ export const executeHeterogeneousAgent = async (
     return;
   }
 
+  // A run this desktop spawns never reaches `execAgent`: it reports its fee here,
+  // and a refused fee, or a Stop while the hold was pending, ends it before the CLI starts.
+  const feeStop = params.runFee
+    ? undefined
+    : await claimLocalRunFee(runFee, { ...params, workspaceId }, abortSignal);
+  if (feeStop === 'stopped') return void writeTopicStatus('active');
+  if (feeStop) return void (await persistTerminalError(feeStop));
+
   try {
     // Account routing: realize the pinned/balanced account choice as spawn env
     // (CLAUDE_CONFIG_DIR profile). Unbound agents get {} and spawn exactly as
@@ -2672,6 +2663,15 @@ export const executeHeterogeneousAgent = async (
       } catch (err) {
         console.error('[HeterogeneousAgent] status reconcile backstop failed:', err);
       }
+    }
+    // The resume-fallback retry inherited the claim and settles it.
+    if (!resumeFallbackTriggered) {
+      const terminal = deferredTerminalEvent as AgentStreamEvent | null;
+      await settleLocalRunFee(runFee, {
+        aborted: isAborted(),
+        failed: terminalErrorPersisted,
+        terminal,
+      });
     }
   }
 
