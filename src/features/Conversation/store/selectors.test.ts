@@ -48,6 +48,16 @@ const createMockState = (overrides: Partial<State> = {}): State => ({
   ...overrides,
 });
 
+const twoBlockAssistantGroup = () => ({
+  children: [
+    { content: 'first', id: 'block-1' },
+    { content: 'second', id: 'block-2' },
+  ],
+  content: '',
+  id: 'group-1',
+  role: 'assistantGroup',
+});
+
 describe('conversationSelectors', () => {
   describe('Context Selectors', () => {
     describe('context', () => {
@@ -273,17 +283,7 @@ describe('conversationSelectors', () => {
     describe('isMessageGenerating', () => {
       it('only checks the requested message id', () => {
         const store = createMockState({
-          displayMessages: [
-            {
-              children: [
-                { content: 'first', id: 'block-1' },
-                { content: 'second', id: 'block-2' },
-              ],
-              content: '',
-              id: 'group-1',
-              role: 'assistantGroup',
-            } as any,
-          ],
+          displayMessages: [twoBlockAssistantGroup() as any],
           operationState: {
             ...DEFAULT_OPERATION_STATE,
             getMessageOperationState: (messageId) => ({
@@ -300,17 +300,7 @@ describe('conversationSelectors', () => {
     describe('isAssistantGroupItemGenerating', () => {
       it('returns true for an assistantGroup when any child block is generating', () => {
         const store = createMockState({
-          displayMessages: [
-            {
-              children: [
-                { content: 'first', id: 'block-1' },
-                { content: 'second', id: 'block-2' },
-              ],
-              content: '',
-              id: 'group-1',
-              role: 'assistantGroup',
-            } as any,
-          ],
+          displayMessages: [twoBlockAssistantGroup() as any],
           operationState: {
             ...DEFAULT_OPERATION_STATE,
             getMessageOperationState: (messageId) => ({
@@ -325,17 +315,7 @@ describe('conversationSelectors', () => {
 
       it('returns true for a child block when its assistantGroup is generating', () => {
         const store = createMockState({
-          displayMessages: [
-            {
-              children: [
-                { content: 'first', id: 'block-1' },
-                { content: 'second', id: 'block-2' },
-              ],
-              content: '',
-              id: 'group-1',
-              role: 'assistantGroup',
-            } as any,
-          ],
+          displayMessages: [twoBlockAssistantGroup() as any],
           operationState: {
             ...DEFAULT_OPERATION_STATE,
             getMessageOperationState: (messageId) => ({

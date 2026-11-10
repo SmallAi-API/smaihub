@@ -111,6 +111,13 @@ const APP_TOOLS_STORAGE_KEY = composioAppToolsResource.storageKey('gmail');
 /** Identifiers of the connections the store currently shows. */
 const connectionIds = () => useToolStore.getState().composioServers.map((s) => s.identifier);
 
+const slackConnectionResponse = () => ({
+  authConfigId: 'ac_slack',
+  connectedAccountId: 'ca_slack',
+  identifier: 'slack',
+  redirectUrl: 'https://composio.dev/redirect',
+});
+
 describe('composio connections replica', () => {
   const scopes = new Set<string>();
   let scope = '';
@@ -221,12 +228,7 @@ describe('composio connections replica', () => {
     renderHook(() => useToolStore((s) => s.useFetchUserComposioConnections)(true), { wrapper });
     await waitFor(() => expect(useToolStore.getState().composioServers).toHaveLength(1));
 
-    mocks.createConnection.mockResolvedValue({
-      authConfigId: 'ac_slack',
-      connectedAccountId: 'ca_slack',
-      identifier: 'slack',
-      redirectUrl: 'https://composio.dev/redirect',
-    });
+    mocks.createConnection.mockResolvedValue(slackConnectionResponse());
 
     await act(async () => {
       await useToolStore
@@ -309,12 +311,7 @@ describe('composio connections replica', () => {
     });
     await waitFor(() => expect(useToolStore.getState().isComposioServersInit).toBe(true));
 
-    mocks.createConnection.mockResolvedValue({
-      authConfigId: 'ac_slack',
-      connectedAccountId: 'ca_slack',
-      identifier: 'slack',
-      redirectUrl: 'https://composio.dev/redirect',
-    });
+    mocks.createConnection.mockResolvedValue(slackConnectionResponse());
     await act(async () => {
       await useToolStore
         .getState()
@@ -399,12 +396,7 @@ describe('composio connections replica', () => {
     });
     await waitFor(() => expect(useToolStore.getState().isComposioServersInit).toBe(true));
 
-    mocks.createConnection.mockResolvedValue({
-      authConfigId: 'ac_slack',
-      connectedAccountId: 'ca_slack',
-      identifier: 'slack',
-      redirectUrl: 'https://composio.dev/redirect',
-    });
+    mocks.createConnection.mockResolvedValue(slackConnectionResponse());
     await act(async () => {
       await useToolStore
         .getState()
@@ -444,12 +436,7 @@ describe('composio connections replica', () => {
     renderHook(() => useToolStore((s) => s.useFetchUserComposioConnections)(true), { wrapper });
     await waitFor(() => expect(mocks.getComposioPlugins).toHaveBeenCalledTimes(1));
 
-    mocks.createConnection.mockResolvedValue({
-      authConfigId: 'ac_slack',
-      connectedAccountId: 'ca_slack',
-      identifier: 'slack',
-      redirectUrl: 'https://composio.dev/redirect',
-    });
+    mocks.createConnection.mockResolvedValue(slackConnectionResponse());
     await act(async () => {
       await useToolStore
         .getState()
@@ -506,12 +493,7 @@ describe('composio connections replica', () => {
     });
     await waitFor(() => expect(useToolStore.getState().isComposioServersInit).toBe(true));
 
-    mocks.createConnection.mockResolvedValue({
-      authConfigId: 'ac_slack',
-      connectedAccountId: 'ca_slack',
-      identifier: 'slack',
-      redirectUrl: 'https://composio.dev/redirect',
-    });
+    mocks.createConnection.mockResolvedValue(slackConnectionResponse());
     await act(async () => {
       await useToolStore
         .getState()
@@ -648,12 +630,7 @@ describe('composio connections replica', () => {
     await act(async () => {});
 
     await act(async () => {
-      resolveCreate({
-        authConfigId: 'ac_slack',
-        connectedAccountId: 'ca_slack',
-        identifier: 'slack',
-        redirectUrl: 'https://composio.dev/redirect',
-      });
+      resolveCreate(slackConnectionResponse());
       await created;
     });
 
