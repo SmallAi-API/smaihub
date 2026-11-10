@@ -4,15 +4,19 @@ import { describe, expect, it, vi } from 'vitest';
 import * as uuidModule from '../../utils/uuid';
 import { OllamaStream } from './ollama';
 
-const readStringChunks = async (stream: ReadableStream<string>) => {
+const readStringChunks = async (stream: ReadableStream<Uint8Array>) => {
   const chunks: string[] = [];
+  const decoder = new TextDecoder();
   const reader = stream.getReader();
 
   while (true) {
     const { done, value } = await reader.read();
 
     if (done) break;
-    if (value !== undefined) chunks.push(value);
+    if (value !== undefined) {
+      expect(value).toBeInstanceOf(Uint8Array);
+      chunks.push(decoder.decode(value, { stream: true }));
+    }
   }
 
   return chunks;
