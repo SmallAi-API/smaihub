@@ -480,7 +480,7 @@ export interface SystemStatus {
      */
     completedTasks?: 'all' | 'day' | 'month' | 'none' | 'week';
     /** `label:<groupId>` groups by one label group. */
-    groupBy: 'assignee' | 'member' | 'none' | 'priority' | 'status' | `label:${string}`;
+    groupBy: 'assignee' | 'member' | 'none' | 'priority' | 'project' | 'status' | `label:${string}`;
     /** @deprecated Replaced by `completedTasks`; read once to migrate. */
     hideCompleted?: boolean;
     nestedSubTasks: boolean;
@@ -488,7 +488,8 @@ export interface SystemStatus {
     orderCompletedByRecency: boolean;
     orderDirection: 'asc' | 'desc';
     showSubTasks: boolean;
-    subGroupBy: 'assignee' | 'member' | 'none' | 'priority' | 'status' | `label:${string}`;
+    subGroupBy:
+      'assignee' | 'member' | 'none' | 'priority' | 'project' | 'status' | `label:${string}`;
   };
   /**
    * Home team board: the attention list folded to a slim rail so the timeline
