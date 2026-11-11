@@ -91,6 +91,7 @@
   "response.GoogleAIBlockReason.SAFETY": "內容因安全原因被阻止。請調整並重試。",
   "response.GoogleAIBlockReason.SPII": "內容可能包含敏感個人信息（SPII）。請刪除敏感細節並重試。",
   "response.GoogleAIBlockReason.default": "內容被阻止（{{blockReason}}）。請調整並重試。",
+  "response.InsufficientBudgetForAgentRunFee": "點數不足，無法支付 Agent 執行費用。每次執行 Agent 都會收取費用，即使使用您自己的 CLI 帳號也一樣。請儲值或升級您的方案後再試。",
   "response.InsufficientBudgetForModel": "您的剩餘餘額不足以使用此模型。請儲值、升級您的方案，或嘗試費用較低的模型。",
   "response.InvalidAccessCode": "密碼不正確或為空，請輸入正確的訪問密碼，或添加自定義 API 金鑰",
   "response.LobeHubModelDeprecated": "模型 \"{{model}}\" 已不再可用。請從模型選擇器中選擇一個當前的模型。",

@@ -34,6 +34,8 @@
   "features.messageTextSelectionActions.title": "訊息文字選取操作",
   "features.oauthApps.desc": "在個人和工作區設置中顯示 OAuth 應用程式管理。此功能預設為隱藏。",
   "features.oauthApps.title": "OAuth 應用程式",
+  "features.pageCollab.desc": "即時共同編輯工作區頁面，並查看還有誰正在瀏覽頁面。關閉後，頁面仍會正常儲存，重新整理後即可看到團隊成員的變更。",
+  "features.pageCollab.title": "頁面即時協作",
   "features.projects.desc": "將長期目標組織成專屬的工作空間，並擁有自己的代理、知識庫和任務。",
   "features.projects.title": "專案工作空間",
   "features.selfLearning.desc": "讓每個代理在背景中從您的對話中學習：它記住事實、精煉技能、收集教訓，並在每晚回顧其一天。您發送回的回合變成規則。每晚的回顧最多涵蓋50個對話。所有內容都可以在記憶 → 自我演變中查看。",

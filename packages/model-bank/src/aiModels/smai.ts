@@ -1379,6 +1379,34 @@ const smaiChatModels: AIChatModelCard[] = [
   },
   {
     abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_048_576,
+    description:
+      "Gemini 4 Carbon is Google's strongest model, with state-of-the-art cybersecurity and long-horizon capabilities for sustained agentic coding, multimodal knowledge work, and scientific reasoning.",
+    displayName: 'Gemini 4 Carbon',
+    enabled: true,
+    family: 'gemini',
+    generation: 'gemini-4',
+    id: 'gemini-4-carbon',
+    maxOutput: 65_536,
+    // https://openrouter.ai/api/v1/models/google/gemini-4-carbon/endpoints
+    releasedAt: '2026-11-11',
+    // OpenRouter forwards `thinkingLevel` as `reasoning.effort`. `urlContext` is a Gemini API
+    // tool OpenRouter does not proxy, so it is left out.
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['thinkingLevel3'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
       audio: true,
       functionCall: true,
       reasoning: true,

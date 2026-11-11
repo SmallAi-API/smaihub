@@ -283,6 +283,8 @@
   "acceptance.gate.titleWave": "釋放波 {{wave}}？",
   "acceptance.gate.unitAcceptance": "接受 {{passed}}/{{total}}",
   "acceptance.gate.unitAcceptanceOpen": "開放接受",
+  "acceptance.gate.unitArtifacts": "輸出",
+  "acceptance.gate.unitArtifactsEmpty": "此單元尚未登記任何輸出。",
   "acceptance.gate.unitBrief": "此單元的功能",
   "acceptance.gate.unitCount": "{{count}} 個單元",
   "acceptance.gate.unitMeta": "{{runs}} 次運行 · {{tokens}} 個代幣",
