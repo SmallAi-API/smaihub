@@ -23,7 +23,8 @@ import { getSystemLanguage, resolveUILocale } from '@/utils/system-language';
 import { LOADING_SCREEN_PAINTED_CHANNEL } from '~common/loadingScreen';
 import { SYSTEM_LANGUAGE_ARG_PREFIX } from '~common/systemLanguage';
 
-import { type App } from '../App';
+import type { App } from '../App';
+import { attachDevInstanceLabel, getDevInstanceLabel } from './devInstanceLabel';
 import { WindowStateManager } from './WindowStateManager';
 import { WindowThemeManager } from './WindowThemeManager';
 
@@ -340,7 +341,9 @@ export default class Browser {
     this.setupTopLevelNavigationListener(browserWindow);
     this.setupWillPreventUnloadListener(browserWindow);
     this.setupContextMenu(browserWindow);
-    this.setupRendererDiagnostics(browserWindow);
+
+    const devInstanceLabel = getDevInstanceLabel();
+    if (devInstanceLabel) attachDevInstanceLabel(browserWindow, devInstanceLabel);
   }
 
   private setupTopLevelNavigationListener(browserWindow: BrowserWindow): void {
