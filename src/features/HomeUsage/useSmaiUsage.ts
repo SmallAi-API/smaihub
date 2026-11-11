@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 
 import { useActiveWorkspaceSlug } from '@/business/client/hooks/useActiveWorkspaceSlug';
-import { mutate as mutateScoped, useClientDataSWR } from '@/libs/swr';
-import { homeUsageKeys, statsKeys } from '@/libs/swr/keys';
+import { useClientDataSWR } from '@/libs/swr';
+import { homeUsageKeys } from '@/libs/swr/keys';
 import { aiProviderService } from '@/services/aiProvider';
+import { statsActions } from '@/store/stats';
 import type { SmaiUsageResult } from '@/types/smaiUsage';
 
 import { getUsageIdentity } from './credentials';
@@ -75,11 +76,7 @@ export const useSmaiUsage = (enabled: boolean) => {
           if (disposed) return;
           if (policy.result?.available && before !== policy.handledRevision) {
             // Same counters as settings/profile; update only after a real refresh.
-            void Promise.allSettled([
-              mutateScoped(statsKeys.countAgents()),
-              mutateScoped(statsKeys.countTopics()),
-              mutateScoped(statsKeys.countMessages()),
-            ]);
+            void statsActions.refreshCounts();
           }
           const dirty = getSmaiUsageRevision() > policy.handledRevision;
           schedule(dirty ? USAGE_SETTLEMENT_DELAY : USAGE_POLL_INTERVAL + Math.random() * 15_000);

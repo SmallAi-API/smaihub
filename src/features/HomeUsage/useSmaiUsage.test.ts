@@ -29,9 +29,10 @@ vi.mock('./useEligibility', () => ({
 }));
 vi.mock('@/services/aiProvider', () => ({ aiProviderService: { getSmaiUsage } }));
 vi.mock('@/libs/swr', async () => ({
-  mutate: mutateStats,
   useClientDataSWR: (await import('swr')).default,
 }));
+
+vi.mock('@/store/stats', () => ({ statsActions: { refreshCounts: mutateStats } }));
 
 const balance = (totalAvailable = 4): SmaiUsageResult => ({
   available: true,
@@ -93,6 +94,11 @@ describe('useSmaiUsage', () => {
       expect(result.current.data).toBeUndefined();
     },
   );
+  it('refreshes replica counters after a successful usage query', async () => {
+    open();
+    await advance();
+    expect(mutateStats).toHaveBeenCalledTimes(1);
+  });
   it('exposes a loading state before the first eligible response', async () => {
     const { result } = open();
     expect(result.current.isLoading).toBe(true);

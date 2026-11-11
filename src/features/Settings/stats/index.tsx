@@ -3,13 +3,10 @@
 import { Divider, Grid } from '@lobehub/ui';
 import { Form } from '@lobehub/ui/form';
 import dayjs from 'dayjs';
-import { memo, type ReactNode, useEffect, useState } from 'react';
+import { memo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import SettingHeader from '@/features/Settings/features/SettingHeader';
-import { useClientDataSWR } from '@/libs/swr';
-import { statsKeys } from '@/libs/swr/keys';
-import { usageService } from '@/services/usage';
 
 import {
   ShareButton,
@@ -47,18 +44,6 @@ interface StatsSettingProps {
 const StatsSetting = memo<StatsSettingProps>(({ mobile, headerNode, showSettingHeader = true }) => {
   const { t, i18n } = useTranslation('auth');
   dayjs.locale(i18n.language);
-
-  const [dateStrings] = useState<string>();
-
-  const { mutate } = useClientDataSWR(statsKeys.usageStat(), async () =>
-    usageService.findAndGroupByDay(dateStrings),
-  );
-
-  useEffect(() => {
-    if (dateStrings) {
-      mutate();
-    }
-  }, [dateStrings, mutate]);
 
   return (
     <>
