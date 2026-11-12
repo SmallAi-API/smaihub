@@ -323,34 +323,6 @@ export const serverConfigKeys = {
   get: 'serverConfig:get' as const,
 };
 
-// ---- discover (marketplace) ---------------------------------------------
-// NOTE: discover/eval/ragEval/knowledgeBase/device/userMemory/file prefixes
-// are deliberately kept OUT of `CACHE_TIERS`
-// (see localStorageProvider.ts) so this key-convergence introduces no new
-// persistence — they stay memory-only exactly as before.
-export const discoverKeys = {
-  // -- marketplace detail "related agents" lists (UI) --
-  mcpAgents: def('discover:mcpAgents', (identifier: string, page: number) => [
-    'discover:mcpAgents',
-    identifier,
-    page,
-  ]),
-  skillAgents: def('discover:skillAgents', (identifier: string, page: number) => [
-    'discover:skillAgents',
-    identifier,
-    page,
-  ]),
-  skillStoreMarketSkills: def(
-    'discover:skillStoreMarketSkills',
-    (locale: string, keywords: string, page: number) => [
-      'discover:skillStoreMarketSkills',
-      locale,
-      keywords,
-      page,
-    ],
-  ),
-};
-
 // ---- agent eval ---------------------------------------------------------
 export const evalKeys = {
   benchmarkDetail: def('eval:benchmarkDetail', (id: string) => ['eval:benchmarkDetail', id]),
@@ -641,12 +613,6 @@ export const shareKeys = {
   visitorTopics: def('share:visitorTopics', (shareId: string) => ['share:visitorTopics', shareId]),
 };
 
-// ---- fork source (community detail) -------------------------------------
-export const forkKeys = {
-  groupSource: def('fork:groupSource', (identifier: string) => ['fork:groupSource', identifier]),
-  source: def('fork:source', (identifier: string) => ['fork:source', identifier]),
-};
-
 // ---- local file ---------------------------------------------------------
 export const localFileKeys = {
   claudeCodeMemory: def(
@@ -696,15 +662,6 @@ export const localFileKeys = {
     'localFile:projectIndex',
     deviceId ?? 'local',
     dirPath,
-  ]),
-};
-
-// ---- favorite status (marketplace detail headers) -----------------------
-export const favoriteKeys = {
-  status: def('favorite:status', (targetType: string, identifier: string) => [
-    'favorite:status',
-    targetType,
-    identifier,
   ]),
 };
 
@@ -856,12 +813,9 @@ export const swrKeys = {
   changelog: changelogKeys,
   cron: cronKeys,
   device: deviceKeys,
-  discover: discoverKeys,
   electron: electronKeys,
   eval: evalKeys,
-  favorite: favoriteKeys,
   file: fileKeys,
-  fork: forkKeys,
   gateway: gatewayKeys,
   goal: goalKeys,
   global: globalKeys,
