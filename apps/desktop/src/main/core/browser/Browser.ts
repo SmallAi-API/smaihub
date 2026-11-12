@@ -11,13 +11,8 @@ import { DESKTOP_EXTERNAL_NAVIGATION_HOSTS, isMac } from '@/const/env';
 import { isFileProxyUrl, isSameOrigin, OIDC_AUTH_HEADER } from '@/const/protocol';
 import RemoteServerConfigCtr from '@/controllers/RemoteServerConfigCtr';
 import { backendProxyProtocolManager } from '@/core/infrastructure/BackendProxyProtocolManager';
-import {
-  appendVercelCookie,
-  deleteRequestHeader,
-  hasRequestHeader,
-  setRequestHeader,
-  setResponseHeader,
-} from '@/utils/http-headers';
+import { getRemoteDebuggingRendererArgs } from '@/modules/remoteDebugging';
+import { appendVercelCookie, setResponseHeader } from '@/utils/http-headers';
 import { createLogger } from '@/utils/logger';
 import { getSystemLanguage, resolveUILocale } from '@/utils/system-language';
 import { LOADING_SCREEN_PAINTED_CHANNEL } from '~common/loadingScreen';
@@ -250,7 +245,10 @@ export default class Browser {
       title,
 
       webPreferences: {
-        additionalArguments: [`${SYSTEM_LANGUAGE_ARG_PREFIX}${getSystemLanguage()}`],
+        additionalArguments: [
+          `${SYSTEM_LANGUAGE_ARG_PREFIX}${getSystemLanguage()}`,
+          ...getRemoteDebuggingRendererArgs(),
+        ],
         backgroundThrottling: false,
         contextIsolation: true,
         preload: path.join(preloadDir, 'index.js'),
