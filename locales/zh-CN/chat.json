@@ -475,6 +475,7 @@
   "gatewayMode.desc": "通过smai.ai的代理网关在云中运行代理。即使您关闭页面，任务仍会继续运行。",
   "globalApproval.collapse": "收起",
   "globalApproval.dismiss": "忽略",
+  "globalApproval.dismissFailed": "忽略失败，请重试",
   "globalApproval.dismissHint": "只在这里隐藏，首页仍保留",
   "globalApproval.dismissed": "已忽略，可在首页继续处理",
   "globalApproval.goToConversation": "打开会话",
