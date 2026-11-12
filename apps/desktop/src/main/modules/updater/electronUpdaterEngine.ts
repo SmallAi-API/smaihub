@@ -3,17 +3,28 @@ import { autoUpdater } from 'electron-updater';
 
 import { isDev, isWindows } from '@/const/env';
 import { getDesktopEnv } from '@/env';
+import type { LogLevel } from '@/utils/structuredLog';
+import { writeStructuredLog } from '@/utils/structuredLog';
 
 import { UPDATE_SERVER_URL } from './configs';
 import type { UpdateEngine } from './engine';
 
 autoUpdater.autoInstallOnAppQuit = false;
 
-const UPDATE_SERVER_NOT_CONFIGURED =
-  'Update server is not configured. Set UPDATE_SERVER_URL to enable updates.';
-
-/** False when there is no feed to check; the GitHub fallback is disabled on purpose. */
-let feedConfigured = true;
+/**
+ * electron-updater's own lines keep going to `main.log` (the update-test docs
+ * grep it) and also reach `main.jsonl` with the rest of the main process.
+ */
+const toUpdaterLogger = (level: LogLevel) => (message?: unknown) => {
+  log[level](message);
+  writeStructuredLog({ level, message, ns: 'electron-updater', process: 'main' });
+};
+const updaterLogger = {
+  debug: toUpdaterLogger('debug'),
+  error: toUpdaterLogger('error'),
+  info: toUpdaterLogger('info'),
+  warn: toUpdaterLogger('warn'),
+};
 
 export const electronUpdaterEngine: UpdateEngine = {
   checkForUpdates: () =>
@@ -22,7 +33,7 @@ export const electronUpdaterEngine: UpdateEngine = {
       : Promise.reject(new Error(UPDATE_SERVER_NOT_CONFIGURED)),
   configure: (channel) => {
     log.transports.file.level = 'info';
-    autoUpdater.logger = log;
+    autoUpdater.logger = updaterLogger;
     autoUpdater.autoDownload = false;
     autoUpdater.forceDevUpdateConfig = isDev || getDesktopEnv().FORCE_DEV_UPDATE_CONFIG;
     autoUpdater.allowPrerelease = channel !== 'stable';
