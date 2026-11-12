@@ -2165,8 +2165,7 @@ describe('GatewayActionImpl', () => {
       // task exists and this client already knows its operation id.
       const onMessageAccepted = vi.fn(() => controller.abort('user cancelled'));
       const replaceMessages = vi.fn();
-
-      const mockClient = createMockClient();
+      const internalDispatchMessage = vi.fn();
       const internalDispatchTopic = vi.fn();
       const internalPinTopicStatus = vi.fn();
       // `refreshTopic` has already pulled in the server's running row: this
@@ -2200,6 +2199,7 @@ describe('GatewayActionImpl', () => {
         completeOperation,
         connectToGateway,
         getOperationAbortSignal: vi.fn(() => controller.signal),
+        internal_dispatchMessage: internalDispatchMessage,
         internal_dispatchTopic: internalDispatchTopic,
         internal_pinTopicStatus: internalPinTopicStatus,
         moveQueuedMessages,
@@ -2209,15 +2209,13 @@ describe('GatewayActionImpl', () => {
         startOperation,
         switchTopic: vi.fn(),
       })) as any;
-
       (globalThis as any).window = {
         global_serverConfigStore: {
           getState: () => ({ serverConfig: { agentGatewayUrl: 'https://gateway.test.com' } }),
         },
       };
-
       const action = new GatewayActionImpl(set as any, get, undefined);
-      action.createClient = vi.fn(() => mockClient);
+      action.createClient = vi.fn(() => createMockClient());
       const interruptTaskSpy = vi
         .mocked(aiAgentService.interruptTask)
         .mockResolvedValue({ operationId: 'server-op-cancel', success: true });
@@ -2281,6 +2279,8 @@ describe('GatewayActionImpl', () => {
           value: { metadata: { runningOperation: null } },
         }),
       );
+      const [mirrored] = internalDispatchMessage.mock.calls[0];
+      expect(mirrored).toMatchObject({ id: 'ast-1', value: { interruptedMidStream: true } });
     });
 
     /**
@@ -2335,6 +2335,7 @@ describe('GatewayActionImpl', () => {
         completeOperation: vi.fn(),
         connectToGateway: vi.fn(),
         getOperationAbortSignal: vi.fn(() => controller.signal),
+        internal_dispatchMessage: vi.fn(),
         internal_dispatchTopic: internalDispatchTopic,
         internal_pinTopicStatus: internalPinTopicStatus,
         internal_replaceTopicId: vi.fn(),
@@ -2346,13 +2347,11 @@ describe('GatewayActionImpl', () => {
         startOperation: vi.fn(),
         switchTopic: vi.fn(),
       })) as any;
-
       (globalThis as any).window = {
         global_serverConfigStore: {
           getState: () => ({ serverConfig: { agentGatewayUrl: 'https://gateway.test.com' } }),
         },
       };
-
       const action = new GatewayActionImpl(set as any, get, undefined);
       action.createClient = vi.fn(() => createMockClient());
       vi.mocked(aiAgentService.interruptTask).mockResolvedValue({
@@ -2412,7 +2411,7 @@ describe('GatewayActionImpl', () => {
     });
 
     /**
-     * @example A Stop while the start request is in flight still stops the run the server creates.
+     * @example A Stop while the start request is in flight stops the run and keeps the turn.
      */
     it.each(['owner', 'share'] as const)(
       'interrupts the %s server run when cancel aborts the in-flight start request',
@@ -2427,11 +2426,11 @@ describe('GatewayActionImpl', () => {
         // thread failed with "already has an active writer".
         //
         // Before: no interrupt ever reached the orphaned server run.
-        // After: the send still rejects at once, and the run is interrupted
-        // when the server result arrives.
+        // After: it is interrupted when the result arrives, and the send keeps the
+        // persisted turn (rejecting it put the sent text back in the composer).
         const controller = new AbortController();
         const connectToGateway = vi.fn();
-        const onMessageAccepted = vi.fn();
+        const [onMessageAccepted, onStartRequestSent] = [vi.fn(), vi.fn()];
         const state: Record<string, any> = { gatewayConnections: {}, topicDataMap: {} };
         const set = vi.fn((updater: any) => {
           if (typeof updater === 'function') Object.assign(state, updater(state));
@@ -2443,6 +2442,7 @@ describe('GatewayActionImpl', () => {
           completeOperation: vi.fn(),
           connectToGateway,
           getOperationAbortSignal: vi.fn(() => controller.signal),
+          internal_dispatchMessage: vi.fn(),
           internal_dispatchTopic: vi.fn(),
           internal_pinTopicStatus: vi.fn(),
           moveQueuedMessages: vi.fn(),
@@ -2506,19 +2506,19 @@ describe('GatewayActionImpl', () => {
           },
           message: 'Hello',
           onMessageAccepted,
+          onStartRequestSent,
           parentOperationId: 'parent-send-msg-op',
         });
         const start =
           surface === 'share' ? shareChatService.execAgentTask : aiAgentService.execAgentTask;
         await vi.waitFor(() => expect(start).toHaveBeenCalledOnce());
+        expect(onStartRequestSent).toHaveBeenCalledOnce();
 
         controller.abort('user cancelled');
-        /** @example The send still settles as cancelled right away. */
-        await expect(execution).rejects.toMatchObject({ name: 'AbortError' });
-        expect(connectToGateway).not.toHaveBeenCalled();
-        expect(onMessageAccepted).not.toHaveBeenCalled();
-
         finishOnServer();
+        await expect(execution).resolves.toEqual(persisted);
+        expect(connectToGateway).not.toHaveBeenCalled();
+        expect(onMessageAccepted).toHaveBeenCalledOnce();
         /** @example The orphaned server run is interrupted by its real operation id. */
         if (surface === 'share') {
           await vi.waitFor(() =>
