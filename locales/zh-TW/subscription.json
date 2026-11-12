@@ -680,6 +680,8 @@
   "plansModal.modelAccess.title": "解鎖所有模型",
   "plansModal.persistentSandbox.desc": "您的代理在雲端沙盒中寫入的檔案會在會話結束時被丟棄。升級以保持持久的工作目錄，該目錄在會話之間持續存在並在您的主題之間共享。",
   "plansModal.persistentSandbox.title": "保留您的沙盒檔案",
+  "plansModal.preciseSchedule.desc": "在任何指定分鐘執行排程任務，不再只限於整點或半點。升級至付費方案即可自行選擇時間。",
+  "plansModal.preciseSchedule.title": "將任務排程在指定時間",
   "plansModal.ultraModelAccess.desc": "Ultra 模型功能最強大，費用也最高，僅限 Pro 及以上方案使用。升級即可使用。",
   "plansModal.ultraModelAccess.title": "Ultra 模型需要 Pro 或更高等級的方案",
   "qa.desc": "若您的問題未被解答，請參閱 <1>產品文件</1> 以獲得更多常見問題，或與我們聯繫。",
