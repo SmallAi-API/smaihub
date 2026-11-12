@@ -1097,6 +1097,36 @@ const smaiChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 1_000_000,
     description:
+      "Claude Fable 5.2 is Anthropic's latest model for demanding reasoning and long-horizon agentic work, priced below Fable 5.1.",
+    displayName: 'Claude Fable 5.2',
+    enabled: true,
+    family: 'claude-mythos',
+    generation: 'mythos-5.2',
+    id: 'claude-fable-5-2',
+    isOfficial: true,
+    knowledgeCutoff: '2026-06',
+    maxOutput: 128_000,
+    releasedAt: '2026-11-12',
+    // Like Fable 5.1, adaptive thinking is always on, so the `enableAdaptiveThinking` toggle is
+    // intentionally omitted.
+    // https://platform.claude.com/docs/en/models/fable-5-2/overview
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['disableContextCaching', 'opus47Effort'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_000_000,
+    description:
       "Claude Fable 5.1 is Anthropic's most capable generally available model. It outperforms Fable 5 on long-running coding and research at the same base price, with cache reads at a quarter of the cost.",
     displayName: 'Claude Fable 5.1',
     enabled: true,

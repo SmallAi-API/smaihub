@@ -1,4 +1,6 @@
-import { Button, createStaticStyles, toast } from '@lobehub/ui';
+import { Button, toast } from '@lobehub/ui';
+import { cssVar } from '@lobehub/ui/stylex/cssVar.stylex';
+import * as stylex from '@stylexjs/stylex';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -10,50 +12,52 @@ import { usePermission } from '@/hooks/usePermission';
 import { agentService } from '@/services/agent';
 import { useAgentStore } from '@/store/agent';
 
-const styles = createStaticStyles(({ css, cssVar }) => ({
-  promo: css`
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    min-height: 30px;
-  `,
-  cta: css`
-    flex: none;
-
-    height: 30px;
-    padding-inline: 12px;
-    border: 0;
-    border-radius: ${cssVar.borderRadiusLG};
-
-    font-size: 13px;
-    font-weight: 600;
-    color: ${cssVar.colorPrimary};
-
-    background: ${cssVar.colorBgContainer};
-    box-shadow: none;
-
-    &:hover {
-      color: ${cssVar.colorPrimaryHover} !important;
-      background: ${cssVar.colorBgContainer} !important;
-    }
-  `,
-  icon: css`
-    flex: none;
-    color: ${cssVar.colorPrimary};
-  `,
-  label: css`
-    overflow: hidden;
-    flex: 1;
-
-    min-width: 0;
-
-    font-size: 14px;
-    line-height: 22px;
-    color: ${cssVar.colorTextSecondary};
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  `,
-}));
+const styles = stylex.create({
+  promo: {
+    display: 'flex',
+    gap: 10,
+    alignItems: 'center',
+    minHeight: 30,
+  },
+  cta: {
+    flex: 'none',
+    height: 30,
+    paddingInline: 12,
+    borderWidth: 0,
+    borderStyle: 'none',
+    borderColor: 'currentcolor',
+    borderRadius: cssVar.borderRadiusLG,
+    fontSize: 13,
+    fontWeight: 600,
+    color: {
+      'default': cssVar.colorPrimary,
+      ':hover': `${cssVar.colorPrimaryHover} !important`,
+    },
+    backgroundColor: {
+      'default': cssVar.colorBgContainer,
+      ':hover': `${cssVar.colorBgContainer} !important`,
+    },
+    backgroundImage: {
+      'default': 'none',
+      ':hover': 'none !important',
+    },
+    boxShadow: 'none',
+  },
+  icon: {
+    flex: 'none',
+    color: cssVar.colorPrimary,
+  },
+  label: {
+    overflow: 'hidden',
+    flex: '1',
+    minWidth: 0,
+    fontSize: 14,
+    lineHeight: '22px',
+    color: cssVar.colorTextSecondary,
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+});
 
 /**
  * Model announcement rendered in place of the Home greeting subtitle.
@@ -70,7 +74,7 @@ const HomePromoBanner = memo(() => {
   const applyBusinessModelModeConfig = useBusinessModelModeConfig();
   const [loading, setLoading] = useState(false);
 
-  const model = defaultHomeNewModels.find((item) => item.model === 'gemini-4-argon');
+  const model = defaultHomeNewModels.find((item) => item.model === 'claude-fable-5-2');
   const provider = model?.provider ?? fallbackChatProvider;
 
   const handleTryNow = useCallback(async () => {
@@ -109,11 +113,13 @@ const HomePromoBanner = memo(() => {
   if (!canCreateContent || !agentId || !model) return null;
 
   return (
-    <span className={styles.promo} data-testid={'home-promo-banner'}>
-      <ModelIcon className={styles.icon} model={model.model} size={22} />
-      <span className={styles.label}>{t('homePromoBanner.label', { model: model.title })}</span>
+    <span {...stylex.props(styles.promo)} data-testid={'home-promo-banner'}>
+      <ModelIcon {...stylex.props(styles.icon)} model={model.model} size={22} />
+      <span {...stylex.props(styles.label)}>
+        {t('homePromoBanner.label', { model: model.title })}
+      </span>
       <Button
-        className={styles.cta}
+        {...stylex.props(styles.cta)}
         disabled={loading}
         loading={loading}
         type={'text'}
