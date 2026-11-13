@@ -560,7 +560,10 @@ export function sharedRendererDefine(options: { isElectron: boolean; isMobile: b
 }
 
 export const sharedOptimizeDeps = {
-  exclude: [...stylexTokenModules],
+  // The app pins 2.1.2 for long-paragraph performance, while the CJK extension
+  // needs a newer attention API. Pre-bundling merges both versions by package
+  // name, so leave this ESM dependency to resolve from each importer's package.
+  exclude: [...stylexTokenModules, 'mdast-util-to-markdown'],
   include: [
     'react',
     'react-dom',

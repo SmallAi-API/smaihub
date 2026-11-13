@@ -67,10 +67,12 @@ describe('lobe-dev-editor-provider', () => {
 describe('sharedOptimizeDeps', () => {
   it('pre-bundles the @lobehub/ui root entrypoint', () => {
     expect(sharedOptimizeDeps.include).toContain('@lobehub/ui');
-    expect(sharedOptimizeDeps.exclude).toEqual([
-      '@lobehub/ui/stylex/cssVar.stylex',
-      '@lobehub/ui/stylex/media.stylex',
-    ]);
+    expect(sharedOptimizeDeps.exclude).toEqual(
+      expect.arrayContaining([
+        '@lobehub/ui/stylex/cssVar.stylex',
+        '@lobehub/ui/stylex/media.stylex',
+      ]),
+    );
   });
 });
 
