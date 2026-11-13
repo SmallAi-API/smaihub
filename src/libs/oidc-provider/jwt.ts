@@ -69,7 +69,14 @@ export const getJWKS = (): object => {
       throw new Error('JWKS 中没有找到 RS256 算法的 RSA 密钥');
     }
 
-    return jwks;
+    // oidc-provider 9.14+ rejects any `key_ops` member ("jwks.keys[0].key_ops is not
+    // supported"), but keys exported through Web Crypto carry `key_ops: ['sign']`.
+    // The provider only signs with these keys, so dropping the member keeps existing
+    // JWKS_KEY values working without asking deployments to regenerate them.
+    return {
+      ...jwks,
+      keys: jwks.keys.map(({ key_ops: _keyOps, ...key }: Record<string, unknown>) => key),
+    };
   } catch (error) {
     console.error('解析 JWKS 失败:', error);
     throw new Error(`JWKS_KEY 解析错误: ${(error as Error).message}`, { cause: error });
