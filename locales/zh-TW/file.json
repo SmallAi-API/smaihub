@@ -468,6 +468,7 @@
   "pageList.transferWarning": "這是一個單向移動；恢復需要再次移動。",
   "pageList.untitled": "無標題",
   "portal.openInPageEditor": "在文件中編輯",
+  "preview.audioLoadFailed": "此音訊無法在瀏覽器中播放。請下載後聆聽。",
   "preview.downloadFile": "下載檔案",
   "preview.raw": "原始",
   "preview.render": "預覽",
