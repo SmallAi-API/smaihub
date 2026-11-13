@@ -102,6 +102,7 @@ describe('evalRunChatConfigSchema', () => {
       glm5_3ReasoningEffort: 'low',
       textVerbosity: 'low',
       thinkingLevel3: 'medium',
+      thinkingLevel5: 'xhigh',
     };
     expect(evalRunChatConfigSchema.parse(input)).toEqual(input);
   });
@@ -111,5 +112,6 @@ describe('evalRunChatConfigSchema', () => {
       false,
     );
     expect(evalRunChatConfigSchema.safeParse({ systemRole: 'x' }).success).toBe(false);
+    expect(evalRunChatConfigSchema.safeParse({ thinkingLevel5: 'minimal' }).success).toBe(false);
   });
 });

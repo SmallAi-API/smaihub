@@ -60,6 +60,7 @@
   "gemini-3.8-flash.description": "Gemini 3.8 Flash 是 Google 最智能的 Flash 模型，专为长期软件工程、自治代理和复杂企业工作流程而设计。",
   "gemini-4-argon.description": "Gemini 4 Argon 专为复杂的软件工程、数学、科学推理和自主多步骤代理任务而构建，支持多模态输入和文本输出。",
   "gemini-4-carbon.description": "Gemini 4 Carbon 是 Google 最强大的模型，具备最先进的网络安全能力和长期能力，适用于持续的自主编码、多模态知识工作和科学推理。",
+  "gemini-4-hydrogen.description": "Gemini 4 Hydrogen 为日常编码、代理工作流程和多模态推理带来快速高效的智能，并提供四个可配置的思考级别。",
   "gemini-nano-banana-2.1.description": "Nano Banana 2.1 支持 1K、2K 和 4K 图像生成与编辑，提升了文字渲染和角色一致性，最多支持 14 张参考图。",
   "gemini-omni-1.1-flash.description": "Gemini Omni Flash 是一个原生的多模态模型，用于文本到视频、图像到视频、参考到视频和对话视频编辑。",
   "glm-5.2.description": "GLM-5.2是Z.ai最新的旗舰模型，专为长时间任务场景设计，相较于GLM-5.1在长时间任务能力上有显著提升。该753B MoE模型支持稳定的1M-token上下文窗口，具备更强的编程能力，并支持多种思维努力水平，以实现性能与延迟之间的灵活平衡。",

@@ -88,6 +88,7 @@ describe('useReasoningEffortControl', () => {
     ['thinkingLevel2', 'gemini-3-pro-preview', ['low', 'high'], 'high'],
     ['thinkingLevel3', 'gemini-3.7-flash', ['low', 'medium', 'high'], 'medium'],
     ['thinkingLevel4', 'gemini-3.1-flash-image', ['minimal', 'high'], 'minimal'],
+    ['thinkingLevel5', 'gemini-4-hydrogen', ['low', 'medium', 'high', 'xhigh'], 'high'],
     ['thinkingLevel', 'gemini-3.1-flash-lite', ['minimal', 'low', 'medium', 'high'], 'minimal'],
   ])('exposes %s choices and the runtime default for %s', (key, model, levels, fallback) => {
     testState.ai.reasoningParams = [key as string];
@@ -106,6 +107,15 @@ describe('useReasoningEffortControl', () => {
     expect(result.current.hasReasoningMode).toBe(true);
     expect(result.current.modeValue).toBe('pro');
     expect(result.current.modeLevels).toEqual(['standard', 'pro']);
+  });
+
+  it('shows the saved Hydrogen xhigh value', () => {
+    testState.ai.reasoningParams = ['thinkingLevel5'];
+    testState.ai.config = { thinkingLevel5: 'xhigh' };
+
+    const { result } = renderHook(() => useReasoningEffortControl('gemini-4-hydrogen', 'google'));
+
+    expect(result.current.effortValue).toBe('xhigh');
   });
 
   it('writes the model-instance config, and ignores clicks while a write is in flight', () => {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { gptImage25Schema, gptImage26Schema } from '../const/imageParameters';
-import { extractDefaultValues, ModelParamsMetaSchema } from '../standard-parameters';
-import { smaiImageModels } from './smai';
+import { gptImage25Schema, gptImage26Schema } from '../../const/imageParameters';
+import { extractDefaultValues, ModelParamsMetaSchema } from '../../standard-parameters';
+import { smaiImageModels } from './index';
 
 describe('SMAI GPT Image 2.6 GIF model card', () => {
   it.each([
