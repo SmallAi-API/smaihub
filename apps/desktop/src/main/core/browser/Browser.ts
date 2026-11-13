@@ -12,7 +12,13 @@ import { isFileProxyUrl, isSameOrigin, OIDC_AUTH_HEADER } from '@/const/protocol
 import RemoteServerConfigCtr from '@/controllers/RemoteServerConfigCtr';
 import { backendProxyProtocolManager } from '@/core/infrastructure/BackendProxyProtocolManager';
 import { getRemoteDebuggingRendererArgs } from '@/modules/remoteDebugging';
-import { appendVercelCookie, setResponseHeader } from '@/utils/http-headers';
+import {
+  appendVercelCookie,
+  deleteRequestHeader,
+  hasRequestHeader,
+  setRequestHeader,
+  setResponseHeader,
+} from '@/utils/http-headers';
 import { createLogger } from '@/utils/logger';
 import { getSystemLanguage, resolveUILocale } from '@/utils/system-language';
 import { LOADING_SCREEN_PAINTED_CHANNEL } from '~common/loadingScreen';
