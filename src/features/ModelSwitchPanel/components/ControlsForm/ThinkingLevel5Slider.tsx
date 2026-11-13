@@ -1,4 +1,4 @@
-import type { CreatedLevelSliderProps } from './createLevelSlider';
+import { type CreatedLevelSliderProps } from './createLevelSlider';
 import { createLevelSliderComponent } from './createLevelSlider';
 
 /**
@@ -10,9 +10,11 @@ type ThinkingLevel5 = (typeof THINKING_LEVELS_5)[number];
 
 export type ThinkingLevel5SliderProps = CreatedLevelSliderProps<ThinkingLevel5>;
 
-export const ThinkingLevel5Slider = createLevelSliderComponent<ThinkingLevel5>({
+const ThinkingLevel5Slider = createLevelSliderComponent<ThinkingLevel5>({
   configKey: 'thinkingLevel5',
   defaultValue: 'high',
   levels: THINKING_LEVELS_5,
   style: { minWidth: 200 },
 });
+
+export default ThinkingLevel5Slider;

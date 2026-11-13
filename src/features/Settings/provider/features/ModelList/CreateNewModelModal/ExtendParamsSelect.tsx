@@ -41,7 +41,7 @@ import ThinkingBudgetSlider from '@/features/ModelSwitchPanel/components/Control
 import ThinkingLevel2Slider from '@/features/ModelSwitchPanel/components/ControlsForm/ThinkingLevel2Slider';
 import ThinkingLevel3Slider from '@/features/ModelSwitchPanel/components/ControlsForm/ThinkingLevel3Slider';
 import ThinkingLevel4Slider from '@/features/ModelSwitchPanel/components/ControlsForm/ThinkingLevel4Slider';
-import { ThinkingLevel5Slider } from '@/features/ModelSwitchPanel/components/ControlsForm/ThinkingLevel5Slider';
+import ThinkingLevel5Slider from '@/features/ModelSwitchPanel/components/ControlsForm/ThinkingLevel5Slider';
 import ThinkingLevelSlider from '@/features/ModelSwitchPanel/components/ControlsForm/ThinkingLevelSlider';
 import ThinkingSlider from '@/features/ModelSwitchPanel/components/ControlsForm/ThinkingSlider';
 
@@ -392,7 +392,11 @@ const PREVIEW_META: Partial<Record<ExtendParamsType, PreviewMeta>> = {
   thinkingLevel2: { labelSuffix: ' (3 Pro)', previewWidth: 200, tag: 'thinkingLevel' },
   thinkingLevel3: { labelSuffix: ' (Gemini 3.1)', previewWidth: 200, tag: 'thinkingLevel' },
   thinkingLevel4: { labelSuffix: ' (Nano Banana 2)', previewWidth: 200, tag: 'thinkingLevel' },
-  thinkingLevel5: { labelSuffix: ' (Gemini 4 Hydrogen)', previewWidth: 220, tag: 'thinkingLevel' },
+  thinkingLevel5: {
+    labelSuffix: ' (Gemini 4 Hydrogen)',
+    previewWidth: 300,
+    tag: 'thinkingLevel',
+  },
   urlContext: { labelSuffix: ' (Gemini)', previewWidth: 400, tag: 'urlContext' },
 };
 
