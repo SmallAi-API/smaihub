@@ -15,6 +15,9 @@ import { useUserStore } from '@/store/user';
 import { settingsSelectors } from '@/store/user/selectors';
 import { type UserGeneralConfig } from '@/types/user/settings';
 
+import { useDiagnosticsItems } from './useDiagnosticsItems';
+import { useRemoteDebuggingItem } from './useRemoteDebuggingItem';
+
 const Page = memo<{ showSettingHeader?: boolean }>(({ showSettingHeader = true }) => {
   const { t } = useTranslation('setting');
 
@@ -42,6 +45,8 @@ const Page = memo<{ showSettingHeader?: boolean }>(({ showSettingHeader = true }
   });
 
   const enableGatewayMode = useServerConfigStore(serverConfigSelectors.enableGatewayMode);
+  const diagnosticsItems = useDiagnosticsItems<UserGeneralConfig>();
+  const remoteDebuggingItem = useRemoteDebuggingItem<UserGeneralConfig>();
 
   const handleGatewayModeChange = useCallback(
     (checked: boolean) => {
@@ -104,6 +109,8 @@ const Page = memo<{ showSettingHeader?: boolean }>(({ showSettingHeader = true }
             } satisfies FormFieldProps<UserGeneralConfig>,
           ]
         : []),
+      ...diagnosticsItems,
+      ...(remoteDebuggingItem ? [remoteDebuggingItem] : []),
     ],
     extra: loading && <Spin size="small" style={{ opacity: 0.5 }} />,
     title: t('tab.advanced.toolsAndDiagnostics.title'),
