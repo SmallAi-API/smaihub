@@ -9,6 +9,15 @@ import {
 import type { SmaiUsageResult } from '@/types/smaiUsage';
 
 export class AiProviderService {
+  /**
+   * Run the server-side connectivity check. Without `model`, a provider whose card sets
+   * `settings.checkMode: 'credentials'` verifies its key through the runtime credential
+   * check instead of a chat request.
+   */
+  checkProviderConnectivity = async (id: string, model?: string) => {
+    return lambdaClient.aiProvider.checkProviderConnectivity.mutate({ id, model });
+  };
+
   createAiProvider = async (params: CreateAiProviderParams) => {
     return lambdaClient.aiProvider.createAiProvider.mutate(params);
   };

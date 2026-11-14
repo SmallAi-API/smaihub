@@ -346,6 +346,8 @@ export interface SystemStatus {
    * 记住用户最后选择的图像生成提供商
    */
   lastSelectedImageProvider?: string;
+  lastSelectedMusicModel?: string;
+  lastSelectedMusicProvider?: string;
   lastSelectedVideoModel?: string;
   lastSelectedVideoProvider?: string;
   latestChangelogId?: string;
@@ -375,6 +377,7 @@ export interface SystemStatus {
    * ModelSwitchPanel 的宽度
    */
   modelSwitchPanelWidth?: number;
+  musicTopicViewMode?: 'grid' | 'list';
   noWideScreen?: boolean;
   pageAgentPanelWidth?: number;
   /**
@@ -730,6 +733,8 @@ export const INITIAL_STATUS = {
   terminalPanelHeight: 320,
   tokenDisplayFormatShort: true,
   topicPageSize: 20,
+  // Songs rarely carry cover art, so music topics read better as a titled list
+  musicTopicViewMode: 'list' as const,
   verifyReportPanelWidth: 300,
   videoPanelWidth: 320,
   videoTopicViewMode: 'grid' as const,

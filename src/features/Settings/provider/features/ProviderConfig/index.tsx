@@ -119,6 +119,7 @@ const ProviderConfig = memo<ProviderConfigProps>(
   }) => {
     const {
       authType,
+      checkMode,
       proxyUrl,
       showApiKey = true,
       defaultShowBrowserRequest,
@@ -397,6 +398,7 @@ const ProviderConfig = memo<ProviderConfigProps>(
             ) : (
               <Checker
                 checkErrorRender={checkErrorRender}
+                checkMode={checkMode}
                 model={data?.checkModel || checkModel!}
                 provider={id}
                 onAfterCheck={async () => {

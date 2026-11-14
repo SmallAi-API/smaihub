@@ -120,7 +120,7 @@ const getModelProperty = async <T>(
 
 const hasParameters = (parameters?: object) => !!parameters && Object.keys(parameters).length > 0;
 
-/** Only image and video models reach here, so `parameters` is a generation schema. */
+/** Only image, video and music models reach here, so `parameters` is a generation schema. */
 const resolveModelParameters = async (
   model: EnabledAiModel,
 ): Promise<ModelParamsSchema | undefined> => {
@@ -271,6 +271,35 @@ export const getImageModelList = createProviderModelCollector('image', normalize
 
 export const getVideoModelList = createProviderModelCollector('video', normalizeVideoModel);
 
+/**
+ * Normalizes an enabled text-to-music model: the creation page reads `parameters` to decide
+ * which inputs to show and `outputsPerRequest` to tell how many songs one request returns.
+ */
+export const normalizeMusicModel = async (
+  model: EnabledAiModel,
+): Promise<ProviderModelListItem> => {
+  const [parameters, pricing, description, outputsPerRequest] = await Promise.all([
+    resolveModelParameters(model),
+    getModelProperty<Pricing>(model, 'pricing'),
+    getModelProperty<string>(model, 'description'),
+    getModelProperty<number>(model, 'outputsPerRequest'),
+  ]);
+
+  return {
+    abilities: (model.abilities || {}) as ModelAbilities,
+    contextWindowTokens: model.contextWindowTokens,
+    displayName: model.displayName ?? '',
+    id: model.id,
+    releasedAt: model.releasedAt,
+    ...(parameters && { parameters }),
+    ...(description && { description }),
+    ...(pricing && { pricing }),
+    ...(typeof outputsPerRequest === 'number' && { outputsPerRequest }),
+  };
+};
+
+export const getMusicModelList = createProviderModelCollector('text2music', normalizeMusicModel);
+
 const buildProviderModelLists = async (
   providers: EnabledProvider[],
   enabledAiModels: EnabledAiModel[],
@@ -321,6 +350,14 @@ const buildVideoProviderModelLists = async (
 ) => buildProviderModelLists(providers, enabledAiModels, getVideoModelList);
 
 /**
+ * Build text-to-music provider model lists with proper async handling
+ */
+const buildMusicProviderModelLists = async (
+  providers: EnabledProvider[],
+  enabledAiModels: EnabledAiModel[],
+) => buildProviderModelLists(providers, enabledAiModels, getMusicModelList);
+
+/**
  * Derives the runtime state from the server rows plus the bundled model bank —
  * the exact body of the old runtime-state `useClientDataSWR` fetcher, extracted
  * so the replica resource can own the sync. `isLogin` separates the signed-in
@@ -369,6 +406,11 @@ const fetchAiProviderRuntimeState = async (
       enabledAiModels,
       'video',
     );
+    const enabledMusicAiProviders = filterEnabledProvidersByModelType(
+      data.enabledAiProviders,
+      enabledAiModels,
+      'text2music',
+    );
 
     // Build model lists with proper async handling
     const [
@@ -377,12 +419,14 @@ const fetchAiProviderRuntimeState = async (
       enabledAsrModelList,
       enabledImageModelList,
       enabledVideoModelList,
+      enabledMusicModelList,
     ] = await Promise.all([
       buildProviderModelLists(enabledChatAiProviders, enabledAiModels, getChatModelList),
       buildEmbeddingProviderModelLists(enabledEmbeddingAiProviders, enabledAiModels),
       buildAsrProviderModelLists(enabledAsrAiProviders, enabledAiModels),
       buildImageProviderModelLists(enabledImageAiProviders, enabledAiModels),
       buildVideoProviderModelLists(enabledVideoAiProviders, enabledAiModels),
+      buildMusicProviderModelLists(enabledMusicAiProviders, enabledAiModels),
     ]);
 
     return {
@@ -395,6 +439,7 @@ const fetchAiProviderRuntimeState = async (
       enabledEmbeddingModelList,
       enabledImageAiProviders,
       enabledImageModelList,
+      enabledMusicModelList,
       enabledVideoAiProviders,
       enabledVideoModelList,
       hiddenBuiltinModels,
@@ -446,18 +491,25 @@ const fetchAiProviderRuntimeState = async (
     enabledAiModels,
     'asr',
   );
+  const enabledMusicAiProviders = filterEnabledProvidersByModelType(
+    enabledAiProviders,
+    enabledAiModels,
+    'text2music',
+  );
   const [
     enabledChatModelList,
     enabledEmbeddingModelList,
     enabledAsrModelList,
     enabledImageModelList,
     enabledVideoModelList,
+    enabledMusicModelList,
   ] = await Promise.all([
     buildProviderModelLists(enabledChatAiProviders, enabledAiModels, getChatModelList),
     buildEmbeddingProviderModelLists(enabledEmbeddingAiProviders, enabledAiModels),
     buildAsrProviderModelLists(enabledAsrAiProviders, enabledAiModels),
     buildImageProviderModelLists(enabledImageAiProviders, enabledAiModels),
     buildVideoProviderModelLists(enabledVideoAiProviders, enabledAiModels),
+    buildMusicProviderModelLists(enabledMusicAiProviders, enabledAiModels),
   ]);
 
   return {
@@ -470,6 +522,7 @@ const fetchAiProviderRuntimeState = async (
     enabledEmbeddingModelList,
     enabledImageAiProviders,
     enabledImageModelList,
+    enabledMusicModelList,
     enabledVideoAiProviders,
     enabledVideoModelList,
     hiddenBuiltinModels: defaultHiddenBuiltinModels,
@@ -515,6 +568,7 @@ const projectRuntimeState = (data: AiProviderRuntimeStateView): Partial<AiInfraS
   enabledChatModelList: data.enabledChatModelList || [],
   enabledEmbeddingModelList: data.enabledEmbeddingModelList || [],
   enabledImageModelList: data.enabledImageModelList || [],
+  enabledMusicModelList: data.enabledMusicModelList || [],
   enabledVideoModelList: data.enabledVideoModelList || [],
   hiddenBuiltinModels: data.hiddenBuiltinModels,
   isInitAiProviderRuntimeState: true,
@@ -535,6 +589,7 @@ const projectRuntimeStateDisplay = (
         enabledChatModelList: data.enabledChatModelList || [],
         enabledEmbeddingModelList: data.enabledEmbeddingModelList || [],
         enabledImageModelList: data.enabledImageModelList || [],
+        enabledMusicModelList: data.enabledMusicModelList || [],
         enabledVideoModelList: data.enabledVideoModelList || [],
         modelRedirects: data.modelRedirects,
         providerBindingAgentTypes: data.providerBindingAgentTypes ?? {},
@@ -551,6 +606,7 @@ const aiProviderRuntimeStateLens: ReplicaLens<AiInfraStore, AiProviderRuntimeSta
     enabledChatModelList: [],
     enabledEmbeddingModelList: [],
     enabledImageModelList: [],
+    enabledMusicModelList: [],
     enabledVideoModelList: [],
     hiddenBuiltinModels: undefined,
     isInitAiProviderRuntimeState: false,

@@ -40,6 +40,7 @@ export const config = {
     '/changelog(.*)',
     '/settings(.*)',
     '/image',
+    '/music',
     '/video',
     '/resource',
     '/resource(.*)',
