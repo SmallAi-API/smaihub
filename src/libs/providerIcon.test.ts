@@ -49,6 +49,18 @@ describe('provider artwork', () => {
   );
 
   it.each([
+    ['fishaudio', 'FishAudio'],
+    ['doubaospeech', 'Doubao'],
+  ])('renders the %s avatar from the %s artwork', (provider, title) => {
+    const avatar = renderToStaticMarkup(createElement(ProviderIcon, { provider, type: 'avatar' }));
+    const wordmark = renderToStaticMarkup(createElement(ProviderCombine, { provider }));
+
+    expect(avatar).toContain(`<title>${title}</title>`);
+    expect(avatar).not.toContain('lucide-provider');
+    expect(wordmark).not.toContain('lucide-provider');
+  });
+
+  it.each([
     { id: 'smai', logo: '/logo.png', name: 'smai.ai' },
     { id: 'openai', logo: '/smallai.png', name: 'SmallAi GPT' },
     { id: 'newapi', logo: '/smallai.png', name: 'SmallAi' },
