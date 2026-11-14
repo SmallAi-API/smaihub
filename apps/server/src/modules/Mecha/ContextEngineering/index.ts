@@ -13,6 +13,7 @@ export const toContextSnapshot = ({
   additionalVariables,
   agentAccountContext,
   agentBuilderContext,
+  agentDocumentChanges,
   agentDocuments,
   agentGroup,
   agentIdentity,
@@ -55,6 +56,7 @@ export const toContextSnapshot = ({
   workspaceContext,
 }: ServerMessagesEngineParams): ContextSnapshot => ({
   agent: {
+    documentChanges: agentDocumentChanges,
     documents: agentDocuments,
     enableHistoryCount,
     enableStaleToolResultTrim,
