@@ -10,10 +10,13 @@
  * (lowerCamel resource), followed by parameters.
  *
  * Benefits:
- * - Consistent, discoverable naming (`swrKeys.topic.list(...)`).
- * - The `domain:` prefix lets the tiered cache provider route persistence by
- *   domain (see `localStorageProvider.ts`) and lets callers refresh a whole
- *   domain at once via `matchDomain('topic:')`.
+ * - Consistent, discoverable naming (`swrKeys.topic.search(...)`).
+ * - The `domain:` prefix lets callers refresh a whole domain at once via
+ *   `matchDomain('topic:')`.
+ *
+ * SWR keeps these entries in memory only: there is no cache provider and
+ * nothing here is persisted. Data that must paint from a local copy on a cold
+ * start is a replica (`@/libs/replica`), not an SWR key.
  *
  * Each factory also exposes `.root` (the namespace string) for `mutate`
  * matchers that compare `key[0]`.
@@ -102,14 +105,7 @@ export const normalizeMessageListQueryContext = (
   ...(context.agentShareId === undefined ? {} : { agentShareId: context.agentShareId }),
 });
 
-/** Previous persisted key schema, used only by the targeted v1 → v2 migration. */
-export const LEGACY_MESSAGE_CACHE_VERSION = 1;
-
-/**
- * Message cache key schema version. Version 2 canonicalizes query context, so
- * it requires a persisted-key migration even though `UIChatMessage[]` itself
- * did not change.
- */
+/** Message key schema version. Version 2 canonicalizes the query context. */
 export const MESSAGE_CACHE_VERSION = 2;
 
 export const messageKeys = {
@@ -143,11 +139,6 @@ export const isMessageListKey = (
 
 // ---- topic --------------------------------------------------------------
 export const topicKeys = {
-  list: def('topic:list', (containerKey: string, opts: Record<string, unknown>) => [
-    'topic:list',
-    containerKey,
-    opts,
-  ]),
   scheduledRunWatch: def('topic:scheduledRunWatch', (topicId: string) => [
     'topic:scheduledRunWatch',
     topicId,
@@ -237,17 +228,6 @@ export const isDocumentCommentKeyForEvent = (
   return false;
 };
 
-// ---- group --------------------------------------------------------------
-export const groupKeys = {
-  /** Agent picker for the "create group" modal. */
-  queryAgentsForCreate: def('group:queryAgentsForCreate', () => ['group:queryAgentsForCreate']),
-};
-
-// ---- thread -------------------------------------------------------------
-export const threadKeys = {
-  list: def('thread:list', (topicId: string) => ['thread:list', topicId]),
-};
-
 /**
  * Goal reads that have no local-first projection: the pending queues are live
  * "what needs you" feeds, and the topic link is a discovery poll.
@@ -323,32 +303,11 @@ export const serverConfigKeys = {
   get: 'serverConfig:get' as const,
 };
 
-// ---- agent eval ---------------------------------------------------------
-export const evalKeys = {
-  benchmarkDetail: def('eval:benchmarkDetail', (id: string) => ['eval:benchmarkDetail', id]),
-  benchmarks: def('eval:benchmarks', () => ['eval:benchmarks']),
-  datasetRuns: def('eval:datasetRuns', (datasetId: string) => ['eval:datasetRuns', datasetId]),
-  runDetail: def('eval:runDetail', (id: string) => ['eval:runDetail', id]),
-  runResults: def('eval:runResults', (id: string) => ['eval:runResults', id]),
-  runs: def('eval:runs', (benchmarkId?: string) => ['eval:runs', benchmarkId]),
-  testCaseDetail: def('eval:testCaseDetail', (id: string) => ['eval:testCaseDetail', id]),
-  testCases: def('eval:testCases', (datasetId: string, limit?: number, offset?: number) => [
-    'eval:testCases',
-    datasetId,
-    limit,
-    offset,
-  ]),
-};
-
 // ---- RAG eval -----------------------------------------------------------
 export const ragEvalKeys = {
   datasetList: def('ragEval:datasetList', (knowledgeBaseId?: string) => [
     'ragEval:datasetList',
     knowledgeBaseId,
-  ]),
-  datasetRecords: def('ragEval:datasetRecords', (datasetId: string) => [
-    'ragEval:datasetRecords',
-    datasetId,
   ]),
   evaluationList: def('ragEval:evaluationList', (knowledgeBaseId?: string) => [
     'ragEval:evaluationList',
@@ -489,16 +448,10 @@ export const globalKeys = {
   systemStatus: def('global:systemStatus', () => ['global:systemStatus']),
 };
 
-// ---- file ---------------------------------------------------------------
-export const fileKeys = {
-  ttsFile: def('file:ttsFile', (messageId: string) => ['file:ttsFile', messageId]),
-};
-
 // =========================================================================
-// UI-layer keys (features / routes / components). Prefixes below stay
-// memory-only unless explicitly listed in `CACHE_TIERS`. Names avoid colliding
-// with cached prefixes — e.g. share/topic is `share:` not `topic:`, portal
-// header is `portal:` not `document:`.
+// UI-layer keys (features / routes / components). Names avoid colliding with
+// domain prefixes refreshed through `matchDomain` — e.g. share/topic is
+// `share:` not `topic:`, portal header is `portal:` not `document:`.
 // =========================================================================
 
 // ---- MCP Apps (interactive tool result views) -----------------------------
@@ -534,10 +487,6 @@ export const messengerKeys = {
 
 // ---- scm (GitHub App integration) --------------------------------------
 export const scmKeys = {
-  changeRequests: def('scm:changeRequests', (workspaceId: string | null | undefined) => [
-    'scm:changeRequests',
-    workspaceId ?? null,
-  ]),
   repositories: def('scm:repositories', (workspaceId: string | null | undefined) => [
     'scm:repositories',
     workspaceId ?? null,
@@ -573,35 +522,6 @@ export const inboxKeys = {
 
 // ---- share (shared agent / topic / page) ---------------------------------
 export const shareKeys = {
-  agentInfo: def('share:agentInfo', (slugOrId: string) => ['share:agentInfo', slugOrId]),
-  /** Connector lists the creator-side AGENT share tool picker screens, keyed by agentId. */
-  agentShareConnectors: def('share:agentShareConnectors', (agentId: string) => [
-    'share:agentShareConnectors',
-    agentId,
-  ]),
-  /** Candidates for the creator-side AGENT share skill picker, keyed by agentId. */
-  agentShareGrantableSkills: def('share:agentShareGrantableSkills', (agentId: string) => [
-    'share:agentShareGrantableSkills',
-    agentId,
-  ]),
-  // Creator-side share status keyed by agentId (visitor side uses `agentInfo`).
-  agentShareStats: def('share:agentShareStats', (agentId: string) => [
-    'share:agentShareStats',
-    agentId,
-  ]),
-  agentShareEligibleWorks: def(
-    'share:agentShareEligibleWorks',
-    (agentId: string, offset: number, includeWorkIds: readonly string[]) => [
-      'share:agentShareEligibleWorks',
-      agentId,
-      offset,
-      includeWorkIds,
-    ],
-  ),
-  agentShareStatus: def('share:agentShareStatus', (agentId: string) => [
-    'share:agentShareStatus',
-    agentId,
-  ]),
   artifact: def('share:artifact', (id: string) => ['share:artifact', id]),
   file: def('share:file', (shareId: string) => ['share:file', shareId]),
   pageDocument: def('share:pageDocument', (documentId: string) => [
@@ -609,8 +529,6 @@ export const shareKeys = {
     documentId,
   ]),
   topic: def('share:topic', (id: string) => ['share:topic', id]),
-  /** The visitor's own topics under an agent share (server-scoped by senderId). */
-  visitorTopics: def('share:visitorTopics', (shareId: string) => ['share:visitorTopics', shareId]),
 };
 
 // ---- local file ---------------------------------------------------------
@@ -738,14 +656,6 @@ export const topicActionKeys = {
   openNewOrSave: def('topicAction:openNewOrSave', () => ['topicAction:openNewOrSave']),
 };
 
-// ---- misc remaining domains ---------------------------------------------
-export const resourceKeys = {
-  list: def('resource:list', (params: unknown, workspaceId: string | null) => [
-    'resource:list',
-    params,
-    workspaceId,
-  ]),
-};
 export const recommendationsKeys = {
   heteroDetections: def('recommendations:heteroDetections', () => [
     'recommendations:heteroDetections',
@@ -808,12 +718,9 @@ export const swrKeys = {
   cron: cronKeys,
   device: deviceKeys,
   electron: electronKeys,
-  eval: evalKeys,
-  file: fileKeys,
   gateway: gatewayKeys,
   goal: goalKeys,
   global: globalKeys,
-  group: groupKeys,
   image: imageKeys,
   imessage: imessageKeys,
   inbox: inboxKeys,
@@ -826,12 +733,9 @@ export const swrKeys = {
   openInApp: openInAppKeys,
   ragEval: ragEvalKeys,
   recommendations: recommendationsKeys,
-  resource: resourceKeys,
   serverConfig: serverConfigKeys,
   share: shareKeys,
   taskLabel: taskLabelKeys,
-  thread: threadKeys,
-  tool: toolKeys,
   topic: topicKeys,
   acceptanceCollaboration: acceptanceCollaborationKeys,
   documentComment: documentCommentKeys,
