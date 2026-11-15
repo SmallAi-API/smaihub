@@ -127,6 +127,8 @@
   "message.copied": "已複製",
   "message.copy": "複製文字",
   "message.expand": "展開消息",
+  "message.relayReplyFrom": "{{name}} 在 #{{channel}} 中回覆",
+  "message.relayedBy": "由 {{name}} 轉發",
   "moveToTrash": "將頻道移至垃圾桶",
   "moveToTrashConfirm": "要將“{{title}}”移至垃圾桶嗎？回覆將停止。您可以從垃圾桶中恢復頻道及其歷史記錄。代理人和檔案將被保留。",
   "moveToTrashSuccess": "頻道已移至垃圾桶",
