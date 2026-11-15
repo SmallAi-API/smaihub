@@ -578,9 +578,9 @@ export function sharedRendererDefine(options: { isElectron: boolean; isMobile: b
 }
 
 export const sharedOptimizeDeps = {
-  // The app pins 2.1.2 for long-paragraph performance, while the CJK extension
-  // needs a newer attention API. Pre-bundling merges both versions by package
-  // name, so leave this ESM dependency to resolve from each importer's package.
+  // Vite resolves an optimized dep by bare name for every importer. Pre-bundling
+  // the workspace-pinned 2.1.x would hand it to mdast-util-to-markdown-cjk-friendly,
+  // which needs the 2.2 attention API, and <Markdown> throws in dev.
   exclude: [...stylexTokenModules, 'mdast-util-to-markdown'],
   include: [
     'react',
