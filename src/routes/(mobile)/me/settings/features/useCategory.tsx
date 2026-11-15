@@ -7,7 +7,6 @@ import {
   BrainCircuit,
   ChartColumnBigIcon,
   ChartPieIcon,
-  Coins,
   CreditCard,
   Database,
   EllipsisIcon,
@@ -85,12 +84,7 @@ export const useCategory = (): CategoryGroup[] => {
           makeItem({
             icon: ChartPieIcon,
             key: SettingsTabs.Usage,
-            label: t('setting:tab.usage'),
-          }),
-          makeItem({
-            icon: Coins,
-            key: SettingsTabs.Credits,
-            label: t('subscription:tab.credits'),
+            label: t('subscription:tab.usageAndBalance'),
           }),
           makeItem({
             icon: CreditCard,
