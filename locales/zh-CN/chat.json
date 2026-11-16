@@ -2412,6 +2412,7 @@
   "supervisor.label": "协调者",
   "supervisor.todoList.allComplete": "所有任务已完成",
   "supervisor.todoList.title": "任务完成",
+  "tab.automations": "自动化",
   "tab.backToChat": "返回对话",
   "tab.context": "上下文",
   "tab.engine": "引擎",

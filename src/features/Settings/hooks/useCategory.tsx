@@ -30,6 +30,7 @@ import {
   TerminalSquare,
   Trash2,
   Wrench,
+  ZapIcon,
 } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -82,6 +83,7 @@ export const useCategory = () => {
   ]);
   const remoteServerUrl = useElectronStore(electronSyncSelectors.remoteServerUrl);
   const enableOAuthApps = useUserStore(labPreferSelectors.enableOAuthApps);
+  const enableWebhook = useServerConfigStore(serverConfigSelectors.enableWebhook);
 
   const avatarUrl = useMemo(() => {
     if (!avatar) return undefined;
@@ -215,6 +217,13 @@ export const useCategory = () => {
         key: SettingsTabs.Connector,
         label: t('tab.connector'),
       },
+      // What connectors fire on their own: the event subscriptions agents made
+      // through them. Next to the connectors they come from.
+      enableWebhook && {
+        icon: ZapIcon,
+        key: SettingsTabs.Automations,
+        label: t('tab.automations'),
+      },
       {
         icon: KeyRound,
         key: SettingsTabs.Creds,
@@ -311,6 +320,7 @@ export const useCategory = () => {
     mobile,
     showProvider,
     enableOAuthApps,
+    enableWebhook,
     avatarUrl,
     username,
   ]);
