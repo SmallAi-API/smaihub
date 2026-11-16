@@ -3289,6 +3289,7 @@
   "workflow.collapse": "折叠",
   "workflow.expandFull": "完全展开",
   "workflow.failedSuffix": "（失败）",
+  "workflow.showEarlierSteps": "查看更早的步骤（{{count}}）",
   "workflow.summaryCallsTotal_one": "共 {{count}} 次调用",
   "workflow.summaryCallsTotal_other": "共 {{count}} 次调用",
   "workflow.summaryFailed": "{{count}} 次失败",

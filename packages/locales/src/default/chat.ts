@@ -3699,6 +3699,7 @@ export default {
   'viewSwitcher.page': 'Page',
   'viewSwitcher.task': 'Task',
   'workflow.failedSuffix': '(failed)',
+  'workflow.showEarlierSteps': 'Show earlier steps ({{count}})',
   'workflow.summaryCallsTotal_one': '{{count}} call',
   'workflow.summaryCallsTotal_other': '{{count}} calls',
   'workflow.summaryFailed': '{{count}} failed',
