@@ -385,7 +385,7 @@ const AgentWorkingSidebar = memo<AgentWorkingSidebarProps>(({ availableWidth }) 
     isGithub,
     snapshot: snapshotConfig?.git,
     topicId,
-    workingDirectory,
+    workingDirectory: sourceWorkingDirectory ?? workingDirectory,
   });
   const paramsAvailable = !isHetero;
   // The in-app browser pages are renderer-retained Electron webviews — desktop only.
@@ -839,7 +839,7 @@ const AgentWorkingSidebar = memo<AgentWorkingSidebarProps>(({ availableWidth }) 
       {overviewPanel}
       <TopicPullRequestProbes
         deviceId={remoteDeviceId}
-        path={environmentWorkingDirectory}
+        path={sourceWorkingDirectory ?? environmentWorkingDirectory}
         probes={pullRequestProbes}
       />
       <RightPanel
@@ -994,6 +994,7 @@ const AgentWorkingSidebar = memo<AgentWorkingSidebarProps>(({ availableWidth }) 
                     className={stylex.props(styles.pane).className}
                     deviceId={remoteDeviceId}
                     pullRequest={pullRequest}
+                    repositoryPath={sourceWorkingDirectory}
                     workingDirectory={workingDirectory}
                     onOpenTab={openTab}
                   />
