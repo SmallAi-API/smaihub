@@ -1,7 +1,7 @@
 import { MemoryManifest } from '@lobechat/builtin-tool-memory';
 import { WebBrowsingManifest } from '@lobechat/builtin-tool-web-browsing';
 import { getConnectorCatalog, RECOMMENDED_SKILLS, RecommendedSkillType } from '@lobechat/const';
-import { type AgentPluginMode, getDisabledPluginIds } from '@lobechat/types';
+import { type AgentPluginMode } from '@lobechat/types';
 import {
   Avatar,
   confirmModal,
@@ -73,6 +73,7 @@ import {
 import ComposioServerItem from './ComposioServerItem';
 import ComposioSkillIcon from './ComposioSkillIcon';
 import { SKILL_ICON_SIZE } from './constants';
+import { resolveDisabledIds, resolveImplicitMode } from './librarySkillPolicy';
 import LobehubSkillIcon from './LobehubSkillIcon';
 import LobehubSkillServerItem from './LobehubSkillServerItem';
 import MarketAgentSkillPopoverContent from './MarketAgentSkillPopoverContent';
@@ -171,8 +172,17 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
   const rawPlugins = useAgentStore(
     (s) => agentByIdSelectors.getAgentConfigById(agentId)(s)?.plugins,
   );
-  const disabledIds = useMemo(() => getDisabledPluginIds(rawPlugins), [rawPlugins]);
-  const disabledIdSet = useMemo(() => new Set(disabledIds), [disabledIds]);
+  const marketAgentSkills = useToolStore(agentSkillsSelectors.getMarketAgentSkills, isEqual);
+  const userAgentSkills = useToolStore(agentSkillsSelectors.getUserAgentSkills, isEqual);
+  // Library skills are opt-in per agent: one this agent never turned on is Disabled.
+  const librarySkillIds = useMemo(
+    () => new Set([...marketAgentSkills, ...userAgentSkills].map((skill) => skill.identifier)),
+    [marketAgentSkills, userAgentSkills],
+  );
+  const disabledIdSet = useMemo(
+    () => new Set(resolveDisabledIds(rawPlugins, librarySkillIds)),
+    [rawPlugins, librarySkillIds],
+  );
   // In manual skill-activate mode, surface hidden builtin tools (web-browsing,
   // cloud-sandbox, knowledge-base, etc.) so users can explicitly enable/disable them.
   // In auto mode the activator handles those tools transparently, so they remain hidden.
@@ -225,24 +235,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
     async (id: string, mode: SkillPolicyMode) => {
       if (!canEdit) return;
 
-      // A capability has two homes. chatConfig carries the on/off state the engine
-      // reads (`resolveToolRules`), so the row, the injection and the wiring can never
-      // disagree; `agents.plugins` carries the explicit Pinned/Disabled choice, which
-      // is what puts the row in the Pinned or Disabled group.
-      if (isCapabilityTool(id)) {
-        const currentMode: SkillPolicyMode = checkedSet.has(id)
-          ? 'pinned'
-          : disabledIdSet.has(id)
-            ? 'disabled'
-            : 'auto';
-        if (currentMode === mode) return;
-
-        const patch = resolveCapabilityConfigPatch(id, mode);
-        if (patch) await updateAgentChatConfig(patch);
-        await setPluginMode(id, mode);
-        return;
-      }
-
       const currentMode: SkillPolicyMode = checkedSet.has(id)
         ? 'pinned'
         : disabledIdSet.has(id)
@@ -250,9 +242,15 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
           : 'auto';
       if (currentMode === mode) return;
 
-      await setPluginMode(id, mode);
+      // A capability has two homes. chatConfig carries the on/off state the engine
+      // reads (`resolveToolRules`), so the row, the injection and the wiring can never
+      // disagree; `agents.plugins` carries the explicit Pinned/Disabled choice, which
+      // is what puts the row in the Pinned or Disabled group.
+      const patch = isCapabilityTool(id) ? resolveCapabilityConfigPatch(id, mode) : undefined;
+      if (patch) await updateAgentChatConfig(patch);
+      await setPluginMode(id, mode, resolveImplicitMode(id, librarySkillIds));
     },
-    [canEdit, checkedSet, disabledIdSet, setPluginMode, updateAgentChatConfig],
+    [canEdit, checkedSet, disabledIdSet, librarySkillIds, setPluginMode, updateAgentChatConfig],
   );
 
   const openSkillPolicyMenu = useCallback((id: string) => {
@@ -554,8 +552,6 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
 
   // Agent Skills related state
   const installedBuiltinSkills = useToolStore(builtinToolSelectors.installedBuiltinSkills, isEqual);
-  const marketAgentSkills = useToolStore(agentSkillsSelectors.getMarketAgentSkills, isEqual);
-  const userAgentSkills = useToolStore(agentSkillsSelectors.getUserAgentSkills, isEqual);
 
   // MCP connectors the user added: custom ones and marketplace installs
   const customConnectors = useToolStore(connectorSelectors.userMcpConnectors, isEqual);
