@@ -234,8 +234,6 @@ export const composioRouter = router({
         appSlug: z.string(),
         identifier: z.string(),
         label: z.string(),
-        /** Client hint: toolkit requires no authentication (from the catalog `noAuth` flag). */
-        noAuth: z.boolean().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -252,64 +250,6 @@ export const composioRouter = router({
 
       const callbackUrl = `${process.env.APP_URL || process.env.NEXTAUTH_URL || ''}/api/composio/oauth/callback`;
 
-      const fetchToolManifest = async (): Promise<ToolManifest> => {
-        let rawTools: any[] = [];
-        try {
-          const toolsResp = await (ctx.composioClient.tools as any).getRawComposioTools({
-            toolkits: [appSlug],
-          });
-          rawTools = toolsResp?.items || toolsResp || [];
-        } catch {
-          // tools may not be available before auth
-        }
-        return {
-          api: Array.isArray(rawTools)
-            ? rawTools.map((tool: any) => ({
-                description: tool.description || '',
-                name: tool.slug || tool.name || '',
-                parameters: tool.inputParameters ||
-                  tool.inputSchema || { properties: {}, type: 'object' },
-              }))
-            : [],
-          identifier,
-          meta: { avatar: '🔌', description: `Composio: ${label}`, title: label },
-          type: 'default',
-        };
-      };
-
-      // Some toolkits (e.g. `composio_search`, web-search style tools) require no
-      // authentication. They cannot have an auth config — creating one returns
-      // 400 `Auth_Config_NoAuthApp`. Register the plugin as immediately ACTIVE and
-      // skip the entire OAuth dance.
-      const registerNoAuth = async () => {
-        const manifest = await fetchToolManifest();
-        await ctx.pluginModel.create({
-          customParams: {
-            composio: {
-              appSlug,
-              authConfigId: '',
-              connectedAccountId: '',
-              noAuth: true,
-              status: 'ACTIVE',
-            },
-          },
-          identifier,
-          manifest,
-          source: 'composio',
-          type: 'plugin',
-        });
-        return {
-          authConfigId: '',
-          connectedAccountId: '',
-          identifier,
-          noAuth: true,
-          redirectUrl: undefined as string | undefined,
-        };
-      };
-
-      // Fast path: client already knows this is a no-auth toolkit (catalog flag).
-      if (input.noAuth) return registerNoAuth();
-
       // Prefer a pre-configured auth config (e.g. a custom/white-label config
       // created in the Composio dashboard), pinned per toolkit via env. Falls
       // back to discovering an existing config for this toolkit, and finally to
@@ -321,34 +261,10 @@ export const composioRouter = router({
           (c: any) => c.toolkit?.slug?.toLowerCase() === appSlug.toLowerCase(),
         );
         if (!authConfig) {
-          try {
-            authConfig = await (ctx.composioClient.authConfigs as any).create(appSlug, {
-              name: appSlug,
-              type: 'use_composio_managed_auth',
-            });
-          } catch (error) {
-            const msg = error instanceof Error ? error.message : String(error);
-            // A toolkit that doesn't require auth rejects auth config creation
-            // with `Auth_Config_NoAuthApp` — treat it as no-auth.
-            if (msg.includes('Auth_Config_NoAuthApp') || msg.includes('does not require')) {
-              return registerNoAuth();
-            }
-            // A toolkit that requires auth but has no Composio-managed credentials
-            // (e.g. `twitter`) returns `Auth_Config_DefaultAuthConfigNotFound`. It
-            // can only be connected with a custom auth config (the admin's own
-            // client_id/secret), pinned per toolkit via COMPOSIO_AUTH_CONFIG_IDS.
-            // Surface an actionable 400 instead of a 500.
-            if (
-              msg.includes('Auth_Config_DefaultAuthConfigNotFound') ||
-              msg.includes('does not have managed credentials')
-            ) {
-              throw new TRPCError({
-                code: 'BAD_REQUEST',
-                message: `"${label}" has no Composio-managed credentials. An admin must create a custom auth config for it in the Composio dashboard and pin it via COMPOSIO_AUTH_CONFIG_IDS ("${identifier}": "ac_...").`,
-              });
-            }
-            throw error;
-          }
+          authConfig = await (ctx.composioClient.authConfigs as any).create(appSlug, {
+            name: appSlug,
+            type: 'use_composio_managed_auth',
+          });
         }
         authConfigId = authConfig.id;
       }
@@ -375,7 +291,36 @@ export const composioRouter = router({
         { callbackUrl, ...(agentId ? { allowMultiple: true } : {}) },
       );
 
-      const manifest = await fetchToolManifest();
+      let rawTools: any[] = [];
+      try {
+        const toolsResp = await (ctx.composioClient.tools as any).getRawComposioTools({
+          toolkits: [appSlug],
+        });
+        rawTools = toolsResp?.items || toolsResp || [];
+      } catch {
+        // tools may not be available before auth
+      }
+
+      const manifest: ToolManifest = {
+        api: Array.isArray(rawTools)
+          ? rawTools.map((tool: any) => ({
+              description: tool.description || '',
+              name: tool.slug || tool.name || '',
+              parameters: tool.inputParameters ||
+                tool.inputSchema || {
+                  properties: {},
+                  type: 'object',
+                },
+            }))
+          : [],
+        identifier,
+        meta: {
+          avatar: '🔌',
+          description: `Composio: ${label}`,
+          title: label,
+        },
+        type: 'default',
+      };
 
       // Legacy plugin-table projection is personal-only (no agent_id column), so
       // skip it for agent connections — the runtime resolves those off the
@@ -427,7 +372,6 @@ export const composioRouter = router({
         authConfigId,
         connectedAccountId: connReq.id,
         identifier,
-        noAuth: false,
         redirectUrl: connReq.redirectUrl,
       };
     }),

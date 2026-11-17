@@ -1,6 +1,5 @@
 import { COMPOSIO_APP_TYPES } from '@lobechat/const';
 import { produce } from 'immer';
-import useSWRInfinite from 'swr/infinite';
 
 import {
   cacheScope,
@@ -10,7 +9,6 @@ import {
   type ReplicaLens,
   type ReplicaSyncResult,
 } from '@/libs/replica';
-import { toolKeys } from '@/libs/swr/keys';
 import { lambdaClient, toolsClient } from '@/libs/trpc/client';
 import { refreshConnectorManagePolicy } from '@/services/connectorManagePolicy';
 import { type StoreSetter } from '@/store/types';
@@ -251,7 +249,7 @@ export class ComposioStoreActionImpl {
         identifier: response.identifier,
         label,
         redirectUrl: response.redirectUrl,
-        status: params.noAuth ? ComposioServerStatus.ACTIVE : ComposioServerStatus.PENDING_AUTH,
+        status: ComposioServerStatus.PENDING_AUTH,
       };
 
       // Replace the record in place (by identifier) or append the new one, so a
@@ -296,10 +294,7 @@ export class ComposioStoreActionImpl {
         n('createComposioConnection/error'),
       );
 
-      // Re-throw so the caller (UI hook) can surface an actionable message to the
-      // user instead of silently doing nothing. tRPC errors carry the server's
-      // message (e.g. "no Composio-managed credentials …").
-      throw error;
+      return undefined;
     }
   };
 
@@ -549,30 +544,6 @@ export class ComposioStoreActionImpl {
    */
   useFetchAppTools = (appSlug: string | undefined): ReplicaSyncResult =>
     this.#appTools.useSync(appSlug ?? null, { revalidateOnFocus: false });
-
-  useFetchComposioCatalog = (params: { category?: string; search?: string }) => {
-    const { category, search } = params;
-    return useSWRInfinite(
-      (index, previous) => {
-        if (index > 0 && !previous?.nextCursor) return null;
-        return toolKeys.composioCatalog(category, search, previous?.nextCursor);
-      },
-      (key) => {
-        const [, categoryKey, searchKey, cursorKey] = key as [
-          string,
-          string | undefined,
-          string | undefined,
-          string | undefined,
-        ];
-        return toolsClient.composio.listToolkits.query({
-          category: categoryKey || undefined,
-          cursor: cursorKey || undefined,
-          search: searchKey || undefined,
-        });
-      },
-      { revalidateOnFocus: false },
-    );
-  };
 
   /** Fetch orchestration only; read the servers through `composioStoreSelectors`'. */
   useFetchUserComposioConnections = (enabled: boolean): ComposioConnectionsSyncResult => {

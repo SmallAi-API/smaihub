@@ -6,13 +6,13 @@ import { t } from 'i18next';
 import { isDesktop } from '@/const/version';
 import { MarketAuthProvider } from '@/layout/AuthProvider/MarketAuth';
 
-import { SkillStoreContent, type SkillStoreTab } from './SkillStoreContent';
+import { SkillStoreContent } from './SkillStoreContent';
 
-export const createSkillStoreModal = (options?: { initialTab?: SkillStoreTab }) =>
+export const createSkillStoreModal = () =>
   createModal({
     content: (
       <MarketAuthProvider isDesktop={isDesktop}>
-        <SkillStoreContent initialTab={options?.initialTab} />
+        <SkillStoreContent />
       </MarketAuthProvider>
     ),
     footer: null,

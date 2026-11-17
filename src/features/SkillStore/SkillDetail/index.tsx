@@ -37,30 +37,16 @@ export const createBuiltinSkillDetailModal = ({
   });
 
 export interface CreateComposioSkillDetailModalOptions {
-  description?: string;
-  icon?: string;
   identifier: string;
-  label?: string;
   serverName: string;
 }
 
 export const createComposioSkillDetailModal = ({
-  description,
-  icon,
   identifier,
-  label,
   serverName,
 }: CreateComposioSkillDetailModalOptions) =>
   createModal({
-    content: (
-      <ComposioSkillDetailContent
-        description={description}
-        icon={icon}
-        identifier={identifier}
-        label={label}
-        serverName={serverName}
-      />
-    ),
+    content: <ComposioSkillDetailContent identifier={identifier} serverName={serverName} />,
     footer: null,
     title: t('dev.title.skillDetails', { ns: 'plugin' }),
     width: 800,

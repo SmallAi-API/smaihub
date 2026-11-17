@@ -1,6 +1,6 @@
 'use client';
 
-import { type ComposioAppType, getComposioAppByIdentifier } from '@lobechat/const';
+import { getComposioAppByIdentifier } from '@lobechat/const';
 import { type ReactNode } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,27 +14,18 @@ import { DetailContext } from './DetailContext';
 
 interface ComposioDetailProviderProps {
   children: ReactNode;
-  /** Fallback description from the catalog item (for not-yet-connected dynamic toolkits). */
-  fallbackDescription?: string;
-  /** Fallback icon (logo URL) from the catalog item. */
-  fallbackIcon?: string;
-  /** Fallback label from the catalog item. */
-  fallbackLabel?: string;
   identifier: string;
   serverName: string;
 }
 
 export const ComposioDetailProvider = ({
   children,
-  fallbackDescription,
-  fallbackIcon,
-  fallbackLabel,
   identifier,
   serverName,
 }: ComposioDetailProviderProps) => {
   const { t } = useTranslation(['setting']);
 
-  const staticConfig = useMemo(() => getComposioAppByIdentifier(identifier), [identifier]);
+  const config = useMemo(() => getComposioAppByIdentifier(identifier), [identifier]);
 
   const composioServers = useToolStore(composioStoreSelectors.getServers);
 
@@ -42,32 +33,6 @@ export const ComposioDetailProvider = ({
     () => composioServers.find((s) => s.identifier === identifier),
     [identifier, composioServers],
   );
-
-  // Dynamic catalog toolkits are not in the static list. Synthesize a config
-  // from the catalog item (passed as fallbacks) or the connected server
-  // metadata so the detail modal renders the correct icon/label, not the 🔌
-  // placeholder.
-  const config: ComposioAppType | undefined = useMemo(() => {
-    if (staticConfig) return staticConfig;
-    return {
-      appSlug: serverName,
-      author: 'Composio',
-      authorUrl: 'https://composio.dev',
-      description: fallbackDescription || '',
-      icon: fallbackIcon || serverState?.icon || '🔌',
-      identifier,
-      label: fallbackLabel || serverState?.label || identifier,
-      readme: '',
-    };
-  }, [
-    staticConfig,
-    serverName,
-    serverState,
-    identifier,
-    fallbackIcon,
-    fallbackLabel,
-    fallbackDescription,
-  ]);
 
   const isConnected = useMemo(
     () => serverState?.status === ComposioServerStatus.ACTIVE,

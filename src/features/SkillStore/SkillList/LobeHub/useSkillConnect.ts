@@ -1,7 +1,6 @@
 'use client';
 
 import { COMPOSIO_APP_TYPES, getLobehubSkillProviderById } from '@lobechat/const';
-import { toast } from '@lobehub/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useToolStore } from '@/store/tool';
@@ -16,21 +15,11 @@ const POLL_TIMEOUT_MS = 15_000;
 
 interface UseSkillConnectOptions {
   identifier: string;
-  /** Display label, used when the toolkit is not in the static catalog (dynamic catalog items). */
-  label?: string;
-  /** Toolkit requires no authentication (dynamic catalog `noAuth` flag). */
-  noAuth?: boolean;
   serverName?: string;
   type: 'composio' | 'lobehub';
 }
 
-export const useSkillConnect = ({
-  identifier,
-  label,
-  noAuth,
-  serverName,
-  type,
-}: UseSkillConnectOptions) => {
+export const useSkillConnect = ({ identifier, serverName, type }: UseSkillConnectOptions) => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isWaitingAuth, setIsWaitingAuth] = useState(false);
 
@@ -213,8 +202,7 @@ export const useSkillConnect = ({
       const newServer = await createComposioConnection({
         appSlug: appType?.appSlug ?? serverName ?? identifier,
         identifier,
-        label: appType?.label ?? label ?? identifier,
-        noAuth,
+        label: appType?.label ?? identifier,
       });
 
       if (newServer) {
@@ -226,18 +214,12 @@ export const useSkillConnect = ({
       }
     } catch (error) {
       console.error('[SkillStore] Failed to connect server:', error);
-      // Surface the server's actionable message (e.g. a toolkit that needs a
-      // custom auth config) instead of silently failing.
-      const msg = error instanceof Error ? error.message : String(error);
-      toast.error(msg);
     } finally {
       setIsConnecting(false);
     }
   }, [
     userId,
     serverName,
-    label,
-    noAuth,
     composioServer,
     identifier,
     createComposioConnection,

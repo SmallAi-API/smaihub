@@ -2,7 +2,6 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { wsCompatProcedure } from '@/business/server/trpc-middlewares/workspaceAuth';
-import { getServerComposioAuthConfigId } from '@/config/composio';
 import { ConnectorModel } from '@/database/models/connector';
 import { PluginModel } from '@/database/models/plugin';
 import { getComposioClient, isComposioConnectedAccountNotFoundError } from '@/libs/composio';
@@ -28,87 +27,6 @@ const composioProcedure = wsCompatProcedure.use(serverDatabase).use(async (opts)
 });
 
 export const composioToolsRouter = router({
-  /**
-   * Browse the full Composio toolkit catalog (1000+ toolkits), paginated.
-   *
-   * Uses the low-level `client.toolkits.list()` instead of the SDK's
-   * `toolkits.get(query)` wrapper: the wrapper's `transformToolkitListResponse`
-   * maps `items` to an array and DROPS `next_cursor`, so cursor pagination is
-   * impossible through it. The raw client returns `{ items, next_cursor }`.
-   */
-  listCategories: publicProcedure.query(async () => {
-    const client = getComposioClient();
-    const response = await (client.toolkits as any).listCategories();
-    const items = response?.items || response || [];
-    return {
-      categories: Array.isArray(items)
-        ? items.map((c: any) => ({ name: c.name || c.slug || '', slug: c.slug || c.id || '' }))
-        : [],
-    };
-  }),
-
-  listToolkits: publicProcedure
-    .input(
-      z.object({
-        category: z.string().optional(),
-        cursor: z.string().optional(),
-        limit: z.number().min(1).max(100).optional(),
-        search: z.string().optional(),
-      }),
-    )
-    .query(async ({ input }) => {
-      const client = getComposioClient();
-
-      const response = await (client as any).client.toolkits.list({
-        category: input.category,
-        cursor: input.cursor,
-        limit: input.limit ?? 30,
-        managed_by: 'composio',
-        search: input.search,
-        sort_by: 'usage',
-      });
-
-      const items = response?.items || [];
-      const toolkits = Array.isArray(items)
-        ? items
-            .map((item: any) => {
-              const meta = item.meta || {};
-              const slug: string = item.slug || '';
-              const identifier = slug.toLowerCase();
-              const noAuth = item.no_auth ?? item.noAuth ?? false;
-              const composioManagedAuthSchemes =
-                item.composio_managed_auth_schemes || item.composioManagedAuthSchemes || [];
-              // A toolkit is connectable when it needs no auth, OR Composio has
-              // managed credentials for it, OR an admin pinned a custom auth
-              // config via COMPOSIO_AUTH_CONFIG_IDS. Otherwise connecting would
-              // fail with `Auth_Config_DefaultAuthConfigNotFound` — hide it.
-              const connectable =
-                noAuth ||
-                (Array.isArray(composioManagedAuthSchemes) &&
-                  composioManagedAuthSchemes.length > 0) ||
-                Boolean(getServerComposioAuthConfigId(identifier));
-              return {
-                appSlug: slug.toUpperCase(),
-                authSchemes: item.auth_schemes || item.authSchemes || [],
-                connectable,
-                description: meta.description || '',
-                icon: meta.logo || '',
-                // identifier is the kebab-case slug used as the local plugin id.
-                identifier,
-                label: item.name || slug,
-                noAuth,
-                toolsCount: meta.tools_count ?? meta.toolsCount ?? 0,
-              };
-            })
-            .filter((tk: { connectable: boolean }) => tk.connectable)
-        : [];
-
-      return {
-        nextCursor: (response?.next_cursor ?? null) as string | null,
-        toolkits,
-      };
-    }),
-
   executeAction: composioProcedure
     .input(
       z.object({
