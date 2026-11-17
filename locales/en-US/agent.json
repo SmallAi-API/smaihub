@@ -162,7 +162,7 @@
   "channel.connectionError.permission_denied": "The platform denied access. Check the bot's permissions and enabled capabilities.",
   "channel.connectionError.rate_limited": "The platform is rate limiting this bot. Wait a moment and try again.",
   "channel.connectionError.session_expired": "The bot session has expired. Save the bot again to reconnect it.",
-  "channel.connectionError.upstream_unavailable": "The platform service is temporarily unavailable. LobeHub will try again later.",
+  "channel.connectionError.upstream_unavailable": "The platform service is temporarily unavailable. smai.ai will try again later.",
   "channel.connectionError.webhook_mode_required": "This deployment can only connect this platform in Webhook mode. Switch the connection mode to Webhook and update the callback address in the platform console.",
   "channel.connectionMode": "Connection Mode",
   "channel.connectionModeHint": "How the platform delivers events to the bot",

@@ -162,7 +162,6 @@
   "channel.connectionError.permission_denied": "平台拒絕訪問。請檢查機器人的權限和啟用的功能。",
   "channel.connectionError.rate_limited": "平台對此機器人進行了速率限制。請稍候再試。",
   "channel.connectionError.session_expired": "機器人會話已過期。再次保存機器人以重新連接。",
-  "channel.connectionError.upstream_unavailable": "平台服務暫時無法使用。smai.ai 稍後會重試。",
   "channel.connectionMode": "連接模式",
   "channel.connectionModeHint": "對於新機器人，建議使用 WebSocket。如果您的機器人已在 QQ 開放平台上配置了回調 URL，則使用 Webhook。",
   "channel.connectionModeWebSocket": "WebSocket",
