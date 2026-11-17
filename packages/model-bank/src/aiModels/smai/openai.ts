@@ -19,6 +19,60 @@ export const openAIChatModels: AIChatModelCard[] = [
     },
     contextWindowTokens: 1_050_000,
     description:
+      'GPT-6.2 Astra is built for demanding projects in software development, computer use, and professional documents.',
+    displayName: 'GPT-6.2 Astra',
+    enabled: true,
+    family: 'gpt',
+    generation: 'gpt-6.2',
+    id: 'gpt-6.2-astra',
+    isOfficial: true,
+    knowledgeCutoff: '2026-05',
+    maxOutput: 128_000,
+    /** @see https://developers.openai.com/api/docs/models/gpt-6.2-astra */
+    releasedAt: '2026-11-17',
+    settings: {
+      extendParams: ['gpt6ReasoningEffort', 'textVerbosity'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_050_000,
+    description:
+      'GPT-6.2 Sol is an efficient model for everyday work, from coding to running agent workflows at scale.',
+    displayName: 'GPT-6.2 Sol',
+    enabled: true,
+    family: 'gpt',
+    generation: 'gpt-6.2',
+    id: 'gpt-6.2-sol',
+    isOfficial: true,
+    knowledgeCutoff: '2026-06',
+    maxOutput: 128_000,
+    /** @see https://developers.openai.com/api/docs/models/gpt-6.2-sol */
+    releasedAt: '2026-11-17',
+    settings: {
+      extendParams: ['gpt6ReasoningEffort', 'textVerbosity'],
+      searchImpl: 'params',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    contextWindowTokens: 1_050_000,
+    description:
       'GPT-6.1 Sol delivers near-Astra performance for complex coding, computer use, and professional work at a lower cost.',
     displayName: 'GPT-6.1 Sol',
     enabled: true,

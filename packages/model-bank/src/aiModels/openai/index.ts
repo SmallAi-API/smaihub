@@ -1,6 +1,8 @@
 /* eslint-disable eslint-core/no-restricted-syntax -- Preserve the original model descriptions after the split. */
 import type { AIChatModelCard } from '../../types/aiModel';
 import { openaiDecisionModels } from './decision';
+import { openaiGpt62ChatModels } from './gpt62';
+import { openaiLegacyChatModels } from './legacyChat';
 import {
   openaiASRModels,
   openaiEmbeddingModels,
@@ -14,6 +16,7 @@ export * from './decision';
 export * from './nonChat';
 
 export const openaiChatModels: AIChatModelCard[] = [
+  ...openaiGpt62ChatModels,
   {
     abilities: {
       functionCall: true,
