@@ -31,6 +31,7 @@ import { pickString, toRecord } from '@lobechat/utils/object';
 
 import type { ModelCompletionFailureReason } from '@/business/server/recordModelCompletionFailure';
 import { recordModelCompletionFailure } from '@/business/server/recordModelCompletionFailure';
+import { buildSmaiSessionHeaders } from '@/server/modules/ModelRuntime/smaiSession';
 
 import type { RuntimeExecutorContext } from '../context';
 import { isOperationInterrupted, log, timing } from '../executorHelpers';
@@ -352,6 +353,14 @@ export class ServerCallLlmAttempt {
       signal: this.ctx.abortSignal,
       user: this.ctx.userId,
     };
+    // smai.ai gateway channel affinity: one opaque key per conversation (no raw ids leave the server).
+    const smaiSessionHeaders = buildSmaiSessionHeaders({
+      provider: this.provider,
+      topicId: this.topicId,
+      trigger: this.trigger,
+      userId: this.ctx.userId,
+    });
+    if (smaiSessionHeaders) chatOptions.requestHeaders = smaiSessionHeaders;
     const response = await this.modelRuntime.chat(this.chatPayload, chatOptions);
 
     try {

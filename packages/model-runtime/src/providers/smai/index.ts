@@ -8,6 +8,7 @@ import { detectModelProvider, processMultiProviderModelList } from '../../utils/
 import { responsesAPIModels } from '../openai/modelId';
 import { resolveProviderRouteModels } from '../utils/resolveProviderRouteModels';
 import { createSMAIVideo, pollSMAIVideoStatus } from './createVideo';
+import { LobeSMAIOpenAI } from './openaiRuntime';
 import type { SMAIPricing } from './pricing';
 import { convertSMAIPricing } from './pricing';
 
@@ -84,6 +85,7 @@ const SMAIVideoRuntime = createOpenAICompatibleRuntime({
     return pollSMAIVideoStatus(inferenceId, {
       apiKey: options.apiKey,
       baseURL: options.baseURL || 'https://api.smai.ai/v1',
+      defaultHeaders: options.defaultHeaders as Record<string, any> | undefined,
     });
   },
   provider: ModelProvider.SMAI,
@@ -224,6 +226,7 @@ export const params = {
             useResponseModels: [...Array.from(responsesAPIModels), /gpt-\d(?!\d)/, /^o\d/],
           },
         },
+        runtime: LobeSMAIOpenAI,
       },
     ];
   },

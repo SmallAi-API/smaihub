@@ -80,6 +80,7 @@ export * from './providers/openai/modelId';
 export { LobeOpenRouterAI } from './providers/openrouter';
 export { LobePerplexityAI } from './providers/perplexity';
 export { LobeQwenAI } from './providers/qwen';
+export { getSmaiSessionId, SMAI_SESSION_HEADER } from './providers/smai/session';
 export { LobeStepfunAI } from './providers/stepfun';
 export { LobeStraicoAI } from './providers/straico';
 export { LobeStreamLakeAI } from './providers/streamlake';

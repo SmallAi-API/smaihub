@@ -288,7 +288,15 @@ export class LobeGoogleAI implements LobeRuntimeAI {
         log(JSON.stringify(finalPayload), '\n');
       }
 
-      const geminiStreamResponse = await this.client.models.generateContentStream(finalPayload);
+      // Per-request headers ride on the SDK's request-level httpOptions, which it merges over
+      // the client headers and never serializes into the body. Kept out of `finalPayload` so
+      // diagnostics and debug logs stay unchanged.
+      const requestHeaders = options?.requestHeaders;
+      const geminiStreamResponse = await this.client.models.generateContentStream(
+        requestHeaders && Object.keys(requestHeaders).length > 0
+          ? { ...finalPayload, config: { ...config, httpOptions: { headers: requestHeaders } } }
+          : finalPayload,
+      );
       const observedGeminiStream = observeProviderAsyncIterable(
         geminiStreamResponse,
         providerResponseDiagnostics,

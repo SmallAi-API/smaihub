@@ -102,6 +102,10 @@ export const shouldUseResponsesAPI = (
   return false;
 };
 
+/** OpenAI model families that get a `prompt_cache_key` by default. */
+export const isOpenAIPromptCacheKeyModel = (model: string | undefined) =>
+  !!model && (model.startsWith('gpt-') || /^o\d/.test(model) || model === 'chat-latest');
+
 export const resolvePromptCacheKey = (
   model: string | undefined,
   user: string | undefined,
@@ -110,7 +114,7 @@ export const resolvePromptCacheKey = (
   if (!user) return;
 
   // Keep the default key at {userId}:{model}; {agentId/topicId} can be added later if a narrower cache bucket is needed.
-  if (model?.startsWith('gpt-') || /^o\d/.test(model || '') || model === 'chat-latest') {
+  if (isOpenAIPromptCacheKeyModel(model)) {
     return `lobe:${user}:${model}`;
   }
 

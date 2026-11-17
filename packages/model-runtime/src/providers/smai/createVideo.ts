@@ -32,19 +32,31 @@ interface SMAIVideoStatusResponse {
  * Query the status of a video generation task
  * Endpoint: GET /v1/videos/{id}
  */
+interface SMAIVideoRequestOptions {
+  apiKey: string;
+  baseURL: string;
+  /** Provider-level headers (e.g. `X-Client: smai.ai`), sent before auth/content headers. */
+  defaultHeaders?: Record<string, any>;
+}
+
+const buildSMAIVideoHeaders = (options: { apiKey: string; defaultHeaders?: unknown }) => ({
+  ...(options.defaultHeaders && typeof options.defaultHeaders === 'object'
+    ? (options.defaultHeaders as Record<string, string>)
+    : {}),
+  'Authorization': `Bearer ${options.apiKey}`,
+  'Content-Type': 'application/json',
+});
+
 export async function querySMAIVideoStatus(
   taskId: string,
-  options: { apiKey: string; baseURL: string },
+  options: SMAIVideoRequestOptions,
 ): Promise<SMAIVideoStatusResponse> {
   const statusUrl = `${options.baseURL}/videos/${taskId}`;
 
   log('Querying video status for: %s', taskId);
 
   const response = await fetch(statusUrl, {
-    headers: {
-      'Authorization': `Bearer ${options.apiKey}`,
-      'Content-Type': 'application/json',
-    },
+    headers: buildSMAIVideoHeaders(options),
     method: 'GET',
   });
 
@@ -64,7 +76,7 @@ export async function querySMAIVideoStatus(
  */
 export async function pollSMAIVideoStatus(
   taskId: string,
-  options: { apiKey: string; baseURL: string },
+  options: SMAIVideoRequestOptions,
 ): Promise<PollVideoStatusResult> {
   const response = await querySMAIVideoStatus(taskId, options);
 
@@ -137,10 +149,7 @@ export async function createSMAIVideo(
 
   const response = await fetch(`${baseURL}/videos`, {
     body: JSON.stringify(body),
-    headers: {
-      'Authorization': `Bearer ${options.apiKey}`,
-      'Content-Type': 'application/json',
-    },
+    headers: buildSMAIVideoHeaders(options),
     method: 'POST',
   });
 

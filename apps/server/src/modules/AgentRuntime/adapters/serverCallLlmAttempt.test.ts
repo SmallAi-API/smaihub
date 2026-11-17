@@ -26,9 +26,12 @@ vi.mock('@lobechat/model-runtime', async () => {
     await import('../../../../../../packages/model-runtime/src/errors/modelRefusal');
   const { consumeStreamUntilDone } =
     await import('../../../../../../packages/model-runtime/src/utils/consumeStream');
+  const { SMAI_SESSION_HEADER } =
+    await import('../../../../../../packages/model-runtime/src/providers/smai/session');
 
   return {
     consumeStreamUntilDone,
+    SMAI_SESSION_HEADER,
     isEmptyModelCompletion,
     isModelRefusalFinishReason,
     ModelEmptyError,
@@ -43,6 +46,12 @@ vi.mock('@/business/server/recordModelCompletionFailure', () => ({
 vi.mock('@/envs/file', () => ({
   fileEnv: { NEXT_PUBLIC_S3_FILE_PATH: 'files' },
 }));
+
+const llmConfigMock = vi.hoisted(() => ({
+  SMAI_SESSION_HASH_SALT: 'test-salt' as string | undefined,
+}));
+
+vi.mock('@/envs/llm', () => ({ getLLMConfig: () => llmConfigMock }));
 
 const toolName = new ToolNameResolver().generate('workspace', 'search', 'builtin');
 const resolved = {
@@ -69,6 +78,9 @@ const createAttempt = (
   attemptOverrides?: {
     clientIp?: string;
     agentShareVisitorIds?: { agentId: string; shareId: string; visitorUserId: string };
+    provider?: string;
+    topicId?: string;
+    trigger?: unknown;
     userAgent?: string;
   },
   abortSignal?: AbortSignal,
@@ -261,6 +273,56 @@ describe('ServerCallLlmAttempt', () => {
     const metadata = chat.mock.calls[0][1]!.metadata as Record<string, unknown>;
     expect(metadata.clientIp).toBeUndefined();
     expect(metadata.userAgent).toBeUndefined();
+  });
+
+  describe('smai session affinity header', () => {
+    const finish = async ({ callback }: ChatMethodOptions) => {
+      await callback?.onText?.('Answer');
+      await callback?.onCompletion?.({ text: '', usage: { totalOutputTokens: 1 } });
+    };
+    const sessionOf = (chat: ReturnType<typeof createAttempt>['chat']) =>
+      (chat.mock.calls[0][1]!.requestHeaders as Record<string, string> | undefined)?.[
+        'X-Smai-Session'
+      ];
+    const run = async (overrides: Parameters<typeof createAttempt>[2]) => {
+      const { attempt, chat } = createAttempt(finish, undefined, overrides);
+      await attempt.execute();
+      return chat;
+    };
+
+    beforeEach(() => {
+      llmConfigMock.SMAI_SESSION_HASH_SALT = 'test-salt';
+    });
+
+    it('sends a stable 32-hex session per topic for smai conversation turns', async () => {
+      const first = sessionOf(await run({ provider: 'smai', trigger: 'chat' }));
+      const again = sessionOf(await run({ provider: 'smai', trigger: 'chat' }));
+      const otherTopic = sessionOf(
+        await run({ provider: 'smai', topicId: 'topic-2', trigger: 'chat' }),
+      );
+
+      expect(first).toMatch(/^[\da-f]{32}$/);
+      expect(again).toBe(first);
+      expect(otherTopic).toMatch(/^[\da-f]{32}$/);
+      expect(otherTopic).not.toBe(first);
+    });
+
+    it.each([
+      ['another provider', { provider: 'openai', trigger: 'chat' }],
+      ['an auxiliary trigger', { provider: 'smai', trigger: 'topic_title' }],
+      ['a missing topic', { provider: 'smai', topicId: '', trigger: 'chat' }],
+    ])('sends no requestHeaders for %s', async (_, overrides) => {
+      const chat = await run(overrides);
+
+      expect(chat.mock.calls[0][1]!.requestHeaders).toBeUndefined();
+    });
+
+    it('sends no requestHeaders when the salt is not configured', async () => {
+      llmConfigMock.SMAI_SESSION_HASH_SALT = undefined;
+      const chat = await run({ provider: 'smai', trigger: 'chat' });
+
+      expect(chat.mock.calls[0][1]!.requestHeaders).toBeUndefined();
+    });
   });
 
   it('records provider evidence while keeping partial output readable after a stream error', async () => {
