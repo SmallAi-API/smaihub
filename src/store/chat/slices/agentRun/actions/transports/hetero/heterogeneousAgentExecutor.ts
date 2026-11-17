@@ -2494,8 +2494,8 @@ export const executeHeterogeneousAgent = async (
         set: (id) => void (mainState = { ...mainState, lastSpineMessageId: id }),
       },
     });
-    // A task stop needs open input (SDK, or a CLI kept open for Steer); a one-shot CLI has none.
-    if (adapterType === 'claude-code' && (useClaudeCodeSdk || localSteer)) {
+    // Claude Code keeps its input (SDK stream or CLI stdin) open in every Follow-up mode.
+    if (adapterType === 'claude-code') {
       unregisterTaskStopper = registerLocalBackgroundTaskStopper(operationId, (taskId) =>
         heterogeneousAgentService.stopBackgroundTask(sidForCancel, taskId),
       );
@@ -2515,7 +2515,6 @@ export const executeHeterogeneousAgent = async (
         ? { replayTranscript: true, replayTranscriptConfigDir, replayTranscriptStartedAt }
         : {}),
       ...(resumeReplayMessages?.length ? { resumeReplayMessages } : {}),
-      ...(localSteer && { liveSteer: true }),
       sessionId: ipcRunSessionId,
       systemContext: systemContext || undefined,
       topicId: context.topicId ?? undefined,
