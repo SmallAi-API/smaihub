@@ -106,6 +106,7 @@ export enum SettingsTabs {
   Stats = 'stats',
 
   Storage = 'storage',
+  SubscriptionAccounts = 'subscription-accounts',
   SystemTools = 'system-tools',
   Tools = 'tools',
   Trash = 'trash',
