@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import debug from 'debug';
 
+import { isFileParseBudgetError } from './fileParseBudget';
 import { getFileLoader } from './loaders';
 import {
   type DocumentPage,
@@ -203,6 +204,8 @@ export const loadFile = async (
         log('Loader does not support attachDocumentMetadata.');
       }
     } catch (loadErr) {
+      // A budget refusal must reach the caller instead of becoming a cached error page
+      if (isFileParseBudgetError(loadErr)) throw loadErr;
       const error = loadErr as Error;
       console.error(
         `Error loading pages for ${filePath} using ${LoaderClass.name}: ${error.message}`,
