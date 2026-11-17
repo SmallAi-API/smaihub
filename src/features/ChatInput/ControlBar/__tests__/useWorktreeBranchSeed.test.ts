@@ -24,8 +24,8 @@ describe('useWorktreeBranchSeed', () => {
   // Regression: the default name is drawn against the repo's branch list, and
   // that list arrives asynchronously. Drawing while the read is still in flight
   // makes it look like "no branches", so a repo whose refs include a branch
-  // literally called `lobehub` was handed `lobehub/...` and git refused creation with
-  // `cannot lock ref 'refs/heads/lobehub/...': 'refs/heads/lobehub' exists`.
+  // literally called `smai` was handed `smai/...` and git refused creation with
+  // `cannot lock ref 'refs/heads/smai/...': 'refs/heads/smai' exists`.
   it('hands out no name while the branch list is still being read', () => {
     listGitBranches.mockImplementation(() => new Promise(() => {}));
 
@@ -35,23 +35,23 @@ describe('useWorktreeBranchSeed', () => {
     expect(result.current.name).toBeUndefined();
   });
 
-  it('avoids the lobehub/ namespace once a ref on it has been seen', async () => {
-    listGitBranches.mockResolvedValue([branch('main'), branch('lobehub')]);
+  it('avoids the smai/ namespace once a ref on it has been seen', async () => {
+    listGitBranches.mockResolvedValue([branch('main'), branch('smai')]);
 
     const result = seed('/repo/taken-namespace');
 
     await waitFor(() => expect(result.current.isReady).toBe(true));
-    // Only a list that actually contains `lobehub` produces the flat form, so this
+    // Only a list that actually contains `smai` produces the flat form, so this
     // value proves the occupying ref reached the draw.
-    expect(result.current.name).toMatch(/^lobehub-\d{12}-[a-z]+-[a-z]+$/);
+    expect(result.current.name).toMatch(/^smai-\d{12}-[a-z]+-[a-z]+$/);
   });
 
-  it('keeps the lobehub/ namespace when nothing occupies it', async () => {
+  it('keeps the smai/ namespace when nothing occupies it', async () => {
     listGitBranches.mockResolvedValue([branch('main'), branch('canary')]);
 
     const result = seed('/repo/free-namespace');
 
     await waitFor(() => expect(result.current.isReady).toBe(true));
-    expect(result.current.name).toMatch(/^lobehub\/\d{12}-[a-z]+-[a-z]+$/);
+    expect(result.current.name).toMatch(/^smai\/\d{12}-[a-z]+-[a-z]+$/);
   });
 });

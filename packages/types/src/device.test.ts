@@ -171,12 +171,12 @@ describe('deriveWorktreePath', () => {
     deriveWorktreePath(sourcePath, 'b', { homeDir: home }).split(/[/\\]/).at(-2) as string;
 
   // The folder the worktree modal previews for a generated branch
-  // (`lobehub/<timestamp>-<adjective>-<noun>`): the `/` folds to `-`, and the
+  // (`smai/<timestamp>-<adjective>-<noun>`): the `/` folds to `-`, and the
   // checkout lands under the central root, keyed by repo name + path hash.
   it('folds a generated branch into the central worktree root', () => {
     expect(
-      deriveWorktreePath('/code/lobehub', 'lobehub/202610020308-quiet-hill', { homeDir: home }),
-    ).toBe(`/Users/me/.lobehub/worktrees/${key('/code/lobehub')}/lobehub-202610020308-quiet-hill`);
+      deriveWorktreePath('/code/lobehub', 'smai/202610020308-quiet-hill', { homeDir: home }),
+    ).toBe(`/Users/me/.lobehub/worktrees/${key('/code/lobehub')}/smai-202610020308-quiet-hill`);
     expect(key('/code/lobehub')).toMatch(/^lobehub-[\da-f]{8}$/);
     // Trailing separators on either input don't change the result.
     expect(deriveWorktreePath('/code/lobehub/', 'feat/x', { homeDir: '/Users/me/' })).toBe(
@@ -184,20 +184,20 @@ describe('deriveWorktreePath', () => {
     );
   });
 
-  // The `lobehub/` namespace of a generated branch survives as the leaf's
-  // `lobehub-` prefix; the parent folder is still the repo name + path hash.
-  it('keeps the lobehub/ namespace as the lobehub- leaf prefix', () => {
+  // The `smai/` namespace of a generated branch survives as the leaf's
+  // `smai-` prefix; the parent folder is still the repo name + path hash.
+  it('keeps the smai/ namespace as the smai- leaf prefix', () => {
     expect(
-      deriveWorktreePath('/code/my-app', 'lobehub/202610020308-quiet-hill', { homeDir: home }),
-    ).toBe(`/Users/me/.lobehub/worktrees/${key('/code/my-app')}/lobehub-202610020308-quiet-hill`);
+      deriveWorktreePath('/code/my-app', 'smai/202610020308-quiet-hill', { homeDir: home }),
+    ).toBe(`/Users/me/.lobehub/worktrees/${key('/code/my-app')}/smai-202610020308-quiet-hill`);
     expect(key('/code/my-app')).toMatch(/^my-app-[\da-f]{8}$/);
   });
 
   it('keeps the source path separator on Windows', () => {
     const source = 'C:\\code\\lobehub';
     expect(
-      deriveWorktreePath(source, 'lobehub/202610020308-quiet-hill', { homeDir: 'C:\\Users\\me' }),
-    ).toBe(`C:\\Users\\me\\.lobehub\\worktrees\\${key(source)}\\lobehub-202610020308-quiet-hill`);
+      deriveWorktreePath(source, 'smai/202610020308-quiet-hill', { homeDir: 'C:\\Users\\me' }),
+    ).toBe(`C:\\Users\\me\\.lobehub\\worktrees\\${key(source)}\\smai-202610020308-quiet-hill`);
   });
 
   it('keeps same-named repos at different paths apart', () => {
@@ -225,11 +225,11 @@ describe('deriveWorktreePath', () => {
   // Without a known home (a device that does not report one) the previous
   // sibling layout is kept, so released devices still get an absolute path.
   it('falls back to a sibling folder without a home directory', () => {
-    expect(deriveWorktreePath('/code/lobehub', 'lobehub/202610020308-quiet-hill')).toBe(
-      '/code/lobehub-lobehub-202610020308-quiet-hill',
+    expect(deriveWorktreePath('/code/lobehub', 'smai/202610020308-quiet-hill')).toBe(
+      '/code/lobehub-smai-202610020308-quiet-hill',
     );
-    expect(deriveWorktreePath('C:\\code\\lobehub', 'lobehub/x', { homeDir: ' ' })).toBe(
-      'C:\\code\\lobehub-lobehub-x',
+    expect(deriveWorktreePath('C:\\code\\lobehub', 'smai/x', { homeDir: ' ' })).toBe(
+      'C:\\code\\lobehub-smai-x',
     );
     expect(deriveWorktreePath('/code/lobehub', '')).toBe('/code/lobehub');
   });

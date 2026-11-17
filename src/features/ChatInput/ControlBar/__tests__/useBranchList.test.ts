@@ -202,7 +202,7 @@ describe('useBranchList', () => {
 
   it('draws no worktree name from a persisted list the device has not confirmed', async () => {
     // A branch made since last session would be missing from this list, and a
-    // name drawn against it could collide (`refs/heads/lobehub` blocks `lobehub/…`).
+    // name drawn against it could collide (`refs/heads/smai` blocks `smai/…`).
     await seed([branch('main', true)]);
     vi.mocked(gitService.listGitBranches).mockImplementation(pending);
 
