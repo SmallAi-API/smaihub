@@ -106,6 +106,8 @@
   "gpt-6-luna.description": "GPT-6 Luna 是 OpenAI 针对专注、高容量任务的最有效模型。",
   "gpt-6-sol.description": "GPT-6 Sol 是为复杂编码和代理工作流程而构建的。",
   "gpt-6.1-sol.description": "GPT-6.1 Sol 提供接近 Astra 的性能，适用于复杂编码、计算机使用和专业工作，且成本更低。",
+  "gpt-6.2-astra.description": "GPT-6.2 Astra 专为软件开发、计算机使用和专业文档领域的高要求项目而构建。",
+  "gpt-6.2-sol.description": "GPT-6.2 Sol 是一款适用于日常工作的高效模型，涵盖从编码到大规模运行代理工作流程的各类任务。",
   "gpt-image-1-mini.description": "成本更低的 GPT Image 1 版本，原生支持文本与图像输入并生成图像输出。",
   "gpt-image-1.5.description": "ChatGPT Image 1.5 原生多模态图片生成模型。",
   "gpt-image-1.description": "ChatGPT 原生多模态图片生成模型。",

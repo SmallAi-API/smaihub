@@ -67,6 +67,7 @@
   "claudeCode.askUserQuestion.timeExpired": "時間到 — 每個問題使用選項 1。",
   "claudeCode.askUserQuestion.timeExpiredNoAnswer": "時間已過 — 此問題無法再回答。",
   "claudeCode.askUserQuestion.timeRemaining": "剩餘時間：{{time}} · 未回答的問題在超時時默認為選項 1。",
+  "claudeCode.askUserQuestion.timeRemainingNoAnswer": "剩餘時間：{{time}} · 此問題將在超時時關閉，不會提交答案。",
   "codeInterpreter-legacy.error": "執行錯誤",
   "codeInterpreter-legacy.executing": "執行中...",
   "codeInterpreter-legacy.files": "檔案：",

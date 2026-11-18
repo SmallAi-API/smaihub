@@ -168,6 +168,7 @@
   "tab.openInSplitView": "在分割視圖中打開",
   "tab.overflow": "{{count}} 個更多標籤",
   "tab.pin": "固定標籤",
+  "tab.reopenClosedTab": "重新開啟已關閉的標籤",
   "tab.resizeSplitView": "調整分割視圖大小",
   "tab.running": "代理正在運行",
   "tab.unpin": "取消固定標籤",
