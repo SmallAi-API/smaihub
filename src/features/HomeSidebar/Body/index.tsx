@@ -13,6 +13,7 @@ import Billboard from '@/features/Billboard';
 import ChannelList from '@/features/Channels/ChannelList';
 import Recents from '@/features/Home/Recents';
 import NavItem from '@/features/NavPanel/components/NavItem';
+import { useNavItemMetrics } from '@/features/NavPanel/density';
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
 import WorkspaceLink from '@/features/Workspace/WorkspaceLink';
 import { useActiveTabKey } from '@/hooks/useActiveTabKey';
@@ -47,7 +48,6 @@ const ACCORDION_KEYS = new Set<string>([GroupKey.Favorites, GroupKey.Recents, Gr
 /** Keys rendered in the header — must be excluded from the body to avoid duplicates
  * when migrating users whose persisted sidebarItems still include them. */
 const HEADER_KEYS = new Set<string>(['home', 'search']);
-const SECTION_GAP = 8;
 
 const accordionComponents: Record<string, (key: string) => ReactElement> = {
   [GroupKey.Agent]: (key) => <Agent itemKey={key} key={key} />,
@@ -73,6 +73,7 @@ const mergeSidebarExpandedKeys = (
 
 const Body = memo(() => {
   const { t } = useTranslation('common');
+  const { panelPaddingInline, sectionGap } = useNavItemMetrics();
   const tab = useActiveTabKey();
   const navigate = useWorkspaceAwareNavigate();
   const { topNavItems, bottomMenuItems } = useNavLayout();
@@ -258,7 +259,7 @@ const Body = memo(() => {
           <AccordionRoot
             indicatorPlacement="inline"
             key={`acc-${sectionGroup.length}`}
-            style={{ gap: SECTION_GAP }}
+            style={{ gap: sectionGap }}
             value={sidebarExpandedKeys}
             onValueChange={(keys) => handleAccordionExpandedChange(accordionKeys, keys as string[])}
           >
@@ -273,7 +274,7 @@ const Body = memo(() => {
       flushAccordion();
       if (sectionGroup.length > 0) {
         elements.push(
-          <Flexbox gap={SECTION_GAP} key={`sections-${elements.length}`}>
+          <Flexbox gap={sectionGap} key={`sections-${elements.length}`}>
             {sectionGroup}
           </Flexbox>,
         );
@@ -324,10 +325,11 @@ const Body = memo(() => {
     renderSidebarItem,
     sidebarExpandedKeys,
     handleAccordionExpandedChange,
+    sectionGap,
   ]);
 
   return (
-    <Flexbox flex={1} gap={1} paddingInline={4} style={{ minHeight: '100%' }}>
+    <Flexbox flex={1} gap={1} paddingInline={panelPaddingInline} style={{ minHeight: '100%' }}>
       {content}
     </Flexbox>
   );
