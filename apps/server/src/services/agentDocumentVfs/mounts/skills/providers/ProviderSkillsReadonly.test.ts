@@ -2,15 +2,13 @@
 import { builtinSkills } from '@lobechat/builtin-skills';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { filterBuiltinSkills } from '@/helpers/skillFilters';
-
 import { ProviderSkillsBuiltin } from './ProviderSkillsBuiltin';
 import { ProviderSkillsInstalledActive } from './ProviderSkillsInstalledActive';
 import { ProviderSkillsInstalledAll } from './ProviderSkillsInstalledAll';
 
 describe('readonly skill providers', () => {
-  const builtinSkill = filterBuiltinSkills(builtinSkills)[0];
-  const builtinSkillWithResources = filterBuiltinSkills(builtinSkills).find(
+  const builtinSkill = builtinSkills[0];
+  const builtinSkillWithResources = builtinSkills.find(
     (skill) => skill.resources && Object.keys(skill.resources).length > 0,
   );
 

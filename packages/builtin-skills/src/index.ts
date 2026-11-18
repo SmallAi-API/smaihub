@@ -2,12 +2,11 @@ import type { BuiltinSkill } from '@lobechat/types';
 
 import { AgentBrowserSkill } from './agent-browser';
 import { ArtifactsSkill } from './artifacts';
-import { TaskSkill } from './task';
+import { LobeHubSkill } from './lobehub';
 
 export { AgentBrowserIdentifier } from './agent-browser';
 export { ArtifactsIdentifier } from './artifacts';
 export { LobeHubIdentifier } from './lobehub';
-export { TaskIdentifier } from './task';
 export {
   buildReactArtifactProject,
   REACT_ARTIFACT_APP_PATH,
@@ -29,6 +28,6 @@ export {
 export const builtinSkills: BuiltinSkill[] = [
   AgentBrowserSkill,
   ArtifactsSkill,
-  TaskSkill,
+  LobeHubSkill,
   // FindSkillsSkill
 ];
