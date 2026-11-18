@@ -14,6 +14,7 @@ import {
   projectPublicTopic,
 } from '../helpers/public-fields';
 import type { ServiceResult } from '../types';
+import type { DeletedResources } from '../types/common.type';
 import { evalPagination as processPaginationConditions } from '../types/eval-resource.type';
 import type {
   MessageListResponse,
@@ -645,11 +646,11 @@ export class MessageService extends BaseService {
   }
 
   /**
-   * 删除单个消息
-   * @param messageId 消息ID
-   * @returns Promise<void>
+   * Delete a single message
+   * @param messageId Message ID
+   * @returns Whether a message row was actually removed
    */
-  async deleteMessage(messageId: string): Promise<void> {
+  async deleteMessage(messageId: string): Promise<boolean> {
     try {
       // 权限校验
       const permissionResult = await this.resolveOperationPermission('MESSAGE_DELETE', {
@@ -667,55 +668,51 @@ export class MessageService extends BaseService {
       const permissionWhere = this.buildPermissionWhere(messages, permissionResult.condition);
       if (permissionWhere) whereConditions.push(permissionWhere);
 
-      // 使用事务删除消息、消息与文件的关联关系
-      await this.db.transaction(async (trx) => {
-        await trx.delete(messages).where(and(...whereConditions));
+      // Use a transaction to delete messages and their associations with files
+      const removed = await this.db.transaction(async (trx) => {
+        const rows = await trx
+          .delete(messages)
+          .where(and(...whereConditions))
+          .returning({ id: messages.id });
+        // Only unlink files of a message this caller actually deleted.
+        if (rows.length === 0) return false;
         await trx.delete(messagesFiles).where(eq(messagesFiles.messageId, messageId));
+        return true;
       });
 
-      this.log('info', '消息删除成功', { messageId });
+      this.log('info', '消息删除成功', { messageId, removed });
+      return removed;
     } catch (error) {
       return this.handleServiceError(error, '删除消息');
     }
   }
 
   /**
-   * 批量删除消息
-   * @param messageIds 消息ID数组
-   * @returns Promise<{ success: number; failed: number; errors: any[] }>
+   * Delete messages in batch. Best effort: an id the caller may not delete (or
+   * that no longer exists) is skipped rather than failing the whole batch.
+   * @param messageIds Message ID array
+   * @returns `count` = message rows actually removed by this call
    */
-  async deleteBatchMessages(messageIds: string[]): Promise<{
-    errors: Array<{ error: string; messageId: string }>;
-    failed: number;
-    success: number;
-  }> {
+  async deleteBatchMessages(messageIds: string[]): Promise<DeletedResources> {
     try {
-      const result = {
-        errors: [] as Array<{ error: string; messageId: string }>,
-        failed: 0,
-        success: 0,
-      };
+      let count = 0;
+      let failed = 0;
 
       for (const messageId of messageIds) {
         try {
-          await this.deleteMessage(messageId);
-          result.success++;
+          if (await this.deleteMessage(messageId)) count++;
         } catch (error) {
-          result.failed++;
-          result.errors.push({
+          failed++;
+          this.log('warn', '批量删除消息时跳过一条', {
             error: error instanceof Error ? error.message : String(error),
             messageId,
           });
         }
       }
 
-      this.log('info', '批量删除消息完成', {
-        failed: result.failed,
-        success: result.success,
-        total: messageIds.length,
-      });
+      this.log('info', '批量删除消息完成', { count, failed, total: messageIds.length });
 
-      return result;
+      return { count, deleted: true };
     } catch (error) {
       return this.handleServiceError(error, '批量删除消息');
     }

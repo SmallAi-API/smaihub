@@ -135,8 +135,10 @@ export class AgentGroupService extends BaseService {
    * @param request 更新请求参数
    * @returns 更新结果
    */
-  async updateAgentGroup(request: UpdateAgentGroupRequest): ServiceResult<void> {
-    this.log('info', '更新助理分类', { id: request.id, name: request.name });
+  async updateAgentGroup(
+    request: UpdateAgentGroupRequest,
+  ): ServiceResult<AgentGroupListResponse[0]> {
+    this.log('info', 'Updating agent group', { id: request.id, name: request.name });
 
     try {
       // 权限校验
@@ -153,14 +155,18 @@ export class AgentGroupService extends BaseService {
         throw this.createBusinessError(`助理分类 ID "${id}" 不存在`);
       }
 
-      await this.db
+      // Answer with the row the update wrote, under the same scope it used.
+      const [updated] = await this.db
         .update(sessionGroups)
         .set({ ...updateData, updatedAt: new Date() })
-        .where(and(eq(sessionGroups.id, id), this.buildWorkspaceWhere(sessionGroups)));
+        .where(and(eq(sessionGroups.id, id), this.buildWorkspaceWhere(sessionGroups)))
+        .returning();
+      if (!updated) throw this.createBusinessError(`助理分类 ID "${id}" 不存在`);
 
-      this.log('info', '助理分类更新成功', { id });
+      this.log('info', 'Agent group updated successfully', { id });
+      return projectPublicAgentGroup(updated);
     } catch (error) {
-      this.handleServiceError(error, '更新助理分类');
+      return this.handleServiceError(error, '更新助理分类');
     }
   }
 

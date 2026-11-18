@@ -6,14 +6,14 @@ import type { LobeChatDatabase } from '@/database/type';
 import { BaseService } from '../common/base.service';
 import { removeSystemContext } from '../helpers/translate';
 import type { ServiceResult } from '../types';
+import type { DeletedResource } from '../types/common.type';
 import type {
   MessageTranslateInfoUpdate,
   MessageTranslateResponse,
   MessageTranslateTriggerRequest,
+  MessageTranslateWriteResponse,
 } from '../types/message-translations.type';
 import { ChatService } from './chat.service';
-
-type MessageTranslateItem = typeof messageTranslates.$inferSelect;
 
 export class MessageTranslateService extends BaseService {
   constructor(db: LobeChatDatabase, userId: string | null, workspaceId?: string) {
@@ -66,8 +66,8 @@ export class MessageTranslateService extends BaseService {
    */
   async translateMessage(
     translateData: MessageTranslateTriggerRequest,
-  ): ServiceResult<Partial<MessageTranslateItem>> {
-    // 权限检查已在路由层完成 (MESSAGE_READ + TRANSLATION_CREATE)
+  ): ServiceResult<MessageTranslateWriteResponse> {
+    // Permission check is already done in the route layer (MESSAGE_READ + TRANSLATION_CREATE)
 
     this.log('info', '开始翻译消息', {
       ...translateData,
@@ -113,8 +113,8 @@ export class MessageTranslateService extends BaseService {
    */
   async updateTranslateInfo(
     data: MessageTranslateInfoUpdate,
-  ): ServiceResult<Partial<MessageTranslateItem>> {
-    // 权限检查已在路由层完成 (MESSAGE_UPDATE + TRANSLATION_UPDATE)
+  ): ServiceResult<MessageTranslateWriteResponse> {
+    // Permission check is already done in the route layer (MESSAGE_UPDATE + TRANSLATION_UPDATE)
 
     try {
       // 检查消息是否存在
@@ -163,10 +163,8 @@ export class MessageTranslateService extends BaseService {
    * @param messageId 消息ID
    * @returns 删除结果
    */
-  async deleteTranslateByMessageId(
-    messageId: string,
-  ): ServiceResult<{ deleted: boolean; messageId: string }> {
-    // 权限检查已在路由层完成 (TRANSLATION_DELETE)
+  async deleteTranslateByMessageId(messageId: string): ServiceResult<DeletedResource> {
+    // Permission check is already done in the route layer (TRANSLATION_DELETE)
 
     try {
       // Check if the translation message exists
@@ -187,7 +185,7 @@ export class MessageTranslateService extends BaseService {
           and(eq(messageTranslates.id, messageId), this.buildWorkspaceWhere(messageTranslates)),
         );
 
-      return { deleted: true, messageId };
+      return { deleted: true, id: messageId };
     } catch (error) {
       this.handleServiceError(error, '删除翻译信息');
     }
