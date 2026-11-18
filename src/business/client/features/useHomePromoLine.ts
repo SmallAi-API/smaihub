@@ -13,7 +13,11 @@ export const useHomePromoLine = (): ReactNode | undefined => {
   const { allowed } = usePermission('create_content');
   const { defaultHomeNewModels } = useStarterModelDefaults();
 
-  if (!allowed || !agentId || !defaultHomeNewModels.some((item) => item.model === 'gpt-6.1-sol')) {
+  if (
+    !allowed ||
+    !agentId ||
+    !defaultHomeNewModels.some((item) => item.model === 'gpt-6.2-astra')
+  ) {
     return undefined;
   }
 
