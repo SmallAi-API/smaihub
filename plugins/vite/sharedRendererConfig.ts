@@ -578,8 +578,6 @@ export function sharedRendererDefine(options: { isElectron: boolean; isMobile: b
 }
 
 export const sharedOptimizeDeps = {
-  // Keep Markdown inside pre-bundling: externalizing it loses the CJK extension's
-  // importer path and resolves its required 2.2 handlers to the root's pinned 2.1.
   exclude: [...stylexTokenModules],
   include: [
     'react',
@@ -589,6 +587,9 @@ export const sharedOptimizeDeps = {
     'react-router/dom',
     '@lobehub/ui',
     '@lobehub/ui > @emotion/react',
+    // UI leaf modules bypass dependency scanning on Web. Bundle CJK explicitly
+    // so its 2.2 handlers cannot resolve to the root serializer's pinned 2.1.
+    'remark-cjk-friendly',
     'zustand',
     'zustand/middleware',
     'swr',
