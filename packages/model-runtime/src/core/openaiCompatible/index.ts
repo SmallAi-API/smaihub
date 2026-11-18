@@ -214,7 +214,7 @@ export const createOpenAICompatibleRuntime = <T extends Record<string, any> = an
       return { ...requestPayload, model: mappedModel };
     }
 
-    private prepareResponsesRequest(
+    protected prepareResponsesRequest(
       requestPayload: ResponseCreateParamsWithPromptCacheKey,
       logicalModel: string,
     ) {
