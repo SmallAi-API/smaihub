@@ -63,6 +63,11 @@ export const cleanupTestUser = async (serverDB: LobeChatDatabase, userId: string
   const { users } = await import('@/database/schemas');
   const { eq } = await import('drizzle-orm');
 
-  // 由于外键级联删除，只需删除用户即可
+  const { releaseProjectEnvironments } =
+    await import('@/database/models/utils/projectEnvironmentCleanup');
+
+  // Everything else cascades from the user; each project's environment is
+  // released the way account deletion releases it.
+  await releaseProjectEnvironments(serverDB, { userId });
   await serverDB.delete(users).where(eq(users.id, userId));
 };
