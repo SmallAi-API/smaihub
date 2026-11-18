@@ -111,7 +111,7 @@ describe('workspace settings useCategory', () => {
     expect(result.current.at(-1)?.key).toBe(WorkspaceSettingsGroupKey.System);
   });
 
-  it('groups runtime resources once after Connections and keeps drives hidden', () => {
+  it('groups devices, subscription accounts and environments under Resources', () => {
     const { result } = renderHook(() => useWorkspaceSettingCategory(), { wrapper });
     const keys = result.current.map((group) => group.key);
     expect(new Set(keys).size).toBe(keys.length);
