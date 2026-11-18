@@ -1,15 +1,18 @@
-import {
-  type CreateSkillInput,
-  type ImportGitHubInput,
-  type ImportUrlInput,
-  type ImportZipInput,
-  type SkillImportResult,
-  type SkillItem,
-  type SkillListItem,
-  type SkillResourceContent,
-  type SkillResourceTreeNode,
-  type SkillSource,
-  type UpdateSkillInput,
+import type {
+  CreateSkillInput,
+  GitHubSkillBatchInput,
+  GitHubSkillDiscovery,
+  GitHubSkillOutcome,
+  ImportGitHubInput,
+  ImportUrlInput,
+  ImportZipInput,
+  SkillImportResult,
+  SkillItem,
+  SkillListItem,
+  SkillResourceContent,
+  SkillResourceTreeNode,
+  SkillSource,
+  UpdateSkillInput,
 } from '@lobechat/types';
 
 import { lambdaClient } from '@/libs/trpc/client';
@@ -22,6 +25,14 @@ class AgentSkillService {
   }
 
   // ===== Import =====
+
+  discoverGitHubSkills(gitUrl: string): Promise<GitHubSkillDiscovery> {
+    return lambdaClient.agentSkills.discoverGitHubSkills.mutate({ gitUrl });
+  }
+
+  importGitHubSkills(input: GitHubSkillBatchInput): Promise<GitHubSkillOutcome[]> {
+    return lambdaClient.agentSkills.importGitHubSkills.mutate(input);
+  }
 
   async importFromGitHub(params: ImportGitHubInput): Promise<SkillImportResult | undefined> {
     return lambdaClient.agentSkills.importFromGitHub.mutate(params);
