@@ -232,11 +232,6 @@ export const useCategory = () => {
         key: SettingsTabs.Webhooks,
         label: t('tab.webhooks'),
       },
-      {
-        icon: KeyRound,
-        key: SettingsTabs.Creds,
-        label: t('tab.creds'),
-      },
     ].filter(Boolean) as CategoryItem[];
 
     groups.push({
@@ -265,6 +260,13 @@ export const useCategory = () => {
         icon: ContainerIcon,
         key: SettingsTabs.Environments,
         label: t('tab.environments'),
+      },
+      // Secrets the agents' runs read at execution time, next to the
+      // environments that consume them.
+      {
+        icon: KeyRound,
+        key: SettingsTabs.Creds,
+        label: t('tab.creds'),
       },
       isDesktop && {
         icon: EthernetPort,
