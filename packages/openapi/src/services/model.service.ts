@@ -54,8 +54,8 @@ export class ModelService extends BaseService {
       const permissionWhere = this.buildPermissionWhere(aiModels, permissionResult.condition);
       if (permissionWhere) conditions.push(permissionWhere);
 
-      // 处理 ModelsListQuery 特定参数
-      const { page, pageSize, keyword, provider, type, enabled } = request;
+      // Handle ModelsListQuery-specific parameters
+      const { keyword, provider, type, enabled } = request;
 
       // 如果提供了关键词，添加到查询条件中
       if (keyword) {
@@ -89,8 +89,8 @@ export class ModelService extends BaseService {
 
       const finalWhereCondition = conditions.length > 0 ? and(...conditions) : undefined;
 
-      // 计算偏移量
-      const { limit, offset } = processPaginationConditions({ page, pageSize });
+      // Calculate offset
+      const { limit, offset } = processPaginationConditions(request);
 
       // 并行执行查询和计数
       const [result, totalResult] = await Promise.all([

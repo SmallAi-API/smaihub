@@ -1,21 +1,28 @@
 // 引入 zod 用于通用 schema
 import { z } from 'zod';
 
-// ==================== 通用分页查询参数 ====================
+import { CursorPaginationQuerySchema, legacyPageQueryShape } from '../helpers/pagination';
+
+// ==================== Common Pagination Query Parameters ====================
 
 /**
  * 通用分页查询参数接口
  */
 export interface IPaginationQuery {
+  cursor?: string;
   keyword?: string;
+  limit?: number;
   page?: number;
   pageSize?: number;
 }
 
 /**
- * 通用分页查询参数 Schema
+ * Common pagination query parameter Schema: `cursor` + `limit`, plus the
+ * deprecated `page`/`pageSize` existing clients still send. See
+ * `helpers/pagination.ts` for the list contract.
  */
 export const PaginationQuerySchema = z.object({
+  ...CursorPaginationQuerySchema.shape,
   keyword: z
     .string()
     .optional()
@@ -24,16 +31,7 @@ export const PaginationQuerySchema = z.object({
       return val.trim();
     })
     .refine((val) => val.length <= 100, 'Search keyword cannot exceed 100 characters'),
-  page: z
-    .string()
-    .transform((val) => parseInt(val, 10))
-    .pipe(z.number().min(1))
-    .optional(),
-  pageSize: z
-    .string()
-    .transform((val) => parseInt(val, 10))
-    .pipe(z.number().min(1).max(100))
-    .optional(),
+  ...legacyPageQueryShape,
 });
 
 export type PaginationQueryResponse<T = any> = {
