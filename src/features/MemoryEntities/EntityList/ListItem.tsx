@@ -2,6 +2,9 @@ import { cssVar } from '@lobehub/ui/stylex/cssVar.stylex';
 import * as stylex from '@stylexjs/stylex';
 import { memo } from 'react';
 
+import { useInterfaceDensity } from '@/styles/density';
+import { sidebarRow } from '@/styles/density.stylex';
+
 import KindIcon from '../components/KindIcon';
 import { useEntityFormat } from '../format';
 import { type MemoryEntity } from '../types';
@@ -24,6 +27,7 @@ const styles = stylex.create({
     textAlign: 'start',
     width: '100%',
   },
+  rowCompact: { paddingBlock: '6px' },
   active: {
     backgroundColor: {
       'default': cssVar.colorFillSecondary,
@@ -35,7 +39,7 @@ const styles = stylex.create({
   titleLine: { alignItems: 'baseline', display: 'flex', gap: '8px' },
   title: {
     flex: '1',
-    fontSize: '14px',
+    fontSize: sidebarRow.textFontSize,
     fontWeight: 500,
     lineHeight: '20px',
     minWidth: 0,
@@ -73,11 +77,17 @@ interface ListItemProps {
  */
 const ListItem = memo<ListItemProps>(({ active, entity, lastTouchedAt, muted, onSelect }) => {
   const format = useEntityFormat();
+  const compact = useInterfaceDensity() === 'compact';
   return (
     <button
       aria-current={active ? 'page' : undefined}
       type={'button'}
-      {...stylex.props(styles.row, active && styles.active, muted && styles.muted)}
+      {...stylex.props(
+        styles.row,
+        compact && styles.rowCompact,
+        active && styles.active,
+        muted && styles.muted,
+      )}
       onClick={() => onSelect(entity.id)}
     >
       <KindIcon kind={entity.kind} />

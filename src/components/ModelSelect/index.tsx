@@ -19,7 +19,7 @@ import { type CSSProperties, type FC, type ReactNode } from 'react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ModelIcon } from '@/components/LobeIcons';
+import { useDensityTokens, useInterfaceDensity } from '@/styles/density';
 import { type AiProviderSourceType } from '@/types/aiProvider';
 import { formatTokenNumber } from '@/utils/format';
 import { getProviderLogoUrl } from '@/utils/providerLogo';
@@ -280,6 +280,8 @@ export const ModelItemRender = memo<ModelItemRenderProps>(
     style,
   }) => {
     const { mobile } = useResponsive();
+    const compact = useInterfaceDensity() === 'compact';
+    const { iconSize } = useDensityTokens();
     const displayNameOrId = displayName || id;
 
     return (
@@ -287,7 +289,7 @@ export const ModelItemRender = memo<ModelItemRenderProps>(
         horizontal
         align={'center'}
         className={className}
-        gap={32}
+        gap={compact ? 16 : 32}
         justify={'space-between'}
         style={{
           overflow: 'hidden',
@@ -302,7 +304,13 @@ export const ModelItemRender = memo<ModelItemRenderProps>(
           gap={8}
           style={{ flexShrink: 1, minWidth: 0, overflow: 'hidden' }}
         >
-          <ModelIcon model={id} size={20} />
+          <Avatar
+            alt=""
+            avatar={getProviderLogoUrl(provider)}
+            shape={'circle'}
+            size={compact ? iconSize : 20}
+            style={{ flexShrink: 0 }}
+          />
           <Text
             style={mobile ? { maxWidth: '60vw' } : { minWidth: 0, overflow: 'hidden' }}
             ellipsis={{
