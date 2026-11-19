@@ -16,6 +16,7 @@ import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useStat
 import { useTranslation } from 'react-i18next';
 
 import { useAnalytics } from '@/libs/analytics/client';
+import { densityVars } from '@/styles/densityVars';
 import type { GlobalBillboard, GlobalBillboardItem } from '@/types/serverConfig';
 
 import { resolveBillboardAction, runBillboardAction } from './actions';
@@ -58,8 +59,7 @@ const styles = createStaticStyles(({ css }) => ({
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
 
-    font-size: 12px;
-    line-height: 20px;
+    font-size: ${densityVars.fontSize};
     color: ${cssVar.colorTextSecondary};
     text-overflow: ellipsis;
   `,
@@ -118,7 +118,7 @@ const styles = createStaticStyles(({ css }) => ({
     background: ${cssVar.colorFillTertiary};
   `,
   itemBody: css`
-    padding-inline: 12px;
+    padding: ${densityVars.contentGap};
   `,
   title: css`
     overflow: hidden;
@@ -126,7 +126,7 @@ const styles = createStaticStyles(({ css }) => ({
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
 
-    font-size: 14px;
+    font-size: ${densityVars.pageTitleFontSize};
     font-weight: 600;
     line-height: 22px;
     color: ${cssVar.colorText};

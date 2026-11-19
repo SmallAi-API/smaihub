@@ -8,6 +8,8 @@ import * as stylex from '@stylexjs/stylex';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { densityTokens } from '@/styles/density.stylex';
+
 import Version from './Version';
 
 const styles = stylex.create({});

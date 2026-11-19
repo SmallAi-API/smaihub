@@ -3,6 +3,7 @@ import * as stylex from '@stylexjs/stylex';
 import { memo } from 'react';
 
 import Avatar from '@/components/Avatar';
+import { densityTokens } from '@/styles/density.stylex';
 
 import KindIcon from '../components/KindIcon';
 import { useEntityDataContext } from '../context';
@@ -29,14 +30,14 @@ const styles = stylex.create({
     color: cssVar.colorText,
     cursor: 'pointer',
     display: 'flex',
-    gap: '12px',
+    gap: densityTokens['--lobe-density-content-gap'],
     paddingBlock: '8px',
     paddingInline: '8px',
     textAlign: 'start',
   },
   text: { display: 'flex', flexDirection: 'column', minWidth: 0 },
   name: {
-    fontSize: '14px',
+    fontSize: densityTokens['--lobe-density-font-size'],
     fontWeight: 500,
     lineHeight: '20px',
     overflow: 'hidden',
@@ -61,10 +62,10 @@ const styles = stylex.create({
     fontSize: '13px',
     gap: '6px',
     paddingBlock: '4px',
-    paddingInlineEnd: '12px',
+    paddingInlineEnd: densityTokens['--lobe-density-content-gap'],
     paddingInlineStart: '4px',
   },
-  chipPlain: { paddingInlineStart: '12px' },
+  chipPlain: { paddingInlineStart: densityTokens['--lobe-density-content-gap'] },
   chipType: { color: cssVar.colorTextQuaternary, fontSize: '12px' },
 });
 

@@ -6,6 +6,7 @@ import { memo } from 'react';
 import { Trans } from 'react-i18next';
 
 import { EntityLinkRender, type LobeLinkKind } from '@/features/EntityLink';
+import { densityTokens } from '@/styles/density.stylex';
 
 const styles = stylex.create({
   bubble: {
@@ -13,7 +14,7 @@ const styles = stylex.create({
     paddingBlock: '10px',
     paddingInline: '14px',
     borderRadius: '12px',
-    fontSize: '14px',
+    fontSize: densityTokens['--lobe-density-font-size'],
     lineHeight: 1.8,
     color: cssVar.colorText,
     backgroundColor: cssVar.colorFillTertiary,

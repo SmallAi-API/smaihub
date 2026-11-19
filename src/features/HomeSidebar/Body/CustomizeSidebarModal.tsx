@@ -65,6 +65,7 @@ import {
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
 import { labPreferSelectors } from '@/store/user/selectors';
+import { densityTokens } from '@/styles/density.stylex';
 
 // ---------------------------------------------------------------------------
 // Types & constants
@@ -183,7 +184,7 @@ const styles = stylex.create({
     display: 'grid',
     gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
     gap: '8px',
-    paddingBlockStart: '16px',
+    paddingBlockStart: densityTokens['--lobe-density-card-padding'],
   },
 });
 
