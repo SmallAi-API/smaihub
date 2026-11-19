@@ -7,8 +7,11 @@ import { DocumentModel } from '@/database/models/document';
 import { EmbeddingModel } from '@/database/models/embedding';
 import { FileModel } from '@/database/models/file';
 import { MessageModel } from '@/database/models/message';
+import { getServerDB } from '@/database/server';
+import { initModelRuntimeFromDB } from '@/server/modules/ModelRuntime';
 import { ChunkService } from '@/server/services/chunk';
 import { DocumentService } from '@/server/services/document';
+import { resolveFileEmbeddingModel } from '@/server/services/knowledgeBase/fileEmbeddingModel';
 
 import { chunkRouter } from '../chunk';
 
@@ -28,6 +31,50 @@ vi.mock('@/database/models/message', () => ({ MessageModel: vi.fn() }));
 vi.mock('@/server/services/chunk', () => ({ ChunkService: vi.fn() }));
 vi.mock('@/server/services/document', () => ({ DocumentService: vi.fn() }));
 vi.mock('@/database/server', () => ({ getServerDB: vi.fn() }));
+vi.mock('@/server/modules/ModelRuntime', () => ({ initModelRuntimeFromDB: vi.fn() }));
+vi.mock('@/server/services/knowledgeBase/fileEmbeddingModel', () => ({
+  resolveFileEmbeddingModel: vi.fn(),
+}));
+
+describe('chunkRouter.semanticSearch', () => {
+  it('embeds the query with both the resolved channel and model', async () => {
+    const serverDB = {} as Awaited<ReturnType<typeof getServerDB>>;
+    const embedding = [0.1, 0.2, 0.3];
+    const embeddings = vi.fn().mockResolvedValue([embedding]);
+    const semanticSearch = vi.fn().mockResolvedValue([]);
+    vi.mocked(getServerDB).mockResolvedValue(serverDB);
+    vi.mocked(ChunkModel).mockImplementation(function () {
+      return { semanticSearch } as unknown as ChunkModel;
+    });
+    vi.mocked(resolveFileEmbeddingModel).mockResolvedValue({
+      model: 'text-embedding-3-large',
+      provider: 'custom-embedding',
+    });
+    vi.mocked(initModelRuntimeFromDB).mockResolvedValue({
+      embeddings,
+    } as Awaited<ReturnType<typeof initModelRuntimeFromDB>>);
+
+    const caller = chunkRouter.createCaller({ userId: 'user_test' } as Parameters<
+      typeof chunkRouter.createCaller
+    >[0]);
+    await expect(caller.semanticSearch({ fileIds: ['file_1'], query: 'hello' })).resolves.toEqual(
+      [],
+    );
+
+    expect(resolveFileEmbeddingModel).toHaveBeenCalledWith(serverDB, 'user_test', undefined);
+    expect(initModelRuntimeFromDB).toHaveBeenCalledWith(
+      serverDB,
+      'user_test',
+      'custom-embedding',
+      undefined,
+    );
+    expect(embeddings).toHaveBeenCalledWith(
+      { dimensions: 1024, input: 'hello', model: 'text-embedding-3-large' },
+      expect.anything(),
+    );
+    expect(semanticSearch).toHaveBeenCalledWith({ embedding, fileIds: ['file_1'], query: 'hello' });
+  });
+});
 
 describe('chunkRouter.getFileContents — ID branching', () => {
   const userId = 'user_test';

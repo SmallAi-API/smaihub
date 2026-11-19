@@ -1,4 +1,3 @@
-import { DEFAULT_FILE_EMBEDDING_MODEL_ITEM } from '@lobechat/const';
 import { RequestTrigger, SemanticSearchSchema } from '@lobechat/types';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
@@ -11,34 +10,22 @@ import { DocumentModel } from '@/database/models/document';
 import { EmbeddingModel } from '@/database/models/embedding';
 import { FileModel } from '@/database/models/file';
 import { MessageModel } from '@/database/models/message';
-import { AiInfraRepos } from '@/database/repositories/aiInfra';
 import { router } from '@/libs/trpc/lambda';
 import { serverDatabase } from '@/libs/trpc/lambda/middleware';
-import { getServerDefaultFilesConfig, getServerGlobalConfig } from '@/server/globalConfig';
 import { initModelRuntimeFromDB } from '@/server/modules/ModelRuntime';
 import { ChunkService } from '@/server/services/chunk';
 import { DocumentService } from '@/server/services/document';
 import { KnowledgeBaseSearchService } from '@/server/services/knowledgeBase';
+import { resolveFileEmbeddingModel } from '@/server/services/knowledgeBase/fileEmbeddingModel';
 
 import { assertFileNotInRestrictedKnowledgeBase } from './_helpers/knowledgeBaseAccess';
 
-const chunkProcedure = wsCompatProcedure.use(serverDatabase).use(async (opts) => {
+const chunkProcedure = wsCompatProcedure.use(serverDatabase).use((opts) => {
   const { ctx } = opts;
   const wsId = ctx.workspaceId ?? undefined;
-  const globalConfig = await getServerGlobalConfig();
-
-  const providerConfigs: Record<string, { enabled: boolean }> = {};
-  if (globalConfig.aiProvider) {
-    for (const [key, value] of Object.entries(globalConfig.aiProvider)) {
-      if (value) {
-        providerConfigs[key] = { enabled: value.enabled ?? false };
-      }
-    }
-  }
 
   return opts.next({
     ctx: {
-      aiInfraRepos: new AiInfraRepos(ctx.serverDB, ctx.userId, providerConfigs),
       asyncTaskModel: new AsyncTaskModel(ctx.serverDB, ctx.userId, wsId),
       chunkModel: new ChunkModel(ctx.serverDB, ctx.userId, wsId),
       chunkService: new ChunkService(ctx.serverDB, ctx.userId, wsId),
@@ -145,18 +132,19 @@ export const chunkRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const defaultConfig =
-        getServerDefaultFilesConfig().embeddingModel || DEFAULT_FILE_EMBEDDING_MODEL_ITEM;
-      const { model } = defaultConfig;
-      const enabledEmbeddingProviders = await ctx.aiInfraRepos.getEnabledEmbeddingProviders();
-      const provider = enabledEmbeddingProviders[0]?.id || defaultConfig.provider;
+      const workspaceId = ctx.workspaceId ?? undefined;
+      const { model, provider } = await resolveFileEmbeddingModel(
+        ctx.serverDB,
+        ctx.userId,
+        workspaceId,
+      );
 
       // Read user's provider config from database
       const agentRuntime = await initModelRuntimeFromDB(
         ctx.serverDB,
         ctx.userId,
         provider,
-        ctx.workspaceId ?? undefined,
+        workspaceId,
       );
 
       const embeddings = await agentRuntime.embeddings(

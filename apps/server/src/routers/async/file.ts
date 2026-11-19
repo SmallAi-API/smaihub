@@ -7,22 +7,20 @@ import { z } from 'zod';
 
 import { checkEmbeddingUsage } from '@/business/server/trpc-middlewares/async';
 import { FILE_PARSE_SIZE_LIMIT_ERROR_MESSAGE, MAX_FILE_PARSE_SIZE } from '@/const/file';
-import { DEFAULT_FILE_EMBEDDING_MODEL_ITEM } from '@/const/settings/knowledge';
 import { AsyncTaskModel } from '@/database/models/asyncTask';
 import { ChunkModel } from '@/database/models/chunk';
 import { EmbeddingModel } from '@/database/models/embedding';
 import { FileModel } from '@/database/models/file';
-import { AiInfraRepos } from '@/database/repositories/aiInfra';
 import { type NewChunkItem, type NewEmbeddingsItem } from '@/database/schemas';
 import type { LobeChatDatabase } from '@/database/type';
 import { fileEnv } from '@/envs/file';
 import { asyncAuthedProcedure, asyncRouter as router } from '@/libs/trpc/async';
-import { getServerDefaultFilesConfig, getServerGlobalConfig } from '@/server/globalConfig';
 import { initModelRuntimeFromDB } from '@/server/modules/ModelRuntime';
 import { ChunkService } from '@/server/services/chunk';
 import { DocumentService } from '@/server/services/document';
 import { FileService } from '@/server/services/file';
 import { isSharedLimitFailure, toAsyncTaskErrorType } from '@/server/services/fileParse/failure';
+import { resolveFileEmbeddingModel } from '@/server/services/knowledgeBase/fileEmbeddingModel';
 import { type IAsyncTaskError } from '@/types/asyncTask';
 import { AsyncTaskError, AsyncTaskErrorType, AsyncTaskStatus } from '@/types/asyncTask';
 import { safeParseJSON } from '@/utils/safeParseJSON';
@@ -34,23 +32,11 @@ import { sanitizeUTF8 } from '@/utils/sanitizeUTF8';
  */
 const IN_FLIGHT_BATCH_GRACE_MS = 30_000;
 
-const fileProcedure = asyncAuthedProcedure.use(async (opts) => {
+const fileProcedure = asyncAuthedProcedure.use((opts) => {
   const { ctx } = opts;
-  const globalConfig = await getServerGlobalConfig();
-
-  // Convert ServerModelProviderConfig to ProviderConfig format
-  const providerConfigs: Record<string, { enabled: boolean }> = {};
-  if (globalConfig.aiProvider) {
-    for (const [key, value] of Object.entries(globalConfig.aiProvider)) {
-      if (value) {
-        providerConfigs[key] = { enabled: value.enabled ?? false };
-      }
-    }
-  }
 
   return opts.next({
     ctx: {
-      aiInfraRepos: new AiInfraRepos(ctx.serverDB, ctx.userId, providerConfigs),
       asyncTaskModel: new AsyncTaskModel(ctx.serverDB, ctx.userId),
       chunkModel: new ChunkModel(ctx.serverDB, ctx.userId),
       chunkService: new ChunkService(ctx.serverDB, ctx.userId),
@@ -151,18 +137,11 @@ export const fileRouter = router({
 
       const asyncTask = await asyncTaskModel.findById(input.taskId);
 
-      const defaultConfig =
-        getServerDefaultFilesConfig().embeddingModel || DEFAULT_FILE_EMBEDDING_MODEL_ITEM;
-      const { model } = defaultConfig;
-
-      // Get user's enabled embedding providers (sorted by user preference)
-      const enabledEmbeddingProviders = await ctx.aiInfraRepos.getEnabledEmbeddingProviders();
-
-      // Use the first enabled provider, fallback to default config if none enabled
-      const provider =
-        enabledEmbeddingProviders.length > 0
-          ? enabledEmbeddingProviders[0].id
-          : defaultConfig.provider;
+      const { model, provider } = await resolveFileEmbeddingModel(
+        ctx.serverDB,
+        ctx.userId,
+        workspaceId,
+      );
 
       if (!asyncTask) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Async Task not found' });
 
