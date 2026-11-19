@@ -5,6 +5,8 @@ import {
   ACCEPTANCE_EXTENSION_IDS,
   ACCEPTANCE_EXTENSION_SCOPE,
   ACCEPTANCE_REVIEW_SCOPE,
+  LOBEHUB_DESKTOP_CLIENT_ID,
+  LOBOT_DESKTOP_CLIENT_ID,
 } from '@lobechat/const';
 import { type ClientMetadata } from 'oidc-provider';
 import urlJoin from 'url-join';
@@ -19,36 +21,43 @@ const desktopAppOrigins = cloudAppOrigins.includes(new URL(appUrl).origin)
 const marketBaseUrl = new URL(appEnv.MARKET_BASE_URL ?? 'https://market.lobehub.com').origin;
 
 /**
+ * A desktop app signs in through the shared `/oidc/callback/desktop` handoff:
+ * the callback stores the code under the request's `state`, and the app polls
+ * it back with its PKCE verifier. Each app still has its own client, so its
+ * grants and tokens are told apart from the other desktop apps'.
+ */
+const desktopClient = (
+  client: Pick<ClientMetadata, 'client_id' | 'client_name' | 'logo_uri'>,
+): ClientMetadata => ({
+  application_type: 'web',
+  grant_types: ['authorization_code', 'refresh_token'],
+  post_logout_redirect_uris: [
+    ...desktopAppOrigins.map((origin) => urlJoin(origin, '/oauth/logout')),
+    'http://localhost:3210/oauth/logout',
+  ],
+  redirect_uris: [
+    ...desktopAppOrigins.map((origin) => urlJoin(origin, '/oidc/callback/desktop')),
+    'http://localhost:3210/oidc/callback/desktop',
+  ],
+  response_types: ['code'],
+  token_endpoint_auth_method: 'none',
+  ...client,
+});
+
+/**
  * Clients the open-source distribution registers itself.
  */
 const builtinClients: ClientMetadata[] = [
-  {
-    application_type: 'web',
-    client_id: 'lobehub-desktop',
+  desktopClient({
+    client_id: LOBEHUB_DESKTOP_CLIENT_ID,
     client_name: `${BRANDING_NAME} Desktop`,
-    // Only supports authorization code flow
-    grant_types: ['authorization_code', 'refresh_token'],
-
     logo_uri: 'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com/logo/smai.ai.png',
-
-    post_logout_redirect_uris: [
-      // Keep the legacy subdomain working while Cloud moves to the apex domain.
-      ...desktopAppOrigins.map((origin) => urlJoin(origin, '/oauth/logout')),
-      'http://localhost:3210/oauth/logout',
-    ],
-
-    // 桌面端授权回调 - 改为 Web 页面路径
-    redirect_uris: [
-      ...desktopAppOrigins.map((origin) => urlJoin(origin, '/oidc/callback/desktop')),
-      'http://localhost:3210/oidc/callback/desktop',
-    ],
-
-    // 支持授权码获取令牌和刷新令牌
-    response_types: ['code'],
-
-    // 标记为公共客户端客户端，无密钥
-    token_endpoint_auth_method: 'none',
-  },
+  }),
+  desktopClient({
+    client_id: LOBOT_DESKTOP_CLIENT_ID,
+    client_name: 'Lobot',
+    logo_uri: 'https://hub-apac-1.lobeobjects.space/lobot-desktop-icon.png',
+  }),
 
   {
     application_type: 'native', // 移动端使用 native 类型

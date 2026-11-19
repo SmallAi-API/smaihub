@@ -67,52 +67,48 @@ describe('OIDC Provider - Market Client Integration', () => {
   });
 
   describe('Provider Configuration', () => {
-    it('should accept both Cloud desktop callback origins during the apex migration', async () => {
-      vi.doMock('@/envs/app', () => ({
-        appEnv: {
-          APP_URL: 'https://app.lobehub.com',
-          MARKET_BASE_URL: undefined,
-        },
-      }));
+    it.each(['lobehub-desktop', 'lobot-desktop'])(
+      'restricts %s redirects to the SMai origin and localhost',
+      async (clientId) => {
+        vi.doMock('@/envs/app', () => ({
+          appEnv: { APP_URL: 'https://www.smallai.asia' },
+        }));
 
-      const { default: Provider } = await import('oidc-provider');
-      const { defaultClients } = await import('./config');
-      const provider = new Provider('https://app.lobehub.com/oidc', { clients: defaultClients });
-      const desktopClient = await provider.Client.find('lobehub-desktop');
+        const { default: Provider } = await import('oidc-provider');
+        const { defaultClients } = await import('./config');
+        const provider = new Provider('https://www.smallai.asia/oidc', { clients: defaultClients });
+        const client = await provider.Client.find(clientId);
 
-      expect(
-        desktopClient?.redirectUriAllowed('https://app.lobehub.com/oidc/callback/desktop'),
-      ).toBe(true);
-      expect(desktopClient?.redirectUriAllowed('https://lobehub.com/oidc/callback/desktop')).toBe(
-        true,
-      );
-      expect(desktopClient?.redirectUriAllowed('https://example.com/oidc/callback/desktop')).toBe(
-        false,
-      );
+        expect(client?.redirectUris).toEqual([
+          'https://www.smallai.asia/oidc/callback/desktop',
+          'http://localhost:3210/oidc/callback/desktop',
+        ]);
+        expect(client?.postLogoutRedirectUris).toEqual([
+          'https://www.smallai.asia/oauth/logout',
+          'http://localhost:3210/oauth/logout',
+        ]);
 
-      vi.doUnmock('@/envs/app');
-    });
+        vi.doUnmock('@/envs/app');
+      },
+    );
 
     it('should register toby as a public native client with an https callback only', async () => {
       vi.doMock('@/envs/app', () => ({
         appEnv: {
-          APP_URL: 'https://app.lobehub.com',
+          APP_URL: 'https://www.smallai.asia',
           MARKET_BASE_URL: undefined,
         },
       }));
 
       const { default: Provider } = await import('oidc-provider');
       const { defaultClients } = await import('./config');
-      const provider = new Provider('https://app.lobehub.com/oidc', { clients: defaultClients });
+      const provider = new Provider('https://www.smallai.asia/oidc', { clients: defaultClients });
       const tobyClient = await provider.Client.find('toby');
 
       expect(tobyClient?.applicationType).toBe('native');
       expect(tobyClient?.tokenEndpointAuthMethod).toBe('none');
       expect(tobyClient?.grantTypes).toEqual(['authorization_code', 'refresh_token']);
-      expect(tobyClient?.redirectUriAllowed('https://app.lobehub.com/oidc/callback/toby')).toBe(
-        true,
-      );
-      expect(tobyClient?.redirectUriAllowed('https://lobehub.com/oidc/callback/toby')).toBe(true);
+      expect(tobyClient?.redirectUris).toEqual(['https://www.smallai.asia/oidc/callback/toby']);
       expect(tobyClient?.redirectUriAllowed('com.lobehub.toby://auth/callback')).toBe(false);
       expect(tobyClient?.redirectUriAllowed('https://example.com/oidc/callback/toby')).toBe(false);
 

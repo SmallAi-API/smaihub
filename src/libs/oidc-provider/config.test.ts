@@ -25,11 +25,11 @@ afterEach(() => {
 });
 
 describe('OIDC default clients', () => {
-  it('keep the upstream names under default branding', async () => {
+  it('names the desktop and mobile clients under SMai branding', async () => {
     const names = await loadClientNames();
 
-    expect(names['lobehub-desktop']).toBe('LobeHub Desktop');
-    expect(names['lobehub-mobile']).toBe('LobeHub Mobile');
+    expect(names['lobehub-desktop']).toBe('smai.ai Desktop');
+    expect(names['lobehub-mobile']).toBe('smai.ai Mobile');
   });
 
   it("name the deployment's own desktop and mobile apps under custom branding", async () => {
@@ -37,6 +37,27 @@ describe('OIDC default clients', () => {
 
     expect(names['lobehub-desktop']).toBe('Acme Desktop');
     expect(names['lobehub-mobile']).toBe('Acme Mobile');
+  });
+
+  it('gives Lobot its own desktop client that signs in through the desktop handoff', async () => {
+    vi.resetModules();
+    const { defaultClients } = await import('./config');
+    const desktop = defaultClients.find((c) => c.client_id === 'lobehub-desktop');
+    const lobot = defaultClients.find((c) => c.client_id === 'lobot-desktop');
+
+    expect(desktop?.logo_uri).toBe(
+      'https://smaihub-1301925107.cos.ap-guangzhou.myqcloud.com/logo/smai.ai.png',
+    );
+    expect(lobot).toMatchObject({
+      client_name: 'Lobot',
+      logo_uri: 'https://hub-apac-1.lobeobjects.space/lobot-desktop-icon.png',
+      grant_types: ['authorization_code', 'refresh_token'],
+      response_types: ['code'],
+      token_endpoint_auth_method: 'none',
+    });
+    expect(lobot?.redirect_uris).toEqual(desktop?.redirect_uris);
+    expect(lobot?.redirect_uris?.every((uri) => uri.endsWith('/oidc/callback/desktop'))).toBe(true);
+    expect(lobot?.post_logout_redirect_uris).toEqual(desktop?.post_logout_redirect_uris);
   });
 
   it('register the browser extension as a public PKCE client that can stay signed in', async () => {
