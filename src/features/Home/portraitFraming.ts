@@ -38,22 +38,14 @@ const CHARACTERS_SUBMERGED_RATIO = 0.1;
 /** Space between the hero row and the card that masks the portrait. */
 export const HOME_PORTRAIT_CARD_GAP = 24;
 
-/**
- * Fit the animated characters into a portrait lane of the given width.
- *
- * The artwork is authored in a fixed 550×400 box and scaled as a whole, so the
- * lane's width is what binds (the box is wider than it is tall, and the lane is
- * the reverse). Overlap is measured from the scaled height, since that is the
- * artwork's real extent — measuring from a nominal lane height would put the cut
- * in empty space.
- */
-export const getHomePortraitFrame = (laneWidth: number) => {
+/** Fit the animated characters to the lane and account for the gap above the card. */
+export const getHomePortraitFrame = (laneWidth: number, cardGap = HOME_PORTRAIT_CARD_GAP) => {
   const scale = laneWidth / CHARACTERS_WIDTH;
   const height = CHARACTERS_HEIGHT * scale;
 
   return {
     height,
-    overlap: height * CHARACTERS_SUBMERGED_RATIO + HOME_PORTRAIT_CARD_GAP,
+    overlap: height * CHARACTERS_SUBMERGED_RATIO + cardGap,
     scale,
   };
 };

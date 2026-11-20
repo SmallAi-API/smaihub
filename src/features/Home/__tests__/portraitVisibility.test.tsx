@@ -83,10 +83,11 @@ const renderHome = async ({
     });
   }
   vi.doMock('@/store/global', () => ({ useGlobalStore: selectFromGlobalStore }));
-  function selectFromUserStore(selector: (state: unknown) => unknown) {
-    return selector({ isSignedIn: isLogin });
-  }
-  vi.doMock('@/store/user', () => ({ useUserStore: selectFromUserStore }));
+  const userState = { isSignedIn: isLogin };
+  vi.doMock('@/store/user', () => ({
+    getUserStoreState: () => userState,
+    useUserStore: (selector: (state: unknown) => unknown) => selector(userState),
+  }));
 
   const { default: Home } = await import('../index');
 

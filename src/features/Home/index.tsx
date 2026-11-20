@@ -25,6 +25,7 @@ import { densityVars } from '@/styles/densityVars';
 
 import { HOME_ENTITY_PORTAL_SCOPE, isAcceptancePortalView } from './acceptancePortalView';
 import { isHomeMinimalLayout } from './CustomizeModal/config';
+import { useHomeSpacing } from './homeDensity';
 import HomeHeader from './HomeHeader';
 import HomeModeContent from './HomeModeContent';
 import HomePortrait from './HomePortrait';
@@ -89,13 +90,11 @@ const SPEECH_RESERVED_WIDTH =
 /** Use the tighter rail state so its animation cannot switch rows or rewrap text. */
 const SPEECH_INLINE_MIN = SPEECH_RESERVED_WIDTH + SPEECH_GREETING_MIN;
 const COMPACT_PORTRAIT_WIDTH = HOME_PORTRAIT_WIDTH * COMPACT_PORTRAIT_SHRINK;
-/**
- * The artwork is scaled as a whole, so each lane width implies the height the
- * characters actually occupy — which is what the overlap has to measure, not
- * the lane's nominal height.
- */
 const PORTRAIT_FRAME = getHomePortraitFrame(HOME_PORTRAIT_WIDTH);
 const COMPACT_PORTRAIT_FRAME = getHomePortraitFrame(COMPACT_PORTRAIT_WIDTH);
+/** Compact density uses the smaller portrait at every width. */
+const DENSE_ROW_GAP = 16;
+const DENSE_PORTRAIT_FRAME = getHomePortraitFrame(COMPACT_PORTRAIT_WIDTH, DENSE_ROW_GAP);
 const MINIMAL_STACK_GAP = 24;
 /**
  * The minimal header stacks the agent switcher (24px avatar + 2px paddings,
@@ -109,6 +108,8 @@ const MINIMAL_SWITCHER_ROW = 28;
 const MINIMAL_HEADER_GAP = 8;
 const MINIMAL_HEADER_HEIGHT = MINIMAL_SWITCHER_ROW + MINIMAL_HEADER_GAP + MINIMAL_GREETING_LINE;
 const MINIMAL_LIFT = MINIMAL_HEADER_HEIGHT + MINIMAL_STACK_GAP;
+/** The same stack in compact density: 20px greeting, 20px avatar switcher, 16px gap. */
+const DENSE_MINIMAL_LIFT = Math.round(20 * 1.4) + MINIMAL_HEADER_GAP + 24 + 16;
 
 const styles = createStaticStyles(({ css }) => ({
   // Both rows size to their content and the page scrolls around the whole grid
@@ -125,6 +126,10 @@ const styles = createStaticStyles(({ css }) => ({
     gap: ${HOME_PORTRAIT_CARD_GAP}px ${RAIL_COLUMN_GAP}px;
 
     width: 100%;
+
+    html[data-density='compact'] & {
+      row-gap: ${DENSE_ROW_GAP}px;
+    }
 
     @media (width <= 1100px) {
       grid-template-columns: 1fr;
@@ -246,6 +251,18 @@ const styles = createStaticStyles(({ css }) => ({
       );
       min-height: 0;
     }
+
+    html[data-density='compact'] & {
+      --home-portrait-width: ${COMPACT_PORTRAIT_WIDTH}px;
+      --home-portrait-scale: ${DENSE_PORTRAIT_FRAME.scale};
+      --home-portrait-overlap: -${DENSE_PORTRAIT_FRAME.overlap}px;
+
+      min-height: ${DENSE_PORTRAIT_FRAME.height - DENSE_PORTRAIT_FRAME.overlap}px;
+
+      @container home (width >= ${SPEECH_INLINE_MIN}px) {
+        min-height: 0;
+      }
+    }
   `,
   bubbleSlot: css`
     width: max-content;
@@ -281,6 +298,10 @@ const styles = createStaticStyles(({ css }) => ({
     max-inline-size: 760px;
     margin-inline: auto;
     padding-block-end: ${MINIMAL_LIFT}px;
+
+    html[data-density='compact'] & {
+      padding-block-end: ${DENSE_MINIMAL_LIFT}px;
+    }
   `,
   railSurface: css`
     transform: translateX(0);
@@ -340,6 +361,7 @@ const styles = createStaticStyles(({ css }) => ({
 
 const Home = memo(() => {
   const isLogin = useUserStore(authSelectors.isLogin);
+  const { mainGap, minimalStackGap } = useHomeSpacing();
   const showHomeRail = useGlobalStore(systemStatusSelectors.showHomeRail);
   const showHomePortrait = useGlobalStore(systemStatusSelectors.showHomePortrait);
   const hiddenWidgets = useGlobalStore(systemStatusSelectors.hiddenHomeWidgets);
@@ -416,7 +438,7 @@ const Home = memo(() => {
 
   if (minimal)
     return (
-      <Flexbox className={styles.minimal} gap={MINIMAL_STACK_GAP}>
+      <Flexbox className={styles.minimal} gap={minimalStackGap}>
         <HomeHeader centered />
         <div className={styles.inputArea}>
           <InputArea
@@ -456,7 +478,7 @@ const Home = memo(() => {
         className={cx(styles.main, styles.content, styles.contentCollapsed)}
         data-rail-collapsed={contentCollapsed}
         data-testid={'home-main'}
-        gap={24}
+        gap={mainGap}
       >
         <Flexbox className={styles.inputArea} gap={12}>
           <InputArea
