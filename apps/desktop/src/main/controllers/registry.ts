@@ -4,6 +4,7 @@ import {
   type MergeIpcService,
 } from '@/utils/ipc';
 
+import AppLaunchCtr from './AppLaunchCtr';
 import AuthCtr from './AuthCtr';
 import AuvCtr from './AuvCtr';
 import BinaryCtr from './BinaryCtr';
@@ -43,6 +44,7 @@ import WorkspaceCtr from './WorkspaceCtr';
 export const controllerIpcConstructors = [
   HeterogeneousAgentCtr,
   HeteroSessionCtr,
+  AppLaunchCtr,
   AuthCtr,
   AuvCtr,
   BrowserControlCtr,
