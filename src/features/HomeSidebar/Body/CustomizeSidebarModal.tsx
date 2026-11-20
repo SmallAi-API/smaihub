@@ -60,12 +60,11 @@ import { systemStatusSelectors } from '@/store/global/selectors';
 import {
   DEFAULT_SIDEBAR_ITEMS,
   getDefaultHiddenSections,
+  setSidebarSectionHidden,
   SIDEBAR_ACCORDION_KEYS,
   SIDEBAR_SPACER_ID,
 } from '@/store/global/selectors/systemStatus';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
-import { useUserStore } from '@/store/user';
-import { labPreferSelectors } from '@/store/user/selectors';
 import { densityTokens } from '@/styles/density.stylex';
 
 // ---------------------------------------------------------------------------
@@ -105,24 +104,16 @@ const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
 interface SidebarItemAvailability {
   channelsEnabled?: boolean;
   dashboardEnabled?: boolean;
-  goalsEnabled?: boolean;
 }
 
-// Dashboards also stay out until the `dashboard` feature flag is on for the
-// user, Channels until Channels are enabled, and Goals until the user turns on
-// its lab; a dropped id is restored by `withAllKnownKeys` once it is.
 export const getAvailableSidebarItems = (
   isWorkspaceMode: boolean,
-  {
-    channelsEnabled = false,
-    dashboardEnabled = false,
-    goalsEnabled = false,
-  }: SidebarItemAvailability = {},
+  { channelsEnabled = false, dashboardEnabled = false }: SidebarItemAvailability = {},
 ): SidebarItemConfig[] =>
   ALL_SIDEBAR_ITEMS.filter((item) => {
     if (item.id === 'channels' && !channelsEnabled) return false;
+    if (!isWorkspaceMode && item.id === 'goals') return false;
     if (item.id === 'dashboard' && !dashboardEnabled) return false;
-    if (item.id === 'goals' && !goalsEnabled) return false;
     if (isWorkspaceMode && (item.id === 'memory' || item.id === 'dashboard')) return false;
     return true;
   });
@@ -206,10 +197,11 @@ const styles = stylex.create({
 
 const SortableItem = memo<{
   hiddenSections: string[];
+  personal: boolean;
   id: string;
   onToggle: (key: string) => void;
-}>(({ id, hiddenSections, onToggle }) => {
-  const { t } = useTranslation(['common', 'channel']);
+}>(({ id, hiddenSections, onToggle, personal }) => {
+  const { t } = useTranslation(['common', 'channel', 'chat']);
   const item = ITEM_MAP.get(id);
   const labelKey = item?.labelKey;
   const {
@@ -255,7 +247,11 @@ const SortableItem = memo<{
           <Icon icon={GripVertical} size={14} style={{ color: cssVar.colorTextQuaternary }} />
         </Flexbox>
         {route?.icon && <Icon icon={route.icon} size={18} />}
-        <Text>{t(labelKey as any, { ns: item.labelNs ?? 'common' })}</Text>
+        <Text>
+          {personal && id === 'tasks'
+            ? t('tab.goalsAndTasks', { ns: 'chat' })
+            : t(labelKey as any, { ns: item.labelNs ?? 'common' })}
+        </Text>
       </Flexbox>
       {item.alwaysVisible ? (
         <Tooltip title={t('navPanel.pinned' as any)}>
@@ -363,8 +359,8 @@ const AccordionGroup = memo<{ children: React.ReactNode }>(({ children }) => {
 // Drag overlay item (static, no sortable hooks)
 // ---------------------------------------------------------------------------
 
-const OverlayItem = memo<{ id: string }>(({ id }) => {
-  const { t } = useTranslation(['common', 'channel']);
+const OverlayItem = memo<{ id: string; personal: boolean }>(({ id, personal }) => {
+  const { t } = useTranslation(['common', 'channel', 'chat']);
   const agentLabelKey = 'navPanel.agent';
 
   // Accordion group overlay: render a compact representation
@@ -410,7 +406,11 @@ const OverlayItem = memo<{ id: string }>(({ id }) => {
     <Flexbox horizontal align={'center'} className={stylex.props(styles.overlay).className} gap={8}>
       <Icon icon={GripVertical} size={14} style={{ color: cssVar.colorTextQuaternary }} />
       {route?.icon && <Icon icon={route.icon} size={18} />}
-      <Text>{t(labelKey as any, { ns: labelNs })}</Text>
+      <Text>
+        {personal && id === 'tasks'
+          ? t('tab.goalsAndTasks', { ns: 'chat' })
+          : t(labelKey as any, { ns: labelNs })}
+      </Text>
     </Flexbox>
   );
 });
@@ -438,16 +438,14 @@ const CustomizeSidebarContent = memo(() => {
   const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
   const isWorkspaceMode = !!useActiveWorkspaceSlug();
   const dashboardEnabled = useServerConfigStore(serverConfigSelectors.enableDashboard);
-  const goalsEnabled = useUserStore(labPreferSelectors.enableGoals);
   const channelsEnabled = useChannelsEnabled();
   const sortableItemIds = useMemo(
     () =>
       getSortableSidebarItemIds(isWorkspaceMode, {
         channelsEnabled,
         dashboardEnabled,
-        goalsEnabled,
       }),
-    [isWorkspaceMode, channelsEnabled, dashboardEnabled, goalsEnabled],
+    [isWorkspaceMode, channelsEnabled, dashboardEnabled],
   );
   const filteredStoreItems = useMemo(
     () => storeItems.filter((id) => sortableItemIds.has(id)),
@@ -493,12 +491,10 @@ const CustomizeSidebarContent = memo(() => {
   const toggleSection = useCallback(
     (key: string) => {
       const isHidden = hiddenSections.includes(key);
-      const newHidden = isHidden
-        ? hiddenSections.filter((k) => k !== key)
-        : [...hiddenSections, key];
+      const newHidden = setSidebarSectionHidden(hiddenSections, key, !isHidden, isWorkspaceMode);
       setHiddenSections(newHidden);
     },
-    [hiddenSections],
+    [hiddenSections, isWorkspaceMode],
   );
 
   const handleResetDefault = useCallback(() => {
@@ -594,7 +590,13 @@ const CustomizeSidebarContent = memo(() => {
     isSpacer(id) ? (
       <SpacerSortableItem key={id} />
     ) : (
-      <SortableItem hiddenSections={hiddenSections} id={id} key={id} onToggle={toggleSection} />
+      <SortableItem
+        hiddenSections={hiddenSections}
+        id={id}
+        key={id}
+        personal={!isWorkspaceMode}
+        onToggle={toggleSection}
+      />
     );
 
   return (
@@ -625,7 +627,7 @@ const CustomizeSidebarContent = memo(() => {
 
         {createPortal(
           <DragOverlay dropAnimation={{ sideEffects: defaultDropAnimationSideEffects({}) }}>
-            {activeId ? <OverlayItem id={activeId} /> : null}
+            {activeId ? <OverlayItem id={activeId} personal={!isWorkspaceMode} /> : null}
           </DragOverlay>,
           document.body,
         )}

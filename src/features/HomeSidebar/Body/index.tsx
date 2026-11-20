@@ -23,7 +23,7 @@ import { electronSystemService } from '@/services/electron/system';
 import { useGlobalStore } from '@/store/global';
 import { SidebarTabKey } from '@/store/global/initialState';
 import { systemStatusSelectors } from '@/store/global/selectors';
-import { SIDEBAR_SPACER_ID } from '@/store/global/selectors/systemStatus';
+import { setSidebarSectionHidden, SIDEBAR_SPACER_ID } from '@/store/global/selectors/systemStatus';
 import { useUserStore } from '@/store/user';
 import { isModifierClick } from '@/utils/navigation';
 
@@ -101,9 +101,16 @@ const Body = memo(() => {
 
   const hideSection = useCallback(
     (key: string) => {
-      updateSystemStatus({ hiddenSidebarSections: [...hiddenSections, key] });
+      updateSystemStatus({
+        hiddenSidebarSections: setSidebarSectionHidden(
+          hiddenSections,
+          key,
+          true,
+          !!activeWorkspaceId,
+        ),
+      });
     },
-    [hiddenSections, updateSystemStatus],
+    [activeWorkspaceId, hiddenSections, updateSystemStatus],
   );
 
   const getContextMenuItems = useCallback(
@@ -218,7 +225,6 @@ const Body = memo(() => {
           }}
         >
           <NavItem
-            active={tab === (navItem.activeTab ?? key)}
             contextMenuItems={getContextMenuItems(key)}
             icon={navItem.icon}
             title={navItem.title}
@@ -226,6 +232,9 @@ const Body = memo(() => {
               <DropdownMenu items={getContextMenuItems(key)}>
                 <ActionIcon icon={MoreHorizontalIcon} size={'small'} style={{ flex: 'none' }} />
               </DropdownMenu>
+            }
+            active={
+              tab === (navItem.activeTab ?? key) || navItem.additionalActiveTabs?.includes(tab)
             }
           />
         </WorkspaceLink>

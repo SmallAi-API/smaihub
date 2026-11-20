@@ -197,9 +197,6 @@ The `signature` column planned for pain detection stays a separate change.
 
 ## Delivery plan
 
-All of it sits behind the Agent Lab gate (`useAgentLabGate`) until the benchmark target
-below holds.
-
 | PR  | Content                                                                                                                                                                                                                                 | Depends on   |
 | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
 | 1   | Goal marks (done, 0f5d9bb672a)                                                                                                                                                                                                          | —            |
