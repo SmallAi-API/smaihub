@@ -31,6 +31,7 @@ import { ReadOnlyNotice } from './ReadOnlyNotice';
 import { ReplyActivity } from './ReplyActivity';
 import { ReplyFailureRow } from './ReplyFailure';
 import type { ReplyTopic } from './ReplyTopicPanel';
+import { withoutShareRefusals } from './shareRefusal';
 import { styles } from './styles';
 import type { ChannelThreadDraft } from './threadDraft';
 import { useChannelEvents } from './useChannelEvents';
@@ -147,7 +148,7 @@ const Timeline = ({
       )
     : [];
   const failures = replyFailurePlacement(
-    detail?.jobs ?? [],
+    detail ? withoutShareRefusals(detail, detail.jobs ?? []) : [],
     new Set([
       ...timeline.flatMap((item) => (item.kind === 'message' ? [item.message.id] : [])),
       ...(detail?.rootMessage ? [detail.rootMessage.id] : []),
