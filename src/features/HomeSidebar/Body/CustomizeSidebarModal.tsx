@@ -53,6 +53,7 @@ import { useTranslation } from 'react-i18next';
 import { useActiveWorkspaceId } from '@/business/client/hooks/useActiveWorkspaceId';
 import { useActiveWorkspaceSlug } from '@/business/client/hooks/useActiveWorkspaceSlug';
 import { getRouteById } from '@/config/routes';
+import { useChannelsEnabled } from '@/features/Channels/useChannelsEnabled';
 import { useGlobalStore } from '@/store/global';
 import { DEFAULT_HOME_SIDEBAR_EXPANDED_KEYS } from '@/store/global/initialState';
 import { systemStatusSelectors } from '@/store/global/selectors';
@@ -78,6 +79,8 @@ export interface SidebarItemConfig {
   icon?: LucideIcon;
   id: string;
   labelKey: string;
+  /** i18n namespace of `labelKey`; defaults to `common`. */
+  labelNs?: string;
   routeId?: string;
 }
 
@@ -90,6 +93,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
   { id: 'recents', labelKey: 'recents' },
   { id: 'project', labelKey: 'tab.projects', routeId: 'project' },
   { alwaysVisible: true, id: 'agent', labelKey: 'navPanel.agent' },
+  { id: 'channels', labelKey: 'title', labelNs: 'channel' },
   { id: 'image', labelKey: 'tab.generation', routeId: 'image' },
   { id: 'community', labelKey: 'tab.community', routeId: 'community' },
   { id: 'resource', labelKey: 'tab.resource', routeId: 'resource' },
@@ -98,17 +102,25 @@ const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
   { id: 'memory', labelKey: 'tab.memory', routeId: 'memory' },
 ];
 
+interface SidebarItemAvailability {
+  channelsEnabled?: boolean;
+  dashboardEnabled?: boolean;
+  goalsEnabled?: boolean;
+}
+
 // Dashboards also stay out until the `dashboard` feature flag is on for the
-// user, and Goals until the user turns on its lab; a dropped id is restored by
-// `withAllKnownKeys` once it is.
+// user, Channels until Channels are enabled, and Goals until the user turns on
+// its lab; a dropped id is restored by `withAllKnownKeys` once it is.
 export const getAvailableSidebarItems = (
   isWorkspaceMode: boolean,
   {
+    channelsEnabled = false,
     dashboardEnabled = false,
     goalsEnabled = false,
-  }: { dashboardEnabled?: boolean; goalsEnabled?: boolean } = {},
+  }: SidebarItemAvailability = {},
 ): SidebarItemConfig[] =>
   ALL_SIDEBAR_ITEMS.filter((item) => {
+    if (item.id === 'channels' && !channelsEnabled) return false;
     if (item.id === 'dashboard' && !dashboardEnabled) return false;
     if (item.id === 'goals' && !goalsEnabled) return false;
     if (isWorkspaceMode && (item.id === 'memory' || item.id === 'dashboard')) return false;
@@ -117,7 +129,7 @@ export const getAvailableSidebarItems = (
 
 export const getSortableSidebarItemIds = (
   isWorkspaceMode: boolean,
-  options?: { dashboardEnabled?: boolean; goalsEnabled?: boolean },
+  options?: SidebarItemAvailability,
 ): Set<string> =>
   new Set([
     ...getAvailableSidebarItems(isWorkspaceMode, options).map((item) => item.id),
@@ -197,7 +209,7 @@ const SortableItem = memo<{
   id: string;
   onToggle: (key: string) => void;
 }>(({ id, hiddenSections, onToggle }) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'channel']);
   const item = ITEM_MAP.get(id);
   const labelKey = item?.labelKey;
   const {
@@ -243,7 +255,7 @@ const SortableItem = memo<{
           <Icon icon={GripVertical} size={14} style={{ color: cssVar.colorTextQuaternary }} />
         </Flexbox>
         {route?.icon && <Icon icon={route.icon} size={18} />}
-        <Text>{t(labelKey as any)}</Text>
+        <Text>{t(labelKey as any, { ns: item.labelNs ?? 'common' })}</Text>
       </Flexbox>
       {item.alwaysVisible ? (
         <Tooltip title={t('navPanel.pinned' as any)}>
@@ -352,7 +364,7 @@ const AccordionGroup = memo<{ children: React.ReactNode }>(({ children }) => {
 // ---------------------------------------------------------------------------
 
 const OverlayItem = memo<{ id: string }>(({ id }) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'channel']);
   const agentLabelKey = 'navPanel.agent';
 
   // Accordion group overlay: render a compact representation
@@ -392,12 +404,13 @@ const OverlayItem = memo<{ id: string }>(({ id }) => {
   if (!item) return null;
   const route = item.routeId ? getRouteById(item.routeId) : undefined;
   const labelKey = item.id === 'agent' ? agentLabelKey : item.labelKey;
+  const labelNs = item.id === 'agent' ? 'common' : (item.labelNs ?? 'common');
 
   return (
     <Flexbox horizontal align={'center'} className={stylex.props(styles.overlay).className} gap={8}>
       <Icon icon={GripVertical} size={14} style={{ color: cssVar.colorTextQuaternary }} />
       {route?.icon && <Icon icon={route.icon} size={18} />}
-      <Text>{t(labelKey as any)}</Text>
+      <Text>{t(labelKey as any, { ns: labelNs })}</Text>
     </Flexbox>
   );
 });
@@ -426,9 +439,15 @@ const CustomizeSidebarContent = memo(() => {
   const isWorkspaceMode = !!useActiveWorkspaceSlug();
   const dashboardEnabled = useServerConfigStore(serverConfigSelectors.enableDashboard);
   const goalsEnabled = useUserStore(labPreferSelectors.enableGoals);
+  const channelsEnabled = useChannelsEnabled();
   const sortableItemIds = useMemo(
-    () => getSortableSidebarItemIds(isWorkspaceMode, { dashboardEnabled, goalsEnabled }),
-    [isWorkspaceMode, dashboardEnabled, goalsEnabled],
+    () =>
+      getSortableSidebarItemIds(isWorkspaceMode, {
+        channelsEnabled,
+        dashboardEnabled,
+        goalsEnabled,
+      }),
+    [isWorkspaceMode, channelsEnabled, dashboardEnabled, goalsEnabled],
   );
   const filteredStoreItems = useMemo(
     () => storeItems.filter((id) => sortableItemIds.has(id)),

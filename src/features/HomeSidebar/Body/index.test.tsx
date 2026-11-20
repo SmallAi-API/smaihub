@@ -124,6 +124,10 @@ vi.mock('@/features/Channels/ChannelList', () => ({
   default: () => <div data-testid="sidebar-channels" />,
 }));
 
+vi.mock('@/features/Channels/useChannelsEnabled', () => ({
+  useChannelsEnabled: () => true,
+}));
+
 vi.mock('@/features/Billboard', async () => {
   const { useState } = await import('react');
   const MockBillboard = () => {
@@ -311,6 +315,28 @@ describe('Home sidebar body', () => {
     expect(children[0]).toContainElement(screen.getByTestId('sidebar-item-agent'));
     expect(children[1]).toHaveAttribute('data-testid', 'sidebar-channels');
     expect(children[2]).toContainElement(screen.getByTestId('sidebar-item-recents'));
+  });
+
+  it('places Channels where the saved order puts them', () => {
+    mocks.globalState.status.sidebarItems = ['channels', 'recents', 'agent', 'favorites'];
+
+    render(<Body />);
+
+    const children = Array.from(screen.getByTestId('sidebar-sections').children);
+
+    expect(children[0]).toHaveAttribute('data-testid', 'sidebar-channels');
+    expect(children[1]).toContainElement(screen.getByTestId('sidebar-item-recents'));
+    expect(children[1]).toContainElement(screen.getByTestId('sidebar-item-agent'));
+  });
+
+  it('leaves Channels out once they are hidden', () => {
+    mocks.globalState.status.sidebarItems = ['recents', 'agent', 'channels'];
+    mocks.globalState.status.hiddenSidebarSections = ['channels'];
+
+    render(<Body />);
+
+    expect(screen.queryByTestId('sidebar-channels')).toBeNull();
+    expect(screen.getByTestId('sidebar-item-agent')).toBeInTheDocument();
   });
 
   // The Projects entry is keyed `project` like its sidebar layout id, but its page is `/projects`.
