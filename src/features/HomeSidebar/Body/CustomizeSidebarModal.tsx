@@ -95,7 +95,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
   { alwaysVisible: true, id: 'agent', labelKey: 'navPanel.agent' },
   { id: 'channels', labelKey: 'title', labelNs: 'channel' },
   { id: 'image', labelKey: 'tab.generation', routeId: 'image' },
-  { id: 'community', labelKey: 'tab.community', routeId: 'community' },
+  { id: 'community', labelKey: 'tab.marketplace', routeId: 'community' },
   { id: 'resource', labelKey: 'tab.resource', routeId: 'resource' },
   { icon: BookOpenIcon, id: 'docs', labelKey: 'tab.docs' },
   { icon: MessageCircle, id: 'support', labelKey: 'tab.support' },

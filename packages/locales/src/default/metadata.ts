@@ -5,29 +5,29 @@ export default {
     'Supporting the world leading AI models—including GPT-5.2, Claude 4.5 Opus, NanoBanana, and Gemini 3 Pro—smai.ai features built-in Agents for seamless interaction. Easily build your own Agents and achieve true skill control. Using task-driven tools, you can create long-term Agent teammates that evolve alongside you. Join the world largest human-Agent symbiotic network.',
   'chat.title': '{{appName}} · Agent teammates that grow with you',
   'discover.assistants.description':
-    'Content, Q&A, images, video, voice, workflows—browse and add Agents from the Community.',
-  'discover.assistants.title': 'Agent Community',
+    'Content, Q&A, images, video, voice, workflows—browse and add Agents from the Marketplace.',
+  'discover.assistants.title': 'Agent Marketplace',
   'discover.description': 'Explore Agents, Skills, Providers, models, and MCP Servers.',
   'discover.mcp.description':
     'Search, compare, and connect to thousands of MCP Servers, enabling AI systems to easily access file systems, databases, APIs, and other essential resources, comprehensively expanding your AI capabilities.',
-  'discover.mcp.title': 'MCP Servers Community',
+  'discover.mcp.title': 'MCP Server Marketplace',
   'discover.models.description':
     'Explore mainstream AI models OpenAI / GPT / Claude 3 / Gemini / Ollama / Azure / DeepSeek',
-  'discover.models.title': 'Model Community',
+  'discover.models.title': 'Model Marketplace',
   'discover.plugins.description':
     'Explore charts, academic tools, image/video/voice generation, and workflows—add Skills to your Agents.',
-  'discover.plugins.title': 'Skill Community',
+  'discover.plugins.title': 'Skill Marketplace',
   'discover.providers.description':
     'Explore leading model providers OpenAI / Qwen / Ollama / Anthropic / DeepSeek / Google Gemini / OpenRouter',
-  'discover.providers.title': 'Provider Community',
+  'discover.providers.title': 'Provider Marketplace',
   'discover.search': 'Search',
-  'discover.title': 'Discover',
+  'discover.title': 'Marketplace',
   'image.description':
     '{{appName}} brings you the best experience with GPT Image, Flux, Midjourney, and Stable Diffusion',
   'image.title': 'AI Art',
   'plugins.description':
     'Search, charts, academic tools, image/video/voice generation, workflows—add Skills to your Agents.',
-  'plugins.title': 'Skill Community',
+  'plugins.title': 'Skill Marketplace',
   'welcome.description':
     '{{appName}} brings you the best UI experience for ChatGPT, Claude, Gemini, and OLLaMA.',
   'welcome.title': 'Welcome to {{appName}} · Where Agents Collaborate',
