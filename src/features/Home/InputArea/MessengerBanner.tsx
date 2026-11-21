@@ -46,7 +46,7 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
 
     background: ${cssVar.colorBgContainer};
     box-shadow:
-      0 0 8px -2px rgb(0 0 0 / 5%),
+      ${cssVar.boxShadowTertiary},
       0 0 0 1px ${cssVar.colorFillTertiary};
   `,
   icon: css`

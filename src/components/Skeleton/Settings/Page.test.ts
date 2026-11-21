@@ -27,9 +27,9 @@ afterEach(cleanup);
 
 describe('resolveSettingsSkeletonTab', () => {
   it('reads the tab and its sub-segment', () => {
-    expect(resolveSettingsSkeletonTab('/settings/messenger/discord')).toEqual({
-      sub: 'discord',
-      tab: 'messenger',
+    expect(resolveSettingsSkeletonTab('/settings/provider/all')).toEqual({
+      sub: 'all',
+      tab: 'provider',
     });
     expect(resolveSettingsSkeletonTab('/settings/billing')).toEqual({ tab: 'billing' });
   });

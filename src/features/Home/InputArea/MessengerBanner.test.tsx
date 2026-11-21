@@ -30,9 +30,6 @@ vi.mock('@lobehub/ui', () => ({
   Icon: ({ icon: IconComponent }: { icon: (props: Record<string, unknown>) => ReactNode }) => (
     <IconComponent />
   ),
-}));
-
-vi.mock('antd-style', () => ({
   createStaticStyles: () => ({
     avatar: 'avatar',
     icon: 'icon',
