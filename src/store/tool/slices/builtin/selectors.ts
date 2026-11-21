@@ -1,7 +1,6 @@
 import {
   alwaysOnToolIds,
   isOnDemandBuiltinTool,
-  manualModeExcludeToolIds,
   runtimeManagedToolIds,
 } from '@lobechat/builtin-tools';
 import { isToolEnabledByFeatureFlags } from '@lobechat/builtin-tools/featureGates';
@@ -77,38 +76,22 @@ const getComposioMetasWithAvailability = (s: ToolStoreState): LobeToolMetaWithAv
 // Set form for O(1) lookup inside the filter loop.
 const RUNTIME_MANAGED_TOOL_IDS = new Set(runtimeManagedToolIds);
 const ALWAYS_ON_TOOL_IDS = new Set(alwaysOnToolIds);
-const MANUAL_MODE_EXCLUDE_TOOL_IDS = new Set(manualModeExcludeToolIds);
-
-interface ProfileConfigurableToolOptions {
-  featureFlags?: Partial<IFeatureFlagsState>;
-  isManualMode: boolean;
-}
 
 /**
  * Agent Profile only owns tools whose lifecycle can genuinely be controlled by
  * the agent's plugin policy. Runtime-managed tools (for example Web Browsing),
  * non-discoverable infrastructure, and system-fixed tools do not satisfy that
- * contract. A default tool removed specifically by manual activation mode is
- * the exception: an explicit profile pin genuinely adds it back.
+ * contract.
  */
 const isProfileConfigurableBuiltinTool = (
   tool: ToolStoreState['builtinTools'][number],
-  { featureFlags, isManualMode }: ProfileConfigurableToolOptions,
+  featureFlags: Partial<IFeatureFlagsState> | undefined,
 ): boolean => {
-  if (
-    !isToolEnabledByFeatureFlags(
-      tool.identifier,
-      featureFlags ?? getServerConfigStoreState()?.featureFlags,
-    )
-  )
-    return false;
+  if (!isToolEnabledByFeatureFlags(tool.identifier, featureFlags)) return false;
   if (tool.discoverable === false) return false;
   if (RUNTIME_MANAGED_TOOL_IDS.has(tool.identifier)) return false;
 
-  return (
-    !ALWAYS_ON_TOOL_IDS.has(tool.identifier) ||
-    (isManualMode && MANUAL_MODE_EXCLUDE_TOOL_IDS.has(tool.identifier))
-  );
+  return !ALWAYS_ON_TOOL_IDS.has(tool.identifier);
 };
 
 /**
@@ -230,6 +213,7 @@ const allMetaList = (s: ToolStoreState): LobeToolMetaWithAvailability[] => {
  */
 const discoverableMetaList = (s: ToolStoreState): LobeToolMeta[] => {
   const { uninstalledBuiltinTools } = s;
+  const featureFlags = getServerConfigStoreState()?.featureFlags;
 
   const skillMetas = (s.builtinSkills || [])
     .filter((skill) => isBuiltinSkillAvailableInCurrentEnv(skill.identifier))
@@ -241,6 +225,7 @@ const discoverableMetaList = (s: ToolStoreState): LobeToolMeta[] => {
     .filter((item) => {
       // Exclude pure infrastructure tools (never user-facing)
       if (item.discoverable === false) return false;
+      if (!isToolEnabledByFeatureFlags(item.identifier, featureFlags)) return false;
       if (
         !isOnDemandBuiltinTool(item.identifier) &&
         uninstalledBuiltinTools.includes(item.identifier)
@@ -278,39 +263,41 @@ const installedAllMetaList = (s: ToolStoreState): LobeToolMetaWithAvailability[]
 };
 
 /**
- * Installed builtin tools that Agent Profile can truthfully pin or unpin.
+ * Installed builtin tools that Agent Profile can truthfully enable or disable.
  *
  * This intentionally differs from `installedAllMetaList`, which is also used
  * by inventory/detail surfaces and therefore contains runtime-managed and
  * internal tools for lookup purposes.
  */
-const installedProfileConfigurableMetaList =
-  (options: ProfileConfigurableToolOptions) =>
-  (s: ToolStoreState): LobeToolMetaWithAvailability[] => {
-    const { uninstalledBuiltinTools } = s;
+const installedProfileConfigurableMetaList = (
+  s: ToolStoreState,
+  featureFlags = getServerConfigStoreState()?.featureFlags,
+): LobeToolMetaWithAvailability[] => {
+  const { uninstalledBuiltinTools } = s;
 
-    const builtinMetas = s.builtinTools
-      .filter((tool) => isProfileConfigurableBuiltinTool(tool, options))
-      .filter(
-        (item) =>
-          isOnDemandBuiltinTool(item.identifier) ||
-          !uninstalledBuiltinTools.includes(item.identifier),
-      )
-      .map(toBuiltinMetaWithAvailability);
+  const builtinMetas = s.builtinTools
+    .filter((tool) => isProfileConfigurableBuiltinTool(tool, featureFlags))
+    .filter(
+      (item) =>
+        isOnDemandBuiltinTool(item.identifier) ||
+        !uninstalledBuiltinTools.includes(item.identifier),
+    )
+    .map(toBuiltinMetaWithAvailability);
 
-    return [...builtinMetas, ...getComposioMetasWithAvailability(s)];
-  };
+  return [...builtinMetas, ...getComposioMetasWithAvailability(s)];
+};
 
 /**
- * Builtin identifiers hidden from Agent Profile in the current activation
- * mode. Their config entries remain intact so switching modes is reversible.
+ * Builtin identifiers hidden from Agent Profile. Their config entries remain
+ * intact so non-profile flows are unaffected.
  */
-const nonProfileConfigurableBuiltinToolIds =
-  (options: ProfileConfigurableToolOptions) =>
-  (s: ToolStoreState): string[] =>
-    s.builtinTools
-      .filter((tool) => !isProfileConfigurableBuiltinTool(tool, options))
-      .map((tool) => tool.identifier);
+const nonProfileConfigurableBuiltinToolIds = (
+  s: ToolStoreState,
+  featureFlags = getServerConfigStoreState()?.featureFlags,
+): string[] =>
+  s.builtinTools
+    .filter((tool) => !isProfileConfigurableBuiltinTool(tool, featureFlags))
+    .map((tool) => tool.identifier);
 
 /**
  * Bundled skills available on this client, including those awaiting an agent opt-in.

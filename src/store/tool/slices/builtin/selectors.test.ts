@@ -73,12 +73,12 @@ describe('builtinToolSelectors', () => {
       const result = builtinToolSelectors.metaList(state);
       expect(result).toEqual([
         {
-          author: 'LobeHub',
+          author: 'smai.ai',
           identifier: 'test-skill',
           meta: { avatar: '🧪', description: 'A test skill', title: 'Test Skill' },
           type: 'builtin',
         },
-        { author: 'LobeHub', identifier: 'tool-1', meta: { title: 'Tool 1' }, type: 'builtin' },
+        { author: 'smai.ai', identifier: 'tool-1', meta: { title: 'Tool 1' }, type: 'builtin' },
       ]);
     });
 
@@ -99,7 +99,7 @@ describe('builtinToolSelectors', () => {
       // Should only contain skill, hidden tool is filtered out
       expect(result).toEqual([
         {
-          author: 'LobeHub',
+          author: 'smai.ai',
           identifier: 'test-skill',
           meta: { avatar: '🧪', description: 'A test skill', title: 'Test Skill' },
           type: 'builtin',
@@ -225,33 +225,17 @@ describe('builtinToolSelectors', () => {
         uninstalledBuiltinTools: ['uninstalled-tool'],
       } as ToolStoreState;
 
-      const autoVisible = builtinToolSelectors.installedProfileConfigurableMetaList({
-        isManualMode: false,
-      })(state);
-      const autoExcluded = builtinToolSelectors.nonProfileConfigurableBuiltinToolIds({
-        isManualMode: false,
-      })(state);
-      const manualVisible = builtinToolSelectors.installedProfileConfigurableMetaList({
-        isManualMode: true,
-      })(state);
-      const manualExcluded = builtinToolSelectors.nonProfileConfigurableBuiltinToolIds({
-        isManualMode: true,
-      })(state);
+      const visible = builtinToolSelectors.installedProfileConfigurableMetaList(state);
+      const excluded = builtinToolSelectors.nonProfileConfigurableBuiltinToolIds(state);
 
-      expect(autoVisible.map((item) => item.identifier)).toEqual([
+      expect(visible.map((item) => item.identifier)).toEqual([
         'lobe-skill-store',
         'lobe-agent-management',
         'profile-tool',
       ]);
-      expect(autoExcluded).toEqual(expect.arrayContaining(['lobe-web-browsing', 'lobe-verify']));
-      expect(manualVisible.map((item) => item.identifier)).toEqual([
-        'lobe-skill-store',
-        'lobe-agent-management',
-        'profile-tool',
-      ]);
-      expect(manualExcluded).toEqual(expect.arrayContaining(['lobe-web-browsing', 'lobe-verify']));
-      expect(manualExcluded).not.toContain('lobe-skill-store');
-      expect(manualExcluded).not.toContain('lobe-agent-management');
+      expect(excluded).toEqual(expect.arrayContaining(['lobe-web-browsing', 'lobe-verify']));
+      expect(excluded).not.toContain('lobe-skill-store');
+      expect(excluded).not.toContain('lobe-agent-management');
     });
   });
 });

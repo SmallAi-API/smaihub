@@ -72,38 +72,30 @@ describe('video skill rollout visibility', () => {
     },
   );
 
-  it.each([
-    [false, false],
-    [false, true],
-    [true, false],
-    [true, true],
-  ])(
-    'keeps saved profile pins with manual mode %s and broad picker %s',
-    (manual, useAllMetaList) => {
-      const { result } = renderHook(() => useProfileBuiltinTools(manual, useAllMetaList));
-      expect(ids(result.current.profileBuiltinList)).not.toContain(VideoGenerationIdentifier);
-      expect(
-        result.current.nonProfileConfigurableBuiltinToolIdentifiers.has(VideoGenerationIdentifier),
-      ).toBe(true);
-      expect(ids(result.current.knownBuiltinList)).toContain(VideoGenerationIdentifier);
-      expect(
-        resolveStalePluginCleanup({
-          canEditContent: true,
-          canEditResource: true,
-          isAccessResolved: true,
-          isConnectorsInit: true,
-          isToolCatalogSynced: true,
-          plugins: [VideoGenerationIdentifier],
-          validIdentifiers: new Set(ids(result.current.knownBuiltinList)),
-        }),
-      ).toBeNull();
-      act(() => setEnabled(true));
-      expect(ids(result.current.profileBuiltinList)).toContain(VideoGenerationIdentifier);
-      expect(
-        result.current.nonProfileConfigurableBuiltinToolIdentifiers.has(VideoGenerationIdentifier),
-      ).toBe(false);
-    },
-  );
+  it.each([false, true])('keeps saved profile pins with broad picker %s', (useAllMetaList) => {
+    const { result } = renderHook(() => useProfileBuiltinTools(useAllMetaList));
+    expect(ids(result.current.profileBuiltinList)).not.toContain(VideoGenerationIdentifier);
+    expect(
+      result.current.nonProfileConfigurableBuiltinToolIdentifiers.has(VideoGenerationIdentifier),
+    ).toBe(true);
+    expect(ids(result.current.knownBuiltinList)).toContain(VideoGenerationIdentifier);
+    expect(
+      resolveStalePluginCleanup({
+        canEditContent: true,
+        canEditResource: true,
+        isAccessResolved: true,
+        isConnectorsInit: true,
+        isToolCatalogSynced: true,
+        plugins: [VideoGenerationIdentifier],
+        validIdentifiers: new Set(ids(result.current.knownBuiltinList)),
+      }),
+    ).toBeNull();
+    act(() => setEnabled(true));
+    expect(ids(result.current.profileBuiltinList)).toContain(VideoGenerationIdentifier);
+    expect(
+      result.current.nonProfileConfigurableBuiltinToolIdentifiers.has(VideoGenerationIdentifier),
+    ).toBe(false);
+  });
 
   it('retains inventory for historical lookups but removes discovery while disabled', () => {
     const state = useToolStore.getState();

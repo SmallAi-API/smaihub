@@ -144,7 +144,6 @@ const AgentTool = memo<AgentToolProps>(
     const activeAgentId = useAgentStore((s) => s.activeAgentId);
     const effectiveAgentId = agentId || activeAgentId || '';
     const config = useAgentStore(agentSelectors.getAgentConfigById(effectiveAgentId), isEqual);
-    const isManualSkillMode = config?.chatConfig?.skillActivateMode === 'manual';
     // Workspace General access on this agent. A private agent is creator-only and
     // has no shared access row, so skip the query for it (same shape as the
     // prompt editor's gate). Only the automatic stale-plugin cleanup below reads
@@ -163,20 +162,8 @@ const AgentTool = memo<AgentToolProps>(
     const updateAgentConfigById = useAgentStore((s) => s.updateAgentConfigById);
     const installedPluginList = useToolStore(pluginSelectors.installedPluginMetaList, isEqual);
 
-    // Keep the broad list for stale-config validation. The picker uses the
-    // narrower profile list below so runtime-owned tools never become choices.
-    const knownBuiltinList = useToolStore(
-      useAllMetaList ? builtinToolSelectors.installedAllMetaList : builtinToolSelectors.metaList,
-      isEqual,
-    );
-    const profileBuiltinList = useToolStore(
-      useAllMetaList
-        ? builtinToolSelectors.installedProfileConfigurableMetaList({
-            isManualMode: isManualSkillMode,
-          })
-        : builtinToolSelectors.metaList,
-      isEqual,
-    );
+    const { knownBuiltinList, nonProfileConfigurableBuiltinToolIdentifiers, profileBuiltinList } =
+      useProfileBuiltinTools(useAllMetaList);
     const connectedIds = useToolStore(
       (s) => getConnectedConnectorIds(s, effectiveAgentId),
       isEqual,
@@ -225,17 +212,6 @@ const AgentTool = memo<AgentToolProps>(
       for (const id of disabledToolIds) ids.delete(id);
       return ids;
     }, [implicitToolIds, config?.plugins, disabledToolIds]);
-
-    const nonProfileConfigurableBuiltinToolIds = useToolStore(
-      builtinToolSelectors.nonProfileConfigurableBuiltinToolIds({
-        isManualMode: isManualSkillMode,
-      }),
-      isEqual,
-    );
-    const nonProfileConfigurableBuiltinToolIdentifiers = useMemo(
-      () => new Set(nonProfileConfigurableBuiltinToolIds),
-      [nonProfileConfigurableBuiltinToolIds],
-    );
 
     // Composio-related state
     const allComposioServers = useToolStore(composioStoreSelectors.getServers, isEqual);
