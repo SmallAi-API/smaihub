@@ -2,6 +2,12 @@ import { Hono } from 'hono';
 
 import { getAllScopePermissions } from '@/utils/rbac';
 
+import {
+  CREATE_MESSAGE_EXAMPLE,
+  example,
+  MESSAGE_EXAMPLE,
+  MESSAGE_LIST_EXAMPLE,
+} from '../common/examples';
 import { routeDoc } from '../common/openapi';
 import { zValidator } from '../common/validator';
 import { MessageController } from '../controllers';
@@ -42,7 +48,12 @@ MessageRoutes.get(
 // GET /api/v1/messages - 获取消息列表 (支持各种过滤和搜索)
 MessageRoutes.get(
   '/',
-  routeDoc({ data: MessageListSchema, summary: 'List messages', tags: ['messages'] }),
+  routeDoc({
+    data: MessageListSchema,
+    responseExample: MESSAGE_LIST_EXAMPLE,
+    summary: 'List messages',
+    tags: ['messages'],
+  }),
   requireAuth,
   requireAnyPermission(
     getAllScopePermissions('MESSAGE_READ'),
@@ -74,7 +85,13 @@ MessageRoutes.get(
 // POST /api/v1/messages - 创建新消息 (需要消息写入权限)
 MessageRoutes.post(
   '/',
-  routeDoc({ data: MessageSchema, summary: 'Create a message', tags: ['messages'] }),
+  routeDoc({
+    data: MessageSchema,
+    requestExample: example(MessagesCreateRequestSchema, CREATE_MESSAGE_EXAMPLE),
+    responseExample: MESSAGE_EXAMPLE,
+    summary: 'Create a message',
+    tags: ['messages'],
+  }),
   requireAuth,
   requireAnyPermission(
     getAllScopePermissions('MESSAGE_CREATE'),
@@ -93,6 +110,7 @@ MessageRoutes.post(
 MessageRoutes.post(
   '/replies',
   routeDoc({
+    operationId: 'messages.createReply',
     data: MessageSchema.nullable(),
     description:
       'Stores the user message, then generates and stores the assistant reply. Answers with the reply; `null` only if it could not be read back.',
@@ -137,6 +155,7 @@ MessageRoutes.delete(
 MessageRoutes.delete(
   '/',
   routeDoc({
+    operationId: 'messages.deleteMany',
     data: DeletedResourcesSchema,
     description:
       'Best effort: ids the caller may not delete or that no longer exist are skipped. `count` is the number of messages actually removed.',
