@@ -56,6 +56,7 @@ interface CreateServerCallLlmAttemptInput {
   clientIp?: string;
   ctx: RuntimeExecutorContext;
   events: AgentEvent[];
+  getToolActivationContext?: ChatMethodOptions['getToolActivationContext'];
   maxAttempts: number;
   messageCount: number;
   model: string;
@@ -155,6 +156,7 @@ export class ServerCallLlmAttempt {
   private completion?: OnFinishData;
   private readonly contentPartEvents: ContentPartData[] = [];
   private readonly ctx: RuntimeExecutorContext;
+  private readonly getToolActivationContext?: ChatMethodOptions['getToolActivationContext'];
   private finishReason?: string;
   private grounding: GroundingSearch | null = null;
   private readonly imageList: ChatImageItem[] = [];
@@ -184,6 +186,7 @@ export class ServerCallLlmAttempt {
     attempt,
     blobStore,
     chatPayload,
+    getToolActivationContext,
     clientIp,
     ctx,
     events,
@@ -201,6 +204,7 @@ export class ServerCallLlmAttempt {
   }: CreateServerCallLlmAttemptInput) {
     this.attempt = attempt;
     this.chatPayload = chatPayload;
+    this.getToolActivationContext = getToolActivationContext;
     this.ctx = ctx;
     this.maxAttempts = maxAttempts;
     this.messageCount = messageCount;
@@ -349,6 +353,7 @@ export class ServerCallLlmAttempt {
         },
       },
       diagnostics: this.runtimeDiagnostics,
+      getToolActivationContext: this.getToolActivationContext,
       metadata: this.runtimeMetadata,
       signal: this.ctx.abortSignal,
       user: this.ctx.userId,

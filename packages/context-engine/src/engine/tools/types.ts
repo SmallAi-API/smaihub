@@ -199,6 +199,8 @@ export interface OperationToolSet {
  */
 export interface ActivatedStepTool {
   activatedAtStep: number;
+  /** Absent for initially available tools and older persisted operations. */
+  afterToolCallId?: string;
   id: string;
   manifest?: LobeToolManifest;
   source: ActivationSource;
