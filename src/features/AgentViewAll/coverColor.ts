@@ -8,8 +8,13 @@ import { remoteAvatarSrc } from '@/components/Avatar/fallback';
  * The generated character's palette as theme colors. `ink` / `gray` share the
  * gray scale: the cover is mixed toward the container color, which keeps both
  * readable in either theme.
+ *
+ * Keyed by string rather than `AgentAvatarColor`: `@lobehub/ui` grows that
+ * palette in minor releases, and an exhaustive record breaks the type check of
+ * every build that resolves a newer one. A color it adds before it is listed
+ * here falls back to gray.
  */
-const SEED_COLORS = {
+const SEED_COLORS: Record<string, string> = {
   cyan: cssVar.cyan,
   geekblue: cssVar.geekblue,
   gray: cssVar.gray,
@@ -30,7 +35,7 @@ const SEED_COLORS = {
 export const seedCoverColor = (item: SidebarAgentItem): string => {
   const picked = typeof item.avatar === 'string' ? parseAgentAvatar(item.avatar) : undefined;
 
-  return SEED_COLORS[picked?.color ?? getAgentAvatarTraits(item.id).color];
+  return SEED_COLORS[picked?.color ?? getAgentAvatarTraits(item.id).color] ?? cssVar.gray;
 };
 
 export const AGENT_COVER_PATTERNS = [

@@ -80,10 +80,10 @@ it.each([AgentDocumentsManifest, AgentAccountManifest])(
     const next = input(after, history);
     const canonical = await serverMessagesEngine(next);
     const state = { activatedStepTools: [activation], operationToolSet } as AgentState;
-    const delta = await createToolActivationResolver(state, after, next, canonical.messages)?.();
+    const delta = await createToolActivationResolver(state, after, next, canonical)?.();
     if (manifest.identifier === AgentAccountManifest.identifier) {
-      expect(initial.messages[0].content).toContain('You cannot read or send mail');
-      expect(canonical.messages[0].content).toContain('Read them with the account tool');
+      expect(initial[0].content).toContain('You cannot read or send mail');
+      expect(canonical[0].content).toContain('Read them with the account tool');
       expect(delta).toBeUndefined();
       return;
     }
@@ -95,16 +95,16 @@ it.each([AgentDocumentsManifest, AgentAccountManifest])(
       },
     ]);
     expect(delta?.system).toEqual({
-      current: canonical.messages[0].content,
-      initial: initial.messages[0].content,
+      current: canonical[0].content,
+      initial: initial[0].content,
     });
     // Discovery message stays identical across activation — no user-prefix rewrite needed.
-    expect(canonical.messages[1]).toEqual(initial.messages[1]);
-    expect(canonical.messages[1].content).toContain(documents.identifier);
+    expect(canonical[1]).toEqual(initial[1]);
+    expect(canonical[1].content).toContain(documents.identifier);
 
     // A truncated/pruned result cannot lend its old position to a definition.
     const truncated = await serverMessagesEngine(input(after, [user]));
-    expect(await createToolActivationResolver(state, after, next, truncated.messages)?.()).toEqual({
+    expect(await createToolActivationResolver(state, after, next, truncated)?.()).toEqual({
       additions: [],
     });
   },
@@ -166,10 +166,10 @@ it('preserves SystemDateProvider in both initial and canonical system prompts wh
   ] as UIChatMessage[]);
   const canonical = await serverMessagesEngine(next);
   const state = { activatedStepTools: [activation], operationToolSet } as AgentState;
-  const delta = await createToolActivationResolver(state, after, next, canonical.messages)?.();
+  const delta = await createToolActivationResolver(state, after, next, canonical)?.();
 
-  expect(delta?.system?.initial).toBe(initial.messages[0].content);
+  expect(delta?.system?.initial).toBe(initial[0].content);
   expect(delta?.system?.initial).toContain('Current date:');
   expect(delta?.system?.current).toContain('Current date:');
-  expect(canonical.messages[1]).toEqual(initial.messages[1]);
+  expect(canonical[1]).toEqual(initial[1]);
 });

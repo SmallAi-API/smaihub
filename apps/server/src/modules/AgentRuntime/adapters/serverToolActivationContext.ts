@@ -84,7 +84,7 @@ export function createToolActivationResolver(
       },
     });
     const current = systemContent(canonicalMessages);
-    const original = systemContent(baseline.messages);
+    const original = systemContent(baseline);
     if (current !== undefined && original !== undefined) {
       return { additions, system: { current, initial: original } };
     }
