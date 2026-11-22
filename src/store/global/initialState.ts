@@ -50,6 +50,7 @@ export type WorkingSidebarTab =
   | 'review'
   | 'search'
   | 'skills'
+  | 'tools'
   | 'web'
   | (string & {});
 
