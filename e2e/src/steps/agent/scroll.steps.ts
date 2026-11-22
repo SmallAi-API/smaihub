@@ -175,11 +175,11 @@ async function scrollBy(world: CustomWorld, deltaY: number): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
-// Setting toggle via the chat-appearance settings page
+// Setting toggle via the conversation settings page
 // ---------------------------------------------------------------------------
 
 async function setAutoScrollEnabled(world: CustomWorld, desired: boolean): Promise<void> {
-  await world.page.goto('/settings/chat-appearance');
+  await world.page.goto('/settings/conversation');
   // The first local dev compile can take a while, so keep an explicit timeout.
   // (Next.js builds the settings route on demand); a generous timeout avoids
   // flakes when the test suite warms up a cold server.

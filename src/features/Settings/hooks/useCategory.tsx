@@ -19,6 +19,7 @@ import {
   Info,
   KeyboardIcon,
   Map,
+  MessagesSquareIcon,
   MonitorSmartphoneIcon,
   PaletteIcon,
   Sparkles,
@@ -104,6 +105,11 @@ export const useCategory = () => {
         icon: PaletteIcon,
         key: SettingsTabs.Appearance,
         label: t('tab.appearance'),
+      },
+      {
+        icon: MessagesSquareIcon,
+        key: SettingsTabs.Conversation,
+        label: t('tab.conversation'),
       },
       !mobile && {
         icon: KeyboardIcon,
