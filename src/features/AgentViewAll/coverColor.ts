@@ -1,5 +1,5 @@
 import type { SidebarAgentItem } from '@lobechat/types';
-import { type AgentAvatarColor, cssVar, getAgentAvatarTraits } from '@lobehub/ui';
+import { type AgentAvatarColor, cssVar, getAgentAvatarTraits, parseAgentAvatar } from '@lobehub/ui';
 
 import { isDefaultAgentAvatar } from '@/components/AgentAvatar';
 import { remoteAvatarSrc } from '@/components/Avatar/fallback';
@@ -23,12 +23,15 @@ const SEED_COLORS: Record<AgentAvatarColor, string> = {
 };
 
 /**
- * Cover color derived from the agent id: the same color its generated
- * character wears, so an agent without an avatar of its own gets a band that
- * matches its face, and any other agent still gets a stable one.
+ * Cover color of the agent's character: the color its owner picked, else the
+ * one derived from the agent id. An agent without an image of its own gets a
+ * band that matches its face, and any other agent still gets a stable one.
  */
-export const seedCoverColor = (item: SidebarAgentItem): string =>
-  SEED_COLORS[getAgentAvatarTraits(item.id).color];
+export const seedCoverColor = (item: SidebarAgentItem): string => {
+  const picked = typeof item.avatar === 'string' ? parseAgentAvatar(item.avatar) : undefined;
+
+  return SEED_COLORS[picked?.color ?? getAgentAvatarTraits(item.id).color];
+};
 
 export const AGENT_COVER_PATTERNS = [
   'dots',
