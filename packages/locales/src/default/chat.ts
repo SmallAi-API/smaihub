@@ -2144,6 +2144,7 @@ export default {
   'supervisor.todoList.title': 'Tasks Completed',
   'tab.groupProfile': 'Group Profile',
   'tab.backToChat': 'Back to chat',
+  'tab.group.advanced': 'Advanced',
   'tab.group.identity': 'Identity',
   'tab.group.shape': 'Shape',
   'tab.group.setup': 'Configure',
