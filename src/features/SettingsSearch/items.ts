@@ -509,6 +509,13 @@ export const SETTINGS_SEARCH_ITEMS: SettingsSearchItem[] = [
     tab: SettingsTabs.Conversation,
   },
   {
+    anchor: 'conversation-message-usage',
+    descKey: 'settingChatAppearance.showMessageUsage.desc',
+    keywords: ['token', 'usage', 'model', 'cost', 'developer', 'advanced tools'],
+    labelKey: 'settingChatAppearance.showMessageUsage.title',
+    tab: SettingsTabs.Conversation,
+  },
+  {
     anchor: 'conversation-transition',
     keywords: ['transition', 'animation', 'fade', 'streaming'],
     labelKey: 'settingChatAppearance.transitionMode.title',
@@ -547,13 +554,6 @@ export const SETTINGS_SEARCH_ITEMS: SettingsSearchItem[] = [
     visible: (ctx) => ctx.isDesktop && ctx.isWindows,
   },
   // Advanced
-  {
-    anchor: 'advanced-dev-mode',
-    descKey: 'settingCommon.devMode.desc',
-    keywords: ['developer', 'debug', 'dev mode'],
-    labelKey: 'settingCommon.devMode.title',
-    tab: SettingsTabs.Advanced,
-  },
   {
     anchor: 'advanced-gateway-mode',
     descKey: 'tab.advanced.gatewayMode.desc',

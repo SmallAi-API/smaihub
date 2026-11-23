@@ -55,6 +55,8 @@ export const useCategory = (): CategoryGroup[] => {
   const { t } = useTranslation(['setting', 'auth', 'subscription']);
   const { hideDocs, showProvider } = useServerConfigStore(featureFlagsSelectors);
   const enableBusinessFeatures = useServerConfigStore(serverConfigSelectors.enableBusinessFeatures);
+  // Advanced only holds gateway mode on mobile; without it the page is empty.
+  const enableGatewayMode = useServerConfigStore(serverConfigSelectors.enableGatewayMode);
   const enableOAuthApps = useUserStore(labPreferSelectors.enableOAuthApps);
 
   return useMemo(() => {
@@ -119,11 +121,12 @@ export const useCategory = (): CategoryGroup[] => {
 
     const system: CategoryItem[] = [
       makeItem({ icon: Database, key: SettingsTabs.Storage, label: t('setting:tab.storage') }),
-      makeItem({
-        icon: EllipsisIcon,
-        key: SettingsTabs.Advanced,
-        label: t('setting:tab.advanced'),
-      }),
+      enableGatewayMode &&
+        makeItem({
+          icon: EllipsisIcon,
+          key: SettingsTabs.Advanced,
+          label: t('setting:tab.advanced'),
+        }),
       enableOAuthApps &&
         makeItem({
           icon: AppWindowIcon,
@@ -144,5 +147,13 @@ export const useCategory = (): CategoryGroup[] => {
       { items: connection, key: SettingsGroupKey.Connection, title: t('setting:group.connection') },
       { items: system, key: SettingsGroupKey.System, title: t('setting:group.systemDeveloper') },
     ].filter((group) => group.items.length > 0);
-  }, [t, enableBusinessFeatures, hideDocs, showProvider, enableOAuthApps, navigate]);
+  }, [
+    t,
+    enableBusinessFeatures,
+    hideDocs,
+    showProvider,
+    enableOAuthApps,
+    enableGatewayMode,
+    navigate,
+  ]);
 };

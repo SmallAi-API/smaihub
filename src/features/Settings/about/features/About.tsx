@@ -1,18 +1,12 @@
 'use client';
 
-import { BRANDING_EMAIL, BRANDING_NAME, SOCIAL_URL } from '@lobechat/business-const';
-import { Divider, Flexbox } from '@lobehub/ui';
+import { BRANDING_NAME } from '@lobechat/business-const';
+import { Flexbox } from '@lobehub/ui';
 import { Form } from '@lobehub/ui/form';
-import { cssVar } from '@lobehub/ui/stylex/cssVar.stylex';
-import * as stylex from '@stylexjs/stylex';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { densityTokens } from '@/styles/density.stylex';
-
 import Version from './Version';
-
-const styles = stylex.create({});
 
 const About = memo<{ mobile?: boolean }>(({ mobile }) => {
   const { t } = useTranslation('common');

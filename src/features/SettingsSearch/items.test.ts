@@ -109,7 +109,7 @@ describe('settings search index', () => {
   });
 
   it('does not offer the retired update-channel setting in search', () => {
-    expect(SETTINGS_SEARCH_ITEMS.some((item) => item.anchor === 'advanced-update-channel')).toBe(
+    expect(SETTINGS_SEARCH_ITEMS.some((item) => item.anchor.endsWith('-update-channel'))).toBe(
       false,
     );
   });

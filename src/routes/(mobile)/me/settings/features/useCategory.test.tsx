@@ -26,12 +26,21 @@ vi.mock('react-router', () => ({
   useNavigate: () => navigate,
 }));
 
-const createWrapper = (showProvider: boolean, showApiKeyManage = false) => {
+const createWrapper = (
+  showProvider: boolean,
+  showApiKeyManage = false,
+  enableGatewayMode = false,
+) => {
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <Provider
       createStore={() =>
         initServerConfigStore({
-          serverConfig: { aiProvider: {}, enableBusinessFeatures: true, telemetry: {} },
+          serverConfig: {
+            aiProvider: {},
+            enableBusinessFeatures: true,
+            enableGatewayMode,
+            telemetry: {},
+          },
           featureFlags: {
             ...mapFeatureFlagsEnvToState({
               provider_settings: true,
@@ -88,10 +97,11 @@ describe('mobile settings useCategory', () => {
     [true, false],
     [true, true],
   ])('keeps personal API Key hidden (manage=%s, dev=%s)', (showApiKeyManage, isDevMode) => {
+    const legacyGeneral = { isDevMode };
     useUserStore.setState({
       settings: {
         ...initialUserStoreState.settings,
-        general: { ...initialUserStoreState.settings.general, isDevMode },
+        general: { ...initialUserStoreState.settings.general, ...legacyGeneral },
       },
     });
 
@@ -102,6 +112,18 @@ describe('mobile settings useCategory', () => {
 
     expect(keys).not.toContain(SettingsTabs.APIKey);
   });
+
+  it.each([false, true])(
+    'shows Advanced on mobile when gateway mode is %s',
+    (enableGatewayMode) => {
+      const { result } = renderHook(() => useCategory(), {
+        wrapper: createWrapper(true, false, enableGatewayMode),
+      });
+      const keys = result.current.flatMap((group) => group.items.map((item) => item.key));
+
+      expect(keys.includes(SettingsTabs.Advanced)).toBe(enableGatewayMode);
+    },
+  );
 
   it('keeps Provider visible and routes to the provider list when provider settings are enabled', () => {
     const { result } = renderHook(() => useCategory(), {

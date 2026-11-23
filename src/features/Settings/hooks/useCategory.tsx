@@ -82,6 +82,10 @@ export const useCategory = () => {
   const remoteServerUrl = useElectronStore(electronSyncSelectors.remoteServerUrl);
   const enableOAuthApps = useUserStore(labPreferSelectors.enableOAuthApps);
   const enableWebhook = useServerConfigStore(serverConfigSelectors.enableWebhook);
+  // Advanced holds gateway mode and desktop diagnostics; on the web without
+  // gateway mode it would be an empty page.
+  const enableGatewayMode = useServerConfigStore(serverConfigSelectors.enableGatewayMode);
+  const showAdvanced = isDesktop || enableGatewayMode;
 
   const avatarUrl = useMemo(() => {
     if (!avatar) return undefined;
@@ -273,7 +277,7 @@ export const useCategory = () => {
         key: SettingsTabs.Trash,
         label: t('tab.trash'),
       },
-      {
+      showAdvanced && {
         icon: EllipsisIcon,
         key: SettingsTabs.Advanced,
         label: t('tab.advanced'),
@@ -313,6 +317,7 @@ export const useCategory = () => {
     showProvider,
     enableOAuthApps,
     enableWebhook,
+    showAdvanced,
     avatarUrl,
     username,
   ]);

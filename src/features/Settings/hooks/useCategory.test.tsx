@@ -24,12 +24,18 @@ const createWrapper = (
   showProvider: boolean,
   enableBusinessFeatures = false,
   showApiKeyManage = false,
+  enableGatewayMode = false,
 ) => {
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <Provider
       createStore={() =>
         initServerConfigStore({
-          serverConfig: { aiProvider: {}, enableBusinessFeatures, telemetry: {} },
+          serverConfig: {
+            aiProvider: {},
+            enableBusinessFeatures,
+            enableGatewayMode,
+            telemetry: {},
+          },
           featureFlags: {
             ...mapFeatureFlagsEnvToState({
               provider_settings: true,
@@ -120,20 +126,38 @@ describe('settings useCategory', () => {
     expect(keys).not.toContain(SettingsTabs.Provider);
   });
 
-  it('lists API Key once when both of its flags are on', () => {
-    useUserStore.setState({
-      settings: {
-        ...initialUserStoreState.settings,
-        general: { ...initialUserStoreState.settings.general, isDevMode },
-      },
-    });
+  it.each([
+    [false, false],
+    [false, true],
+    [true, false],
+    [true, true],
+  ])(
+    'keeps personal API Key hidden (manage=%s, legacy dev mode=%s)',
+    (showApiKeyManage, isDevMode) => {
+      const legacyGeneral = { isDevMode };
+      useUserStore.setState({
+        settings: {
+          ...initialUserStoreState.settings,
+          general: { ...initialUserStoreState.settings.general, ...legacyGeneral },
+        },
+      });
 
+      const { result } = renderHook(() => useCategory(), {
+        wrapper: createWrapper(true, true, showApiKeyManage),
+      });
+      const keys = result.current.flatMap((group) => group.items.map((item) => item.key));
+
+      expect(keys).not.toContain(SettingsTabs.APIKey);
+    },
+  );
+
+  it.each([false, true])('shows Advanced on web when gateway mode is %s', (enableGatewayMode) => {
     const { result } = renderHook(() => useCategory(), {
-      wrapper: createWrapper(true, true, showApiKeyManage),
+      wrapper: createWrapper(true, false, false, enableGatewayMode),
     });
     const keys = result.current.flatMap((group) => group.items.map((item) => item.key));
 
-    expect(keys).not.toContain(SettingsTabs.APIKey);
+    expect(keys.includes(SettingsTabs.Advanced)).toBe(enableGatewayMode);
   });
 
   it('shows OAuth Apps when the Labs preference is enabled', () => {

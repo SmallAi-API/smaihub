@@ -22,8 +22,6 @@ import WorkspaceLink from '@/features/Workspace/WorkspaceLink';
 import { useNavLayout } from '@/hooks/useNavLayout';
 import { useAnalytics } from '@/libs/analytics/client';
 import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
-import { useUserStore } from '@/store/user';
-import { userGeneralSettingsSelectors } from '@/store/user/slices/settings/selectors/general';
 
 type FooterMenuItems = DropdownItem[];
 
@@ -76,7 +74,6 @@ const Footer = memo(() => {
   const isHomeSidebar = activeNavKey === 'home';
   const billboardMenuItems = useBillboardMenuItems();
   const enableBusinessFeatures = useServerConfigStore(serverConfigSelectors.enableBusinessFeatures);
-  const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
 
   const trackMenuClick = useCallback(
     (key: string) => {
@@ -96,8 +93,10 @@ const Footer = memo(() => {
     helpMenuItems: DropdownItem[];
     trackedMenuKeys: string[];
   }>(() => {
+    // The compact footer gives Settings its own icon beside Help; only the
+    // expanded footer, which has no such icon, lists it in the menu.
     const settingsGroup: FooterMenuItems =
-      footer.showSettingsEntry && !isDevMode
+      footer.showSettingsEntry && footer.layout === 'expanded'
         ? [
             {
               icon: <Icon icon={Settings2} />,
@@ -117,7 +116,6 @@ const Footer = memo(() => {
           },
         ]
       : [];
-    // Getting help: read the docs, report what broke, or reach a person.
     const helpGroup: FooterMenuItems = [
       {
         icon: <Icon icon={KeyRound} />,
@@ -171,7 +169,6 @@ const Footer = memo(() => {
     footer.showSettingsEntry,
     footer.layout,
     footer.showEvalEntry,
-    isDevMode,
     t,
     settingLabelKey,
     enableBusinessFeatures,
@@ -227,11 +224,12 @@ const Footer = memo(() => {
           >
             <ActionIcon
               aria-label={t('userPanel.help')}
+              data-billboard-anchor=""
               icon={CircleHelp}
               size={FOOTER_ICON_SIZE}
             />
           </DropdownMenu>
-          {isDevMode && (
+          {footer.showSettingsEntry && (
             <WorkspaceLink to="/settings">
               <ActionIcon
                 aria-label={t(settingLabelKey)}

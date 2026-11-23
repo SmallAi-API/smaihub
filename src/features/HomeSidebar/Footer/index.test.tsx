@@ -13,11 +13,8 @@ vi.mock('react-i18next', () => ({
     i18n: { language: 'en-US' },
     t: (key: string) =>
       ({
-        'changelog': 'Changelog',
         'getApp': 'Get App',
-        'userPanel.discord': 'Discord',
-        'userPanel.docs': 'Docs',
-        'userPanel.feedback': 'Feedback',
+        'tab.apiAccess': 'Get API Key',
         'userPanel.help': 'Help',
         'userPanel.inviteFriend': 'Invite a friend',
         'userPanel.setting': 'Settings',
@@ -27,25 +24,22 @@ vi.mock('react-i18next', () => ({
 
 interface RenderFooterOptions {
   billboardItems?: unknown[];
-  bugReportItem?: unknown;
-  bugReportLab?: boolean;
   desktop?: boolean;
   enableBusinessFeatures?: boolean;
-  hideGitHub?: boolean;
   homeSidebar?: boolean;
+  layout?: 'compact' | 'expanded';
+  showSettingsEntry?: boolean;
 }
 
 let mockServerConfigState: Record<string, unknown>;
-let mockUserState: Record<string, unknown>;
 
 const renderFooter = async ({
   billboardItems = [],
-  bugReportItem = null,
-  bugReportLab = false,
   desktop = false,
   enableBusinessFeatures = false,
   homeSidebar = false,
-  hideGitHub = true,
+  layout = 'compact',
+  showSettingsEntry = true,
 }: RenderFooterOptions = {}) => {
   vi.resetModules();
   analyticsTrack.mockReset();
@@ -57,11 +51,6 @@ const renderFooter = async ({
 
   mockServerConfigState = {
     enableBusinessFeatures,
-  };
-  mockUserState = {
-    defaultSettings: {},
-    preference: { lab: { enableTopicBugReport: bugReportLab } },
-    settings: { general: { isDevMode: false } },
   };
 
   vi.doMock('@lobechat/const', async (importOriginal) => {
@@ -80,27 +69,10 @@ const renderFooter = async ({
   vi.doMock('@/libs/analytics/client', () => ({
     useAnalytics: createAnalyticsApi,
   }));
-  vi.doMock('@/components/ChangelogModal', () => ({
-    default: vi.fn(),
-    openChangelogModal: vi.fn(),
-  }));
-  vi.doMock('@/components/FeedbackModal', () => ({
-    default: vi.fn(),
-    openFeedbackModal: vi.fn(),
-  }));
-  function provideBugReportItem() {
-    return bugReportItem;
-  }
-  vi.doMock('@/business/client/hooks/useHelpMenuBugReportItem', () => ({
-    useHelpMenuBugReportItem: provideBugReportItem,
-  }));
-  vi.doMock('@/features/Billboard', () => ({
-    default: () => null,
-  }));
   vi.doMock('@/features/Billboard/MenuItems', () => ({
     useBillboardMenuItems: () => billboardItems,
   }));
-  vi.doMock('@/features/NavPanel', () => ({
+  vi.doMock('@/features/NavPanel/useActiveNavKey', () => ({
     useActiveNavKey: () => (homeSidebar ? 'home' : 'discover'),
   }));
   vi.doMock('@/features/User/UserPanel/ThemeButton', () => ({
@@ -114,12 +86,7 @@ const renderFooter = async ({
   function createNavLayoutState() {
     return {
       bottomMenuItems: [],
-      footer: {
-        hideGitHub,
-        layout: 'compact',
-        showEvalEntry: false,
-        showSettingsEntry: true,
-      },
+      footer: { layout, showEvalEntry: false, showSettingsEntry },
       topNavItems: [],
       userPanel: {
         showDataImporter: false,
@@ -139,13 +106,6 @@ const renderFooter = async ({
     },
     useServerConfigStore: selectFromServerConfigStore,
   }));
-  function selectFromUserStore(selector: (state: Record<string, unknown>) => unknown) {
-    return selector(mockUserState);
-  }
-  vi.doMock('@/store/user', () => ({
-    useUserStore: selectFromUserStore,
-  }));
-
   const { default: Footer } = await import('./index');
 
   render(
@@ -165,17 +125,12 @@ afterEach(() => {
   vi.unstubAllGlobals();
   vi.doUnmock('@lobechat/const');
   vi.doUnmock('@/libs/analytics/client');
-  vi.doUnmock('@/components/ChangelogModal');
-  vi.doUnmock('@/components/FeedbackModal');
-  vi.doUnmock('@/business/client/hooks/useHelpMenuBugReportItem');
-  vi.doUnmock('@/features/Billboard');
   vi.doUnmock('@/features/Billboard/MenuItems');
-  vi.doUnmock('@/features/NavPanel');
+  vi.doUnmock('@/features/NavPanel/useActiveNavKey');
   vi.doUnmock('@/features/User/UserPanel/ThemeButton');
   vi.doUnmock('@/features/Workspace/WorkspaceLink');
   vi.doUnmock('@/hooks/useNavLayout');
   vi.doUnmock('@/store/serverConfig');
-  vi.doUnmock('@/store/user');
 });
 
 describe('Footer billboard anchor', () => {
@@ -186,23 +141,65 @@ describe('Footer billboard anchor', () => {
   }, 20000);
 });
 
-describe('Footer help menu tracking', () => {
-  it('shows Get App before GitHub on web', async () => {
+describe('Footer settings entry', () => {
+  it('shows Settings as a single dedicated link in the compact layout', async () => {
     const user = userEvent.setup();
-    await renderFooter({ hideGitHub: false });
+    await renderFooter();
+
+    expect(screen.getByRole('button', { name: 'Settings' }).closest('a')).toHaveAttribute(
+      'href',
+      '/settings',
+    );
+    await user.click(screen.getByRole('button', { name: 'Help' }));
+    expect(await screen.findByRole('link', { name: 'Get API Key' })).toBeVisible();
+    expect(screen.queryByRole('link', { name: 'Settings' })).not.toBeInTheDocument();
+  }, 20000);
+
+  it('shows Settings in the Help menu in the expanded layout', async () => {
+    const user = userEvent.setup();
+    await renderFooter({ layout: 'expanded' });
+
+    expect(screen.queryByRole('button', { name: 'Settings' })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Help' }));
+    expect(await screen.findByRole('link', { name: 'Settings' })).toHaveAttribute(
+      'href',
+      '/settings',
+    );
+  }, 20000);
+
+  it.each(['compact', 'expanded'] as const)(
+    'honors the settings entry flag in the %s layout',
+    async (layout) => {
+      const user = userEvent.setup();
+      await renderFooter({ layout, showSettingsEntry: false });
+
+      expect(screen.queryByRole('button', { name: 'Settings' })).not.toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: 'Help' }));
+      expect(await screen.findByRole('link', { name: 'Get API Key' })).toBeVisible();
+      expect(screen.queryByRole('link', { name: 'Settings' })).not.toBeInTheDocument();
+    },
+    20000,
+  );
+});
+
+describe('Footer help menu tracking', () => {
+  it('shows the external API link before Get App on web', async () => {
+    const user = userEvent.setup();
+    await renderFooter();
 
     await user.click(screen.getByRole('button', { name: 'Help' }));
 
     const getApp = await screen.findByRole('link', { name: 'Get App' });
-    const github = screen.getByRole('link', { name: 'GitHub' });
+    const apiKey = screen.getByRole('link', { name: 'Get API Key' });
 
     expect(getApp).toHaveAttribute('href', '/apps');
-    expect(getApp.compareDocumentPosition(github) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(apiKey).toHaveAttribute('href', 'https://api.smai.ai');
+    expect(apiKey.compareDocumentPosition(getApp) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   }, 20000);
 
   it('shows Get App in desktop builds too', async () => {
     const user = userEvent.setup();
-    await renderFooter({ desktop: true, hideGitHub: false });
+    await renderFooter({ desktop: true });
 
     await user.click(screen.getByRole('button', { name: 'Help' }));
 
@@ -265,55 +262,16 @@ describe('Footer help menu tracking', () => {
     expect(keys).not.toContain('billboard-promo');
   }, 20000);
 
-  it.each([
-    ['shows', true],
-    ['hides', false],
-  ])(
-    '%s the deployment bug report entry by the lab',
-    async (_case, bugReportLab) => {
-      const user = userEvent.setup();
-      await renderFooter({
-        bugReportItem: { key: 'reportBug', label: 'Report Bug', onClick: vi.fn() },
-        bugReportLab,
-      });
-
-      await user.click(screen.getByRole('button', { name: 'Help' }));
-      await screen.findByText('Feedback');
-
-      expect(!!screen.queryByText('Report Bug')).toBe(bugReportLab);
-    },
-    20000,
-  );
-
-  it('groups help, product and community entries, each separated once', async () => {
+  it('separates the invitation and help groups once', async () => {
     const user = userEvent.setup();
-    await renderFooter({
-      bugReportItem: { key: 'reportBug', label: 'Report Bug', onClick: vi.fn() },
-      bugReportLab: true,
-      enableBusinessFeatures: true,
-      hideGitHub: false,
-    });
+    await renderFooter({ enableBusinessFeatures: true });
 
     await user.click(screen.getByRole('button', { name: 'Help' }));
-    const menu = (await screen.findByText('Docs')).closest('[role="menu"]')!;
+    const menu = await screen.findByRole('menu');
     const sequence = [...menu.querySelectorAll('[role="menuitem"], [role="separator"]')].map(
       (node) => (node.getAttribute('role') === 'separator' ? '|' : node.textContent),
     );
 
-    expect(sequence).toEqual([
-      'Settings',
-      '|',
-      'Invite a friend',
-      '|',
-      'Docs',
-      'Report Bug',
-      'Feedback',
-      '|',
-      'Changelog',
-      'Get App',
-      '|',
-      'Discord',
-      'GitHub',
-    ]);
+    expect(sequence).toEqual(['Invite a friend', '|', 'Get API Key', 'Get App']);
   }, 20000);
 });

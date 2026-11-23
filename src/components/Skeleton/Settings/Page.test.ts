@@ -53,8 +53,10 @@ describe('SETTINGS_TAB_SKELETONS', () => {
     const skeleton = getSettingsTabSkeleton(SettingsTabs.Advanced)!;
     render(createElement(Provider, { createStore: () => store }, createElement(skeleton.Body)));
 
-    expect(screen.getByText('tab.advanced.toolsAndDiagnostics.title')).toBeInTheDocument();
-    expect(screen.getByText('settingCommon.devMode.title')).toBeInTheDocument();
+    expect(Boolean(screen.queryByText('tab.advanced.toolsAndDiagnostics.title'))).toBe(
+      config.isDesktop || config.enableGatewayMode,
+    );
+    expect(screen.queryByText('settingCommon.devMode.title')).not.toBeInTheDocument();
     expect(Boolean(screen.queryByText('tab.advanced.gatewayMode.title'))).toBe(
       config.enableGatewayMode,
     );

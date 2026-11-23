@@ -1,4 +1,5 @@
 'use client';
+
 import { Spin, Switch } from '@lobehub/ui';
 import { Form, type FormFieldProps, type FormGroupItem, useForm } from '@lobehub/ui/form';
 import isEqual from 'fast-deep-equal';
@@ -77,41 +78,29 @@ const Page = memo<{ showSettingHeader?: boolean }>(({ showSettingHeader = true }
     );
   }
 
+  const advancedItems: FormFieldProps<UserGeneralConfig>[] = [
+    ...(enableGatewayMode
+      ? [
+          {
+            children: (
+              <Switch checked={defaultAgentGatewayModeEnabled} onChange={handleGatewayModeChange} />
+            ),
+            desc: t('tab.advanced.gatewayMode.desc'),
+            label: (
+              <SettingsSearchAnchor id={'advanced-gateway-mode'}>
+                {t('tab.advanced.gatewayMode.title')}
+              </SettingsSearchAnchor>
+            ),
+            minWidth: undefined,
+          } satisfies FormFieldProps<UserGeneralConfig>,
+        ]
+      : []),
+    ...diagnosticsItems,
+    ...(remoteDebuggingItem ? [remoteDebuggingItem] : []),
+  ];
+
   const advancedGroup: FormGroupItem<UserGeneralConfig> = {
-    children: [
-      {
-        children: <Switch />,
-        desc: t('settingCommon.devMode.desc'),
-        label: (
-          <SettingsSearchAnchor id={'advanced-dev-mode'}>
-            {t('settingCommon.devMode.title')}
-          </SettingsSearchAnchor>
-        ),
-        minWidth: undefined,
-        name: 'isDevMode',
-      },
-      ...(enableGatewayMode
-        ? [
-            {
-              children: (
-                <Switch
-                  checked={defaultAgentGatewayModeEnabled}
-                  onChange={handleGatewayModeChange}
-                />
-              ),
-              desc: t('tab.advanced.gatewayMode.desc'),
-              label: (
-                <SettingsSearchAnchor id={'advanced-gateway-mode'}>
-                  {t('tab.advanced.gatewayMode.title')}
-                </SettingsSearchAnchor>
-              ),
-              minWidth: undefined,
-            } satisfies FormFieldProps<UserGeneralConfig>,
-          ]
-        : []),
-      ...diagnosticsItems,
-      ...(remoteDebuggingItem ? [remoteDebuggingItem] : []),
-    ],
+    children: advancedItems,
     extra: loading && <Spin size="small" style={{ opacity: 0.5 }} />,
     title: t('tab.advanced.toolsAndDiagnostics.title'),
   };
@@ -122,7 +111,7 @@ const Page = memo<{ showSettingHeader?: boolean }>(({ showSettingHeader = true }
       <Form
         collapsible={false}
         form={form}
-        items={[advancedGroup]}
+        items={advancedItems.length > 0 ? [advancedGroup] : []}
         itemsType={'group'}
         variant={'filled'}
         {...FORM_STYLE}
