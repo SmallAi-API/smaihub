@@ -88,7 +88,7 @@ export default {
   'cmdk.communitySupport': 'Community Support',
   'cmdk.contactUs': 'Contact Us',
   'cmdk.context.agent': 'Agent',
-  'cmdk.context.community': 'Plugins',
+  'cmdk.context.community': 'Marketplace',
   'cmdk.context.general': 'General',
   'cmdk.context.group': 'Group',
   'cmdk.context.memory': 'Memory',
@@ -214,7 +214,7 @@ export default {
 
   'cmdk.search.loading': 'Searching...',
 
-  'cmdk.search.market': 'Plugins',
+  'cmdk.search.market': 'Marketplace',
 
   'cmdk.search.mcp': 'MCP Server',
 
@@ -633,7 +633,7 @@ export default {
   'tab.generation': 'Generation',
   'tab.goals': 'Goals',
   'tab.home': 'Home',
-  'tab.marketplace': 'Plugins',
+  'tab.marketplace': 'Marketplace',
   'tab.me': 'Me',
   'tab.memory': 'Memory',
   'tab.music': 'Music',
