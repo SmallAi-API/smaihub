@@ -194,6 +194,7 @@ vi.mock('@/server/services/heterogeneousAgent', () => ({
   HeterogeneousAgentService: vi.fn().mockImplementation(function () {
     return {
       getHeterogeneousResumeSessionId: mockGetHeterogeneousResumeSessionId,
+      getThreadResumeSessionId: vi.fn().mockResolvedValue(undefined),
     };
   }),
 }));
@@ -2370,8 +2371,7 @@ describe('AiAgentService.execAgent - hetero early-exit file attachments', () => 
 
       await service.execAgent(isolatedChildInput() as any);
 
-      // Otherwise this child would never be recognized by
-      // heteroIngest/heteroFinish at all.
+      // Otherwise this child would never be recognized by heteroIngest/heteroFinish at all.
       expect(findRunningOpSeed()).toBeDefined();
     });
   });
