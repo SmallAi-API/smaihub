@@ -39,6 +39,8 @@ import { statsPageLoader } from '@/spa/router/statsPageLoader';
 import { SettingsTabs } from '@/store/global/initialState';
 import { dynamicElement, dynamicLayout, ErrorBoundary, redirectElement } from '@/utils/router';
 
+import { legacySettingsTabRedirects, legacyWorkspaceBillingRoute } from './legacySettingsRoutes';
+
 // One element per shape, shared by every tab: switching tabs keeps the page
 // mounted instead of swapping in a new lazy component.
 const settingsTabElement = dynamicElement(
@@ -52,13 +54,14 @@ const settingsTabSubElement = dynamicElement(
   { preloadId: 'mobile-settings' },
 );
 
-// Skills and connectors moved to the Marketplace; their old tabs are redirects.
+// Retired tabs have explicit redirects.
 // Credentials keep their own mobile page: mobile has no environments page to
 // share, while desktop redirects `/settings/credential` to it.
 const TABS_WITHOUT_SETTINGS_PAGE = new Set<string>([
   SettingsTabs.Connector,
   SettingsTabs.Provider,
   SettingsTabs.Skill,
+  ...legacySettingsTabRedirects.flatMap(({ path }) => (path ? [path] : [])),
 ]);
 
 const personalSettingsTabRoutes: RouteObject[] = [...new Set(Object.values(SettingsTabs))]
@@ -394,11 +397,12 @@ export const mobileRoutes: RouteObject[] = [
           { element: <LegacySandboxStorageRedirect />, path: 'drive' },
           ...legacySettingsMarketplaceRedirects,
           ...mobileSettingsMemoryRedirects,
+          ...legacySettingsTabRedirects,
           // Every known tab gets a static segment: `/settings/memory` and
           // `/:workspaceSlug/memory` (or `/agent`, `/image`, …) tie on route
           // score, and the workspace tree would read `settings` as a slug.
           ...personalSettingsTabRoutes,
-          // Other settings tabs (common, agent, memory, tts, about, etc.)
+          // Fallback for tabs without an explicit route.
           { element: settingsTabElement, handle: { meta: settingsParamTabMeta }, path: ':tab' },
           {
             element: settingsTabSubElement,
@@ -492,16 +496,8 @@ export const mobileRoutes: RouteObject[] = [
             errorElement: <ErrorBoundary />,
             path: 'settings',
           },
-          // Legacy `/:slug/billing/*` URLs — redirect to `/:slug/settings/*`.
-          {
-            children: [
-              { element: redirectElement('../settings/plans'), path: 'plans' },
-              { element: redirectElement('../settings/usage'), path: 'usage' },
-              { element: redirectElement('../settings/credits'), path: 'credits' },
-              { element: redirectElement('../settings/billing'), path: 'billing' },
-            ],
-            path: 'billing',
-          },
+          // Legacy `/:slug/billing/*` URLs open the matching `/:slug/settings/*` page.
+          legacyWorkspaceBillingRoute,
         ],
         element: dynamicLayout(
           () => import('@/routes/(main)/[workspaceSlug]/_layout'),

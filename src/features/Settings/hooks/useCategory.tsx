@@ -33,6 +33,7 @@ import {
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { type SettingsScope } from '@/features/SettingsSwitch/settingsScope';
 import { useElectronStore } from '@/store/electron';
 import { electronSyncSelectors } from '@/store/electron/selectors';
 import { SettingsTabs } from '@/store/global/initialState';
@@ -49,6 +50,7 @@ export enum SettingsGroupKey {
   Account = 'account',
   Agent = 'agent',
   Connection = 'connection',
+  Data = 'data',
   Resource = 'resource',
   Subscription = 'subscription',
   System = 'system',
@@ -65,6 +67,8 @@ export interface CategoryItem {
 export interface CategoryGroup {
   items: CategoryItem[];
   key: SettingsGroupKey;
+  /** Account settings follow the user; space settings belong to the personal space. */
+  scope: SettingsScope;
   title: string;
 }
 
@@ -98,7 +102,8 @@ export const useCategory = () => {
   const categoryGroups: CategoryGroup[] = useMemo(() => {
     const groups: CategoryGroup[] = [];
 
-    // Account group — who the user is and how the app behaves for them.
+    // ── Account settings: who the user is and how the app behaves for them,
+    // the same in every space.
     const accountItems: CategoryItem[] = [
       {
         icon: avatarUrl ? <Avatar avatar={avatarUrl} shape={'square'} size={26} /> : undefined,
@@ -126,127 +131,27 @@ export const useCategory = () => {
         label: t('tab.notification'),
       },
       {
-        icon: ChartColumnBigIcon,
-        key: SettingsTabs.Stats,
-        label: tAuth('tab.stats'),
+        icon: BrainCircuit,
+        key: SettingsTabs.Memory,
+        label: t('tab.memory'),
+      },
+      enableBusinessFeatures && {
+        icon: Gift,
+        key: SettingsTabs.Referral,
+        label: tSubscription('tab.referral'),
       },
     ].filter(Boolean) as CategoryItem[];
 
     groups.push({
       items: accountItems,
       key: SettingsGroupKey.Account,
+      scope: 'account',
       title: t('group.profile'),
     });
 
-    // Personal subscription / billing items sit right under the account they
-    // belong to. Always shown when business features are enabled — workspace
-    // settings live under a separate `/:workspaceSlug/settings/*` surface and
-    // never share this sidebar.
-    if (enableBusinessFeatures) {
-      const subscriptionItems: CategoryItem[] = [
-        { icon: Map, key: SettingsTabs.Plans, label: tSubscription('tab.plans') },
-        // One entry for usage and balance: `/settings/credits` redirects into it.
-        {
-          icon: ChartPieIcon,
-          key: SettingsTabs.Usage,
-          label: tSubscription('tab.usage'),
-        },
-        { icon: CreditCard, key: SettingsTabs.Billing, label: tSubscription('tab.billing') },
-        { icon: Gift, key: SettingsTabs.Referral, label: tSubscription('tab.referral') },
-      ];
-
-      groups.push({
-        items: subscriptionItems,
-        key: SettingsGroupKey.Subscription,
-        title: t('group.subscription'),
-      });
-    }
-
-    // Agent group — which models an agent uses and what it can do.
-    const agentItems: CategoryItem[] = [
-      // Provider settings should not depend on Advanced tools: new users may need
-      // non-LobeHub providers, and desktop users often bring their own API keys.
-      showProvider && {
-        icon: Brain,
-        key: SettingsTabs.Provider,
-        label: t('tab.provider'),
-      },
-      {
-        icon: Sparkles,
-        key: SettingsTabs.ServiceModel,
-        label: t('tab.serviceModel'),
-      },
-      ENABLE_TOOL_CHANNEL_SETTINGS && {
-        icon: Wrench,
-        key: SettingsTabs.Tools,
-        label: t('tab.tools'),
-      },
-      {
-        icon: BrainCircuit,
-        key: SettingsTabs.Memory,
-        label: t('tab.memory'),
-      },
-      {
-        icon: TagIcon,
-        key: SettingsTabs.Labels,
-        label: t('tab.labels'),
-      },
-    ].filter(Boolean) as CategoryItem[];
-
-    groups.push({
-      items: agentItems,
-      key: SettingsGroupKey.Agent,
-      title: t('group.aiConfig'),
-    });
-
-    // Connection group — the outside services agents can reach, whoever owns
-    // the binding. Every entry here is already the user's own.
-    const connectionItems: CategoryItem[] = [
-      // What connectors fire on their own: the event subscriptions agents made
-      // through them. Connectors themselves are managed in the Marketplace.
-      enableWebhook && {
-        icon: ZapIcon,
-        key: SettingsTabs.Automations,
-        label: t('tab.automations'),
-      },
-      // URLs outside systems call to wake an agent; made on each agent's page, managed here too.
-      enableWebhook && {
-        icon: WebhookIcon,
-        key: SettingsTabs.Webhooks,
-        label: t('tab.webhooks'),
-      },
-    ].filter(Boolean) as CategoryItem[];
-
-    // Every entry is conditional, so a self-hosted deployment may have none.
-    if (connectionItems.length > 0)
-      groups.push({
-        items: connectionItems,
-        key: SettingsGroupKey.Connection,
-        title: t('group.connection'),
-      });
-
-    // Resource group — where agents run.
-    const resourceItems: CategoryItem[] = [
-      {
-        icon: MonitorSmartphoneIcon,
-        key: SettingsTabs.Devices,
-        label: t('tab.devices'),
-      },
-      // The coding-agent subscriptions this member's devices signed in to:
-      // the capacity their agents are balanced onto.
-      {
-        icon: GaugeIcon,
-        key: SettingsTabs.SubscriptionAccounts,
-        label: t('tab.subscriptionAccounts'),
-      },
-      // Environments & Vault, always there: what a run starts from and
-      // the secrets it reads, in one place. An environment is a definition,
-      // written down before anything runs it, so it needs no drive.
-      {
-        icon: ContainerIcon,
-        key: SettingsTabs.Environments,
-        label: t('tab.environmentsAndCreds'),
-      },
+    // Machine and app preferences — low-frequency, so the sidebar starts it
+    // collapsed.
+    const systemItems: CategoryItem[] = [
       isDesktop && {
         icon: EthernetPort,
         key: SettingsTabs.Proxy,
@@ -256,26 +161,6 @@ export const useCategory = () => {
         icon: TerminalSquare,
         key: SettingsTabs.SystemTools,
         label: t('tab.systemTools'),
-      },
-    ].filter(Boolean) as CategoryItem[];
-
-    groups.push({
-      items: resourceItems,
-      key: SettingsGroupKey.Resource,
-      title: t('group.resource'),
-    });
-
-    // System & developer group — low-frequency, so the sidebar starts it collapsed.
-    const systemItems: CategoryItem[] = [
-      {
-        icon: Database,
-        key: SettingsTabs.Storage,
-        label: t('tab.storage'),
-      },
-      {
-        icon: Trash2,
-        key: SettingsTabs.Trash,
-        label: t('tab.trash'),
       },
       showAdvanced && {
         icon: EllipsisIcon,
@@ -302,7 +187,145 @@ export const useCategory = () => {
     groups.push({
       items: systemItems,
       key: SettingsGroupKey.System,
+      scope: 'account',
       title: t('group.systemDeveloper'),
+    });
+
+    // ── Personal space settings: what the personal space owns and spends.
+    // Workspaces keep their own copy under `/:workspaceSlug/settings/*`.
+    if (enableBusinessFeatures) {
+      const subscriptionItems: CategoryItem[] = [
+        { icon: Map, key: SettingsTabs.Plans, label: tSubscription('tab.plans') },
+        // One entry for usage and balance: `/settings/credits` redirects into it.
+        {
+          icon: ChartPieIcon,
+          key: SettingsTabs.Usage,
+          label: tSubscription('tab.usage'),
+        },
+        { icon: CreditCard, key: SettingsTabs.Billing, label: tSubscription('tab.billing') },
+      ];
+
+      groups.push({
+        items: subscriptionItems,
+        key: SettingsGroupKey.Subscription,
+        scope: 'space',
+        title: t('group.subscription'),
+      });
+    }
+
+    // Agent group — which models an agent uses and what it can do.
+    const agentItems: CategoryItem[] = [
+      // Provider settings should not depend on Advanced tools: new users may need
+      // non-LobeHub providers, and desktop users often bring their own API keys.
+      showProvider && {
+        icon: Brain,
+        key: SettingsTabs.Provider,
+        label: t('tab.provider'),
+      },
+      {
+        icon: Sparkles,
+        key: SettingsTabs.ServiceModel,
+        label: t('tab.serviceModel'),
+      },
+      ENABLE_TOOL_CHANNEL_SETTINGS && {
+        icon: Wrench,
+        key: SettingsTabs.Tools,
+        label: t('tab.tools'),
+      },
+      {
+        icon: TagIcon,
+        key: SettingsTabs.Labels,
+        label: t('tab.labels'),
+      },
+    ].filter(Boolean) as CategoryItem[];
+
+    groups.push({
+      items: agentItems,
+      key: SettingsGroupKey.Agent,
+      scope: 'space',
+      title: t('group.aiConfig'),
+    });
+
+    // Connection group — the outside services the space's agents can reach.
+    const connectionItems: CategoryItem[] = [
+      // What connectors fire on their own: the event subscriptions agents made
+      // through them. Connectors themselves are managed in the Marketplace.
+      enableWebhook && {
+        icon: ZapIcon,
+        key: SettingsTabs.Automations,
+        label: t('tab.automations'),
+      },
+      // URLs outside systems call to wake an agent; made on each agent's page, managed here too.
+      enableWebhook && {
+        icon: WebhookIcon,
+        key: SettingsTabs.Webhooks,
+        label: t('tab.webhooks'),
+      },
+    ].filter(Boolean) as CategoryItem[];
+
+    // Every entry is conditional, so a self-hosted deployment may have none.
+    if (connectionItems.length > 0)
+      groups.push({
+        items: connectionItems,
+        key: SettingsGroupKey.Connection,
+        scope: 'space',
+        title: t('group.connection'),
+      });
+
+    // Resource group — where agents run.
+    const resourceItems: CategoryItem[] = [
+      {
+        icon: MonitorSmartphoneIcon,
+        key: SettingsTabs.Devices,
+        label: t('tab.devices'),
+      },
+      // The coding-agent subscriptions this member's devices signed in to:
+      // the capacity their agents are balanced onto.
+      {
+        icon: GaugeIcon,
+        key: SettingsTabs.SubscriptionAccounts,
+        label: t('tab.subscriptionAccounts'),
+      },
+      // Environments & Vault, always there: what a run starts from and
+      // the secrets it reads, in one place. An environment is a definition,
+      // written down before anything runs it, so it needs no drive.
+      {
+        icon: ContainerIcon,
+        key: SettingsTabs.Environments,
+        label: t('tab.environmentsAndCreds'),
+      },
+    ].filter(Boolean) as CategoryItem[];
+
+    groups.push({
+      items: resourceItems,
+      key: SettingsGroupKey.Resource,
+      scope: 'space',
+      title: t('group.resource'),
+    });
+
+    const dataItems: CategoryItem[] = [
+      {
+        icon: ChartColumnBigIcon,
+        key: SettingsTabs.Stats,
+        label: tAuth('tab.stats'),
+      },
+      {
+        icon: Database,
+        key: SettingsTabs.Storage,
+        label: t('tab.storage'),
+      },
+      {
+        icon: Trash2,
+        key: SettingsTabs.Trash,
+        label: t('tab.trash'),
+      },
+    ].filter(Boolean) as CategoryItem[];
+
+    groups.push({
+      items: dataItems,
+      key: SettingsGroupKey.Data,
+      scope: 'space',
+      title: t('group.data'),
     });
 
     return groups;

@@ -3,6 +3,7 @@ import { matchRoutes } from 'react-router';
 import { describe, expect, it } from 'vitest';
 
 import { mainAreaMetaRoutes } from './desktopRouter.config';
+import { legacySettingsTabRedirects } from './legacySettingsRoutes';
 import { mobileRoutes } from './mobileRouter.config';
 
 /** Every leaf path pattern of a route tree, joined from the root. */
@@ -50,6 +51,15 @@ describe('mobile router parity with the desktop main area', () => {
   it('covers a meaningful slice of the desktop tree', () => {
     expect(desktopUrls.length).toBeGreaterThan(150);
   });
+
+  it.each(legacySettingsTabRedirects)(
+    'uses the shared redirect for /settings/$path',
+    (redirect) => {
+      expect(matchRoutes(mobileRoutes, `/settings/${redirect.path}`)?.at(-1)?.route.element).toBe(
+        redirect.element,
+      );
+    },
+  );
 
   it.each(desktopUrls.filter((url) => !MOBILE_UNSUPPORTED.some((re) => re.test(url))))(
     'resolves %s to the same route pattern as desktop',

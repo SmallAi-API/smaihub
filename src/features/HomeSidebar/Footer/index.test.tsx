@@ -148,7 +148,7 @@ describe('Footer settings entry', () => {
 
     expect(screen.getByRole('button', { name: 'Settings' }).closest('a')).toHaveAttribute(
       'href',
-      '/settings',
+      '/settings/profile',
     );
     await user.click(screen.getByRole('button', { name: 'Help' }));
     expect(await screen.findByRole('link', { name: 'Get API Key' })).toBeVisible();
@@ -163,7 +163,7 @@ describe('Footer settings entry', () => {
     await user.click(screen.getByRole('button', { name: 'Help' }));
     expect(await screen.findByRole('link', { name: 'Settings' })).toHaveAttribute(
       'href',
-      '/settings',
+      '/settings/profile',
     );
   }, 20000);
 

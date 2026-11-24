@@ -12,12 +12,12 @@ const scrollOffsets = new Map<string, number>();
 interface SidebarLayoutProps {
   body?: ReactNode;
   contentStyle?: CSSProperties;
+  /** Pinned below the scrolling body. */
   footer?: ReactNode;
-
   header?: ReactNode;
 }
 
-const SideBarLayout = memo<SidebarLayoutProps>(({ header, body, contentStyle }) => {
+const SideBarLayout = memo<SidebarLayoutProps>(({ header, body, contentStyle, footer }) => {
   const navKey = useActiveNavKey();
   const scrollerRef = useRef<HTMLDivElement>(null);
 
@@ -49,6 +49,7 @@ const SideBarLayout = memo<SidebarLayoutProps>(({ header, body, contentStyle }) 
           <Suspense fallback={<SkeletonList paddingBlock={8} />}>{body}</Suspense>
         </TooltipGroup>
       </ScrollArea>
+      {footer && <Suspense fallback={null}>{footer}</Suspense>}
     </Flexbox>
   );
 });

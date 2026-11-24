@@ -3,6 +3,7 @@ import { createElement, type ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
 
 import { useSettingsSearch } from '@/features/SettingsSearch';
+import { SettingsTabs } from '@/store/global/initialState';
 import { ServerConfigStoreProvider } from '@/store/serverConfig/Provider';
 import { WorkspaceSettingsTabs } from '@/types/workspaceSettings';
 
@@ -16,6 +17,7 @@ const memberGroups: WorkspaceSettingCategoryGroup[] = [
       { icon: null, key: WorkspaceSettingsTabs.Conversation, label: 'Conversation' },
     ],
     key: WorkspaceSettingsGroupKey.Account,
+    scope: 'account',
     title: 'Account',
   },
   {
@@ -25,6 +27,7 @@ const memberGroups: WorkspaceSettingCategoryGroup[] = [
       { icon: null, key: WorkspaceSettingsTabs.Notification, label: 'Notifications' },
     ],
     key: WorkspaceSettingsGroupKey.General,
+    scope: 'space',
     title: 'Workspace',
   },
 ];
@@ -37,6 +40,7 @@ const adminGroups: WorkspaceSettingCategoryGroup[] = [
       { icon: null, key: WorkspaceSettingsTabs.ServiceModel, label: 'Service Model' },
     ],
     key: WorkspaceSettingsGroupKey.Agent,
+    scope: 'space',
     title: 'Agent',
   },
 ];
@@ -88,8 +92,8 @@ describe('workspace settings search scope', () => {
     const urls = search('prompt rewrite', adminGroups).map((result) => result.url);
 
     expect(urls).toContain('/acme/settings/service-model#service-model-advanced');
-    expect(search('openai', adminGroups).map((result) => result.url)).toContain(
-      '/acme/settings/provider/openai',
+    expect(search('smai', adminGroups).map((result) => result.url)).toContain(
+      '/acme/settings/provider/smai',
     );
   });
 
@@ -102,6 +106,7 @@ describe('workspace settings search scope', () => {
           { icon: null, key: WorkspaceSettingsTabs.Credits, label: 'Credits' },
         ],
         key: WorkspaceSettingsGroupKey.Subscription,
+        scope: 'space',
         title: 'Subscription',
       },
     ];
@@ -113,6 +118,56 @@ describe('workspace settings search scope', () => {
       // Only the personal Usage page holds the balance
       expect(urls).not.toContain('/acme/settings/usage');
     }
+  });
+
+  it('deep-links rows of a personal-only account tab into its personal page', () => {
+    const groups: WorkspaceSettingCategoryGroup[] = [
+      {
+        items: [
+          {
+            href: '/settings/referral',
+            icon: null,
+            key: SettingsTabs.Referral,
+            label: 'Referral',
+          },
+        ],
+        key: WorkspaceSettingsGroupKey.Account,
+        scope: 'account',
+        title: 'Account',
+      },
+    ];
+
+    expect(search('invite code', groups).map((result) => result.url)).toContain(
+      '/settings/referral#referral-invite-code',
+    );
+  });
+
+  it('keeps personal and workspace Notifications as two results', () => {
+    const groups: WorkspaceSettingCategoryGroup[] = [
+      {
+        items: [
+          {
+            href: '/settings/notification',
+            icon: null,
+            key: SettingsTabs.Notification,
+            label: 'Notifications',
+          },
+        ],
+        key: WorkspaceSettingsGroupKey.Account,
+        scope: 'account',
+        title: 'Account',
+      },
+      {
+        items: [{ icon: null, key: WorkspaceSettingsTabs.Notification, label: 'Notifications' }],
+        key: WorkspaceSettingsGroupKey.General,
+        scope: 'space',
+        title: 'Workspace',
+      },
+    ];
+    const urls = search('notification', groups).map((result) => result.url);
+
+    expect(urls).toContain('/settings/notification');
+    expect(urls).toContain('/acme/settings/notification');
   });
 
   it('indexes only the tab for workspace pages that differ from the personal ones', () => {
