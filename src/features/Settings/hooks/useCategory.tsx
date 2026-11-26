@@ -15,7 +15,7 @@ import {
   EllipsisIcon,
   EthernetPort,
   FlaskConical,
-  GaugeIcon,
+  // GaugeIcon,
   Gift,
   Info,
   KeyboardIcon,
@@ -289,11 +289,11 @@ export const useCategory = () => {
       },
       // The coding-agent subscriptions this member's devices signed in to:
       // the capacity their agents are balanced onto.
-      {
-        icon: GaugeIcon,
-        key: SettingsTabs.SubscriptionAccounts,
-        label: t('tab.subscriptionAccounts'),
-      },
+      // {
+      //   icon: GaugeIcon,
+      //   key: SettingsTabs.SubscriptionAccounts,
+      //   label: t('tab.subscriptionAccounts'),
+      // },
       // Environments & Vault, always there: what a run starts from and
       // the secrets it reads, in one place. An environment is a definition,
       // written down before anything runs it, so it needs no drive.
