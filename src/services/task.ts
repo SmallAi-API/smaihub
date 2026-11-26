@@ -293,7 +293,12 @@ class TaskService {
 
   deleteTopic = async (topicId: string) => lambdaClient.task.deleteTopic.mutate({ topicId });
 
-  // 安全 merge config（不会覆盖 checkpoint/review 等其他 config 字段）
+  /** Resolves and checks a Channel delivery without storing it. */
+  checkChannelDelivery = async (
+    ...args: Parameters<typeof lambdaClient.task.checkChannelDelivery.mutate>
+  ) => lambdaClient.task.checkChannelDelivery.mutate(...args);
+
+  // Safely merges config without overwriting other config fields such as checkpoint/review
   updateConfig = async (id: string, config: Record<string, unknown>) =>
     lambdaClient.task.updateConfig.mutate({ config, id });
 
