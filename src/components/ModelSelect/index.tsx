@@ -19,6 +19,7 @@ import { type CSSProperties, type FC, type ReactNode } from 'react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ModelIcon } from '@/components/LobeIcons';
 import { useDensityTokens, useInterfaceDensity } from '@/styles/density';
 import { type AiProviderSourceType } from '@/types/aiProvider';
 import { formatTokenNumber } from '@/utils/format';
@@ -304,13 +305,7 @@ export const ModelItemRender = memo<ModelItemRenderProps>(
           gap={8}
           style={{ flexShrink: 1, minWidth: 0, overflow: 'hidden' }}
         >
-          <Avatar
-            alt=""
-            avatar={getProviderLogoUrl(provider)}
-            shape={'circle'}
-            size={compact ? iconSize : 20}
-            style={{ flexShrink: 0 }}
-          />
+          <ModelIcon model={id} size={compact ? iconSize : 20} style={{ flexShrink: 0 }} />
           <Text
             style={mobile ? { maxWidth: '60vw' } : { minWidth: 0, overflow: 'hidden' }}
             ellipsis={{

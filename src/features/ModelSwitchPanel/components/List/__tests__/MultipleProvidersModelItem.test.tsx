@@ -71,11 +71,6 @@ vi.mock('@lobehub/icons', () => ({
   LobeHub: { Morden: () => <span /> },
 }));
 
-vi.mock('@/components/LobeIcons', () => ({
-  ModelIcon: () => <span />,
-  ProviderIcon: () => <span />,
-}));
-
 vi.mock('@/components/ModelSelect', () => ({
   ModelItemRender: ({
     displayName,
@@ -101,6 +96,20 @@ vi.mock('../../ModelDetailPanel', () => ({
 }));
 
 describe('MultipleProvidersModelItem', () => {
+  it.each([
+    ['gpt-5.4', 'OpenAI'],
+    ['claude-opus-4-7', 'Claude'],
+    ['gemini-3-pro-preview', 'Gemini'],
+  ])('shows the %s vendor icon when routed through SMai', async (id, vendor) => {
+    const { ModelItemRender } = await vi.importActual<typeof ModelSelectModule>(
+      '@/components/ModelSelect',
+    );
+
+    render(<ModelItemRender id={id} provider="smai" showInfoTag={false} />);
+
+    expect(await screen.findByTitle(vendor)).toBeInTheDocument();
+  });
+
   it('renders the audio capability tag from flattened model abilities', async () => {
     const { ModelItemRender } = await vi.importActual<typeof ModelSelectModule>(
       '@/components/ModelSelect',
