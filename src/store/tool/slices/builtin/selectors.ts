@@ -26,7 +26,7 @@ export interface LobeToolMetaWithAvailability extends LobeToolMeta {
 }
 
 const toBuiltinMeta = (t: ToolStoreState['builtinTools'][number]): LobeToolMeta => ({
-  author: 'LobeHub',
+  author: 'smai.ai',
   identifier: t.identifier,
   meta: t.manifest.meta,
   type: 'builtin' as const,
@@ -40,7 +40,7 @@ const toBuiltinMetaWithAvailability = (
 });
 
 const toSkillMeta = (s: BuiltinSkillManifest): LobeToolMeta => ({
-  author: 'LobeHub',
+  author: 'smai.ai',
   identifier: s.identifier,
   meta: {
     avatar: s.avatar,
