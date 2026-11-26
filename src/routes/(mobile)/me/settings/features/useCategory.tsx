@@ -5,6 +5,7 @@ import {
   BrainCircuit,
   ChartColumnBigIcon,
   ChartPieIcon,
+  CodeXmlIcon,
   CreditCard,
   Database,
   EllipsisIcon,
@@ -21,6 +22,7 @@ import {
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useCodingPlansTab } from '@/business/client/hooks/useCodingPlansTab';
 import { type CellProps } from '@/components/Cell';
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
 import { SettingsTabs } from '@/store/global/initialState';
@@ -55,6 +57,7 @@ export const useCategory = (): CategoryGroup[] => {
   const { t } = useTranslation(['setting', 'auth', 'subscription']);
   const { hideDocs, showProvider } = useServerConfigStore(featureFlagsSelectors);
   const enableBusinessFeatures = useServerConfigStore(serverConfigSelectors.enableBusinessFeatures);
+  const codingPlansTab = useCodingPlansTab();
   // Advanced only holds gateway mode on mobile; without it the page is empty.
   const enableGatewayMode = useServerConfigStore(serverConfigSelectors.enableGatewayMode);
   const enableOAuthApps = useUserStore(labPreferSelectors.enableOAuthApps);
@@ -86,6 +89,12 @@ export const useCategory = (): CategoryGroup[] => {
             key: SettingsTabs.Usage,
             label: t('subscription:tab.usage'),
           }),
+          codingPlansTab &&
+            makeItem({
+              icon: CodeXmlIcon,
+              key: SettingsTabs.CodingPlans,
+              label: codingPlansTab.label,
+            }),
           makeItem({
             icon: CreditCard,
             key: SettingsTabs.Billing,
@@ -96,7 +105,7 @@ export const useCategory = (): CategoryGroup[] => {
             key: SettingsTabs.Referral,
             label: t('subscription:tab.referral'),
           }),
-        ]
+        ].filter((item): item is CategoryItem => Boolean(item))
       : [];
 
     const agent: CategoryItem[] = [
@@ -150,6 +159,7 @@ export const useCategory = (): CategoryGroup[] => {
   }, [
     t,
     enableBusinessFeatures,
+    codingPlansTab,
     hideDocs,
     showProvider,
     enableOAuthApps,
