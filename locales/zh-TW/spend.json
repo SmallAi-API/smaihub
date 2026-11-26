@@ -94,6 +94,7 @@
   "table.pagination.perPage": "每頁 {{size}} 項",
   "table.pagination.prev": "上一頁",
   "table.pagination.range": "{{from}}-{{to}} 共 {{total}} 項",
+  "table.planIncluded": "訂閱點數",
   "table.title": "計算點數使用詳情",
   "table.totalToken.input": "輸入",
   "table.totalToken.output": "輸出",

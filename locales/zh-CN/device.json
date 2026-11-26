@@ -69,6 +69,7 @@
   "workingDirectory.drive.initializeWith": "使用初始化",
   "workingDirectory.drive.moreActions": "更多操作",
   "workingDirectory.drive.pickFailed": "无法切换到此文件夹。请再试一次。",
+  "workingDirectory.drive.pickFailedRetry": "无法切换到此文件夹。请检查网络连接后重试。",
   "workingDirectory.drive.pickFolderFirst": "请先选择一个文件夹",
   "workingDirectory.drive.privateBlocked": "私人环境 - 共享代理无法使用它",
   "workingDirectory.drive.readOnly": "环境目录在这里是只读的。",
