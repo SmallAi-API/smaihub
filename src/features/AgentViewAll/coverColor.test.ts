@@ -1,5 +1,6 @@
 import { DEFAULT_AVATAR } from '@lobechat/const';
 import type { SidebarAgentItem } from '@lobechat/types';
+import { cssVar, getAgentAvatarTraits } from '@lobehub/ui';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -73,6 +74,19 @@ describe('coverImageSrc', () => {
 describe('seedCoverColor', () => {
   it('is stable per agent id', () => {
     expect(seedCoverColor(agent())).toBe(seedCoverColor(agent({ title: 'Renamed' })));
+  });
+
+  it.each([
+    ['cyan', cssVar.cyan],
+    ['green', cssVar.green],
+    ['red', cssVar.red],
+  ] as const)('uses the matching theme color for a %s avatar', (color, token) => {
+    const id = Array.from({ length: 200 }, (_, i) => `agt_${i}`).find(
+      (id) => getAgentAvatarTraits(id).color === color,
+    );
+
+    expect(id).toBeDefined();
+    expect(seedCoverColor(agent({ id }))).toBe(token);
   });
 });
 

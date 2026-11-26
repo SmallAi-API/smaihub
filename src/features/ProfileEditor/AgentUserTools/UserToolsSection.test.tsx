@@ -75,6 +75,10 @@ vi.mock('@/store/agent', () => ({
 vi.mock('@/store/agent/selectors', () => ({
   agentSelectors: { getAgentConfigById: () => () => mocks.agentConfig },
 }));
+vi.mock('@/store/serverConfig', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  useServerConfigStore: (selector: (state: unknown) => unknown) => selector({ featureFlags: {} }),
+}));
 
 const renderSection = () =>
   render(
@@ -125,6 +129,15 @@ describe('UserToolsSection — Workspace/User tool count', () => {
 
     renderSection();
 
+    expect(labelText()).toContain('· 1');
+  });
+
+  it('counts a newly connected tool without an agent configuration entry', () => {
+    mocks.toolState.connectors = [
+      { identifier: 'notion', sourceType: 'custom', status: 'connected', isEnabled: true },
+      { identifier: 'slack', sourceType: 'custom', status: 'pending', isEnabled: true },
+    ];
+    renderSection();
     expect(labelText()).toContain('· 1');
   });
 

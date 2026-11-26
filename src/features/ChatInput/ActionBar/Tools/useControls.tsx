@@ -160,7 +160,7 @@ export const useControls = ({ closeDropdown }: { closeDropdown?: () => void } = 
     (s) =>
       resolveToolMode(agentByIdSelectors.getAgentConfigById(agentId)(s)?.chatConfig) === 'agent',
   );
-  const activationSets = useActivationSets(checked, rawPlugins, discoverBuiltins);
+  const activationSets = useActivationSets(agentId, checked, rawPlugins, discoverBuiltins);
   const { disabledIdSet, optInIds } = activationSets;
   const builtinList = useToolStore(builtinToolSelectors.metaListIncludingHidden, isEqual);
 
