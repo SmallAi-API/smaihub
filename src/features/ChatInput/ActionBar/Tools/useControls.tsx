@@ -69,7 +69,7 @@ import { styles } from './useControls.styles';
 import { usePluginRowUninstall } from './usePluginRowUninstall';
 
 const officialTag = (
-  <Tooltip placement={'top'} title={'LobeHub'}>
+  <Tooltip placement={'top'} title={'smai.ai'}>
     <Tag color={'success'} icon={<Icon icon={BadgeCheck} />} size={'small'} />
   </Tooltip>
 );
