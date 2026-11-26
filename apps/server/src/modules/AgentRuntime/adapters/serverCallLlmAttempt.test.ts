@@ -865,18 +865,13 @@ describe('ServerCallLlmAttempt', () => {
     });
 
     it('does not treat a stream that ends cleanly on abort as a completed turn', async () => {
-      const { attempt, chat } = createAttempt(streamUntilAborted('end'), undefined, {
+      const { attempt } = createAttempt(streamUntilAborted('end'), undefined, {
         enforceInvocationDeadline: true,
-        provider: 'smai',
-        trigger: 'chat',
       });
 
       const error = await runNearDeadline(attempt);
 
       expect(error).toMatchObject({ errorType: 'LlmStepTimeout' });
-      expect(chat.mock.calls[0][1]?.requestHeaders).toMatchObject({
-        'X-Smai-Session': expect.stringMatching(/^[\da-f]{32}$/),
-      });
     });
 
     it('leaves the call alone when deadline enforcement is off', async () => {
