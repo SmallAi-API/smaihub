@@ -142,24 +142,19 @@ describe('Footer billboard anchor', () => {
 });
 
 describe('Footer settings entry', () => {
-  it('shows Settings as a single dedicated link in the compact layout', async () => {
+  // Settings is a frequent destination, so the compact footer gives it its own
+  // icon instead of burying it in the Help menu. It opens the `/settings`
+  // index, which lands on the current space's own settings (Workspace ›
+  // General, or the personal space's first tab), not account settings.
+  it('shows Settings as its own icon, not inside the Help menu', async () => {
     const user = userEvent.setup();
     await renderFooter();
 
     expect(screen.getByRole('button', { name: 'Settings' }).closest('a')).toHaveAttribute(
       'href',
-      '/settings/profile',
+      '/settings',
     );
-    await user.click(screen.getByRole('button', { name: 'Help' }));
-    expect(await screen.findByRole('link', { name: 'Get API Key' })).toBeVisible();
-    expect(screen.queryByRole('link', { name: 'Settings' })).not.toBeInTheDocument();
-  }, 20000);
 
-  it('shows Settings in the Help menu in the expanded layout', async () => {
-    const user = userEvent.setup();
-    await renderFooter({ layout: 'expanded' });
-
-    expect(screen.queryByRole('button', { name: 'Settings' })).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Help' }));
     expect(await screen.findByRole('link', { name: 'Settings' })).toHaveAttribute(
       'href',

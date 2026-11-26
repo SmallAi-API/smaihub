@@ -98,9 +98,9 @@ const Footer = memo(() => {
             {
               icon: <Icon icon={Settings2} />,
               key: 'setting',
-              // Opens account settings in the active space; the settings
-              // sidebar card switches to the space's own settings.
-              label: <WorkspaceLink to="/settings/profile">{t('userPanel.setting')}</WorkspaceLink>,
+              // Opens the active space's own settings; the settings sidebar
+              // card switches to account settings.
+              label: <WorkspaceLink to="/settings">{t('userPanel.setting')}</WorkspaceLink>,
             },
           ]
         : [];
@@ -228,7 +228,7 @@ const Footer = memo(() => {
             />
           </DropdownMenu>
           {footer.showSettingsEntry && (
-            <WorkspaceLink to="/settings/profile">
+            <WorkspaceLink to="/settings">
               <ActionIcon
                 aria-label={t('userPanel.setting')}
                 icon={SettingsIcon}
