@@ -12,6 +12,38 @@ export const geminiChatModels: AIChatModelCard[] = [
       video: true,
       vision: true,
     },
+    contextWindowTokens: 1_048_576,
+    description:
+      'Gemini 4 Neon sits between Hydrogen and Carbon, bringing near-Carbon quality to complex software engineering, knowledge work and science workflows at faster speeds and lower cost.',
+    displayName: 'Gemini 4 Neon',
+    enabled: true,
+    family: 'gemini',
+    generation: 'gemini-4',
+    id: 'gemini-4-neon',
+    maxOutput: 65_536,
+    /** Global endpoint rates, matching the Gemini API; OpenRouter's `google-vertex/global`
+     * endpoint lists the same $3 / $15 / $0.15 cached.
+     * @see https://ai.google.dev/gemini-api/docs/pricing
+     */
+    releasedAt: '2026-11-26',
+    settings: {
+      disabledParams: ['temperature', 'top_p'],
+      extendParams: ['thinkingLevel5', 'urlContext'],
+      searchImpl: 'params',
+      searchProvider: 'google',
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      audio: true,
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
     // https://ai.google.dev/gemini-api/docs/models/gemini-4-hydrogen
     contextWindowTokens: 1_048_576,
     description:
