@@ -57,7 +57,9 @@ for (const failures of [0, 1, 2, 3]) {
         '-c',
         `
         pnpm() {
-          [[ "$*" == 'install --node-linker=hoisted' ]] || return 99
+          [[ "$#" == 5 && "$1" == install && "$2" == --node-linker=hoisted &&
+            "$3" == --store-dir && "$4" == "$RUNNER_TEMP/pnpm-store" &&
+            "$5" == --prefer-offline ]] || return 99
           local attempts=0
           if [[ -f "$ATTEMPT_FILE" ]]; then read -r attempts < "$ATTEMPT_FILE"; fi
           attempts=$((attempts + 1))
@@ -77,6 +79,7 @@ for (const failures of [0, 1, 2, 3]) {
           ATTEMPT_FILE: countPath,
           FAILURES: String(failures),
           GITHUB_WORKSPACE: repository.replaceAll('\\', '/'),
+          RUNNER_TEMP: path.join(root, 'runner temp').replaceAll('\\', '/'),
         },
       },
     );
@@ -88,6 +91,25 @@ for (const failures of [0, 1, 2, 3]) {
     assert.deepEqual(delays, [15, 30].slice(0, Math.min(failures, 2)));
   });
 }
+
+test('restores a shared pnpm store before both desktop dependency installs', async () => {
+  const { runs } = YAML.parse(await readFile(actionPath, 'utf8'));
+  const cache = runs.steps.find((step) => step.uses?.startsWith('actions/cache@'));
+  const rootInstall = runs.steps.find((step) => step.name === 'Install dependencies');
+  const desktopInstall = runs.steps.find((step) => step.name === 'Install deps on Desktop');
+
+  assert.ok(cache);
+  assert.ok(runs.steps.indexOf(cache) < runs.steps.indexOf(rootInstall));
+  assert.ok(runs.steps.indexOf(cache) < runs.steps.indexOf(desktopInstall));
+  assert.equal(cache.with.path, '${{ runner.temp }}/pnpm-store');
+  for (const install of [rootInstall, desktopInstall]) {
+    assert.ok(install.run.includes('--store-dir "$RUNNER_TEMP/pnpm-store" --prefer-offline'));
+  }
+  assert.match(cache.with.key, /runner\.os.*runner\.arch/);
+  assert.match(cache.with.key, /'package\.json'/);
+  assert.match(cache.with.key, /'apps\/desktop\/pnpm-lock\.yaml'/);
+  assert.doesNotMatch(cache.with.key, /'pnpm-lock\.yaml'/);
+});
 
 test('cleans hoisted workspace links before the isolated Desktop install', async () => {
   const source = await readFile(actionPath, 'utf8');

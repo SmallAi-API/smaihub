@@ -14,11 +14,25 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
 
+    # The root lockfile is gitignored. Key its dependencies on tracked manifests and patches.
+    - name: Cache desktop pnpm store
+      uses: actions/cache@v5
+      with:
+        path: ${{ runner.temp }}/pnpm-store
+        key: >-
+          desktop-pnpm-store-${{ runner.os }}-${{ runner.arch }}-v1-${{
+          hashFiles('package.json', 'pnpm-workspace.yaml', 'apps/**/package.json',
+          'packages/**/package.json', 'e2e/package.json', 'patches/*.patch',
+          'apps/desktop/pnpm-workspace.yaml', 'apps/desktop/pnpm-lock.yaml') }}
+        restore-keys: |
+          desktop-pnpm-store-${{ runner.os }}-${{ runner.arch }}-v1-
+
     - name: Install dependencies
       shell: bash
       run: |
         set -euo pipefail
-        bash "$GITHUB_WORKSPACE/.github/scripts/retryCommand.sh" pnpm install --node-linker=hoisted
+        bash "$GITHUB_WORKSPACE/.github/scripts/retryCommand.sh" pnpm install --node-linker=hoisted \
+          --store-dir "$RUNNER_TEMP/pnpm-store" --prefer-offline
 
     # 移除国内 electron 镜像配置，GitHub Actions 使用官方源更快
     - name: Remove China electron mirror from .npmrc
@@ -63,7 +77,8 @@ runs:
           fi
         done
         cd "$desktop_root"
-        bash "$workspace_root/.github/scripts/retryCommand.sh" pnpm install --frozen-lockfile
+        bash "$workspace_root/.github/scripts/retryCommand.sh" pnpm install --frozen-lockfile \
+          --store-dir "$RUNNER_TEMP/pnpm-store" --prefer-offline
         DESKTOP_BUILD_ROOT="$desktop_root" node <<'NODE'
         const path = require('node:path');
         const { createRequire } = require('node:module');
